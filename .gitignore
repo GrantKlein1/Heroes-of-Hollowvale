@@ -1,0 +1,97 @@
+# Node
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Builds
+dist/
+client/dist/
+server/dist/
+
+# Env
+.env
+*.env
+server/.env
+client/.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Editor/OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Coverage
+coverage/
+client/coverage/
+server/coverage/
+
+# Caches
+.cache/
+client/.vite/
+client/.cache/
+turbo/
+.next/
+out/
+.tmp/
+
+# Misc
+*.local
+*.pid
+```# filepath: c:\Users\panda\Personal Files\medievalGame\.gitignore
+# Node
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Builds
+dist/
+client/dist/
+server/dist/
+
+# Env
+.env
+*.env
+server/.env
+client/.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Editor/OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Coverage
+coverage/
+client/coverage/
+server/coverage/
+
+# Caches
+.cache/
+client/.vite/
+client/.cache/
+turbo/
+.next/
+out/
+.tmp/
+
+# Misc
+*.local
+*.pid

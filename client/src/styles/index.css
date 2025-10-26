@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { --parchment: #f1e7d0; }
+
+/* Fantasy display font utility (matches tailwind font-display) */
+.font-display { font-family: 'Uncial Antiqua', serif; letter-spacing: 0.02em; }
+
+/* Scrollbar aesthetics */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb { background-color: rgba(120, 53, 15, 0.5); border-radius: 8px; }
+*::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+
+html, body, #root { height: 100%; }
+
+/* Fallback background if tavern.jpg is missing */
+body { background: radial-gradient(ellipse at center, #3b2f2f 0%, #1c1917 70%); }
