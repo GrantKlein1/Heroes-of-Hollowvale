@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useMemo } from 'react'
 import { sendChat as apiSendChat } from './lib/api'
 
 // Simple top-down RPG prototype with two scenes: Village and Tavern
@@ -7,6 +7,10 @@ const ASSETS = {
   villageBg: encodeURI('/images/start village screen.png'),
   tavernBg: '/images/tavern.png',
   player: '/images/knight.png',
+  // Title background image (place in client/public/images)
+  titleBg: '/images/red dragon boss fight room.png',
+  // Title logo image (with spaces in filename)
+  titleLogo: encodeURI('/images/title screen wider no background.png'),
 }
 
 // Pre-specified prompts (sent as user messages; server enforces bartender persona)
@@ -60,8 +64,13 @@ export default function Game() {
   const sceneRef = useRef('village') // 'village' | 'tavern'
   const [ready, setReady] = useState(false)
   const [scene, setScene] = useState('village')
-  // Class selection overlay
-  const [classSelectOpen, setClassSelectOpen] = useState(true)
+  // Title and options overlays
+  const [titleOpen, setTitleOpen] = useState(true)
+  const titleOpenRef = useRef(true)
+  const [optionsOpen, setOptionsOpen] = useState(false)
+  const optionsOpenRef = useRef(false)
+  // Class selection overlay (opens after Start Game)
+  const [classSelectOpen, setClassSelectOpen] = useState(false)
   const [selectedClass, setSelectedClass] = useState(null)
   // Debug picker state
   const frameRef = useRef({ dx: 0, dy: 0, dw: 1, dh: 1 })
@@ -82,6 +91,11 @@ export default function Game() {
   const chatOpenRef = useRef(false)
   const classSelectOpenRef = useRef(true)
   const inventoryOpenRef = useRef(false)
+  // Options: simple volume slider persisted for future audio
+  const [volume, setVolume] = useState(() => {
+    const v = Number(localStorage.getItem('volume') ?? 70)
+    return Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : 70
+  })
   // Inventory
   const [inventoryOpen, setInventoryOpen] = useState(false)
   // inventory shape: { armor:{head,chest,legs,boots,offhand}, storage: Item[27], hotbar: Item[9] }
@@ -93,6 +107,15 @@ export default function Game() {
   // Inventory drag state
   const [invDrag, setInvDrag] = useState(null) // { item:{id,count}, from:{ section:'armor'|'storage'|'hotbar', key:string|number } | null }
   const [invMouse, setInvMouse] = useState({ x: 0, y: 0 })
+  // Hotbar HUD state
+  const [activeHotbar, setActiveHotbar] = useState(0) // 0..8 like Minecraft
+  // Options toggles for hotbar behaviors
+  const [allowQDrop, setAllowQDrop] = useState(() => (localStorage.getItem('allowQDrop') ?? 'true') !== 'false')
+  const [allowFSwap, setAllowFSwap] = useState(() => (localStorage.getItem('allowFSwap') ?? 'true') !== 'false')
+  // HUD tooltip and selection label
+  const [hudTip, setHudTip] = useState({ show: false, text: '', x: 0, y: 0 })
+  const [hotbarLabel, setHotbarLabel] = useState({ text: '', show: false })
+  const hotbarLabelTimerRef = useRef(null)
 
   // Player state
   const playerRef = useRef({ x: 0, y: 0, w: 48, h: 48, speed: 160 })
@@ -112,8 +135,12 @@ export default function Game() {
         nrect(1, 0, 0.02, 1), // right wall
         // Tavern building blocks (approx top-center), leaving a door gap in the very middle
         // Adjusted to match the visual mug/door area centered on the image
-        nrect(0.43, 0.05, 0.09, 0.24), // left block
-        nrect(0.52, 0.05, 0.09, 0.24), // right block
+        nrect(0.000, 0.742, 0.210, 0.233),
+        nrect(0.788, 0.684, 0.195, 0.219),
+        nrect(0.775, 0.169, 0.193, 0.141),
+        nrect(0.004, 0.089, 0.222, 0.239),
+        nrect(0.008, 0.006, 0.983, 0.198),
+        nrect(0.309, 0.250, 0.377, 0.394)
       ],
   // Door centered beneath the mug: moved further down based on feedback
   door: nrect(0.47, 0.60, 0.06, 0.06),
@@ -123,8 +150,9 @@ export default function Game() {
         // Spawn just inside tavern entrance (relative to tavern image frame)
         playerRef.current._spawn = { scene: 'tavern', nx: 0.5, ny: 0.85 }
       },
-      spawn: { nx: 0.5, ny: 0.5 }, // center plaza
-      playerScale: 0.09, // sprite height as fraction of image height
+      // Spawn near bottom-center on initial load
+      spawn: { nx: 0.5, ny: 0.90 },
+  playerScale: 0.13, // slightly larger: sprite height as fraction of image height
     },
     tavern: {
   bgKey: 'tavernBg',
@@ -147,7 +175,7 @@ export default function Game() {
         playerRef.current._spawn = { scene: 'village', nx: 0.5, ny: 0.72 }
       },
   spawn: { nx: 0.5, ny: 0.82 },
-  playerScale: 0.11,
+  playerScale: 0.13,
     }
   }
 
@@ -211,25 +239,25 @@ export default function Game() {
 
   // Item catalog (id -> name + icon path). Icons are expected at /images/<id>.png
   const ITEMS = {
-    iron_sword: { name: 'Iron Sword', icon: '/images/iron_sword.png' },
-    wooden_shield: { name: 'Wooden Shield', icon: '/images/wooden_shield.png' },
-    chainmail_armor: { name: 'Chainmail Armor', icon: '/images/chainmail_armor.png' },
-    healing_potion: { name: 'Healing Potion', icon: '/images/healing_potion.png' },
+    iron_sword: { name: 'Iron Sword', icon: '/images/knightSword.png' },
+    wooden_shield: { name: 'Wooden Shield', icon: '/images/knightShield.png' },
+    chainmail_armor: { name: 'Chainmail Armor', icon: '/images/knightArmor.png' },
+    healing_potion: { name: 'Healing Potion', icon: '/images/healPotion.png' },
 
-    apprentice_staff: { name: 'Apprentice Staff', icon: '/images/apprentice_staff.png' },
-    spellbook: { name: 'Spellbook', icon: '/images/spellbook.png' },
-    cloth_robes: { name: 'Cloth Robes', icon: '/images/cloth_robes.png' },
-    mana_potion: { name: 'Mana Potion', icon: '/images/mana_potion.png' },
+    apprentice_staff: { name: 'Apprentice Staff', icon: '/images/mageStaff.png' },
+    spellbook: { name: 'Spellbook', icon: '/images/mageSpellBook.png' },
+    cloth_robes: { name: 'Cloth Robes', icon: '/images/mageRobes.png' },
+    mana_potion: { name: 'Mana Potion', icon: '/images/manaPotion.png' },
 
-    twin_daggers: { name: 'Twin Daggers', icon: '/images/twin_daggers.png' },
-    leather_armor: { name: 'Leather Armor', icon: '/images/leather_armor.png' },
-    lockpicks: { name: 'Lockpicks', icon: '/images/lockpicks.png' },
-    poison_vial: { name: 'Poison Vial', icon: '/images/poison_vial.png' },
+    twin_daggers: { name: 'Twin Daggers', icon: '/images/thiefDaggers.png' },
+    leather_armor: { name: 'Leather Armor', icon: '/images/thiefCloak.png' },
+    lockpicks: { name: 'Lockpicks', icon: '/images/thiefLockpick.png' },
+    poison_vial: { name: 'Poison Vial', icon: '/images/thiefPoison.png' },
 
-    battle_axe: { name: 'Battle Axe', icon: '/images/battle_axe.png' },
-    dwarfArmor: { name: 'Dwarf Armor', icon: '/images/dwarfArmor.png' },
-    dwarfPickaxe: { name: 'Dwarf Pickaxe', icon: '/images/dwarfPickaxe.png' },
-    ale_flask: { name: 'Ale Flask', icon: '/images/ale_flask.png' },
+    battle_axe: { name: 'Battle Axe', icon: '/images/dwarfAxe.png' },
+    dwarf_armor: { name: 'Dwarf Armor', icon: '/images/dwarfArmor.png' },
+    dwarf_pickaxe: { name: 'Dwarf Pickaxe', icon: '/images/dwarfPickaxe.png' },
+    ale_flask: { name: 'Ale Flask', icon: '/images/dwarfAle.png' },
   }
 
   const makeItem = (id, count = 1) => ({ id, count })
@@ -245,22 +273,22 @@ export default function Game() {
       base.armor.chest = makeItem('chainmail_armor')
       base.armor.offhand = makeItem('wooden_shield')
       base.hotbar[0] = makeItem('iron_sword')
-      base.hotbar[8] = makeItem('healing_potion', 1)
+      base.hotbar[1] = makeItem('healing_potion', 1)
     } else if (id === 'mage') {
       base.armor.chest = makeItem('cloth_robes')
       base.hotbar[0] = makeItem('apprentice_staff')
       base.storage[0] = makeItem('spellbook')
-      base.hotbar[7] = makeItem('mana_potion', 2)
+      base.hotbar[1] = makeItem('mana_potion', 2)
     } else if (id === 'thief') {
       base.armor.chest = makeItem('leather_armor')
       base.hotbar[0] = makeItem('twin_daggers')
       base.storage[0] = makeItem('lockpicks')
-      base.hotbar[7] = makeItem('poison_vial', 1)
+      base.hotbar[1] = makeItem('poison_vial', 1)
     } else if (id === 'dwarf') {
-      base.armor.chest = makeItem('dwarfArmor')
+      base.armor.chest = makeItem('dwarf_armor')
       base.hotbar[0] = makeItem('battle_axe')
-      base.storage[0] = makeItem('dwarfPickaxe')
-      base.hotbar[7] = makeItem('ale_flask', 1)
+      base.hotbar[1] = makeItem('dwarf_pickaxe')
+      base.hotbar[2] = makeItem('ale_flask', 1)
     }
     return base
   }
@@ -382,6 +410,18 @@ export default function Game() {
     setInvMouse({ x: e.clientX, y: e.clientY })
   }
 
+  // Totals of each item id across entire inventory (armor + storage + hotbar)
+  const inventoryTotals = useMemo(() => {
+    const totals = {}
+    const add = (it) => { if (!it) return; totals[it.id] = (totals[it.id] || 0) + (it.count || 1) }
+    // Armor
+    Object.values(inventory.armor).forEach(add)
+    // Storage and Hotbar
+    inventory.storage.forEach(add)
+    inventory.hotbar.forEach(add)
+    return totals
+  }, [inventory])
+
   // Place dragged stack back into inventory (used when closing)
   const returnDraggedToInventory = () => {
     if (!invDrag?.item) return
@@ -432,13 +472,48 @@ export default function Game() {
   useEffect(() => { chatOpenRef.current = chatOpen }, [chatOpen])
   useEffect(() => { classSelectOpenRef.current = classSelectOpen }, [classSelectOpen])
   useEffect(() => { inventoryOpenRef.current = inventoryOpen }, [inventoryOpen])
+  useEffect(() => { titleOpenRef.current = titleOpen }, [titleOpen])
+  useEffect(() => { optionsOpenRef.current = optionsOpen }, [optionsOpen])
+  useEffect(() => { localStorage.setItem('volume', String(volume)) }, [volume])
+  useEffect(() => { localStorage.setItem('allowQDrop', String(allowQDrop)) }, [allowQDrop])
+  useEffect(() => { localStorage.setItem('allowFSwap', String(allowFSwap)) }, [allowFSwap])
+
+  // Global mousemove for drag ghost and HUD tooltips
+  useEffect(() => {
+    const onMove = (e) => {
+      setInvMouse({ x: e.clientX, y: e.clientY })
+      if (hudTip.show) {
+        setHudTip((t) => ({ ...t, x: e.clientX + 8, y: e.clientY + 8 }))
+      }
+    }
+    window.addEventListener('mousemove', onMove)
+    return () => window.removeEventListener('mousemove', onMove)
+  }, [hudTip.show])
+
+  // Show fading label for current hotbar item when selection changes
+  useEffect(() => {
+    const it = inventory.hotbar[activeHotbar]
+    const name = it ? getItemDef(it.id).name : 'Empty'
+    setHotbarLabel({ text: name, show: true })
+    if (hotbarLabelTimerRef.current) clearTimeout(hotbarLabelTimerRef.current)
+    hotbarLabelTimerRef.current = setTimeout(() => setHotbarLabel((s) => ({ ...s, show: false })), 1500)
+    return () => { if (hotbarLabelTimerRef.current) clearTimeout(hotbarLabelTimerRef.current) }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeHotbar, inventory.hotbar[activeHotbar]?.id])
 
   // Input
   useEffect(() => {
     const onKeyDown = (e) => {
       const tag = (e.target?.tagName || '').toLowerCase()
       const typing = tag === 'input' || tag === 'textarea' || (e.target && e.target.isContentEditable)
-      // Track keys for movement, but movement is paused when chatOpen anyway
+      // If Title or Options are open, limit keys (allow Esc to close Options)
+      if (titleOpenRef.current || optionsOpenRef.current) {
+        if (e.key === 'Escape' && optionsOpenRef.current) {
+          setOptionsOpen(false)
+        }
+        return
+      }
+      // Track keys for movement, but movement is paused when overlays are open anyway
       keysRef.current[e.key.toLowerCase()] = true
       // prevent page scroll for arrow keys/space only when not typing into an input/textarea
       if (!typing && ['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].includes(e.key.toLowerCase())) {
@@ -453,6 +528,44 @@ export default function Game() {
         e.preventDefault()
         if (inventoryOpenRef.current) returnDraggedToInventory()
         setInventoryOpen(v => !v)
+      }
+      //hotbar number keys 1..9
+      if (!typing && !inventoryOpenRef.current && !chatOpenRef.current) {
+        const code = e.key
+        if (code >= '1' && code <= '9') {
+          const idx = Number(code) - 1
+          setActiveHotbar(idx)
+        }
+        // Drop one item from selected slot with Q
+        if ((code === 'q' || code === 'Q') && allowQDrop) {
+          setInventory(inv => {
+            const cur = inv.hotbar[activeHotbar]
+            if (!cur) return inv
+            const next = {
+              armor: { ...inv.armor },
+              storage: inv.storage.slice(),
+              hotbar: inv.hotbar.slice(),
+            }
+            const newCount = (cur.count || 1) - 1
+            next.hotbar[activeHotbar] = newCount > 0 ? { id: cur.id, count: newCount } : null
+            return next
+          })
+        }
+        // Swap selected hotbar item with offhand using F (like Minecraft)
+        if ((code === 'f' || code === 'F') && allowFSwap) {
+          setInventory(inv => {
+            const next = {
+              armor: { ...inv.armor },
+              storage: inv.storage.slice(),
+              hotbar: inv.hotbar.slice(),
+            }
+            const a = next.hotbar[activeHotbar] || null
+            const b = next.armor.offhand || null
+            next.hotbar[activeHotbar] = b
+            next.armor.offhand = a
+            return next
+          })
+        }
       }
       // Close chat with Escape
       if (e.key === 'Escape' && chatOpen) {
@@ -473,9 +586,26 @@ export default function Game() {
     const onKeyUp = (e) => { keysRef.current[e.key.toLowerCase()] = false }
     window.addEventListener('keydown', onKeyDown)
     window.addEventListener('keyup', onKeyUp)
+    const onWheel = (e) => {
+      // Scroll to cycle hotbar like Minecraft (when not typing and no overlays)
+      const tag = (e.target?.tagName || '').toLowerCase()
+      const typing = tag === 'input' || tag === 'textarea' || (e.target && e.target.isContentEditable)
+      if (typing || titleOpenRef.current || optionsOpenRef.current || inventoryOpenRef.current || chatOpenRef.current) return
+      const delta = e.deltaY
+      if (delta === 0) return
+      e.preventDefault()
+      setActiveHotbar((i) => {
+        const dir = delta > 0 ? 1 : -1
+        let n = (i + dir) % 9
+        if (n < 0) n += 9
+        return n
+      })
+    }
+    window.addEventListener('wheel', onWheel, { passive: false })
     return () => {
       window.removeEventListener('keydown', onKeyDown)
       window.removeEventListener('keyup', onKeyUp)
+      window.removeEventListener('wheel', onWheel)
     }
   }, [])
 
@@ -534,11 +664,13 @@ export default function Game() {
       // Helper to map normalized image-space rect to screen pixels
       const mapRect = (r) => ({ x: dx + r.x * dw, y: dy + r.y * dh, w: r.w * dw, h: r.h * dh })
 
-      // Update player size relative to scene image height
+      // Update player size relative to scene image height, preserving sprite aspect ratio
       if (sdef.playerScale && dh > 0) {
-        const ph = Math.max(24, Math.round(sdef.playerScale * dh))
-        playerRef.current.h = ph
-        playerRef.current.w = ph
+        const targetH = Math.max(24, Math.round(sdef.playerScale * dh))
+        const pImgForAR = imagesRef.current.player
+        const ar = (pImgForAR && pImgForAR.height) ? (pImgForAR.width / pImgForAR.height) : 1
+        playerRef.current.h = targetH
+        playerRef.current.w = Math.max(16, Math.round(targetH * ar))
       }
 
       // Handle delayed spawn after transitions
@@ -554,10 +686,10 @@ export default function Game() {
         }
       }
 
-      // Update (pause movement when chat/class/inventory overlays are open)
+      // Update (pause movement when any overlay is open)
       const speed = playerRef.current.speed
       let vx = 0, vy = 0
-      if (!chatOpenRef.current && !classSelectOpenRef.current && !inventoryOpenRef.current) {
+      if (!chatOpenRef.current && !classSelectOpenRef.current && !inventoryOpenRef.current && !titleOpenRef.current && !optionsOpenRef.current) {
         if (keysRef.current['w'] || keysRef.current['arrowup']) vy -= 1
         if (keysRef.current['s'] || keysRef.current['arrowdown']) vy += 1
         if (keysRef.current['a'] || keysRef.current['arrowleft']) vx -= 1
@@ -659,13 +791,21 @@ export default function Game() {
         ctx.fillRect(playerRef.current.x, playerRef.current.y, playerRef.current.w, playerRef.current.h)
       }
 
-      // UI hints
-      ctx.fillStyle = 'rgba(0,0,0,0.5)'
-  ctx.fillRect(8, 8, 380, 56)
-      ctx.fillStyle = '#fff'
-      ctx.font = '14px sans-serif'
-  ctx.fillText('WASD: Move    E: Interact    V: Inventory', 16, 28)
-      ctx.fillText(sceneRef.current === 'village' ? 'Find the tavern door (top-center) and press E' : 'Explore the tavern. Press E near bottom to exit', 16, 50)
+      // UI hints (only after class is selected and start screen closed)
+      if (!titleOpenRef.current && !classSelectOpenRef.current) {
+        ctx.fillStyle = 'rgba(0,0,0,0.5)'
+        ctx.fillRect(8, 8, 380, 56)
+        ctx.fillStyle = '#fff'
+        ctx.font = '14px sans-serif'
+        ctx.fillText('WASD: Move    E: Interact    V: Inventory', 16, 28)
+        ctx.fillText(
+          sceneRef.current === 'village'
+            ? 'Find the tavern door (top-center) and press E'
+            : 'Explore the tavern. Press E near bottom to exit',
+          16,
+          50
+        )
+      }
 
       // Debug prompt near door/exit
       const promptRect = sceneRef.current === 'village' ? sdef.door : sdef.exit
@@ -945,7 +1085,6 @@ export default function Game() {
             <div className="w-full max-w-4xl bg-stone-900/95 backdrop-blur rounded-2xl border border-amber-900/40 shadow-xl shadow-black/50">
               <div className="px-5 py-4 border-b border-amber-900/40 flex items-center justify-between">
                 <h3 className="font-display text-2xl text-amber-200">Inventory</h3>
-                <button onClick={closeInventory} className="text-stone-300 hover:text-amber-300" aria-label="Close">✕</button>
               </div>
               <div className="p-5 space-y-5">
                 {/* Armor section */}
@@ -954,6 +1093,7 @@ export default function Game() {
                   <div className="grid grid-cols-5 gap-3">
                     {['head','chest','legs','boots','offhand'].map((slot) => {
                       const it = inventory.armor[slot]
+                      const total = it ? (inventoryTotals[it.id] || (it.count || 1)) : 0
                       return (
                         <div
                           key={slot}
@@ -970,6 +1110,10 @@ export default function Game() {
                             />
                           ) : (
                             <span className="text-stone-500 text-xs">{slot}</span>
+                          )}
+                          {/* Total count badge when item appears in multiple slots */}
+                          {it && total > (it.count || 1) && (
+                            <span className="absolute top-1 left-1 text-[10px] px-1 rounded bg-stone-900/90 text-amber-200 border border-amber-900/40">{total}</span>
                           )}
                           {it?.count > 1 && (
                             <span className="absolute bottom-1 right-1 text-xs px-1 rounded bg-stone-900/80 text-amber-200">{it.count}</span>
@@ -999,6 +1143,9 @@ export default function Game() {
                             onError={(e)=>{ e.currentTarget.style.display='none' }}
                           />
                         ) : null}
+                        {it && (inventoryTotals[it.id] || 0) > (it.count || 1) && (
+                          <span className="absolute top-1 left-1 text-[10px] px-1 rounded bg-stone-900/90 text-amber-200 border border-amber-900/40">{inventoryTotals[it.id]}</span>
+                        )}
                         {it?.count > 1 && (
                           <span className="absolute bottom-1 right-1 text-xs px-1 rounded bg-stone-900/80 text-amber-200">{it.count}</span>
                         )}
@@ -1026,6 +1173,9 @@ export default function Game() {
                             onError={(e)=>{ e.currentTarget.style.display='none' }}
                           />
                         ) : null}
+                        {it && (inventoryTotals[it.id] || 0) > (it.count || 1) && (
+                          <span className="absolute top-1 left-1 text-[10px] px-1 rounded bg-stone-900/90 text-amber-200 border border-amber-900/40">{inventoryTotals[it.id]}</span>
+                        )}
                         {it?.count > 1 && (
                           <span className="absolute bottom-1 right-1 text-xs px-1 rounded bg-stone-900/80 text-amber-200">{it.count}</span>
                         )}
@@ -1039,29 +1189,181 @@ export default function Game() {
                 <button onClick={closeInventory} className="px-3 py-2 rounded-lg bg-stone-700 hover:bg-stone-600 text-amber-200">Close</button>
               </div>
             </div>
-            {invDrag?.item && (
-              <div
-                className="pointer-events-none fixed z-30"
-                style={{ left: invMouse.x + 8, top: invMouse.y + 8 }}
-              >
-                <div className="relative w-10 h-10 rounded-md border border-amber-700 bg-stone-900/70 flex items-center justify-center">
-                  <img
-                    src={getItemDef(invDrag.item.id).icon}
-                    alt={getItemDef(invDrag.item.id).name}
-                    className="max-w-[70%] max-h-[70%]"
-                    onError={(e)=>{ e.currentTarget.style.display='none' }}
-                  />
-                  {invDrag.item.count > 1 && (
-                    <span className="absolute bottom-0.5 right-0.5 text-[10px] px-1 rounded bg-stone-900/90 text-amber-200">{invDrag.item.count}</span>
-                  )}
-                </div>
-              </div>
-            )}
           </div>
         )}
         {!ready && (
           <div className="absolute inset-0 flex items-center justify-center text-stone-200">
             Loading assets…
+          </div>
+        )}
+
+  {/* Title Screen Overlay */}
+        {titleOpen && (
+          <div className="absolute inset-0 z-30">
+            {/* Use an <img> with object-contain to show more of the background (zoomed out) */}
+            <img src={ASSETS.titleBg} alt="Title Background" className="absolute inset-0 w-full h-full object-contain" />
+            <div className="relative h-full w-full flex flex-col items-center justify-top gap-1 px-6">
+              {/* Replace text with provided title image */}
+              <img
+                src={ASSETS.titleLogo}
+                alt="Heroes of Hollowvale"
+                className="w-[85%] max-w-[700px] drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)] transform -translate-y-6 md:-translate-y-10"
+              />
+              <div className="flex gap-4">
+                <button
+                  onClick={() => { setTitleOpen(false); setClassSelectOpen(true) }}
+                  className="px-6 py-3 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-900 font-semibold shadow-lg shadow-amber-900/30"
+                >Start Game</button>
+                <button
+                  onClick={() => setOptionsOpen(true)}
+                  className="px-6 py-3 rounded-lg bg-stone-800/90 hover:bg-stone-700 text-amber-200 border border-amber-900/40 shadow"
+                >Options</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Options Overlay */}
+        {optionsOpen && (
+          <div className="absolute inset-0 z-40 flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/60" onClick={() => setOptionsOpen(false)} />
+            <div className="relative z-10 w-[92%] max-w-xl rounded-xl border border-amber-900/40 bg-stone-900/95 p-6 shadow-xl">
+              <h2 className="font-display text-3xl text-amber-200 mb-4">Options</h2>
+              <div className="space-y-5">
+                <label className="block">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-stone-200">Volume</span>
+                    <span className="text-stone-300/80 text-sm">{volume}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    value={volume}
+                    onChange={(e) => setVolume(Number(e.target.value))}
+                    className="w-full accent-amber-500"
+                  />
+                </label>
+                <div className="grid grid-cols-1 gap-3">
+                  <label className="flex items-center gap-2 select-none">
+                    <input type="checkbox" checked={allowQDrop} onChange={(e)=>setAllowQDrop(e.target.checked)} className="accent-amber-500" />
+                    <span className="text-stone-200">Enable Q to drop one from selected hotbar</span>
+                  </label>
+                  <label className="flex items-center gap-2 select-none">
+                    <input type="checkbox" checked={allowFSwap} onChange={(e)=>setAllowFSwap(e.target.checked)} className="accent-amber-500" />
+                    <span className="text-stone-200">Enable F to swap selected hotbar with offhand</span>
+                  </label>
+                </div>
+              </div>
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  onClick={() => setOptionsOpen(false)}
+                  className="px-5 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-900 font-semibold shadow"
+                >Back</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* In-game Hotbar HUD (Minecraft-style) */}
+        {!titleOpen && !classSelectOpen && !optionsOpen && (
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 select-none">
+            <div className="flex items-end gap-3">
+              {/* Current item name label with fade */}
+              <div className={[
+                'absolute -top-6 left-1/2 -translate-x-1/2 text-sm px-2 py-0.5 rounded bg-stone-900/70 border border-amber-900/40 text-amber-200 transition-opacity duration-500',
+                hotbarLabel.show ? 'opacity-100' : 'opacity-0'
+              ].join(' ')}>
+                {hotbarLabel.text}
+              </div>
+              {/* Offhand slot on the left */}
+              <div
+                className="relative w-14 h-14 rounded-md border border-amber-900/50 bg-stone-900/60 backdrop-blur-sm flex items-center justify-center"
+                onMouseDown={(e)=>handleSlotMouseDown(e,'armor','offhand')}
+                onContextMenu={(e)=>handleSlotContextMenu(e,'armor','offhand')}
+                onMouseEnter={(e)=>{
+                  const it = inventory.armor.offhand
+                  setHudTip({ show: true, text: it ? getItemDef(it.id).name : 'Offhand', x: e.clientX + 8, y: e.clientY + 8 })
+                }}
+                onMouseMove={(e)=> setHudTip((t)=> t.show ? { ...t, x: e.clientX + 8, y: e.clientY + 8 } : t)}
+                onMouseLeave={()=> setHudTip((t)=> ({...t, show:false}))}
+              >
+                {inventory.armor.offhand ? (
+                  <img
+                    src={getItemDef(inventory.armor.offhand.id).icon}
+                    alt={getItemDef(inventory.armor.offhand.id).name}
+                    className="max-w-[70%] max-h-[70%]"
+                    onError={(e)=>{ e.currentTarget.style.display='none' }}
+                  />
+                ) : (
+                  <span className="text-stone-500 text-[10px]">offhand</span>
+                )}
+                {inventory.armor.offhand?.count > 1 && (
+                  <span className="absolute bottom-0.5 right-0.5 text-[10px] px-1 rounded bg-stone-900/80 text-amber-200">
+                    {inventory.armor.offhand.count}
+                  </span>
+                )}
+              </div>
+              {/* Hotbar 9 slots */}
+              <div className="grid grid-cols-9 gap-1 p-2 rounded-xl bg-stone-900/40 border border-amber-900/40 shadow-lg shadow-black/40">
+                {inventory.hotbar.map((it, idx) => (
+                  <div
+                    key={idx}
+                    className={[
+                      'relative w-14 h-14 rounded-md flex items-center justify-center border',
+                      idx === activeHotbar ? 'border-amber-400 ring-2 ring-amber-400/60 bg-stone-800/80' : 'border-amber-900/40 bg-stone-800/50',
+                    ].join(' ')}
+                    onMouseDown={(e)=>handleSlotMouseDown(e,'hotbar',idx)}
+                    onContextMenu={(e)=>handleSlotContextMenu(e,'hotbar',idx)}
+                    onMouseEnter={(e)=>{
+                      setHudTip({ show: true, text: it ? getItemDef(it.id).name : 'Empty', x: e.clientX + 8, y: e.clientY + 8 })
+                    }}
+                    onMouseMove={(e)=> setHudTip((t)=> t.show ? { ...t, x: e.clientX + 8, y: e.clientY + 8 } : t)}
+                    onMouseLeave={()=> setHudTip((t)=> ({...t, show:false}))}
+                  >
+                    {it ? (
+                      <img
+                        src={getItemDef(it.id).icon}
+                        alt={getItemDef(it.id).name}
+                        className="max-w-[70%] max-h-[70%]"
+                        onError={(e)=>{ e.currentTarget.style.display='none' }}
+                      />
+                    ) : null}
+                    {/* number label like Minecraft */}
+                    <span className="absolute top-0.5 left-1 text-[10px] text-stone-400">{idx+1}</span>
+                    {it?.count > 1 && (
+                      <span className="absolute bottom-0.5 right-0.5 text-[11px] px-1 rounded bg-stone-900/80 text-amber-200">{it.count}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Global drag ghost and HUD tooltip */}
+        {invDrag?.item && (
+          <div
+            className="pointer-events-none fixed z-50"
+            style={{ left: invMouse.x + 8, top: invMouse.y + 8 }}
+          >
+            <div className="relative w-10 h-10 rounded-md border border-amber-700 bg-stone-900/70 flex items-center justify-center">
+              <img
+                src={getItemDef(invDrag.item.id).icon}
+                alt={getItemDef(invDrag.item.id).name}
+                className="max-w-[70%] max-h-[70%]"
+                onError={(e)=>{ e.currentTarget.style.display='none' }}
+              />
+              {invDrag.item.count > 1 && (
+                <span className="absolute bottom-0.5 right-0.5 text-[10px] px-1 rounded bg-stone-900/90 text-amber-200">{invDrag.item.count}</span>
+              )}
+            </div>
+          </div>
+        )}
+        {hudTip.show && (
+          <div className="fixed z-40 px-2 py-1 text-xs rounded bg-stone-900/90 text-amber-100 border border-amber-900/40 pointer-events-none"
+               style={{ left: hudTip.x, top: hudTip.y }}>
+            {hudTip.text}
           </div>
         )}
 
