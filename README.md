@@ -1,5 +1,4 @@
-# Neural Tavern
-
+# Heroes of Hollowvale
 A small AI-powered browser game where you enter a cozy medieval tavern and chat with multiple NPCs (Bartender, Wizard, Rogue), each with a distinct personality powered by the Groq LLM API.
 
 ## Stack
