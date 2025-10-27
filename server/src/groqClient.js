@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { GROQ_API_URL } = require('./config/paths');
 
 /**
  * Calls Groq chat completions API using an OpenAI-compatible endpoint.
@@ -25,7 +26,7 @@ async function chatCompletion({ systemPrompt, messages, model }) {
     msgs = [{ role: 'system', content: systemPrompt || '' }, ...msgs];
   }
 
-  const url = 'https://api.groq.com/openai/v1/chat/completions';
+  const url = GROQ_API_URL;
 
   let lastErr;
   for (const m of candidates) {

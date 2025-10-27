@@ -1,16 +1,17 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react'
 import { sendChat as apiSendChat } from './lib/api'
+import { PATHS, CLASS_SPRITES, ITEM_ICONS, DEFAULT_ITEM_ICON, SPRITE_COMPOSITE } from './config/paths'
 
 // Simple top-down RPG prototype with two scenes: Village and Tavern
 
 const ASSETS = {
-  villageBg: encodeURI('/images/start village screen.png'),
-  tavernBg: '/images/tavern.png',
-  player: '/images/knight.png',
+  villageBg: PATHS.villageBg,
+  tavernBg: PATHS.tavernBg,
+  player: CLASS_SPRITES.knight,
   // Title background image (place in client/public/images)
-  titleBg: '/images/red dragon boss fight room.png',
+  titleBg: PATHS.titleBg,
   // Title logo image (with spaces in filename)
-  titleLogo: encodeURI('/images/title screen wider no background.png'),
+  titleLogo: PATHS.titleLogo,
 }
 
 // Pre-specified prompts (sent as user messages; server enforces bartender persona)
@@ -19,7 +20,7 @@ const DRAGON_PROMPT = `You are the gruff bartender of the Hollowvale Tavern, a w
 The Red Dragon has taken roost in Ashfang Cavern in the Blackspire Mountains, raiding nearby villages, burning crops, and hoarding treasure. The cavern is filled with goblins, traps, and lesser beasts.
 Reward for slaying the dragon:
 - The dragon's hoard of gold and jewels
-- The Blade of Hollowvale, a legendary weapon beneath the hoard
+- The Sword of Aeltharion, a legendary blade reclaimed from beneath the wyrm's hoard
 - Eternal gratitude and free drinks from the tavern and townsfolk
 
 When I ask about the Dragon Quest, respond with detailed, helpful information: directions to Ashfang Cavern, hazards, warnings, tips, and lore—always in medieval tavern barkeep tone. If I go off-topic, be snarky and tell me to stick to the quest or leave.`
@@ -198,7 +199,7 @@ export default function Game() {
     knight: {
       id: 'knight',
       name: 'Knight',
-      sprite: '/images/knight.png',
+      sprite: CLASS_SPRITES.knight,
       description: 'A disciplined warrior clad in steel, sworn to protect and endure. Knights excel in close combat and defense.',
       strengths: ['High defense', 'Strong melee damage', 'Reliable survivability'],
       weaknesses: ['Slow movement', 'Limited ranged options', 'Low magic resistance'],
@@ -208,7 +209,7 @@ export default function Game() {
     mage: {
       id: 'mage',
       name: 'Mage',
-      sprite: encodeURI('/images/mage 2.png'),
+      sprite: CLASS_SPRITES.mage,
       description: 'A master of arcane forces, fragile in body but devastating in spellcraft. Mages bend fire, frost, and lightning to their will.',
       strengths: ['High magic damage', 'Ranged attacks', 'Versatile elemental spells'],
       weaknesses: ['Low health', 'Weak physical defense', 'Relies on mana'],
@@ -218,7 +219,7 @@ export default function Game() {
     thief: {
       id: 'thief',
       name: 'Thief',
-      sprite: '/images/thief.png',
+      sprite: CLASS_SPRITES.thief,
       description: 'A cunning rogue who thrives in shadows, striking swiftly and vanishing just as fast. Agile and resourceful.',
       strengths: ['High speed', 'Critical strikes', 'Stealth abilities'],
       weaknesses: ['Low defense', 'Weaker against groups', 'Limited durability'],
@@ -228,7 +229,7 @@ export default function Game() {
     dwarf: {
       id: 'dwarf',
       name: 'Dwarf',
-      sprite: '/images/dwarf.png',
+      sprite: CLASS_SPRITES.dwarf,
       description: 'A stout fighter from the mountain halls, tough as stone and skilled with heavy weapons. Dwarves endure where others fall.',
       strengths: ['High health', 'Strong melee (axes/hammers)', 'Poison resistance'],
       weaknesses: ['Shorter range', 'Slower speed', 'Limited magic use'],
@@ -239,29 +240,29 @@ export default function Game() {
 
   // Item catalog (id -> name + icon path). Icons are expected at /images/<id>.png
   const ITEMS = {
-    iron_sword: { name: 'Iron Sword', icon: '/images/knightSword.png' },
-    wooden_shield: { name: 'Wooden Shield', icon: '/images/knightShield.png' },
-    chainmail_armor: { name: 'Chainmail Armor', icon: '/images/knightArmor.png' },
-    healing_potion: { name: 'Healing Potion', icon: '/images/healPotion.png' },
+    iron_sword: { name: 'Iron Sword', icon: ITEM_ICONS.iron_sword },
+    wooden_shield: { name: 'Wooden Shield', icon: ITEM_ICONS.wooden_shield },
+    chainmail_armor: { name: 'Chainmail Armor', icon: ITEM_ICONS.chainmail_armor },
+    healing_potion: { name: 'Healing Potion', icon: ITEM_ICONS.healing_potion },
 
-    apprentice_staff: { name: 'Apprentice Staff', icon: '/images/mageStaff.png' },
-    spellbook: { name: 'Spellbook', icon: '/images/mageSpellBook.png' },
-    cloth_robes: { name: 'Cloth Robes', icon: '/images/mageRobes.png' },
-    mana_potion: { name: 'Mana Potion', icon: '/images/manaPotion.png' },
+    apprentice_staff: { name: 'Apprentice Staff', icon: ITEM_ICONS.apprentice_staff },
+    spellbook: { name: 'Spellbook', icon: ITEM_ICONS.spellbook },
+    cloth_robes: { name: 'Cloth Robes', icon: ITEM_ICONS.cloth_robes },
+    mana_potion: { name: 'Mana Potion', icon: ITEM_ICONS.mana_potion },
 
-    twin_daggers: { name: 'Twin Daggers', icon: '/images/thiefDaggers.png' },
-    leather_armor: { name: 'Leather Armor', icon: '/images/thiefCloak.png' },
-    lockpicks: { name: 'Lockpicks', icon: '/images/thiefLockpick.png' },
-    poison_vial: { name: 'Poison Vial', icon: '/images/thiefPoison.png' },
+    twin_daggers: { name: 'Twin Daggers', icon: ITEM_ICONS.twin_daggers },
+    leather_armor: { name: 'Leather Armor', icon: ITEM_ICONS.leather_armor },
+    lockpicks: { name: 'Lockpicks', icon: ITEM_ICONS.lockpicks },
+    poison_vial: { name: 'Poison Vial', icon: ITEM_ICONS.poison_vial },
 
-    battle_axe: { name: 'Battle Axe', icon: '/images/dwarfAxe.png' },
-    dwarf_armor: { name: 'Dwarf Armor', icon: '/images/dwarfArmor.png' },
-    dwarf_pickaxe: { name: 'Dwarf Pickaxe', icon: '/images/dwarfPickaxe.png' },
-    ale_flask: { name: 'Ale Flask', icon: '/images/dwarfAle.png' },
+    battle_axe: { name: 'Battle Axe', icon: ITEM_ICONS.battle_axe },
+    dwarf_armor: { name: 'Dwarf Armor', icon: ITEM_ICONS.dwarf_armor },
+    dwarf_pickaxe: { name: 'Dwarf Pickaxe', icon: ITEM_ICONS.dwarf_pickaxe },
+    ale_flask: { name: 'Ale Flask', icon: ITEM_ICONS.ale_flask },
   }
 
   const makeItem = (id, count = 1) => ({ id, count })
-  const getItemDef = (id) => ITEMS[id] || { name: id, icon: `/images/${id}.png` }
+  const getItemDef = (id) => ITEMS[id] || { name: id, icon: DEFAULT_ITEM_ICON(id) }
 
   function seedInventoryForClass(id) {
     const base = {
@@ -313,6 +314,57 @@ export default function Game() {
     // Seed inventory for chosen class
     setInventory(seedInventoryForClass(id))
   }
+
+  // Map item IDs to sprite item tags for composite filenames (e.g., knightWithSword)
+  const ITEM_SPRITE_TAGS = {
+    iron_sword: 'Sword',
+    apprentice_staff: 'Staff',
+    twin_daggers: 'Daggers',
+    battle_axe: 'Axe',
+  }
+
+  function deriveItemTagFromName(name) {
+    if (!name) return null
+    // Use last word (strip non-letters), e.g., "Iron Sword" -> "Sword"
+    const parts = String(name).trim().split(/\s+/)
+    let last = parts[parts.length - 1] || ''
+    last = (last.match(/[A-Za-z]+/g) || [''])[0]
+    if (!last) return null
+    return last.charAt(0).toUpperCase() + last.slice(1)
+  }
+
+  // Update player sprite when main-hand (hotbar[0]) changes
+  useEffect(() => {
+    const cls = selectedClass
+    if (!cls) return
+    const baseSprite = CLASSES[cls]?.sprite
+    const main = inventory.hotbar[0]
+
+    const setPlayerImage = (src) => {
+      loadImage(src).then(img => { imagesRef.current.player = img }).catch(() => {})
+    }
+
+    if (!main) {
+      // No main-hand item: fallback to class base sprite
+      if (baseSprite) setPlayerImage(baseSprite)
+      return
+    }
+
+    const itemTag = ITEM_SPRITE_TAGS[main.id] || deriveItemTagFromName(getItemDef(main.id)?.name)
+    if (!itemTag) {
+      if (baseSprite) setPlayerImage(baseSprite)
+      return
+    }
+
+  const composite = SPRITE_COMPOSITE(cls, itemTag)
+    loadImage(composite)
+      .then(img => { imagesRef.current.player = img })
+      .catch(() => {
+        // Fallback to base class sprite if composite not found
+        if (baseSprite) setPlayerImage(baseSprite)
+      })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedClass, inventory.hotbar[0]?.id])
 
   // ----- Inventory helpers -----
   const getSlot = (inv, section, key) => {
@@ -929,12 +981,21 @@ export default function Game() {
     }
   }
 
+  // Topic-aware RAG hints for better retrieval on short follow-ups
+  const TOPIC_RAG_HINTS = {
+    dragon: 'Ashfang Cavern, Blackspire Mountains, dragon raids, goblins, traps, hoard, Sword of Aeltharion',
+    history: 'Hollowvale history, Empire of Drak’Tal, Dragonbind Chains, Veyrath, Pyrehold, Sword of Aeltharion'
+  }
+
+  const [chatTopic, setChatTopic] = useState(null)
+
   // Chat helpers
   async function sendToBartender(text) {
     setChatLoading(true)
     try {
       const context = chatMessages.slice(-5) // keep short
-      const payload = { npc: 'bartender', message: text, context }
+      const ragHints = chatTopic ? TOPIC_RAG_HINTS[chatTopic] : undefined
+      const payload = { npc: 'bartender', message: text, context, ragHints }
       const res = await apiSendChat(payload)
       const reply = res?.reply || ''
       setChatMessages(msgs => [...msgs, { role: 'assistant', content: reply }])
@@ -954,6 +1015,9 @@ export default function Game() {
 
     // Append user message
     setChatMessages(msgs => [...msgs, { role: 'user', content: kind === 'dragon' ? 'Ask about the Dragon Quest' : 'Ask about the History of Hollowvale' }])
+    // Lock topic to drive RAG hints for this thread
+    setChatTopic(kind)
+
     // Send the detailed prompt to guide the answer
     await sendToBartender(userText)
     setChatTurns(n => n + 1)
@@ -1002,7 +1066,7 @@ export default function Game() {
                   <p className="text-stone-300/80 text-sm">Speak your business, traveler.</p>
                 </div>
                 <button
-                  onClick={() => { setChatOpen(false); setChatMessages([]); setChatTurns(0); setChatInput(''); setChatMode('topics') }}
+                  onClick={() => { setChatOpen(false); setChatMessages([]); setChatTurns(0); setChatInput(''); setChatMode('topics'); setChatTopic(null) }}
                   className="text-stone-300 hover:text-amber-300"
                   aria-label="Close"
                 >✕</button>
@@ -1027,7 +1091,7 @@ export default function Game() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                     <button onClick={() => handleChoice('dragon')} className="px-3 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-900 font-semibold">Ask about the Dragon Quest</button>
                     <button onClick={() => handleChoice('history')} className="px-3 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-900 font-semibold">Ask about Hollowvale History</button>
-                    <button onClick={() => { setChatOpen(false); setChatMessages([]); setChatTurns(0); setChatInput(''); setChatMode('topics') }} className="px-3 py-2 rounded-lg bg-stone-700 hover:bg-stone-600 text-amber-200">Leave</button>
+                    <button onClick={() => { setChatOpen(false); setChatMessages([]); setChatTurns(0); setChatInput(''); setChatMode('topics'); setChatTopic(null) }} className="px-3 py-2 rounded-lg bg-stone-700 hover:bg-stone-600 text-amber-200">Leave</button>
                   </div>
                 )}
 

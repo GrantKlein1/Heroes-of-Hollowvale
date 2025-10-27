@@ -10,6 +10,7 @@ dotenv.config(); // also load from project root if present
 
 const app = express();
 const PORT = process.env.PORT || 5050;
+const { API_ROUTE_PREFIX } = require('./config/paths');
 
 // Middleware
 app.use(helmet({
@@ -19,18 +20,18 @@ app.use(cors());
 app.use(express.json({ limit: '1mb' }));
 
 // Health
-app.get('/api/health', (req, res) => {
+app.get(`${API_ROUTE_PREFIX}/health`, (req, res) => {
   res.json({ status: 'ok', service: 'neural-tavern', time: new Date().toISOString() });
 });
 
 // Routes
 const chatRouter = require('./routes/chat');
-app.use('/api', chatRouter);
+app.use(API_ROUTE_PREFIX, chatRouter);
 
 // Error handler
 const errorHandler = require('./middleware/errorHandler');
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`Neural Tavern server listening on http://localhost:${PORT}`);
+  console.log(`Neural Tavern server listening on http://localhost:${PORT}${API_ROUTE_PREFIX}`);
 });

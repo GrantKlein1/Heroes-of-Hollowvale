@@ -47,6 +47,69 @@ If `GROQ_API_KEY` is not set and `NODE_ENV=development`, the server returns stub
 - Personalities and memory are defined on the server in `src/npcData.js` and `src/memory.js`.
 - This is a prototype—no database yet; memory resets on server restart.
 
+### Centralized paths (change filenames in one place)
+
+- Client paths: `client/src/config/paths.js`
+	- API_BASE (defaults to `/api` or `VITE_API_BASE`)
+	- IMAGES_BASE (defaults to `/images`)
+	- PATHS: background/title images
+	- CLASS_SPRITES: per-class base sprites
+	- ITEM_ICONS: per-item icon filenames
+	- DEFAULT_ITEM_ICON and SPRITE_COMPOSITE patterns
+
+- Server paths: `server/src/config/paths.js`
+	- API_ROUTE_PREFIX (defaults to `/api`)
+	- LORE_JSON_PATH (defaults to `server/src/rag/lore.json`)
+	- GROQ_API_URL (Groq endpoint)
+
+Edit these files to match your actual filenames and folder layout—no need to hunt through components or route handlers.
+
+## Lore Retrieval (RAG-lite)
+Ground replies in your own lore without fine‑tuning. The server can retrieve the most relevant lore chunks and inject them as system context for each `/api/chat` call.
+
+1) Prepare and embed your lore (one‑time):
+
+	 - Put your `lore.txt` anywhere.
+	 - Install tools for embedding (Python):
+
+		 ```cmd
+		 pip install sentence-transformers numpy
+		 ```
+
+	 - Run the embed script:
+
+		 ```cmd
+		 cd "server\tools"
+		 python embed_lore.py "..\..\lore.txt"
+		 ```
+
+	 - This writes `server/src/rag/lore.json` with chunk texts + vectors.
+
+2) Enable retrieval (optional):
+
+	 - Ensure `server/src/rag/lore.json` exists (from step 1). No API tokens are required.
+	 - If `lore.json` is missing, the server skips retrieval gracefully.
+
+How it works:
+
+## Local embeddings (offline RAG)
+
+The server can compute embeddings locally using Transformers.js, so you don’t need a Hugging Face Inference API token:
+
+- Dependency: `@xenova/transformers` (installed under the `server` workspace)
+- Model: `Xenova/all-MiniLM-L6-v2` (quantized). It downloads on first run and is cached.
+- No external calls are made for embeddings at runtime.
+
+Notes:
+- You can keep using your existing `server/src/rag/lore.json` produced by the Python script.
+- If embeddings are temporarily unavailable, the server gracefully falls back to a simple token-overlap similarity so chat continues to work.
+
+- At runtime, the server embeds the player’s message locally via Transformers.js, ranks the top‑K similar lore chunks (cosine), and injects them as a system message before calling Groq.
+- Files:
+	- `server/src/rag/embeddings_local.js` — local embeddings via Transformers.js.
+	- `server/src/rag/store.js` — loads `lore.json` and retrieves relevant chunks.
+	- `server/src/routes/chat.js` — injects lore system context when available.
+
 ## Troubleshooting
 - If ports conflict, change Vite dev server port in `client/vite.config.js` and API port via `PORT` env for the server.
 - On Windows, commands are `npm`-friendly; no bash-specific scripts are used.
