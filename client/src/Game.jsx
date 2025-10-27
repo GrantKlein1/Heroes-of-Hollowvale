@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react'
 import { sendChat as apiSendChat } from './lib/api'
-import { PATHS, CLASS_SPRITES, ITEM_ICONS, DEFAULT_ITEM_ICON, COMPOSITE_SPRITES } from './config/paths'
+import { PATHS, CLASS_SPRITES, ITEM_ICONS, DEFAULT_ITEM_ICON, COMPOSITE_SPRITES, ANIMATED_SWORD_FRAMES } from './config/paths'
+import AnimatedSprite from './components/AnimatedSprite'
 
 // Simple top-down RPG prototype with two scenes: Village and Tavern
 
 const ASSETS = {
   villageBg: PATHS.villageBg,
   tavernBg: PATHS.tavernBg,
+  pathBg: PATHS.walkingPath,
+  dungeonBg: PATHS.dungeonEntrance,
   player: CLASS_SPRITES.knight,
   // Title background image (place in client/public/images)
   titleBg: PATHS.titleBg,
@@ -120,6 +123,8 @@ export default function Game() {
 
   // Player state
   const playerRef = useRef({ x: 0, y: 0, w: 48, h: 48, speed: 160 })
+  // Remember where the player left the village (normalized image coords)
+  const lastVillagePosRef = useRef({ nx: 0.5, ny: 0.90 })
 
   // Scene definitions with simple colliders and interact zones (normalized)
   const scenes = {
@@ -145,11 +150,19 @@ export default function Game() {
       ],
   // Door centered beneath the mug: moved further down based on feedback
   door: nrect(0.47, 0.60, 0.06, 0.06),
+      // Travel zone at bottom-middle to enter the path scene
+      toPath: nrect(0.45, 0.94, 0.10, 0.06),
       onEnter: () => {
         sceneRef.current = 'tavern'
         setScene('tavern')
         // Spawn just inside tavern entrance (relative to tavern image frame)
         playerRef.current._spawn = { scene: 'tavern', nx: 0.5, ny: 0.85 }
+      },
+      onTravelSouth: () => {
+        sceneRef.current = 'path'
+        setScene('path')
+        // Spawn at top-middle of the path scene
+        playerRef.current._spawn = { scene: 'path', nx: 0.5, ny: 0.10 }
       },
       // Spawn near bottom-center on initial load
       spawn: { nx: 0.5, ny: 0.90 },
@@ -177,6 +190,83 @@ export default function Game() {
       },
   spawn: { nx: 0.5, ny: 0.82 },
   playerScale: 0.13,
+    },
+    path: {
+      bgKey: 'pathBg',
+      fitMode: 'contain',
+      colliders: [
+        // World borders
+        nrect(0, -0.02, 1, 0.02),
+        nrect(0, 1, 1, 0.02),
+        nrect(-0.02, 0, 0.02, 1),
+        nrect(1, 0, 0.02, 1),
+        nrect(0.002, 0.001, 0.432, 0.203),
+        nrect(0.714, 0.011, 0.278, 0.144),
+        nrect(0.627, 0.158, 0.362, 0.065),
+        nrect(0.735, 0.273, 0.265, 0.065),
+        nrect(0.852, 0.401, 0.140, 0.220),
+        nrect(0.612, 0.493, 0.388, 0.134),
+        nrect(0.706, 0.645, 0.288, 0.095),
+        nrect(0.746, 0.850, 0.237, 0.020),
+        nrect(0.466, 0.774, 0.055, 0.031),
+        nrect(0.008, 0.001, 0.371, 0.209),
+        nrect(0.013, 0.227, 0.267, 0.110),
+        nrect(0.008, 0.350, 0.303, 0.249),
+        nrect(0.004, 0.658, 0.191, 0.335)
+      ],
+      // Exit back to village at TOP-center
+      toVillage: nrect(0.45, 0.05, 0.10, 0.06),
+      // Enter dungeon at BOTTOM-center
+      toDungeon: nrect(0.44, 0.94, 0.12, 0.06),
+      onReturn: () => {
+        sceneRef.current = 'village'
+        setScene('village')
+        // Return to where the player left (bottom-middle area), using saved normalized coords
+        const nx = Number.isFinite(lastVillagePosRef.current?.nx) ? lastVillagePosRef.current.nx : 0.5
+        const nyRaw = Number.isFinite(lastVillagePosRef.current?.ny) ? lastVillagePosRef.current.ny : 0.90
+        // Clamp inside the visible frame just a bit
+        const ny = Math.max(0.02, Math.min(0.98, nyRaw))
+        playerRef.current._spawn = { scene: 'village', nx, ny }
+      },
+      onEnterDungeon: () => {
+        sceneRef.current = 'dungeon'
+        setScene('dungeon')
+        // Spawn bottom-left area of the dungeon entrance image
+        playerRef.current._spawn = { scene: 'dungeon', nx: 0.12, ny: 0.88 }
+      },
+      // Default spawn when entering path directly
+      spawn: { nx: 0.5, ny: 0.10 },
+      playerScale: 0.13,
+    },
+    dungeon: {
+      bgKey: 'dungeonBg',
+      fitMode: 'contain',
+      colliders: [
+        // World borders
+        nrect(0, -0.02, 1, 0.02),
+        nrect(0, 1, 1, 0.02),
+        nrect(-0.02, 0, 0.02, 1),
+        nrect(1, 0, 0.02, 1),
+        nrect(0.049, 0.613, 0.174, 0.075),
+        nrect(0.144, 0.282, 0.081, 0.165),
+        nrect(0.189, 0.147, 0.239, 0.085),
+        nrect(0.278, 0.076, 0.712, 0.064),
+        nrect(0.356, 0.000, 0.631, 0.062),
+        nrect(0.684, 0.169, 0.284, 0.110),
+        nrect(0.744, 0.463, 0.089, 0.062),
+        nrect(0.873, 0.665, 0.064, 0.037),
+        nrect(0.712, 0.614, 0.044, 0.020)
+      ],
+      // Exit back to path near bottom-left where player spawns
+      toPath: nrect(0.04, 0.82, 0.20, 0.14),
+      onExitToPath: () => {
+        sceneRef.current = 'path'
+        setScene('path')
+        playerRef.current._spawn = { scene: 'path', nx: 0.5, ny: 0.90 }
+      },
+      // Default spawn in bottom-left region
+      spawn: { nx: 0.12, ny: 0.88 },
+      playerScale: 0.13,
     }
   }
 
@@ -186,9 +276,11 @@ export default function Game() {
     Promise.all([
       loadImage(ASSETS.villageBg),
       loadImage(ASSETS.tavernBg),
-    ]).then(([villageBg, tavernBg]) => {
+      loadImage(ASSETS.pathBg),
+      loadImage(ASSETS.dungeonBg),
+    ]).then(([villageBg, tavernBg, pathBg, dungeonBg]) => {
       if (cancelled) return
-      imagesRef.current = { villageBg, tavernBg, player: null }
+      imagesRef.current = { villageBg, tavernBg, pathBg, dungeonBg, player: null }
       setReady(true)
     }).catch(() => {/* ignore for prototype */})
     return () => { cancelled = true }
@@ -813,11 +905,45 @@ export default function Game() {
             sdef.onEnter?.()
           }
         }
+        // Village south travel to path scene
+        if (sceneRef.current === 'village' && sdef.toPath) {
+          const zonePx = mapRect(sdef.toPath)
+          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
+            // Save current village position in normalized coords so we can return here later
+            const pxCenterX = playerRef.current.x + playerRef.current.w / 2
+            const pxCenterY = playerRef.current.y + playerRef.current.h / 2
+            const nx = Math.max(0, Math.min(1, (pxCenterX - dx) / dw))
+            const ny = Math.max(0, Math.min(1, (pxCenterY - dy) / dh))
+            lastVillagePosRef.current = { nx, ny }
+            sdef.onTravelSouth?.()
+          }
+        }
         // Tavern exit
         if (sceneRef.current === 'tavern' && sdef.exit) {
           const exitPx = mapRect(sdef.exit)
           if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, exitPx)) {
             sdef.onExit?.()
+          }
+        }
+        // Path enter dungeon
+        if (sceneRef.current === 'path' && sdef.toDungeon) {
+          const dz = mapRect(sdef.toDungeon)
+          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, dz)) {
+            sdef.onEnterDungeon?.()
+          }
+        }
+        // Path return to village
+        if (sceneRef.current === 'path' && sdef.toVillage) {
+          const zonePx = mapRect(sdef.toVillage)
+          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
+            sdef.onReturn?.()
+          }
+        }
+        // Dungeon exit back to path (near spawn)
+        if (sceneRef.current === 'dungeon' && sdef.toPath) {
+          const zonePx = mapRect(sdef.toPath)
+          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
+            sdef.onExitToPath?.()
           }
         }
         // Tavern bartender interact -> open chat if near
@@ -873,27 +999,41 @@ export default function Game() {
         ctx.fillStyle = '#fff'
         ctx.font = '14px sans-serif'
         ctx.fillText('WASD: Move    E: Interact    V: Inventory', 16, 28)
-        ctx.fillText(
-          sceneRef.current === 'village'
-            ? 'Find the tavern door (top-center) and press E'
-            : 'Explore the tavern. Press E near bottom to exit',
-          16,
-          50
-        )
+        let hudLine = ''
+        if (sceneRef.current === 'village') {
+          hudLine = 'Find the tavern door (top-center) or travel south; press E when prompted'
+        } else if (sceneRef.current === 'tavern') {
+          hudLine = 'Explore the tavern. Press E near bottom to exit'
+        } else if (sceneRef.current === 'path') {
+          hudLine = 'Walk the path. Press E near top to return or near bottom to enter dungeon'
+        } else if (sceneRef.current === 'dungeon') {
+          hudLine = 'Dungeon entrance. Press E near bottom-left to return to path'
+        }
+        ctx.fillText(hudLine, 16, 50)
       }
 
-      // Debug prompt near door/exit
-      const promptRect = sceneRef.current === 'village' ? sdef.door : sdef.exit
-      if (promptRect) {
-        const pr = mapRect(promptRect)
+      // Door/exit/travel prompts for current scene
+      const prompts = []
+      if (sceneRef.current === 'village') {
+        if (sdef.door) prompts.push({ rect: sdef.door, label: 'Press E to enter' })
+        if (sdef.toPath) prompts.push({ rect: sdef.toPath, label: 'Press E to travel' })
+      } else if (sceneRef.current === 'tavern') {
+        if (sdef.exit) prompts.push({ rect: sdef.exit, label: 'Press E to exit' })
+      } else if (sceneRef.current === 'path') {
+        if (sdef.toVillage) prompts.push({ rect: sdef.toVillage, label: 'Press E to return' })
+        if (sdef.toDungeon) prompts.push({ rect: sdef.toDungeon, label: 'Press E to enter dungeon' })
+      } else if (sceneRef.current === 'dungeon') {
+        if (sdef.toPath) prompts.push({ rect: sdef.toPath, label: 'Press E to return' })
+      }
+      for (const p of prompts) {
+        const pr = mapRect(p.rect)
         if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, pr)) {
           ctx.fillStyle = 'rgba(0,0,0,0.6)'
-          const label = sceneRef.current === 'village' ? 'Press E to enter' : 'Press E to exit'
-          const tw = ctx.measureText(label).width + 16
+          const tw = ctx.measureText(p.label).width + 16
           ctx.fillRect(pr.x, pr.y - 24, Math.max(140, tw), 20)
           ctx.fillStyle = '#ffeb99'
           ctx.font = '12px sans-serif'
-          ctx.fillText(label, pr.x + 8, pr.y - 10)
+          ctx.fillText(p.label, pr.x + 8, pr.y - 10)
         }
       }
 
@@ -1290,6 +1430,14 @@ export default function Game() {
             {/* Use an <img> with object-contain to show more of the background (zoomed out) */}
             <img src={ASSETS.titleBg} alt="Title Background" className="absolute inset-0 w-full h-full object-contain" />
             <div className="relative h-full w-full flex flex-col items-center justify-top gap-1 px-6">
+              {/* Animated sword on left-middle */}
+              <AnimatedSprite
+                frames={ANIMATED_SWORD_FRAMES}
+                fps={12}
+                playing={titleOpen}
+                alt="Animated Sword"
+                className="absolute left-[70%] top-1/2 -translate-y-0 w-[300px] h-auto drop-shadow-[0_4px_18px_rgba(0,0,0,0.6)]"
+              />
               {/* Replace text with provided title image */}
               <img
                 src={ASSETS.titleLogo}
@@ -1351,6 +1499,8 @@ export default function Game() {
             </div>
           </div>
         )}
+
+        {/* Dungeon scene uses E-interact zone; no overlay button needed */}
 
         {/* In-game Hotbar HUD (Minecraft-style) */}
         {!titleOpen && !classSelectOpen && !optionsOpen && (

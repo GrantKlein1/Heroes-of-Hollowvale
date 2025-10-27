@@ -10,6 +10,8 @@ export const IMAGES_BASE = '/images'
 export const PATHS = {
   villageBg: encodeURI(`${IMAGES_BASE}/start village screen.png`),
   tavernBg: `${IMAGES_BASE}/tavern.png`,
+  walkingPath: `${IMAGES_BASE}/walkingPath.png`,
+  dungeonEntrance: encodeURI(`${IMAGES_BASE}/dungeon entrance.png`),
   titleBg: `${IMAGES_BASE}/red dragon boss fight room.png`,
   titleLogo: encodeURI(`${IMAGES_BASE}/title screen wider no background.png`),
 }
@@ -77,3 +79,30 @@ export const COMPOSITE_SPRITES = {
     EmptyHands: `${IMAGES_BASE}/dwarfEmptyHands.png`
   },
 }
+
+// Animated sprite frames (intro screen sword)
+// Ordered sequence for smooth animation
+export const ANIMATED_SWORD_FRAMES = [
+  `${IMAGES_BASE}/animatedSword/animatedSword1.png`,
+  `${IMAGES_BASE}/animatedSword/animatedSword2.png`,
+  `${IMAGES_BASE}/animatedSword/animatedSword3.png`,
+  `${IMAGES_BASE}/animatedSword/animatedSword4.png`,
+  `${IMAGES_BASE}/animatedSword/animatedSword5.png`,
+  `${IMAGES_BASE}/animatedSword/animatedSword6.png`,
+  `${IMAGES_BASE}/animatedSword/animatedSword7.png`,
+  `${IMAGES_BASE}/animatedSword/animatedSword8.png`,
+  `${IMAGES_BASE}/animatedSword/animatedSword9.png`,
+  `${IMAGES_BASE}/animatedSword/animatedSword10.png`,
+  `${IMAGES_BASE}/animatedSword/animatedSword11.png`,
+  `${IMAGES_BASE}/animatedSword/animatedSword12.png`,
+  `${IMAGES_BASE}/animatedSword/animatedSword13.png`,
+  `${IMAGES_BASE}/animatedSword/animatedSword14.png`,
+  `${IMAGES_BASE}/animatedSword/animatedSword15.png`,
+  `${IMAGES_BASE}/animatedSword/animatedSword16.png`,
+  `${IMAGES_BASE}/animatedSword/animatedSword17.png`,
+  `${IMAGES_BASE}/animatedSword/animatedSword18.png`,
+  `${IMAGES_BASE}/animatedSword/animatedSword19.png`,
+  `${IMAGES_BASE}/animatedSword/animatedSword20.png`,
+  `${IMAGES_BASE}/animatedSword/animatedSword21.png`,
+  `${IMAGES_BASE}/animatedSword/animatedSword22.png`,
+]
