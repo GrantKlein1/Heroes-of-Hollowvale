@@ -48,5 +48,32 @@ export const ITEM_ICONS = {
 // Default path for unknown item icons
 export const DEFAULT_ITEM_ICON = (id) => `${IMAGES_BASE}/${id}.png`
 
-// Composite sprite pattern for main-hand overlays
-export const SPRITE_COMPOSITE = (cls, itemTag) => `${IMAGES_BASE}/${cls}With${itemTag}.png`
+// Explicit composite sprites per class and item tag
+// Edit these filenames directly to match your assets.
+export const COMPOSITE_SPRITES = {
+  knight: {
+    Sword: `${IMAGES_BASE}/knight.png`,
+    Shield: `${IMAGES_BASE}/knightWithShield.png`,
+    HealPotion: `${IMAGES_BASE}/knightWithHealPotion.png`,
+    ShieldAndSword: `${IMAGES_BASE}/knightWithShieldAndSword.png`,
+    EmptyHands: `${IMAGES_BASE}/knightEmptyHands.png`
+  },
+  mage: {
+    Staff: `${IMAGES_BASE}/mage 2.png`,
+    Spellbook: `${IMAGES_BASE}/mageWithBook.png`,
+    ManaPotion: `${IMAGES_BASE}/mageWithManaPotion.png`,
+    EmptyHands: `${IMAGES_BASE}/mageEmptyHands.png`
+  },
+  thief: {
+    Daggers: `${IMAGES_BASE}/thief.png`,
+    Lockpick: `${IMAGES_BASE}/thiefWithLockpicks.png`,
+    PoisonVial: `${IMAGES_BASE}/thiefWithPoison.png`,
+    EmptyHands: `${IMAGES_BASE}/thiefEmptyHands.png`
+  },
+  dwarf: {
+    Axe: `${IMAGES_BASE}/dwarf.png`,
+    Pickaxe: `${IMAGES_BASE}/dwarfWithPickaxe.png`,
+    Ale: `${IMAGES_BASE}/dwarfWithAle.png`,
+    EmptyHands: `${IMAGES_BASE}/dwarfEmptyHands.png`
+  },
+}

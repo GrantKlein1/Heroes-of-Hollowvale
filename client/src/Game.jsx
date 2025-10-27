@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react'
 import { sendChat as apiSendChat } from './lib/api'
-import { PATHS, CLASS_SPRITES, ITEM_ICONS, DEFAULT_ITEM_ICON, SPRITE_COMPOSITE } from './config/paths'
+import { PATHS, CLASS_SPRITES, ITEM_ICONS, DEFAULT_ITEM_ICON, COMPOSITE_SPRITES } from './config/paths'
 
 // Simple top-down RPG prototype with two scenes: Village and Tavern
 
@@ -136,12 +136,12 @@ export default function Game() {
         nrect(1, 0, 0.02, 1), // right wall
         // Tavern building blocks (approx top-center), leaving a door gap in the very middle
         // Adjusted to match the visual mug/door area centered on the image
-        nrect(0.000, 0.742, 0.210, 0.233),
         nrect(0.788, 0.684, 0.195, 0.219),
         nrect(0.775, 0.169, 0.193, 0.141),
         nrect(0.004, 0.089, 0.222, 0.239),
         nrect(0.008, 0.006, 0.983, 0.198),
-        nrect(0.309, 0.250, 0.377, 0.394)
+        nrect(0.309, 0.250, 0.377, 0.394),
+        nrect(0.004, 0.819, 0.208, 0.158)
       ],
   // Door centered beneath the mug: moved further down based on feedback
   door: nrect(0.47, 0.60, 0.06, 0.06),
@@ -318,9 +318,17 @@ export default function Game() {
   // Map item IDs to sprite item tags for composite filenames (e.g., knightWithSword)
   const ITEM_SPRITE_TAGS = {
     iron_sword: 'Sword',
+    wooden_shield: 'Shield',
+    healing_potion: 'HealPotion',
     apprentice_staff: 'Staff',
+    spellbook: 'Spellbook',
+    mana_potion: 'ManaPotion',
     twin_daggers: 'Daggers',
+    lockpicks: 'Lockpick',
+    poison_vial: 'PoisonVial',
     battle_axe: 'Axe',
+    dwarf_pickaxe: 'Pickaxe',
+    ale_flask: 'Ale',
   }
 
   function deriveItemTagFromName(name) {
@@ -333,20 +341,25 @@ export default function Game() {
     return last.charAt(0).toUpperCase() + last.slice(1)
   }
 
-  // Update player sprite when main-hand (hotbar[0]) changes
+  // Update player sprite when the selected hotbar item or offhand changes
   useEffect(() => {
     const cls = selectedClass
     if (!cls) return
     const baseSprite = CLASSES[cls]?.sprite
-    const main = inventory.hotbar[0]
+    const main = inventory.hotbar[activeHotbar]
+    const offhand = inventory.armor.offhand
 
     const setPlayerImage = (src) => {
       loadImage(src).then(img => { imagesRef.current.player = img }).catch(() => {})
     }
 
+    const compositeMap = COMPOSITE_SPRITES[cls] || {}
+
     if (!main) {
-      // No main-hand item: fallback to class base sprite
-      if (baseSprite) setPlayerImage(baseSprite)
+      // No main-hand item: prefer explicit EmptyHands mapping, else class base sprite
+      const empty = compositeMap['EmptyHands']
+      if (empty) setPlayerImage(empty)
+      else if (baseSprite) setPlayerImage(baseSprite)
       return
     }
 
@@ -356,15 +369,25 @@ export default function Game() {
       return
     }
 
-  const composite = SPRITE_COMPOSITE(cls, itemTag)
-    loadImage(composite)
-      .then(img => { imagesRef.current.player = img })
-      .catch(() => {
-        // Fallback to base class sprite if composite not found
-        if (baseSprite) setPlayerImage(baseSprite)
-      })
+    // Knight special-case: sword in main + shield in offhand -> combined sprite
+    if (cls === 'knight') {
+      const mainIsSword = ITEM_SPRITE_TAGS[main.id] === 'Sword' || main.id === 'iron_sword'
+      const offIsShield = offhand && (ITEM_SPRITE_TAGS[offhand.id] === 'Shield' || offhand.id === 'wooden_shield')
+      if (mainIsSword && offIsShield && compositeMap['ShieldAndSword']) {
+        setPlayerImage(compositeMap['ShieldAndSword'])
+        return
+      }
+    }
+
+    const composite = compositeMap[itemTag]
+    if (composite) {
+      setPlayerImage(composite)
+    } else {
+      // No explicit mapping — fall back to base class sprite
+      if (baseSprite) setPlayerImage(baseSprite)
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedClass, inventory.hotbar[0]?.id])
+  }, [selectedClass, activeHotbar, inventory.hotbar[activeHotbar]?.id, inventory.armor.offhand?.id])
 
   // ----- Inventory helpers -----
   const getSlot = (inv, section, key) => {

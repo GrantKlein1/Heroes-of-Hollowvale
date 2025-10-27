@@ -55,7 +55,7 @@ If `GROQ_API_KEY` is not set and `NODE_ENV=development`, the server returns stub
 	- PATHS: background/title images
 	- CLASS_SPRITES: per-class base sprites
 	- ITEM_ICONS: per-item icon filenames
-	- DEFAULT_ITEM_ICON and SPRITE_COMPOSITE patterns
+	- DEFAULT_ITEM_ICON and COMPOSITE_SPRITES map (explicit per-class overlays)
 
 - Server paths: `server/src/config/paths.js`
 	- API_ROUTE_PREFIX (defaults to `/api`)
