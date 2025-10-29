@@ -10,6 +10,8 @@ const ASSETS = {
   tavernBg: PATHS.tavernBg,
   pathBg: PATHS.walkingPath,
   dungeonBg: PATHS.dungeonEntrance,
+  dungeonInteriorBg: PATHS.dungeonInterior,
+  treasureBg: PATHS.hiddenTreasureRoom,
   player: CLASS_SPRITES.knight,
   // Title background image (place in client/public/images)
   titleBg: PATHS.titleBg,
@@ -20,7 +22,7 @@ const ASSETS = {
 // Pre-specified prompts (sent as user messages; server enforces bartender persona)
 const DRAGON_PROMPT = `You are the gruff bartender of the Hollowvale Tavern, a weary but sharp-tongued innkeeper. Always stay in character.
 
-The Red Dragon has taken roost in Ashfang Cavern in the Blackspire Mountains, raiding nearby villages, burning crops, and hoarding treasure. The cavern is filled with goblins, traps, and lesser beasts.
+The Red Dragon has taken roost in Ashfang Cavern in the Blackspire Mountains directly south of the tavern, raiding nearby villages, burning crops, and hoarding treasure. The cavern is filled with goblins, traps, and lesser beasts.
 Reward for slaying the dragon:
 - The dragon's hoard of gold and jewels
 - The Sword of Aeltharion, a legendary blade reclaimed from beneath the wyrm's hoard
@@ -65,6 +67,7 @@ export default function Game() {
   const rafRef = useRef(null)
   const keysRef = useRef({})
   const imagesRef = useRef({})
+  const musicRef = useRef(null)
   const sceneRef = useRef('village') // 'village' | 'tavern'
   const [ready, setReady] = useState(false)
   const [scene, setScene] = useState('village')
@@ -97,8 +100,8 @@ export default function Game() {
   const inventoryOpenRef = useRef(false)
   // Options: simple volume slider persisted for future audio
   const [volume, setVolume] = useState(() => {
-    const v = Number(localStorage.getItem('volume') ?? 70)
-    return Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : 70
+    const v = Number(localStorage.getItem('volume') ?? 15)
+    return Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : 15
   })
   // Inventory
   const [inventoryOpen, setInventoryOpen] = useState(false)
@@ -125,6 +128,8 @@ export default function Game() {
   const playerRef = useRef({ x: 0, y: 0, w: 48, h: 48, speed: 160 })
   // Remember where the player left the village (normalized image coords)
   const lastVillagePosRef = useRef({ nx: 0.5, ny: 0.90 })
+  // Remember where the player was standing in the dungeon entrance when entering the treasure room
+  const treasureReturnPosRef = useRef({ nx: 0.235, ny: 0.20 })
 
   // Scene definitions with simple colliders and interact zones (normalized)
   const scenes = {
@@ -217,7 +222,7 @@ export default function Game() {
       // Exit back to village at TOP-center
       toVillage: nrect(0.45, 0.05, 0.10, 0.06),
       // Enter dungeon at BOTTOM-center
-      toDungeon: nrect(0.44, 0.94, 0.12, 0.06),
+      toDungeon: nrect(0.54, 0.94, 0.12, 0.06),
       onReturn: () => {
         sceneRef.current = 'village'
         setScene('village')
@@ -259,16 +264,100 @@ export default function Game() {
       ],
       // Exit back to path near bottom-left where player spawns
       toPath: nrect(0.04, 0.82, 0.20, 0.14),
+      // Enter the dungeon interior at TOP-center
+      toInterior: nrect(0.45, 0.16, 0.10, 0.06),
+  // Secret entrance to the tavern near top-left around (0.235, 0.110)
+  toTavern: nrect(0.20, 0.075, 0.07, 0.07),
       onExitToPath: () => {
         sceneRef.current = 'path'
         setScene('path')
-        playerRef.current._spawn = { scene: 'path', nx: 0.5, ny: 0.90 }
+        playerRef.current._spawn = { scene: 'path', nx: 0.5, ny: 0.16 }
+      },
+      onEnterInterior: () => {
+        sceneRef.current = 'dungeonInterior'
+        setScene('dungeonInterior')
+        // Spawn just inside the dungeon interior near bottom-middle
+        playerRef.current._spawn = { scene: 'dungeonInterior', nx: 0.5, ny: 0.90 }
+      },
+      onEnterTavern: () => {
+        // Rewired: secret entrance now leads to hidden treasure room
+        sceneRef.current = 'treasureRoom'
+        setScene('treasureRoom')
+        // Enter at top-middle inside the treasure room
+        playerRef.current._spawn = { scene: 'treasureRoom', nx: 0.5, ny: 0.10 }
       },
       // Default spawn in bottom-left region
       spawn: { nx: 0.12, ny: 0.88 },
       playerScale: 0.13,
     }
-  }
+  };
+
+  // Add Dungeon Interior scene after base scenes definition
+  Object.assign(scenes, {
+    dungeonInterior: {
+      bgKey: 'dungeonInteriorBg',
+      fitMode: 'contain',
+      colliders: [
+        // World borders only for now
+        nrect(0, -0.02, 1, 0.02),
+        nrect(0, 1, 1, 0.02),
+        nrect(-0.02, 0, 0.02, 1),
+        nrect(1, 0, 0.02, 1),
+        nrect(0.915, 0.452, 0.087, 0.415),
+        nrect(0.968, 0.226, 0.047, 0.188),
+        nrect(0.686, 0.017, 0.220, 0.179),
+        nrect(0.019, 0.017, 0.297, 0.169),
+        nrect(0.275, 0.016, 0.051, 0.157),
+        nrect(0.002, 0.175, 0.178, 0.096),
+        nrect(0.008, 0.404, 0.076, 0.234),
+        nrect(0.203, 0.716, 0.032, 0.021),
+        nrect(0.006, 0.665, 0.087, 0.194)
+      ],
+      // Exit back to the entrance at BOTTOM-center
+      toEntrance: nrect(0.45, 0.95, 0.10, 0.06),
+      onExitToEntrance: () => {
+        sceneRef.current = 'dungeon'
+        setScene('dungeon')
+        // Spawn near top-middle of the entrance image
+        playerRef.current._spawn = { scene: 'dungeon', nx: 0.55, ny: 0.22 }
+      },
+      // Default spawn just inside at bottom-middle
+      spawn: { nx: 0.5, ny: 0.90 },
+      playerScale: 0.13,
+    },
+    treasureRoom: {
+      bgKey: 'treasureBg',
+      fitMode: 'contain',
+      colliders: [
+        nrect(0, -0.02, 1, 0.02),
+        nrect(0, 1, 1, 0.02),
+        nrect(-0.02, 0, 0.02, 1),
+        nrect(1, 0, 0.02, 1),
+        nrect(0.008, 0.329, 0.114, 0.041),
+        nrect(0.114, 0.583, 0.089, 0.034),
+        nrect(0.172, 0.782, 0.083, 0.064),
+        nrect(0.674, 0.831, 0.053, 0.034),
+        nrect(0.803, 0.624, 0.112, 0.059),
+        nrect(0.790, 0.398, 0.176, 0.042),
+        nrect(0.665, 0.006, 0.326, 0.168),
+        nrect(0.008, 0.011, 0.305, 0.169),
+        nrect(0.816, 0.185, 0.117, 0.028)
+
+      ],
+      // Exit zone placed at the top-middle, right where the player spawns
+      toEntrance: nrect(0.45, 0.08, 0.10, 0.06),
+      onExitToEntrance: () => {
+        sceneRef.current = 'dungeon'
+        setScene('dungeon')
+        // Return the player to the exact spot they entered from (normalized coords saved earlier)
+        const nx = Number.isFinite(treasureReturnPosRef.current?.nx) ? treasureReturnPosRef.current.nx : 0.235
+        const ny = Number.isFinite(treasureReturnPosRef.current?.ny) ? treasureReturnPosRef.current.ny : 0.20
+        playerRef.current._spawn = { scene: 'dungeon', nx, ny }
+      },
+      spawn: { nx: 0.5, ny: 0.10 },
+      playerScale: 0.13,
+    }
+  });
 
   // Load images and set initial spawn
   useEffect(() => {
@@ -278,9 +367,11 @@ export default function Game() {
       loadImage(ASSETS.tavernBg),
       loadImage(ASSETS.pathBg),
       loadImage(ASSETS.dungeonBg),
-    ]).then(([villageBg, tavernBg, pathBg, dungeonBg]) => {
+      loadImage(ASSETS.dungeonInteriorBg),
+      loadImage(ASSETS.treasureBg),
+    ]).then(([villageBg, tavernBg, pathBg, dungeonBg, dungeonInteriorBg, treasureBg]) => {
       if (cancelled) return
-      imagesRef.current = { villageBg, tavernBg, pathBg, dungeonBg, player: null }
+      imagesRef.current = { villageBg, tavernBg, pathBg, dungeonBg, dungeonInteriorBg, treasureBg, player: null }
       setReady(true)
     }).catch(() => {/* ignore for prototype */})
     return () => { cancelled = true }
@@ -645,6 +736,71 @@ export default function Game() {
   useEffect(() => { localStorage.setItem('allowQDrop', String(allowQDrop)) }, [allowQDrop])
   useEffect(() => { localStorage.setItem('allowFSwap', String(allowFSwap)) }, [allowFSwap])
 
+  // Music: play only on Intro (titleOpen) and in Village; pause elsewhere
+  // Create audio lazily and try to start on first user interaction if autoplay is blocked
+  const ensureMusic = () => {
+    if (!musicRef.current) {
+      try {
+        const a = new Audio(PATHS.introVillageMusic)
+        a.loop = true
+        a.preload = 'auto'
+        a.volume = Math.max(0, Math.min(1, volume / 100))
+        a.addEventListener('error', () => {
+          console.warn('[Audio] Failed to load:', PATHS.introVillageMusic)
+        }, { once: true })
+        musicRef.current = a
+      } catch (e) {
+        // Some environments may not allow constructing Audio; fail gracefully
+        musicRef.current = null
+      }
+    }
+    return musicRef.current
+  }
+
+  // React to scene/title and play/pause accordingly
+  useEffect(() => {
+    const shouldPlay = titleOpen || scene === 'village'
+    const audio = ensureMusic()
+    if (!audio) return
+    audio.volume = Math.max(0, Math.min(1, volume / 100))
+    if (shouldPlay) {
+      const tryPlay = () => {
+        const p = audio.play()
+        if (p && typeof p.then === 'function') {
+          p.catch(() => {
+            // Autoplay likely blocked; resume on first pointerdown
+            const unlock = () => {
+              audio.play().finally(() => {
+                document.removeEventListener('pointerdown', unlock)
+              })
+            }
+            document.addEventListener('pointerdown', unlock, { once: true })
+          })
+        }
+      }
+      tryPlay()
+    } else {
+      try { audio.pause() } catch {}
+    }
+  }, [titleOpen, scene])
+
+  // Keep music volume in sync with Options slider
+  useEffect(() => {
+    const a = musicRef.current
+    if (a) a.volume = Math.max(0, Math.min(1, volume / 100))
+  }, [volume])
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (musicRef.current) {
+        try { musicRef.current.pause() } catch {}
+        musicRef.current.src = ''
+        musicRef.current = null
+      }
+    }
+  }, [])
+
   // Global mousemove for drag ghost and HUD tooltips
   useEffect(() => {
     const onMove = (e) => {
@@ -946,6 +1102,40 @@ export default function Game() {
             sdef.onExitToPath?.()
           }
         }
+        // Dungeon enter interior at top-center
+        if (sceneRef.current === 'dungeon' && sdef.toInterior) {
+          const zonePx = mapRect(sdef.toInterior)
+          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
+            sdef.onEnterInterior?.()
+          }
+        }
+        // Dungeon secret entrance to tavern (now hidden treasure room) at top-left
+        if (sceneRef.current === 'dungeon' && sdef.toTavern) {
+          const zonePx = mapRect(sdef.toTavern)
+          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
+            // Save the exact dungeon position (normalized) to return to after leaving the treasure room
+            const pxCenterX = playerRef.current.x + playerRef.current.w / 2
+            const pxCenterY = playerRef.current.y + playerRef.current.h / 2
+            const nx = Math.max(0, Math.min(1, (pxCenterX - dx) / dw))
+            const ny = Math.max(0, Math.min(1, (pxCenterY - dy) / dh))
+            treasureReturnPosRef.current = { nx, ny }
+            sdef.onEnterTavern?.()
+          }
+        }
+        // Dungeon interior exit back to entrance (bottom-center)
+        if (sceneRef.current === 'dungeonInterior' && sdef.toEntrance) {
+          const zonePx = mapRect(sdef.toEntrance)
+          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
+            sdef.onExitToEntrance?.()
+          }
+        }
+        // Treasure room exit back to dungeon entrance
+        if (sceneRef.current === 'treasureRoom' && sdef.toEntrance) {
+          const zonePx = mapRect(sdef.toEntrance)
+          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
+            sdef.onExitToEntrance?.()
+          }
+        }
         // Tavern bartender interact -> open chat if near
         if (sceneRef.current === 'tavern' && scenes.tavern.bartender) {
           const b = scenes.tavern.bartender
@@ -1008,6 +1198,10 @@ export default function Game() {
           hudLine = 'Walk the path. Press E near top to return or near bottom to enter dungeon'
         } else if (sceneRef.current === 'dungeon') {
           hudLine = 'Dungeon entrance. Press E near bottom-left to return to path'
+        } else if (sceneRef.current === 'dungeonInterior') {
+          hudLine = 'Dungeon interior. Press E near bottom to exit to entrance'
+        } else if (sceneRef.current === 'treasureRoom') {
+          hudLine = 'Hidden treasure room. Press E near top to exit'
         }
         ctx.fillText(hudLine, 16, 50)
       }
@@ -1024,6 +1218,12 @@ export default function Game() {
         if (sdef.toDungeon) prompts.push({ rect: sdef.toDungeon, label: 'Press E to enter dungeon' })
       } else if (sceneRef.current === 'dungeon') {
         if (sdef.toPath) prompts.push({ rect: sdef.toPath, label: 'Press E to return' })
+        if (sdef.toInterior) prompts.push({ rect: sdef.toInterior, label: 'Press E to enter dungeon' })
+        if (sdef.toTavern) prompts.push({ rect: sdef.toTavern, label: 'Press E to enter hidden room' })
+      } else if (sceneRef.current === 'dungeonInterior') {
+        if (sdef.toEntrance) prompts.push({ rect: sdef.toEntrance, label: 'Press E to exit' })
+      } else if (sceneRef.current === 'treasureRoom') {
+        if (sdef.toEntrance) prompts.push({ rect: sdef.toEntrance, label: 'Press E to exit' })
       }
       for (const p of prompts) {
         const pr = mapRect(p.rect)
@@ -1307,6 +1507,15 @@ export default function Game() {
             </div>
           </div>
         )}
+        {/* Centered animated fire GIF in dungeon interior */}
+        {scene === 'dungeonInterior' && (
+          <img
+            src={PATHS.animatedFireSmallGif}
+            alt="Animated Fire"
+            className="pointer-events-none select-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+            style={{ width: 96, height: 96, imageRendering: 'pixelated' }}
+          />
+        )}
         {inventoryOpen && (
           <div className="absolute inset-0 z-20 flex items-center justify-center p-4" onMouseMove={handleInventoryMouseMove}>
             <div className="w-full max-w-4xl bg-stone-900/95 backdrop-blur rounded-2xl border border-amber-900/40 shadow-xl shadow-black/50">
@@ -1501,6 +1710,18 @@ export default function Game() {
         )}
 
         {/* Dungeon scene uses E-interact zone; no overlay button needed */}
+
+        {/* Global Options button on all non-intro screens */}
+        {!titleOpen && (
+          <div className="absolute top-3 right-3 z-30">
+            <button
+              onClick={() => setOptionsOpen(true)}
+              className="px-3 py-1.5 rounded-lg bg-stone-800/90 hover:bg-stone-700 text-amber-200 border border-amber-900/40 shadow"
+              aria-label="Options"
+              title="Options"
+            >Options</button>
+          </div>
+        )}
 
         {/* In-game Hotbar HUD (Minecraft-style) */}
         {!titleOpen && !classSelectOpen && !optionsOpen && (

@@ -5,6 +5,7 @@ export const API_BASE = import.meta.env.VITE_API_BASE || '/api'
 
 // Static assets served from client/public
 export const IMAGES_BASE = '/images'
+export const AUDIO_BASE = '/audio'
 
 // Common background/title images
 export const PATHS = {
@@ -12,8 +13,14 @@ export const PATHS = {
   tavernBg: `${IMAGES_BASE}/tavern.png`,
   walkingPath: `${IMAGES_BASE}/walkingPath.png`,
   dungeonEntrance: encodeURI(`${IMAGES_BASE}/dungeon entrance.png`),
+  dungeonInterior: `${IMAGES_BASE}/dungeon.png`,
+  hiddenTreasureRoom: `${IMAGES_BASE}/hiddenTreasureRoom.png`,
+  animatedFireSmallGif: `${IMAGES_BASE}/animatedFireSmall/animatedFireSmall.gif`,
   titleBg: `${IMAGES_BASE}/red dragon boss fight room.png`,
   titleLogo: encodeURI(`${IMAGES_BASE}/title screen wider no background.png`),
+  // Background music used on the intro screen and in the village
+  // Place a file named "intro_village.mp3" under client/public/audio or update this path
+  introVillageMusic: `${AUDIO_BASE}/introAndVillageMusic.mp3`,
 }
 
 // Class base sprites

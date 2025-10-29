@@ -27,6 +27,21 @@ function loadLore() {
 // Load on startup
 loadLore()
 
+// Auto-reload lore when the JSON file changes (useful in dev)
+try {
+  const file = LORE_JSON_PATH
+  if (fs.existsSync(file)) {
+    fs.watch(file, { persistent: false }, (eventType) => {
+      if (eventType === 'change' || eventType === 'rename') {
+        console.info('[RAG] Detected lore file change; reloading...')
+        loadLore()
+      }
+    })
+  }
+} catch (e) {
+  console.warn('[RAG] Unable to watch lore file for changes:', e.message)
+}
+
 /**
  * Retrieve up to topK lore texts most similar to the query
  * @param {string} query
