@@ -9,7 +9,7 @@ dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 dotenv.config(); // also load from project root if present
 
 const app = express();
-const PORT = process.env.PORT || 5050;
+const PORT = process.env.PORT || 5051;
 const { API_ROUTE_PREFIX } = require('./config/paths');
 
 // Middleware
@@ -27,6 +27,8 @@ app.get(`${API_ROUTE_PREFIX}/health`, (req, res) => {
 // Routes
 const chatRouter = require('./routes/chat');
 app.use(API_ROUTE_PREFIX, chatRouter);
+const ttsRouter = require('./routes/tts');
+app.use(API_ROUTE_PREFIX, ttsRouter);
 
 // Error handler
 const errorHandler = require('./middleware/errorHandler');

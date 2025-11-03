@@ -5,7 +5,7 @@ const { chatCompletion } = require('../groqClient');
 const { retrieveLoreForQuery } = require('../rag/store');
 
 // --- Helpers ---------------------------------------------------------------
-function truncateToSentences(text = '', max = 7) {
+function truncateToSentences(text = '', max = 8) {
   if (!text || max <= 0) return '';
   // Split into sentences, keeping terminal punctuation if present.
   const parts = String(text)
@@ -24,12 +24,8 @@ function classifyRequest(message, priorUserCount) {
   const isLeave = /\b(leave|goodbye|farewell|i['’]?m\s*leaving|im\s*leaving|bye|take\s*my\s*leave)\b/.test(m);
   const leaveAfterFive = isLeave && priorUserCount >= 5;
 
-  // Determine sentence cap by rule precedence
-  let maxSentences = 7;
-  if (leaveAfterFive) maxSentences = 2;
-  else if (isDragon) maxSentences = 5; // 4-5 sentences target; we cap at 5
-  else if (isTownHistory) maxSentences = 6; // 5-6 target; cap at 6
-
+  // Unified sentence cap across all responses
+  const maxSentences = 8;
   return { isDragon, isTownHistory, isLeave, leaveAfterFive, maxSentences };
 }
 
@@ -64,11 +60,26 @@ router.post('/chat', async (req, res, next) => {
     '',
     'Brevity policy:',
     '- Keep replies concise, natural, and helpful.',
-    '- For any general question: at most 7 sentences.',
-    '- If the player asks about the Dragon Quest: 4–5 sentences (do not exceed 5).',
-    '- If the player asks for the town history: 5–6 sentences (do not exceed 6).',
-    '- After five player questions, if they ask to leave or say goodbye: at most 2 sentences.',
-    '- Prefer short paragraphs; avoid numbered lists unless requested.',
+    '- Do not exceed 6 sentences unless absolutely necessary, Never exceed 7 sentences.',
+    '- All sentences should be less than 16 words long',
+    '- Before responding, verify that sentence count and word count per sentence are within limits.',
+    '- Prefer short paragraphs; avoid numbered lists unless specifically requested.',
+    '- Here are 3 examples to provide guidance on response length only, not tone, lore, accuracy or anything else.:',
+    ' EXAMPLE1: Ashfang Cavern lies beyond the Blackspire Mountains, cloaked in mist and legend.',
+    '      From the tavern, follow the winding road directly south of here.',
+    '      Take the path through the forest winding and narrow, lined with whispering pines.',
+    '      The trail turns sharply right, stones shifting beneath your boots.',
+    '      Soon, the mountain yawns open: a jagged mouth of shadow and silence.', 
+    'EXAMPLE2: Ashfang Cavern rests beyond the Blackspire Mountains, hidden behind mist and pine.',
+    '      Leave the tavern, follow the cobbled road south past the market and old windmill.',
+    '      Take the path narrow, winding, and lined with moss-covered stones.',
+    '      The trail climbs steadily, wind whispering through the trees.',
+    '      Eventually, the mountain opens: a dark mouth carved into jagged rock.',
+    'EXAMPLE3: Ashfang Cavern waits in the Blackspires, cloaked in fog and silence.',
+    '       From the tavern, take the road that twists past the market and windmill.',
+    '       Go left at the fork—steep, slick, and shadowed by looming cliffs.',
+    '       The path narrows, stones loose beneath your boots.',
+    '       Soon, the cavern appears: wide, dark, and watching.'
   ].join('\n')
 
     // Build retrieval query with optional hints to improve grounding on short prompts
@@ -88,7 +99,7 @@ router.post('/chat', async (req, res, next) => {
       ? {
           role: 'system',
           content:
-            `Lore context (for grounding; do not contradict, and don’t quote verbatim unless asked):\n\n` +
+            `Lore context (for grounding; do not contradict, and don't quote verbatim unless asked):\n\n` +
             loreChunks.map((t, i) => `— [${i+1}] ${t}`).join('\n\n')
         }
       : null
@@ -120,8 +131,8 @@ router.post('/chat', async (req, res, next) => {
       replyText = result.text;
     }
 
-    // Enforce sentence cap server-side to guarantee limits
-    const finalReply = truncateToSentences(replyText, caps.maxSentences);
+  // Do not truncate server-side; rely on model guidance above
+  const finalReply = String(replyText || '').trim();
 
     // Update memory (store last 5 exchanges = 10 messages)
     memory.addExchange(npc, message, finalReply);

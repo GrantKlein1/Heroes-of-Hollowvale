@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react'
-import { sendChat as apiSendChat } from './lib/api'
+import { sendChat as apiSendChat, fetchTTS as apiFetchTTS } from './lib/api'
 import { PATHS, CLASS_SPRITES, ITEM_ICONS, DEFAULT_ITEM_ICON, COMPOSITE_SPRITES, ANIMATED_SWORD_FRAMES } from './config/paths'
 import AnimatedSprite from './components/AnimatedSprite'
 
@@ -18,23 +18,6 @@ const ASSETS = {
   // Title logo image (with spaces in filename)
   titleLogo: PATHS.titleLogo,
 }
-
-// Pre-specified prompts (sent as user messages; server enforces bartender persona)
-const DRAGON_PROMPT = `You are the gruff bartender of the Hollowvale Tavern, a weary but sharp-tongued innkeeper. Always stay in character.
-
-The Red Dragon has taken roost in Ashfang Cavern in the Blackspire Mountains directly south of the tavern, raiding nearby villages, burning crops, and hoarding treasure. The cavern is filled with goblins, traps, and lesser beasts.
-Reward for slaying the dragon:
-- The dragon's hoard of gold and jewels
-- The Sword of Aeltharion, a legendary blade reclaimed from beneath the wyrm's hoard
-- Eternal gratitude and free drinks from the tavern and townsfolk
-
-When I ask about the Dragon Quest, respond with detailed, helpful information: directions to Ashfang Cavern, hazards, warnings, tips, and lore—always in medieval tavern barkeep tone. If I go off-topic, be snarky and tell me to stick to the quest or leave.`
-
-const HISTORY_PROMPT = `You are the gruff bartender of the Hollowvale Tavern, a weary but sharp-tongued innkeeper. Always stay in character.
-
-Town History: Hollowvale was founded by miners in the Blackspire Mountains seeking silver and iron. Mines collapsed; caverns became homes to monsters. Hollowvale survived as a trading hub between mountain passes, with the tavern as its heart. Legends say a knightly order once protected the town; their fortress now lies in ruins on the outskirts. Townsfolk are hardy and suspicious of outsiders but loyal to those who prove themselves.
-
-When I ask about the History of Hollowvale, respond with immersive lore: origins, the collapse, trading hub, the old order and ruins, and what the people are like—always in medieval tavern barkeep tone. If I go off-topic, be snarky and tell me to stick to the town or leave.`
 
 const LEAVE_PROMPT = `You are the gruff bartender of the Hollowvale Tavern. The traveler has asked many questions and you tire of them. Tell them to leave, in character.`
 
@@ -116,9 +99,11 @@ export default function Game() {
   const [invMouse, setInvMouse] = useState({ x: 0, y: 0 })
   // Hotbar HUD state
   const [activeHotbar, setActiveHotbar] = useState(0) // 0..8 like Minecraft
+  const activeHotbarRef = useRef(0)
   // Options toggles for hotbar behaviors
   const [allowQDrop, setAllowQDrop] = useState(() => (localStorage.getItem('allowQDrop') ?? 'true') !== 'false')
   const [allowFSwap, setAllowFSwap] = useState(() => (localStorage.getItem('allowFSwap') ?? 'true') !== 'false')
+  const allowFSwapRef = useRef(allowFSwap)
   // HUD tooltip and selection label
   const [hudTip, setHudTip] = useState({ show: false, text: '', x: 0, y: 0 })
   const [hotbarLabel, setHotbarLabel] = useState({ text: '', show: false })
@@ -271,7 +256,7 @@ export default function Game() {
       onExitToPath: () => {
         sceneRef.current = 'path'
         setScene('path')
-        playerRef.current._spawn = { scene: 'path', nx: 0.5, ny: 0.16 }
+        playerRef.current._spawn = { scene: 'path', nx: 0.7, ny: 0.92 }
       },
       onEnterInterior: () => {
         sceneRef.current = 'dungeonInterior'
@@ -386,7 +371,7 @@ export default function Game() {
       description: 'A disciplined warrior clad in steel, sworn to protect and endure. Knights excel in close combat and defense.',
       strengths: ['High defense', 'Strong melee damage', 'Reliable survivability'],
       weaknesses: ['Slow movement', 'Limited ranged options', 'Low magic resistance'],
-      abilities: ['Shield Bash (stun briefly)', 'Defensive Stance (reduce damage)', 'Power Strike (heavy melee)'],
+      abilities: ['[Z] Shield Bash (stun briefly)', '[X] Defensive Stance (reduce damage)', '[C] Power Strike (heavy melee)'],
       items: ['Iron Sword', 'Wooden Shield', 'Chainmail Armor', '1x Healing Potion'],
     },
     mage: {
@@ -396,7 +381,7 @@ export default function Game() {
       description: 'A master of arcane forces, fragile in body but devastating in spellcraft. Mages bend fire, frost, and lightning to their will.',
       strengths: ['High magic damage', 'Ranged attacks', 'Versatile elemental spells'],
       weaknesses: ['Low health', 'Weak physical defense', 'Relies on mana'],
-      abilities: ['Firebolt (ranged fire)', 'Frost Nova (freeze nearby)', 'Arcane Shield (magic barrier)'],
+      abilities: ['[Z] Firebolt (ranged fire)', '[X] Frost Nova (freeze nearby)', '[C] Arcane Shield (magic barrier)'],
       items: ['Apprentice Staff', 'Spellbook', 'Cloth Robes', '2x Mana Potions'],
     },
     thief: {
@@ -406,7 +391,7 @@ export default function Game() {
       description: 'A cunning rogue who thrives in shadows, striking swiftly and vanishing just as fast. Agile and resourceful.',
       strengths: ['High speed', 'Critical strikes', 'Stealth abilities'],
       weaknesses: ['Low defense', 'Weaker against groups', 'Limited durability'],
-      abilities: ['Backstab (bonus rear damage)', 'Smoke Bomb (brief invisibility)', 'Pick Lock (open locks)'],
+      abilities: ['[Z] Backstab (bonus rear damage)', '[X] Smoke Bomb (brief invisibility)', '[C] Pick Lock (open locks)'],
       items: ['Twin Daggers', 'Leather Armor', 'Lockpicks', '1x Poison Vial'],
     },
     dwarf: {
@@ -416,7 +401,7 @@ export default function Game() {
       description: 'A stout fighter from the mountain halls, tough as stone and skilled with heavy weapons. Dwarves endure where others fall.',
       strengths: ['High health', 'Strong melee (axes/hammers)', 'Poison resistance'],
       weaknesses: ['Shorter range', 'Slower speed', 'Limited magic use'],
-      abilities: ['Cleave (wide swing)', 'Stone Skin (armor boost)', 'Battle Roar (ally buff)'],
+      abilities: ['[Z] Cleave (wide swing)', '[X] Stone Skin (armor boost)', '[C] Battle Roar (ally buff)'],
       items: ['Battle Axe', 'Dwarf Armor', 'Dwarf Pickaxe (utility)', '1x Ale Flask (stamina)'],
     },
   }
@@ -730,11 +715,13 @@ export default function Game() {
   useEffect(() => { chatOpenRef.current = chatOpen }, [chatOpen])
   useEffect(() => { classSelectOpenRef.current = classSelectOpen }, [classSelectOpen])
   useEffect(() => { inventoryOpenRef.current = inventoryOpen }, [inventoryOpen])
+  useEffect(() => { activeHotbarRef.current = activeHotbar }, [activeHotbar])
   useEffect(() => { titleOpenRef.current = titleOpen }, [titleOpen])
   useEffect(() => { optionsOpenRef.current = optionsOpen }, [optionsOpen])
   useEffect(() => { localStorage.setItem('volume', String(volume)) }, [volume])
   useEffect(() => { localStorage.setItem('allowQDrop', String(allowQDrop)) }, [allowQDrop])
   useEffect(() => { localStorage.setItem('allowFSwap', String(allowFSwap)) }, [allowFSwap])
+  useEffect(() => { allowFSwapRef.current = allowFSwap }, [allowFSwap])
 
   // Music: play only on Intro (titleOpen) and in Village; pause elsewhere
   // Create audio lazily and try to start on first user interaction if autoplay is blocked
@@ -862,7 +849,7 @@ export default function Game() {
         // Drop one item from selected slot with Q
         if ((code === 'q' || code === 'Q') && allowQDrop) {
           setInventory(inv => {
-            const cur = inv.hotbar[activeHotbar]
+            const cur = inv.hotbar[activeHotbarRef.current]
             if (!cur) return inv
             const next = {
               armor: { ...inv.armor },
@@ -870,21 +857,21 @@ export default function Game() {
               hotbar: inv.hotbar.slice(),
             }
             const newCount = (cur.count || 1) - 1
-            next.hotbar[activeHotbar] = newCount > 0 ? { id: cur.id, count: newCount } : null
+            next.hotbar[activeHotbarRef.current] = newCount > 0 ? { id: cur.id, count: newCount } : null
             return next
           })
         }
         // Swap selected hotbar item with offhand using F (like Minecraft)
-        if ((code === 'f' || code === 'F') && allowFSwap) {
+        if ((code === 'f' || code === 'F') && allowFSwapRef.current) {
           setInventory(inv => {
             const next = {
               armor: { ...inv.armor },
               storage: inv.storage.slice(),
               hotbar: inv.hotbar.slice(),
             }
-            const a = next.hotbar[activeHotbar] || null
+            const a = next.hotbar[activeHotbarRef.current] || null
             const b = next.armor.offhand || null
-            next.hotbar[activeHotbar] = b
+            next.hotbar[activeHotbarRef.current] = b
             next.armor.offhand = a
             return next
           })
@@ -1191,7 +1178,7 @@ export default function Game() {
         ctx.fillText('WASD: Move    E: Interact    V: Inventory', 16, 28)
         let hudLine = ''
         if (sceneRef.current === 'village') {
-          hudLine = 'Find the tavern door (top-center) or travel south; press E when prompted'
+          hudLine = 'Find the tavern door or travel south; press E when prompted'
         } else if (sceneRef.current === 'tavern') {
           hudLine = 'Explore the tavern. Press E near bottom to exit'
         } else if (sceneRef.current === 'path') {
@@ -1353,15 +1340,33 @@ export default function Game() {
   const [chatTopic, setChatTopic] = useState(null)
 
   // Chat helpers
-  async function sendToBartender(text) {
+  // Optional ragHintOverride ensures RAG is used even before chatTopic state updates
+  async function sendToBartender(text, ragHintOverride) {
     setChatLoading(true)
     try {
       const context = chatMessages.slice(-5) // keep short
-      const ragHints = chatTopic ? TOPIC_RAG_HINTS[chatTopic] : undefined
+      const ragHints = (typeof ragHintOverride === 'string' && ragHintOverride.trim())
+        ? ragHintOverride
+        : (chatTopic ? TOPIC_RAG_HINTS[chatTopic] : undefined)
       const payload = { npc: 'bartender', message: text, context, ragHints }
       const res = await apiSendChat(payload)
       const reply = res?.reply || ''
       setChatMessages(msgs => [...msgs, { role: 'assistant', content: reply }])
+      // Speak bartender reply (text-to-speech)
+      try {
+        const audioBlob = await apiFetchTTS({ text: reply })
+        const url = URL.createObjectURL(audioBlob)
+        const audio = new Audio(url)
+        audio.addEventListener('ended', () => URL.revokeObjectURL(url), { once: true })
+        // Match options volume roughly (0..100 -> 0..1); independent of musicRef
+        audio.volume = Math.max(0, Math.min(1, (volume || 100) / 100))
+        await audio.play().catch(() => {/* autoplay may block; play on first pointer */})
+      } catch (e) {
+        // Non-fatal: keep chat flowing even if TTS fails
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn('[TTS] Failed to play audio:', e?.message || e)
+        }
+      }
     } catch (err) {
       setChatMessages(msgs => [...msgs, { role: 'assistant', content: `Bartender (annoyed): ${err.message}` }])
     } finally {
@@ -1372,8 +1377,8 @@ export default function Game() {
   async function handleChoice(kind) {
     if (chatLoading) return
     let userText = ''
-    if (kind === 'dragon') userText = DRAGON_PROMPT
-    else if (kind === 'history') userText = HISTORY_PROMPT
+    if (kind === 'dragon') userText = 'Tell me about the Dragon Quest, and make sure to tell the player to go south of the tavern to explore.'
+    else if (kind === 'history') userText = 'Tell me the history of Hollowvale.'
     else return
 
     // Append user message
@@ -1381,8 +1386,11 @@ export default function Game() {
     // Lock topic to drive RAG hints for this thread
     setChatTopic(kind)
 
+    // Compute hints now (state update is async) to ensure RAG is used on the first reply
+    const initialHints = TOPIC_RAG_HINTS[kind]
+
     // Send the detailed prompt to guide the answer
-    await sendToBartender(userText)
+    await sendToBartender(userText, initialHints)
     setChatTurns(n => n + 1)
   setChatMode('free')
 
@@ -1547,10 +1555,7 @@ export default function Game() {
                           ) : (
                             <span className="text-stone-500 text-xs">{slot}</span>
                           )}
-                          {/* Total count badge when item appears in multiple slots */}
-                          {it && total > (it.count || 1) && (
-                            <span className="absolute top-1 left-1 text-[10px] px-1 rounded bg-stone-900/90 text-amber-200 border border-amber-900/40">{total}</span>
-                          )}
+                          {/* Removed confusing total-count badge that showed total duplicates across inventory */}
                           {it?.count > 1 && (
                             <span className="absolute bottom-1 right-1 text-xs px-1 rounded bg-stone-900/80 text-amber-200">{it.count}</span>
                           )}
@@ -1579,9 +1584,7 @@ export default function Game() {
                             onError={(e)=>{ e.currentTarget.style.display='none' }}
                           />
                         ) : null}
-                        {it && (inventoryTotals[it.id] || 0) > (it.count || 1) && (
-                          <span className="absolute top-1 left-1 text-[10px] px-1 rounded bg-stone-900/90 text-amber-200 border border-amber-900/40">{inventoryTotals[it.id]}</span>
-                        )}
+                        {/* Removed confusing total-count badge that showed total duplicates across inventory */}
                         {it?.count > 1 && (
                           <span className="absolute bottom-1 right-1 text-xs px-1 rounded bg-stone-900/80 text-amber-200">{it.count}</span>
                         )}
@@ -1609,9 +1612,7 @@ export default function Game() {
                             onError={(e)=>{ e.currentTarget.style.display='none' }}
                           />
                         ) : null}
-                        {it && (inventoryTotals[it.id] || 0) > (it.count || 1) && (
-                          <span className="absolute top-1 left-1 text-[10px] px-1 rounded bg-stone-900/90 text-amber-200 border border-amber-900/40">{inventoryTotals[it.id]}</span>
-                        )}
+                        {/* Removed confusing total-count badge that showed total duplicates across inventory */}
                         {it?.count > 1 && (
                           <span className="absolute bottom-1 right-1 text-xs px-1 rounded bg-stone-900/80 text-amber-200">{it.count}</span>
                         )}
