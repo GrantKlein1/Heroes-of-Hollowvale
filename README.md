@@ -1,115 +1,120 @@
 # Heroes of Hollowvale
-A small AI-powered browser game where you enter a cozy medieval tavern and chat with multiple NPCs (Bartender, Wizard, Rogue), each with a distinct personality powered by the Groq LLM API.
+
+A small AI‑powered, top‑down browser game. Explore the village, tavern, and dungeon, talk to the bartender powered by the Groq LLM, and hear voiced replies via ElevenLabs TTS. Replies are grounded in your lore (RAG) from `newLore.txt`.
+
+## Features
+
+- Top‑down movement across scenes: Village → Path → Dungeon Entrance → Dungeon Interior → Hidden Treasure Room
+- Bartender chat (Groq LLM) with Retrieval‑Augmented Generation from your lore
+- ElevenLabs Text‑to‑Speech for bartender replies (auto‑plays; volume tied to Options)
+- Inventory with drag/swap/merge, hotbar (1–9), Q to drop one, F to swap with offhand
+- Secret: top‑left E‑zone in dungeon entrance leads to a treasure room; exit returns you to the exact entry spot
+- Animated fire GIF centered in dungeon interior
+- Brevity guidance: bartender aims for 5–6 sentences; only when necessary up to 8 (no server truncation)
 
 ## Stack
+
 - Frontend: React (Vite) + Tailwind CSS
 - Backend: Node.js + Express
-- AI: Groq LLM API (via environment variable)
-- Memory: In-memory store per NPC (last 5 exchanges)
+- AI LLM: Groq (GROQ_API_KEY)
+- TTS: ElevenLabs (ELEVENLABS_API_KEY)
+- RAG: Local file retrieval from `server/src/rag/lore.json` (embedded from `newLore.txt`)
+- Memory: In‑memory per‑NPC window of recent turns
 
-## Quick Start
+## Quick Start (Windows)
 
-1. Create an `.env` at the project root (or in `server/.env`) using the example:
+1) Install dependencies
+- Server
+  ```powershell
+  cd ".\server"
+  npm install
+  ```
+- Client
+  ```powershell
+  cd "..\client"
+  npm install
+  ```
 
-```
-GROQ_API_KEY=your_key_here
-```
-
-2. Install dependencies:
-
-```
-npm install
-```
-
-3. Run both client and server in dev mode:
-
-```
-npm run dev
-```
-
-- Client: http://localhost:5173
-- Server API: http://localhost:5050/api
-
-If `GROQ_API_KEY` is not set and `NODE_ENV=development`, the server returns stubbed replies so you can try the UI.
-
-## Folder Structure
-```
-.
-├── client/          # Vite + React + Tailwind frontend
-├── server/          # Express backend with Groq integration
-├── .env.example     # Copy to .env and add your GROQ key
-├── package.json     # Workspaces + root scripts
-└── README.md
+2) Add environment variables (server/.env)
+```env
+# server/.env
+GROQ_API_KEY=your_groq_key
+ELEVENLABS_API_KEY=your_elevenlabs_key
+# Optional defaults
+ELEVENLABS_VOICE_ID=21m00Tcm4TlvDq8ikWAM
+PORT=5051
+RAG_DEBUG=1
 ```
 
-## Notes
-- Place game images under `client/public/images/`. For example, put the tavern background at `client/public/images/tavern.jpg` and reference it in code as `/images/tavern.jpg`. The app falls back to a gradient if missing.
-- Personalities and memory are defined on the server in `src/npcData.js` and `src/memory.js`.
-- This is a prototype—no database yet; memory resets on server restart.
+3) Prepare lore (RAG) from newLore.txt
+- Recommended (Python one‑time embedding)
+  ```powershell
+  cd ".\server\tools"
+  pip install sentence-transformers numpy
+  python ".\embed_lore.py" "..\..\newLore.txt"
+  ```
+  This writes `server/src/rag/lore.json`.
 
-### Centralized paths (change filenames in one place)
-
-- Client paths: `client/src/config/paths.js`
-	- API_BASE (defaults to `/api` or `VITE_API_BASE`)
-	- IMAGES_BASE (defaults to `/images`)
-	- PATHS: background/title images
-	- CLASS_SPRITES: per-class base sprites
-	- ITEM_ICONS: per-item icon filenames
-	- DEFAULT_ITEM_ICON and COMPOSITE_SPRITES map (explicit per-class overlays)
-
-- Server paths: `server/src/config/paths.js`
-	- API_ROUTE_PREFIX (defaults to `/api`)
-	- LORE_JSON_PATH (defaults to `server/src/rag/lore.json`)
-	- GROQ_API_URL (Groq endpoint)
-
-Edit these files to match your actual filenames and folder layout—no need to hunt through components or route handlers.
-
-## Lore Retrieval (RAG-lite)
-Ground replies in your own lore without fine‑tuning. The server can retrieve the most relevant lore chunks and inject them as system context for each `/api/chat` call.
-
-1) Prepare and embed your lore (one‑time):
-
-	 - Put your `lore.txt` anywhere.
-	 - Install tools for embedding (Python):
-
-		 ```cmd
-		 pip install sentence-transformers numpy
-		 ```
-
-	 - Run the embed script:
-
-		 ```cmd
-		 cd "server\tools"
-		 python embed_lore.py "..\..\lore.txt"
-		 ```
-
-	 - This writes `server/src/rag/lore.json` with chunk texts + vectors.
-
-2) Enable retrieval (optional):
-
-	 - Ensure `server/src/rag/lore.json` exists (from step 1). No API tokens are required.
-	 - If `lore.json` is missing, the server skips retrieval gracefully.
-
-How it works:
-
-## Local embeddings (offline RAG)
-
-The server can compute embeddings locally using Transformers.js, so you don’t need a Hugging Face Inference API token:
-
-- Dependency: `@xenova/transformers` (installed under the `server` workspace)
-- Model: `Xenova/all-MiniLM-L6-v2` (quantized). It downloads on first run and is cached.
-- No external calls are made for embeddings at runtime.
+4) Run
+- Server (from server/)
+  ```powershell
+  node ".\src\index.js"
+  ```
+  API at http://localhost:5051/api
+- Client (from client/)
+  ```powershell
+  npx vite --host
+  ```
+  UI at http://localhost:5173
 
 Notes:
-- You can keep using your existing `server/src/rag/lore.json` produced by the Python script.
-- If embeddings are temporarily unavailable, the server gracefully falls back to a simple token-overlap similarity so chat continues to work.
+- Do not commit .env files or keys.
+- If `lore.json` is missing, chat still works but without lore grounding.
 
-- At runtime, the server embeds the player’s message locally via Transformers.js, ranks the top‑K similar lore chunks (cosine), and injects them as a system message before calling Groq.
-- Files:
-	- `server/src/rag/embeddings_local.js` — local embeddings via Transformers.js.
-	- `server/src/rag/store.js` — loads `lore.json` and retrieves relevant chunks.
-	- `server/src/routes/chat.js` — injects lore system context when available.
+## How RAG Works
 
-## Troubleshooting
-- If ports conflict, change Vite dev server port in `client/vite.config.js` and API port via `PORT` env for the server.
-- On Windows, commands are `npm`-friendly; no bash-specific scripts are used.
+- Your `newLore.txt` is embedded into chunks (text + vectors) stored in `server/src/rag/lore.json`.
+- On every `/api/chat`, the server retrieves top‑K relevant lore chunks for the user’s message and injects them into the system context before calling Groq.
+- Client requests are concise (e.g., “Tell me about the Dragon Quest.”); the server prompt enforces brevity and grounding.
+
+Re‑embed whenever `newLore.txt` changes (run step 3 again).
+
+## API
+
+- POST /api/chat
+  - Body: `{ npc: "bartender", message: string, context?: Message[], ragHints?: string }`
+  - Returns: `{ reply: string }`
+- POST /api/tts
+  - Body: `{ text: string, voiceId?: string, modelId?: string, outputFormat?: string }`
+  - Returns: audio/mpeg bytes (used by the client to auto‑play bartender speech)
+
+Quick TTS test:
+```powershell
+curl -sS -X POST http://localhost:5051/api/tts ^
+  -H "Content-Type: application/json" ^
+  -d "{\"text\":\"Greetings from Hollowvale.\"}" ^
+  --output tts_test.mp3
+start .\tts_test.mp3
+```
+
+## Controls
+
+- Movement: WASD or Arrow Keys
+- Interact: E (tavern door, exits, dungeon entrances, treasure room)
+- Inventory: V (drag/swap/merge; right‑click splits or places 1)
+- Hotbar: 1–9 select; Q drops one from selected; F swaps selected with offhand
+- Options: button at top‑right (volume affects music and TTS)
+- Debug picker: F2 or ` (shows normalized coordinates)
+
+## Assets
+
+- Place images under `client/public/images/` (see `client/src/config/paths.js`).
+- Title images: `PATHS.titleBg`, `PATHS.titleLogo`
+- Backgrounds: village, tavern, path, dungeon entrance, dungeon interior, hiddenTreasureRoom.png
+- Animated fire: `images/animatedFireSmall/animatedFireSmall.gif`
+
+## Development Notes
+
+- Server listens on port 5051 by default; adjust with `PORT`.
+- RAG logging: set `RAG_DEBUG=1` to print retrieval info to the server console.
+- Replies are not truncated server‑side; brevity is enforced via system prompt (aim 5–6, up to 8 when needed).
