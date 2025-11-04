@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react'
-import { sendChat as apiSendChat, fetchTTS as apiFetchTTS } from './lib/api'
+import { sendChat as apiSendChat, fetchTTS as apiFetchTTS, streamTTS as apiStreamTTS } from './lib/api'
 import { PATHS, CLASS_SPRITES, ITEM_ICONS, DEFAULT_ITEM_ICON, COMPOSITE_SPRITES, ANIMATED_SWORD_FRAMES } from './config/paths'
 import AnimatedSprite from './components/AnimatedSprite'
 
@@ -8,6 +8,7 @@ import AnimatedSprite from './components/AnimatedSprite'
 const ASSETS = {
   villageBg: PATHS.villageBg,
   tavernBg: PATHS.tavernBg,
+  marketBg: PATHS.marketBg,
   pathBg: PATHS.walkingPath,
   dungeonBg: PATHS.dungeonEntrance,
   dungeonInteriorBg: PATHS.dungeonInterior,
@@ -51,6 +52,7 @@ export default function Game() {
   const keysRef = useRef({})
   const imagesRef = useRef({})
   const musicRef = useRef(null)
+  const vendorAudioRef = useRef(null)
   const sceneRef = useRef('village') // 'village' | 'tavern'
   const [ready, setReady] = useState(false)
   const [scene, setScene] = useState('village')
@@ -59,6 +61,10 @@ export default function Game() {
   const titleOpenRef = useRef(true)
   const [optionsOpen, setOptionsOpen] = useState(false)
   const optionsOpenRef = useRef(false)
+  // Market/shop overlay
+  const [shopOpen, setShopOpen] = useState(false)
+  const shopOpenRef = useRef(false)
+  const [shopCategory, setShopCategory] = useState('Potions')
   // Class selection overlay (opens after Start Game)
   const [classSelectOpen, setClassSelectOpen] = useState(false)
   const [selectedClass, setSelectedClass] = useState(null)
@@ -85,6 +91,15 @@ export default function Game() {
   const [volume, setVolume] = useState(() => {
     const v = Number(localStorage.getItem('volume') ?? 15)
     return Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : 15
+  })
+  // Toggle for bartender speech (TTS)
+  const [ttsEnabled, setTtsEnabled] = useState(() => (localStorage.getItem('ttsEnabled') ?? 'true') !== 'false')
+  // Separate volume for bartender voice (TTS)
+  const [ttsVolume, setTtsVolume] = useState(() => {
+    const sv = Number(localStorage.getItem('ttsVolume'))
+    if (Number.isFinite(sv)) return Math.max(0, Math.min(100, sv))
+    const base = Number(localStorage.getItem('volume'))
+    return Number.isFinite(base) ? Math.max(0, Math.min(100, base)) : 50
   })
   // Inventory
   const [inventoryOpen, setInventoryOpen] = useState(false)
@@ -142,6 +157,8 @@ export default function Game() {
   door: nrect(0.47, 0.60, 0.06, 0.06),
       // Travel zone at bottom-middle to enter the path scene
       toPath: nrect(0.45, 0.94, 0.10, 0.06),
+      // Market entrance at upper-left, around 20% down from top
+      toMarket: nrect(0.02, 0.30, 0.10, 0.06),
       onEnter: () => {
         sceneRef.current = 'tavern'
         setScene('tavern')
@@ -153,6 +170,12 @@ export default function Game() {
         setScene('path')
         // Spawn at top-middle of the path scene
         playerRef.current._spawn = { scene: 'path', nx: 0.5, ny: 0.10 }
+      },
+      onEnterMarket: () => {
+        sceneRef.current = 'market'
+        setScene('market')
+        // Spawn at bottom-middle of the market scene
+        playerRef.current._spawn = { scene: 'market', nx: 0.5, ny: 0.90 }
       },
       // Spawn near bottom-center on initial load
       spawn: { nx: 0.5, ny: 0.90 },
@@ -256,7 +279,7 @@ export default function Game() {
       onExitToPath: () => {
         sceneRef.current = 'path'
         setScene('path')
-        playerRef.current._spawn = { scene: 'path', nx: 0.7, ny: 0.92 }
+        playerRef.current._spawn = { scene: 'path', nx: 0.65, ny: 0.92 }
       },
       onEnterInterior: () => {
         sceneRef.current = 'dungeonInterior'
@@ -279,6 +302,30 @@ export default function Game() {
 
   // Add Dungeon Interior scene after base scenes definition
   Object.assign(scenes, {
+    market: {
+      bgKey: 'marketBg',
+      fitMode: 'contain',
+      colliders: [
+        nrect(0, -0.02, 1, 0.02),
+        nrect(0, 1, 1, 0.02),
+        nrect(-0.02, 0, 0.02, 1),
+        nrect(1, 0, 0.02, 1),
+        nrect(0.008, 0.466, 0.980, 0.117)
+      ],
+      // Market owner interaction zone at screen center
+      vendor: nrect(0.45, 0.52, 0.10, 0.10),
+      // Exit back to village at bottom-middle
+      toVillage: nrect(0.45, 0.95, 0.10, 0.06),
+      onExitToVillage: () => {
+        sceneRef.current = 'village'
+        setScene('village')
+        // Return to the village near the market entrance (upper-left area ~20% down)
+        playerRef.current._spawn = { scene: 'village', nx: 0.11, ny: 0.40 }
+      },
+      // Default spawn in market is bottom-middle
+      spawn: { nx: 0.5, ny: 0.90 },
+      playerScale: 0.13,
+    },
     dungeonInterior: {
       bgKey: 'dungeonInteriorBg',
       fitMode: 'contain',
@@ -329,6 +376,16 @@ export default function Game() {
         nrect(0.816, 0.185, 0.117, 0.028)
 
       ],
+      // Hidden chests: 5 total; indices 1 and 3 are locked and require lockpick
+      treasureChests: [
+        { rect: nrect(0.053, 0.339, 0.102, 0.035), locked: false },
+        { rect: nrect(0.126, 0.579, 0.106, 0.041), locked: false },
+        { rect: nrect(0.811, 0.171, 0.102, 0.054), locked: false },
+        { rect: nrect(0.776, 0.424, 0.140, 0.039), locked: false },
+        { rect: nrect(0.801, 0.640, 0.110, 0.049), locked: false },
+        { rect: nrect(0.650, 0.843, 0.124, 0.031), locked: true },
+        { rect: nrect(0.140, 0.806, 0.150, 0.050), locked: true },
+      ],
       // Exit zone placed at the top-middle, right where the player spawns
       toEntrance: nrect(0.45, 0.08, 0.10, 0.06),
       onExitToEntrance: () => {
@@ -350,13 +407,14 @@ export default function Game() {
     Promise.all([
       loadImage(ASSETS.villageBg),
       loadImage(ASSETS.tavernBg),
+      loadImage(ASSETS.marketBg),
       loadImage(ASSETS.pathBg),
       loadImage(ASSETS.dungeonBg),
       loadImage(ASSETS.dungeonInteriorBg),
       loadImage(ASSETS.treasureBg),
-    ]).then(([villageBg, tavernBg, pathBg, dungeonBg, dungeonInteriorBg, treasureBg]) => {
+    ]).then(([villageBg, tavernBg, marketBg, pathBg, dungeonBg, dungeonInteriorBg, treasureBg]) => {
       if (cancelled) return
-      imagesRef.current = { villageBg, tavernBg, pathBg, dungeonBg, dungeonInteriorBg, treasureBg, player: null }
+      imagesRef.current = { villageBg, tavernBg, marketBg, pathBg, dungeonBg, dungeonInteriorBg, treasureBg, player: null }
       setReady(true)
     }).catch(() => {/* ignore for prototype */})
     return () => { cancelled = true }
@@ -427,10 +485,66 @@ export default function Game() {
     dwarf_armor: { name: 'Dwarf Armor', icon: ITEM_ICONS.dwarf_armor },
     dwarf_pickaxe: { name: 'Dwarf Pickaxe', icon: ITEM_ICONS.dwarf_pickaxe },
     ale_flask: { name: 'Ale Flask', icon: ITEM_ICONS.ale_flask },
+    speed_potion: { name: 'Speed Potion', icon: ITEM_ICONS.speed_potion || DEFAULT_ITEM_ICON('speedPotion') },
+    apple: { name: 'Apple', icon: ITEM_ICONS.apple || DEFAULT_ITEM_ICON('apple') },
+    // Gem loot (fallback to default icon if specific icon not provided)
+    ruby: { name: 'Ruby', icon: ITEM_ICONS.ruby || DEFAULT_ITEM_ICON('ruby') },
+    sapphire: { name: 'Sapphire', icon: ITEM_ICONS.sapphire || DEFAULT_ITEM_ICON('sapphire') },
+    emerald: { name: 'Emerald', icon: ITEM_ICONS.emerald || DEFAULT_ITEM_ICON('emerald') },
   }
 
   const makeItem = (id, count = 1) => ({ id, count })
   const getItemDef = (id) => ITEMS[id] || { name: id, icon: DEFAULT_ITEM_ICON(id) }
+
+  // Market catalog and easy-to-edit pricing
+  const MARKET_ITEMS = [
+    // Potions
+    { id: 'healing_potion', category: 'Potions' },
+    { id: 'mana_potion', category: 'Potions' },
+    { id: 'speed_potion', category: 'Potions' },
+    // Magic
+    { id: 'apprentice_staff', category: 'Magic' },
+    { id: 'spellbook', category: 'Magic' },
+    // Food
+    { id: 'apple', category: 'Food' },
+    { id: 'ale_flask', category: 'Food' },
+    // Weaponry
+    { id: 'iron_sword', category: 'Weaponry' },
+    { id: 'twin_daggers', category: 'Weaponry' },
+    { id: 'battle_axe', category: 'Weaponry' },
+    // Armor
+    { id: 'chainmail_armor', category: 'Armor' },
+    { id: 'leather_armor', category: 'Armor' },
+    { id: 'dwarf_armor', category: 'Armor' },
+    { id: 'cloth_robes', category: 'Armor' },
+    // Tools
+    { id: 'lockpicks', category: 'Tools' },
+    { id: 'dwarf_pickaxe', category: 'Tools' },
+  ]
+  const MARKET_PRICES = {
+    // Potions
+    healing_potion: { ruby: 1, sapphire: 0, emerald: 0 },
+    mana_potion:    { ruby: 0, sapphire: 1, emerald: 0 },
+    speed_potion:   { ruby: 0, sapphire: 0, emerald: 2 },
+    // Magic
+    apprentice_staff: { ruby: 3, sapphire: 1, emerald: 0 },
+    spellbook:        { ruby: 1, sapphire: 2, emerald: 0 },
+    // Food
+    apple:     { ruby: 0, sapphire: 0, emerald: 1 },
+    ale_flask: { ruby: 0, sapphire: 1, emerald: 1 },
+    // Weaponry
+    iron_sword:   { ruby: 2, sapphire: 0, emerald: 1 },
+    twin_daggers: { ruby: 2, sapphire: 1, emerald: 0 },
+    battle_axe:   { ruby: 3, sapphire: 0, emerald: 1 },
+    // Armor
+    chainmail_armor: { ruby: 4, sapphire: 0, emerald: 1 },
+    leather_armor:   { ruby: 1, sapphire: 0, emerald: 2 },
+    dwarf_armor:     { ruby: 5, sapphire: 1, emerald: 0 },
+    cloth_robes:     { ruby: 1, sapphire: 2, emerald: 0 },
+    // Tools
+    lockpicks:     { ruby: 0, sapphire: 1, emerald: 1 },
+    dwarf_pickaxe: { ruby: 2, sapphire: 0, emerald: 2 },
+  }
 
   function seedInventoryForClass(id) {
     const base = {
@@ -577,6 +691,159 @@ export default function Game() {
   }
   const sameItem = (a, b) => !!a && !!b && a.id === b.id
 
+  // ----- Loot/Chest helpers -----
+  // Track which treasure chests are opened (same order as scenes.treasureRoom.treasureChests)
+  const [treasureOpened, setTreasureOpened] = useState([false, false, false, false, false])
+
+  // Game notices (short on-screen messages)
+  const [notice, setNotice] = useState({ show: false, text: '' })
+  const noticeTimerRef = useRef(null)
+  const showNotice = (text, ms = 1800) => {
+    setNotice({ show: true, text })
+    if (noticeTimerRef.current) clearTimeout(noticeTimerRef.current)
+    noticeTimerRef.current = setTimeout(() => setNotice({ show: false, text: '' }), ms)
+  }
+
+  // Search/consume/add inventory helpers
+  const findFirstItem = (inv, id) => {
+    for (let i = 0; i < inv.storage.length; i++) {
+      const it = inv.storage[i]; if (it && it.id === id) return { section: 'storage', key: i, item: it }
+    }
+    for (let i = 0; i < inv.hotbar.length; i++) {
+      const it = inv.hotbar[i]; if (it && it.id === id) return { section: 'hotbar', key: i, item: it }
+    }
+    for (const key of Object.keys(inv.armor)) {
+      const it = inv.armor[key]; if (it && it.id === id) return { section: 'armor', key, item: it }
+    }
+    return null
+  }
+
+  const consumeOneItem = (inv, id) => {
+    const loc = findFirstItem(inv, id)
+    if (!loc) return { next: inv, consumed: false }
+    const cur = getSlot(inv, loc.section, loc.key)
+    const cnt = (cur.count || 1) - 1
+    const next = setSlot(inv, loc.section, loc.key, cnt > 0 ? { id: cur.id, count: cnt } : null)
+    return { next, consumed: true }
+  }
+
+  const addItemAnywhere = (inv, id, count) => {
+    if (!count || count <= 0) return { next: inv, remaining: 0 }
+    let remaining = count
+    let next = { armor: { ...inv.armor }, storage: inv.storage.slice(), hotbar: inv.hotbar.slice() }
+    // Merge into existing stacks
+    for (let i = 0; i < next.storage.length && remaining > 0; i++) {
+      const it = next.storage[i]; if (it && it.id === id) { next.storage[i] = { id, count: (it.count || 1) + 1 }; remaining-- }
+    }
+    for (let i = 0; i < next.hotbar.length && remaining > 0; i++) {
+      const it = next.hotbar[i]; if (it && it.id === id) { next.hotbar[i] = { id, count: (it.count || 1) + 1 }; remaining-- }
+    }
+    // Place into empties
+    for (let i = 0; i < next.storage.length && remaining > 0; i++) {
+      if (!next.storage[i]) { next.storage[i] = { id, count: 1 }; remaining-- }
+    }
+    for (let i = 0; i < next.hotbar.length && remaining > 0; i++) {
+      if (!next.hotbar[i]) { next.hotbar[i] = { id, count: 1 }; remaining-- }
+    }
+    return { next, remaining }
+  }
+
+  const addGemsToInventory = (counts) => {
+    setInventory((inv) => {
+      let next = inv
+      let leftover = 0
+      for (const [id, num] of Object.entries(counts)) {
+        let n = Number(num) || 0
+        while (n > 0) {
+          const res = addItemAnywhere(next, id, 1)
+          next = res.next
+          if (res.remaining > 0) { leftover += res.remaining; break }
+          n--
+        }
+      }
+      if (leftover > 0) showNotice('Your packs are full. Some gems could not be taken.')
+      return next
+    })
+  }
+
+  const rollGemLoot = () => {
+    const ri = (a,b)=> Math.floor(Math.random()*(b-a+1))+a
+    let total = ri(2,9)
+    if (Math.random() < 0.03) total = 10
+    const kinds = ['ruby','sapphire','emerald']
+    const counts = { ruby:0, sapphire:0, emerald:0 }
+    for (let i=0;i<total;i++) counts[kinds[ri(0,2)]]++
+    return counts
+  }
+
+  // ----- Market helpers: gem accounting and purchasing -----
+  const gemIds = ['ruby','sapphire','emerald']
+  const getGemTotals = (inv) => {
+    const totals = { ruby: 0, sapphire: 0, emerald: 0 }
+    const add = (it) => { if (!it) return; if (totals[it.id] !== undefined) totals[it.id] += (it.count || 1) }
+    Object.values(inv.armor).forEach(add)
+    inv.storage.forEach(add)
+    inv.hotbar.forEach(add)
+    return totals
+  }
+  const canAfford = (inv, cost) => {
+    const t = getGemTotals(inv)
+    return (t.ruby >= (cost.ruby||0)) && (t.sapphire >= (cost.sapphire||0)) && (t.emerald >= (cost.emerald||0))
+  }
+  const removeItemsById = (inv, id, count) => {
+    if (!count || count <= 0) return inv
+    let need = count
+    let next = { armor: { ...inv.armor }, storage: inv.storage.slice(), hotbar: inv.hotbar.slice() }
+    const takeFrom = (section, key) => {
+      if (need <= 0) return
+      const cur = getSlot(next, section, key)
+      if (!cur || cur.id !== id) return
+      const can = Math.min(need, cur.count || 1)
+      const left = (cur.count || 1) - can
+      next = setSlot(next, section, key, left > 0 ? { id, count: left } : null)
+      need -= can
+    }
+    // Prefer storage then hotbar then armor, but order doesn't matter much
+    for (let i=0;i<next.storage.length && need>0;i++) takeFrom('storage', i)
+    for (let i=0;i<next.hotbar.length && need>0;i++) takeFrom('hotbar', i)
+    for (const k of Object.keys(next.armor)) { if (need>0) takeFrom('armor', k) }
+    return next
+  }
+  const spendGems = (inv, cost) => {
+    let next = inv
+    for (const gid of gemIds) {
+      const n = cost[gid] || 0
+      if (n > 0) next = removeItemsById(next, gid, n)
+    }
+    return next
+  }
+  const hasSpaceForItem = (inv, id) => {
+    // merge into existing stack
+    for (let i=0;i<inv.storage.length;i++){ const it=inv.storage[i]; if (it && it.id===id) return true }
+    for (let i=0;i<inv.hotbar.length;i++){ const it=inv.hotbar[i]; if (it && it.id===id) return true }
+    // or any empty slot
+    if (inv.storage.some(it=>!it)) return true
+    if (inv.hotbar.some(it=>!it)) return true
+    return false
+  }
+
+  // Market purchase handler
+  const tryBuy = (id) => {
+    const price = MARKET_PRICES[id] || { ruby: 0, sapphire: 0, emerald: 0 }
+    markVendorActivity()
+    setInventory((inv) => {
+      if (!canAfford(inv, price)) { showNotice('Not enough gems.'); playVendor('NotEnoughMoney'); return inv }
+      if (!hasSpaceForItem(inv, id)) { showNotice('No space in packs.'); return inv }
+      const afterSpend = spendGems(inv, price)
+      const res = addItemAnywhere(afterSpend, id, 1)
+      if (res.remaining > 0) { showNotice('No space in packs.'); return inv }
+      showNotice(`Bought ${getItemDef(id).name}.`)
+      // Good choice line (if none currently playing)
+      playVendor('GoodChoice')
+      return res.next
+    })
+  }
+
   const handleSlotMouseDown = (e, section, key) => {
     // Left button only
     if (e.button !== 0) return
@@ -718,10 +985,70 @@ export default function Game() {
   useEffect(() => { activeHotbarRef.current = activeHotbar }, [activeHotbar])
   useEffect(() => { titleOpenRef.current = titleOpen }, [titleOpen])
   useEffect(() => { optionsOpenRef.current = optionsOpen }, [optionsOpen])
+  useEffect(() => { shopOpenRef.current = shopOpen }, [shopOpen])
   useEffect(() => { localStorage.setItem('volume', String(volume)) }, [volume])
+  useEffect(() => { localStorage.setItem('ttsEnabled', String(ttsEnabled)) }, [ttsEnabled])
+  useEffect(() => { localStorage.setItem('ttsVolume', String(ttsVolume)) }, [ttsVolume])
   useEffect(() => { localStorage.setItem('allowQDrop', String(allowQDrop)) }, [allowQDrop])
   useEffect(() => { localStorage.setItem('allowFSwap', String(allowFSwap)) }, [allowFSwap])
   useEffect(() => { allowFSwapRef.current = allowFSwap }, [allowFSwap])
+
+  // ----- Vendor voice lines (market) -----
+  const VENDOR_AUDIO_BASE = '/audio/vendor'
+  const VENDOR_LINES = {
+    Greeting: ['Greeting1.mp3','Greeting2.mp3','Greeting3.mp3'],
+    GoodChoice: ['GoodChoice1.mp3','GoodChoice2.mp3','GoodChoice3.mp3'],
+    NotEnoughMoney: ['NotEnoughMoney1.mp3','NotEnoughMoney2.mp3','NotEnoughMoney3.mp3'],
+    Farewell: ['Farewell1.mp3','Farewell2.mp3'],
+    SpeedUp: ['SpeedUp1.mp3','SpeedUp2.mp3'],
+  }
+  // Remember last variant used per category to avoid repeats
+  const vendorLastRef = useRef({}) // { [category: string]: string }
+  const vendorChooseVariant = (category) => {
+    const arr = VENDOR_LINES[category]
+    if (!arr || arr.length === 0) return null
+    const last = vendorLastRef.current[category]
+    const candidates = arr.filter((f) => f !== last)
+    const pool = candidates.length > 0 ? candidates : arr
+    const choice = pool[Math.floor(Math.random() * pool.length)]
+    vendorLastRef.current[category] = choice
+    return choice
+  }
+  const isVendorPlaying = () => {
+    const a = vendorAudioRef.current
+    return !!(a && !a.paused && !a.ended)
+  }
+  const playVendor = (category) => {
+    try {
+      if (!VENDOR_LINES[category] || VENDOR_LINES[category].length === 0) return
+      if (isVendorPlaying()) return // no overlap
+      let a = vendorAudioRef.current
+      if (!a) {
+        a = new Audio()
+        a.preload = 'auto'
+        vendorAudioRef.current = a
+      }
+      a.volume = Math.max(0, Math.min(1, ttsVolume / 100))
+      const file = vendorChooseVariant(category)
+      if (!file) return
+      a.src = `${VENDOR_AUDIO_BASE}/${file}`
+      // Fire and forget; if blocked, skip silently
+      const p = a.play()
+      if (p && typeof p.then === 'function') p.catch(()=>{
+        // If autoplay is blocked, retry on next pointerdown once
+        const unlock = () => {
+          a.play().finally(() => document.removeEventListener('pointerdown', unlock))
+        }
+        document.addEventListener('pointerdown', unlock, { once: true })
+      })
+    } catch {}
+  }
+  const closeShop = () => { try { playVendor('Farewell') } catch {}; setShopOpen(false) }
+  // Keep vendor volume in sync with TTS volume slider
+  useEffect(() => {
+    const a = vendorAudioRef.current
+    if (a) a.volume = Math.max(0, Math.min(1, ttsVolume / 100))
+  }, [ttsVolume])
 
   // Music: play only on Intro (titleOpen) and in Village; pause elsewhere
   // Create audio lazily and try to start on first user interaction if autoplay is blocked
@@ -746,7 +1073,8 @@ export default function Game() {
 
   // React to scene/title and play/pause accordingly
   useEffect(() => {
-    const shouldPlay = titleOpen || scene === 'village'
+    // Play music on title, village, and path; pause in tavern, market, and all cave scenes
+    const shouldPlay = titleOpen || scene === 'village' || scene === 'path'
     const audio = ensureMusic()
     if (!audio) return
     audio.volume = Math.max(0, Math.min(1, volume / 100))
@@ -770,6 +1098,14 @@ export default function Game() {
       try { audio.pause() } catch {}
     }
   }, [titleOpen, scene])
+
+  // Play vendor greeting when entering the Market scene
+  useEffect(() => {
+    if (scene === 'market') {
+      // Entering market is user initiated (E), so playback should be allowed
+      playVendor('Greeting')
+    }
+  }, [scene])
 
   // Keep music volume in sync with Options slider
   useEffect(() => {
@@ -799,6 +1135,25 @@ export default function Game() {
     window.addEventListener('mousemove', onMove)
     return () => window.removeEventListener('mousemove', onMove)
   }, [hudTip.show])
+
+  // Track inactivity in the shop to trigger SpeedUp vendor lines
+  const lastVendorActivityRef = useRef(Date.now())
+  const markVendorActivity = () => { lastVendorActivityRef.current = Date.now() }
+  useEffect(() => {
+    if (!shopOpen) return
+    // Reset on open
+    lastVendorActivityRef.current = Date.now()
+    const id = setInterval(() => {
+      const now = Date.now()
+      if (now - lastVendorActivityRef.current > 25000) {
+        // Try to play a SpeedUp line (skips if something is already playing)
+        playVendor('SpeedUp')
+        // Reset timer so it won't fire continuously
+        lastVendorActivityRef.current = now
+      }
+    }, 1000)
+    return () => clearInterval(id)
+  }, [shopOpen])
 
   // Show fading label for current hotbar item when selection changes
   useEffect(() => {
@@ -887,6 +1242,10 @@ export default function Game() {
           setChatInput('')
         }
       }
+      // Close shop with Escape
+      if (e.key === 'Escape' && shopOpenRef.current) {
+        closeShop()
+      }
       // Close inventory with Escape
       if (e.key === 'Escape' && inventoryOpenRef.current) {
         returnDraggedToInventory()
@@ -900,7 +1259,7 @@ export default function Game() {
       // Scroll to cycle hotbar like Minecraft (when not typing and no overlays)
       const tag = (e.target?.tagName || '').toLowerCase()
       const typing = tag === 'input' || tag === 'textarea' || (e.target && e.target.isContentEditable)
-      if (typing || titleOpenRef.current || optionsOpenRef.current || inventoryOpenRef.current || chatOpenRef.current) return
+  if (typing || titleOpenRef.current || optionsOpenRef.current || inventoryOpenRef.current || chatOpenRef.current || shopOpenRef.current) return
       const delta = e.deltaY
       if (delta === 0) return
       e.preventDefault()
@@ -999,7 +1358,7 @@ export default function Game() {
       // Update (pause movement when any overlay is open)
       const speed = playerRef.current.speed
       let vx = 0, vy = 0
-      if (!chatOpenRef.current && !classSelectOpenRef.current && !inventoryOpenRef.current && !titleOpenRef.current && !optionsOpenRef.current) {
+  if (!chatOpenRef.current && !classSelectOpenRef.current && !inventoryOpenRef.current && !titleOpenRef.current && !optionsOpenRef.current && !shopOpenRef.current) {
         if (keysRef.current['w'] || keysRef.current['arrowup']) vy -= 1
         if (keysRef.current['s'] || keysRef.current['arrowdown']) vy += 1
         if (keysRef.current['a'] || keysRef.current['arrowleft']) vx -= 1
@@ -1038,8 +1397,8 @@ export default function Game() {
   playerRef.current.y = Math.min(Math.max(playerRef.current.y, dy), dy + dh - playerRef.current.h)
 
       // Interact (E)
-      const eDown = !!(keysRef.current['e'])
-      if (!chatOpenRef.current && eDown && !interactLatch) {
+  const eDown = !!(keysRef.current['e'])
+  if (!chatOpenRef.current && !shopOpenRef.current && eDown && !interactLatch) {
         interactLatch = true
         // Village enter door
         if (sceneRef.current === 'village' && sdef.door) {
@@ -1061,6 +1420,13 @@ export default function Game() {
             sdef.onTravelSouth?.()
           }
         }
+        // Village enter market
+        if (sceneRef.current === 'village' && sdef.toMarket) {
+          const zonePx = mapRect(sdef.toMarket)
+          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
+            sdef.onEnterMarket?.()
+          }
+        }
         // Tavern exit
         if (sceneRef.current === 'tavern' && sdef.exit) {
           const exitPx = mapRect(sdef.exit)
@@ -1080,6 +1446,13 @@ export default function Game() {
           const zonePx = mapRect(sdef.toVillage)
           if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
             sdef.onReturn?.()
+          }
+        }
+        // Market exit to village (bottom-middle)
+        if (sceneRef.current === 'market' && sdef.toVillage) {
+          const zonePx = mapRect(sdef.toVillage)
+          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
+            sdef.onExitToVillage?.()
           }
         }
         // Dungeon exit back to path (near spawn)
@@ -1123,6 +1496,38 @@ export default function Game() {
             sdef.onExitToEntrance?.()
           }
         }
+        // Treasure room chests (open with E)
+        if (sceneRef.current === 'treasureRoom' && Array.isArray(sdef.treasureChests)) {
+          for (let i = 0; i < sdef.treasureChests.length; i++) {
+            if (treasureOpened[i]) continue
+            const chest = sdef.treasureChests[i]
+            const cpx = mapRect(chest.rect)
+            const playerBox = { x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }
+            if (intersects(playerBox, cpx)) {
+              if (chest.locked) {
+                let hadLockpick = false
+                setInventory(inv => {
+                  const res = consumeOneItem(inv, 'lockpicks')
+                  hadLockpick = res.consumed
+                  return res.next
+                })
+                if (!hadLockpick) {
+                  showNotice('Locked. Requires lockpicks.')
+                  break
+                }
+              }
+              const loot = rollGemLoot()
+              const parts = []
+              if (loot.ruby) parts.push(`${loot.ruby} Rub${loot.ruby>1?'ies':'y'}`)
+              if (loot.sapphire) parts.push(`${loot.sapphire} Sapphire${loot.sapphire>1?'s':''}`)
+              if (loot.emerald) parts.push(`${loot.emerald} Emerald${loot.emerald>1?'s':''}`)
+              addGemsToInventory(loot)
+              showNotice(parts.length ? `You found ${parts.join(', ')}!` : 'The chest was empty...')
+              setTreasureOpened(arr => { const n = arr.slice(); n[i] = true; return n })
+              break
+            }
+          }
+        }
         // Tavern bartender interact -> open chat if near
         if (sceneRef.current === 'tavern' && scenes.tavern.bartender) {
           const b = scenes.tavern.bartender
@@ -1136,6 +1541,16 @@ export default function Game() {
             setChatTurns(0)
             setChatInput('')
             setChatMode('topics')
+          }
+        }
+        // Market vendor interact -> open shop overlay
+        if (sceneRef.current === 'market' && sdef.vendor) {
+          const vz = mapRect(sdef.vendor)
+          const playerBox = { x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }
+          if (intersects(playerBox, vz)) {
+            setShopOpen(true)
+            markVendorActivity()
+            playVendor('Greeting')
           }
         }
       } else if (!eDown) {
@@ -1198,8 +1613,12 @@ export default function Game() {
       if (sceneRef.current === 'village') {
         if (sdef.door) prompts.push({ rect: sdef.door, label: 'Press E to enter' })
         if (sdef.toPath) prompts.push({ rect: sdef.toPath, label: 'Press E to travel' })
+        if (sdef.toMarket) prompts.push({ rect: sdef.toMarket, label: 'Press E to enter market' })
       } else if (sceneRef.current === 'tavern') {
         if (sdef.exit) prompts.push({ rect: sdef.exit, label: 'Press E to exit' })
+      } else if (sceneRef.current === 'market') {
+        if (sdef.toVillage) prompts.push({ rect: sdef.toVillage, label: 'Press E to exit' })
+        if (sdef.vendor) prompts.push({ rect: sdef.vendor, label: 'Press E to talk to vendor' })
       } else if (sceneRef.current === 'path') {
         if (sdef.toVillage) prompts.push({ rect: sdef.toVillage, label: 'Press E to return' })
         if (sdef.toDungeon) prompts.push({ rect: sdef.toDungeon, label: 'Press E to enter dungeon' })
@@ -1211,6 +1630,12 @@ export default function Game() {
         if (sdef.toEntrance) prompts.push({ rect: sdef.toEntrance, label: 'Press E to exit' })
       } else if (sceneRef.current === 'treasureRoom') {
         if (sdef.toEntrance) prompts.push({ rect: sdef.toEntrance, label: 'Press E to exit' })
+        if (Array.isArray(sdef.treasureChests)) {
+          sdef.treasureChests.forEach((ch, i) => {
+            if (treasureOpened[i]) return
+            prompts.push({ rect: ch.rect, label: ch.locked ? 'Press E to pick lock' : 'Press E to open chest' })
+          })
+        }
       }
       for (const p of prompts) {
         const pr = mapRect(p.rect)
@@ -1353,18 +1778,40 @@ export default function Game() {
       const reply = res?.reply || ''
       setChatMessages(msgs => [...msgs, { role: 'assistant', content: reply }])
       // Speak bartender reply (text-to-speech)
-      try {
-        const audioBlob = await apiFetchTTS({ text: reply })
-        const url = URL.createObjectURL(audioBlob)
-        const audio = new Audio(url)
-        audio.addEventListener('ended', () => URL.revokeObjectURL(url), { once: true })
-        // Match options volume roughly (0..100 -> 0..1); independent of musicRef
-        audio.volume = Math.max(0, Math.min(1, (volume || 100) / 100))
-        await audio.play().catch(() => {/* autoplay may block; play on first pointer */})
-      } catch (e) {
-        // Non-fatal: keep chat flowing even if TTS fails
-        if (process.env.NODE_ENV !== 'production') {
-          console.warn('[TTS] Failed to play audio:', e?.message || e)
+      if (ttsEnabled && reply) {
+        // Prefer streaming playback via MediaSource; fall back to blob if unavailable
+        const mime = 'audio/mpeg'
+        const canStream = typeof window !== 'undefined' && window.MediaSource && typeof window.MediaSource.isTypeSupported === 'function' && window.MediaSource.isTypeSupported(mime)
+        if (canStream) {
+          try {
+            const bodyStream = await apiStreamTTS({ text: reply })
+            await playStreamingAudio(bodyStream, { mime, volume: Math.max(0, Math.min(1, (ttsVolume || 100) / 100)) })
+          } catch (e) {
+            if (process.env.NODE_ENV !== 'production') console.warn('[TTS] Streaming failed, falling back to blob:', e?.message || e)
+            // Fallback to blob-based playback
+            try {
+              const audioBlob = await apiFetchTTS({ text: reply })
+              const url = URL.createObjectURL(audioBlob)
+              const audio = new Audio(url)
+              audio.addEventListener('ended', () => URL.revokeObjectURL(url), { once: true })
+              audio.volume = Math.max(0, Math.min(1, (ttsVolume || 100) / 100))
+              await audio.play().catch(() => {/* autoplay may block */})
+            } catch (e2) {
+              if (process.env.NODE_ENV !== 'production') console.warn('[TTS] Fallback playback failed:', e2?.message || e2)
+            }
+          }
+        } else {
+          // No MSE support: fallback
+          try {
+            const audioBlob = await apiFetchTTS({ text: reply })
+            const url = URL.createObjectURL(audioBlob)
+            const audio = new Audio(url)
+            audio.addEventListener('ended', () => URL.revokeObjectURL(url), { once: true })
+            audio.volume = Math.max(0, Math.min(1, (ttsVolume || 100) / 100))
+            await audio.play().catch(() => {/* autoplay may block */})
+          } catch (e) {
+            if (process.env.NODE_ENV !== 'production') console.warn('[TTS] Failed to play audio:', e?.message || e)
+          }
         }
       }
     } catch (err) {
@@ -1628,6 +2075,67 @@ export default function Game() {
             </div>
           </div>
         )}
+        {shopOpen && scene === 'market' && (
+          <div className="absolute inset-0 z-30 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/60" onClick={() => closeShop()} />
+            <div className="relative z-10 w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl border border-amber-900/40 bg-stone-900/95 shadow-xl p-5">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="font-display text-2xl text-amber-200">Market Stall</h3>
+                  <p className="text-stone-300/80 text-sm">Browse wares by category and pay with gems.</p>
+                </div>
+                <button onClick={() => closeShop()} className="px-3 py-1.5 rounded-lg bg-stone-800/90 hover:bg-stone-700 text-amber-200 border border-amber-900/40">Close</button>
+              </div>
+              <div className="flex items-center gap-4 mb-4 text-sm">
+                <span className="text-stone-300/80">Your gems:</span>
+                <span className="px-2 py-0.5 rounded bg-stone-800/80 border border-amber-900/40 text-amber-200">R {inventoryTotals.ruby||0}</span>
+                <span className="px-2 py-0.5 rounded bg-stone-800/80 border border-amber-900/40 text-amber-200">S {inventoryTotals.sapphire||0}</span>
+                <span className="px-2 py-0.5 rounded bg-stone-800/80 border border-amber-900/40 text-amber-200">E {inventoryTotals.emerald||0}</span>
+              </div>
+              <div className="mb-3 flex flex-wrap gap-2">
+                {['Potions','Magic','Food','Weaponry','Armor','Tools'].map(cat => (
+                  <button
+                    key={cat}
+                    onClick={() => { setShopCategory(cat); markVendorActivity() }}
+                    className={[
+                      'px-3 py-1.5 rounded-lg border',
+                      shopCategory === cat ? 'bg-amber-600 text-stone-900 border-amber-400' : 'bg-stone-800/70 text-amber-200 border-amber-900/40 hover:bg-stone-700'
+                    ].join(' ')}
+                  >{cat}</button>
+                ))}
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                {MARKET_ITEMS.filter(it => it.category === shopCategory).map((it) => {
+                  const def = getItemDef(it.id)
+                  const price = MARKET_PRICES[it.id] || { ruby:0,sapphire:0,emerald:0 }
+                  const afford = canAfford(inventory, price)
+                  const space = hasSpaceForItem(inventory, it.id)
+                  return (
+                    <div key={it.id} className="rounded-xl border border-amber-900/40 bg-stone-800/70 p-3 flex flex-col gap-2">
+                      <div className="flex items-center gap-3">
+                        <img src={def.icon} alt={def.name} className="w-10 h-10 object-contain" onError={(e)=>{ e.currentTarget.style.display='none' }} />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-amber-200 font-medium truncate">{def.name}</div>
+                          <div className="text-xs text-stone-300/80 flex gap-2 mt-0.5">
+                            {price.ruby>0 && <span className="px-1 rounded bg-stone-900/60 border border-amber-900/40">R {price.ruby}</span>}
+                            {price.sapphire>0 && <span className="px-1 rounded bg-stone-900/60 border border-amber-900/40">S {price.sapphire}</span>}
+                            {price.emerald>0 && <span className="px-1 rounded bg-stone-900/60 border border-amber-900/40">E {price.emerald}</span>}
+                            {(price.ruby||0)+(price.sapphire||0)+(price.emerald||0)===0 && <span className="px-1 rounded bg-stone-900/60 border border-amber-900/40">Free</span>}
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => tryBuy(it.id)}
+                        disabled={!afford || !space}
+                        className={[ 'mt-auto px-3 py-1.5 rounded-lg font-semibold', (!afford || !space) ? 'bg-stone-700 text-stone-400 cursor-not-allowed' : 'bg-amber-600 hover:bg-amber-500 text-stone-900' ].join(' ')}
+                      >{(!afford) ? 'Not enough gems' : (!space) ? 'No space' : 'Buy'}</button>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+        )}
         {!ready && (
           <div className="absolute inset-0 flex items-center justify-center text-stone-200">
             Loading assets…
@@ -1677,7 +2185,7 @@ export default function Game() {
               <div className="space-y-5">
                 <label className="block">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-stone-200">Volume</span>
+                    <span className="text-stone-200">Music volume</span>
                     <span className="text-stone-300/80 text-sm">{volume}%</span>
                   </div>
                   <input
@@ -1689,7 +2197,25 @@ export default function Game() {
                     className="w-full accent-amber-500"
                   />
                 </label>
+                <label className="block">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-stone-200">NPC voice volume</span>
+                    <span className="text-stone-300/80 text-sm">{ttsVolume}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    value={ttsVolume}
+                    onChange={(e) => setTtsVolume(Number(e.target.value))}
+                    className="w-full accent-amber-500"
+                  />
+                </label>
                 <div className="grid grid-cols-1 gap-3">
+                  <label className="flex items-center gap-2 select-none">
+                    <input type="checkbox" checked={ttsEnabled} onChange={(e)=>setTtsEnabled(e.target.checked)} className="accent-amber-500" />
+                    <span className="text-stone-200">Speak bartender replies (TTS)</span>
+                  </label>
                   <label className="flex items-center gap-2 select-none">
                     <input type="checkbox" checked={allowQDrop} onChange={(e)=>setAllowQDrop(e.target.checked)} className="accent-amber-500" />
                     <span className="text-stone-200">Enable Q to drop one from selected hotbar</span>
@@ -1826,6 +2352,13 @@ export default function Game() {
           </div>
         )}
 
+        {/* Transient game notice for loot/locks */}
+        {notice.show && (
+          <div className="absolute top-6 left-1/2 -translate-x-1/2 z-30 px-3 py-1.5 rounded bg-stone-900/80 border border-amber-900/50 text-amber-200 shadow">
+            {notice.text}
+          </div>
+        )}
+
         {classSelectOpen && (
           <div className="absolute inset-0 z-30 flex items-center justify-center p-4">
             <div className="w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-stone-900/95 backdrop-blur border border-amber-900/40 rounded-2xl p-5 shadow-xl shadow-black/50">
@@ -1880,3 +2413,82 @@ export default function Game() {
     </div>
   )
 }
+
+// Stream an MP3 over a ReadableStream into MediaSource for immediate playback
+async function playStreamingAudio(readableStream, { mime = 'audio/mpeg', volume = 1.0 } = {}) {
+  return new Promise((resolve, reject) => {
+    try {
+      const mediaSource = new MediaSource()
+      const url = URL.createObjectURL(mediaSource)
+      const audio = new Audio(url)
+      audio.volume = Math.max(0, Math.min(1, volume))
+
+      let sourceBuffer = null
+      let reader = null
+      const queue = []
+      let streamEnded = false
+
+      const onError = (e) => {
+        try { URL.revokeObjectURL(url) } catch {}
+        reject(e instanceof Error ? e : new Error(String(e)))
+      }
+
+      mediaSource.addEventListener('sourceopen', async () => {
+        try {
+          sourceBuffer = mediaSource.addSourceBuffer(mime)
+          reader = readableStream.getReader()
+
+          const feed = () => {
+            if (!sourceBuffer || sourceBuffer.updating) return
+            const chunk = queue.shift()
+            if (chunk) {
+              try { sourceBuffer.appendBuffer(chunk) } catch (e) { onError(e) }
+            } else if (streamEnded) {
+              try { mediaSource.endOfStream() } catch {}
+            }
+          }
+
+          sourceBuffer.addEventListener('updateend', feed)
+
+          // Start pulling chunks
+          ;(async function pump() {
+            try {
+              while (true) {
+                const { value, done } = await reader.read()
+                if (done) {
+                  streamEnded = true
+                  feed()
+                  break
+                }
+                const chunk = value && value.buffer ? new Uint8Array(value.buffer) : new Uint8Array(value || [])
+                queue.push(chunk)
+                feed()
+              }
+            } catch (e) {
+              onError(e)
+            }
+          })()
+        } catch (e) {
+          onError(e)
+        }
+      }, { once: true })
+
+      audio.addEventListener('ended', () => {
+        try { URL.revokeObjectURL(url) } catch {}
+        resolve()
+      }, { once: true })
+      audio.addEventListener('error', (e) => onError(new Error('Audio element error')), { once: true })
+
+      // Try to begin playback; browser may wait for buffer
+      const p = audio.play()
+      if (p && typeof p.then === 'function') {
+        p.catch(() => { /* autoplay might be blocked; user gesture will start it */ })
+      }
+    } catch (e) {
+      reject(e)
+    }
+  })
+}
+
+// Helper to close the shop and play vendor Farewell without overlapping
+// (moved inside component scope below)

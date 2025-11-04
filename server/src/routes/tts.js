@@ -32,16 +32,17 @@ router.post('/tts', async (req, res, next) => {
     // Stream endpoint returns audio bytes directly
     const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream`
 
+    // Stream response directly without buffering to enable incremental playback in the client
     const response = await axios.post(
       url,
       {
         text,
         model_id: modelId,
         output_format: outputFormat,
-        voice_settings: voiceSettings || { stability: 0.3, similarity_boost: 0.90, style: 0.5, speed: 1.1},
+        voice_settings: voiceSettings || { stability: 0.3, similarity_boost: 0.90, style: 0.5, speed: 1.1 },
       },
       {
-        responseType: 'arraybuffer',
+        responseType: 'stream',
         headers: {
           'xi-api-key': apiKey,
           'Content-Type': 'application/json',
@@ -51,10 +52,11 @@ router.post('/tts', async (req, res, next) => {
       }
     )
 
-    const audio = Buffer.from(response.data)
     res.setHeader('Content-Type', 'audio/mpeg')
-    res.setHeader('Content-Length', audio.length)
-    return res.status(200).send(audio)
+    // Do not set Content-Length to allow chunked transfer encoding
+    response.data.on('error', (e) => next(e))
+    response.data.pipe(res)
+    return
   } catch (err) {
     const status = err?.response?.status || err.status || 500
     const detailBuf = err?.response?.data

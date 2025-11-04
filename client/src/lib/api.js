@@ -27,3 +27,18 @@ export async function fetchTTS({ text, voiceId, modelId, outputFormat } = {}) {
   const blob = await res.blob()
   return blob
 }
+
+// Stream TTS audio (chunked) and return the ReadableStream of audio bytes
+export async function streamTTS({ text, voiceId, modelId, outputFormat } = {}) {
+  const res = await fetch(`${API_BASE}/tts`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text, voiceId, modelId, outputFormat })
+  })
+  if (!res.ok) {
+    const textErr = await res.text().catch(() => '')
+    throw new Error(`TTS error: ${res.status} ${textErr}`)
+  }
+  if (!res.body) throw new Error('Streaming not supported: no response body stream')
+  return res.body
+}

@@ -11,6 +11,7 @@ export const AUDIO_BASE = '/audio'
 export const PATHS = {
   villageBg: encodeURI(`${IMAGES_BASE}/start village screen.png`),
   tavernBg: `${IMAGES_BASE}/tavern.png`,
+  marketBg: `${IMAGES_BASE}/market.png`,
   walkingPath: `${IMAGES_BASE}/walkingPath.png`,
   dungeonEntrance: encodeURI(`${IMAGES_BASE}/dungeon entrance.png`),
   dungeonInterior: `${IMAGES_BASE}/dungeon.png`,
@@ -37,6 +38,8 @@ export const ITEM_ICONS = {
   wooden_shield: `${IMAGES_BASE}/knightShield.png`,
   chainmail_armor: `${IMAGES_BASE}/knightArmor.png`,
   healing_potion: `${IMAGES_BASE}/healPotion.png`,
+  speed_potion: `${IMAGES_BASE}/speedPotion.png`,
+  apple: `${IMAGES_BASE}/apple.png`,
 
   apprentice_staff: `${IMAGES_BASE}/mageStaff.png`,
   spellbook: `${IMAGES_BASE}/mageSpellBook.png`,
