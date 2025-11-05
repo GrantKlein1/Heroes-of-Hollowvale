@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react'
 import { sendChat as apiSendChat, fetchTTS as apiFetchTTS, streamTTS as apiStreamTTS } from './lib/api'
-import { PATHS, CLASS_SPRITES, ITEM_ICONS, DEFAULT_ITEM_ICON, COMPOSITE_SPRITES, ANIMATED_SWORD_FRAMES } from './config/paths'
+import { PATHS, CLASS_SPRITES, CLASS_ATTACK_SPRITES, ITEM_ICONS, DEFAULT_ITEM_ICON, COMPOSITE_SPRITES, ANIMATED_SWORD_FRAMES } from './config/paths'
 import AnimatedSprite from './components/AnimatedSprite'
 
 // Simple top-down RPG prototype with two scenes: Village and Tavern
@@ -68,6 +68,8 @@ export default function Game() {
   // Class selection overlay (opens after Start Game)
   const [classSelectOpen, setClassSelectOpen] = useState(false)
   const [selectedClass, setSelectedClass] = useState(null)
+  // Live ref for selectedClass so key handlers see the latest value
+  const selectedClassRef = useRef(null)
   // Debug picker state
   const frameRef = useRef({ dx: 0, dy: 0, dw: 1, dh: 1 })
   const mouseRef = useRef({ nx: 0, ny: 0 })
@@ -109,6 +111,12 @@ export default function Game() {
     storage: Array(27).fill(null),
     hotbar: Array(9).fill(null),
   })
+  // Live ref for inventory so key handlers see the latest value
+  const inventoryRef = useRef({
+    armor: { head: null, chest: null, legs: null, boots: null, offhand: null },
+    storage: Array(27).fill(null),
+    hotbar: Array(9).fill(null),
+  })
   // Inventory drag state
   const [invDrag, setInvDrag] = useState(null) // { item:{id,count}, from:{ section:'armor'|'storage'|'hotbar', key:string|number } | null }
   const [invMouse, setInvMouse] = useState({ x: 0, y: 0 })
@@ -116,9 +124,12 @@ export default function Game() {
   const [activeHotbar, setActiveHotbar] = useState(0) // 0..8 like Minecraft
   const activeHotbarRef = useRef(0)
   // Options toggles for hotbar behaviors
-  const [allowQDrop, setAllowQDrop] = useState(() => (localStorage.getItem('allowQDrop') ?? 'true') !== 'false')
   const [allowFSwap, setAllowFSwap] = useState(() => (localStorage.getItem('allowFSwap') ?? 'true') !== 'false')
   const allowFSwapRef = useRef(allowFSwap)
+  // Attack animation state
+  const attackUntilRef = useRef(0)
+  const ATTACK_DURATION_MS = 1000 // duration to show attack pose; adjust as desired
+  const attackActiveRef = useRef(false) // true while attack pose is displayed
   // HUD tooltip and selection label
   const [hudTip, setHudTip] = useState({ show: false, text: '', x: 0, y: 0 })
   const [hotbarLabel, setHotbarLabel] = useState({ text: '', show: false })
@@ -623,13 +634,13 @@ export default function Game() {
     return last.charAt(0).toUpperCase() + last.slice(1)
   }
 
-  // Update player sprite when the selected hotbar item or offhand changes
-  useEffect(() => {
-    const cls = selectedClass
+  // Helper to apply current composite/base sprite
+  const applyCurrentSprite = () => {
+    const cls = selectedClassRef.current
     if (!cls) return
     const baseSprite = CLASSES[cls]?.sprite
-    const main = inventory.hotbar[activeHotbar]
-    const offhand = inventory.armor.offhand
+    const main = inventoryRef.current?.hotbar?.[activeHotbarRef.current]
+    const offhand = inventoryRef.current?.armor?.offhand
 
     const setPlayerImage = (src) => {
       loadImage(src).then(img => { imagesRef.current.player = img }).catch(() => {})
@@ -645,7 +656,7 @@ export default function Game() {
       return
     }
 
-    const itemTag = ITEM_SPRITE_TAGS[main.id] || deriveItemTagFromName(getItemDef(main.id)?.name)
+  const itemTag = ITEM_SPRITE_TAGS[main.id] || deriveItemTagFromName(getItemDef(main.id)?.name)
     if (!itemTag) {
       if (baseSprite) setPlayerImage(baseSprite)
       return
@@ -668,6 +679,12 @@ export default function Game() {
       // No explicit mapping — fall back to base class sprite
       if (baseSprite) setPlayerImage(baseSprite)
     }
+  }
+
+  // Update player sprite when the selected hotbar item or offhand changes (unless attack pose is active)
+  useEffect(() => {
+    if (performance.now() < attackUntilRef.current) return
+    applyCurrentSprite()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedClass, activeHotbar, inventory.hotbar[activeHotbar]?.id, inventory.armor.offhand?.id])
 
@@ -989,9 +1006,11 @@ export default function Game() {
   useEffect(() => { localStorage.setItem('volume', String(volume)) }, [volume])
   useEffect(() => { localStorage.setItem('ttsEnabled', String(ttsEnabled)) }, [ttsEnabled])
   useEffect(() => { localStorage.setItem('ttsVolume', String(ttsVolume)) }, [ttsVolume])
-  useEffect(() => { localStorage.setItem('allowQDrop', String(allowQDrop)) }, [allowQDrop])
   useEffect(() => { localStorage.setItem('allowFSwap', String(allowFSwap)) }, [allowFSwap])
   useEffect(() => { allowFSwapRef.current = allowFSwap }, [allowFSwap])
+  // Keep selectedClass/inventory refs in sync for non-reactive event handlers
+  useEffect(() => { selectedClassRef.current = selectedClass }, [selectedClass])
+  useEffect(() => { inventoryRef.current = inventory }, [inventory])
 
   // ----- Vendor voice lines (market) -----
   const VENDOR_AUDIO_BASE = '/audio/vendor'
@@ -1201,20 +1220,30 @@ export default function Game() {
           const idx = Number(code) - 1
           setActiveHotbar(idx)
         }
-        // Drop one item from selected slot with Q
-        if ((code === 'q' || code === 'Q') && allowQDrop) {
-          setInventory(inv => {
-            const cur = inv.hotbar[activeHotbarRef.current]
-            if (!cur) return inv
-            const next = {
-              armor: { ...inv.armor },
-              storage: inv.storage.slice(),
-              hotbar: inv.hotbar.slice(),
-            }
-            const newCount = (cur.count || 1) - 1
-            next.hotbar[activeHotbarRef.current] = newCount > 0 ? { id: cur.id, count: newCount } : null
-            return next
-          })
+        // Q: Attack if appropriate weapon is selected; otherwise fallback to drop-one if enabled
+        if (code === 'q' || code === 'Q') {
+          // Avoid extending the attack by key-repeat or spamming
+          if (e.repeat) return
+          const now = performance.now()
+          if (now < attackUntilRef.current) return
+          const cls = selectedClassRef.current
+          const curItem = inventoryRef.current?.hotbar?.[activeHotbarRef.current]
+          const weaponByClass = {
+            knight: 'iron_sword',
+            mage: 'apprentice_staff',
+            thief: 'twin_daggers',
+            dwarf: 'battle_axe',
+          }
+          const attackSprite = cls ? CLASS_ATTACK_SPRITES[cls] : null
+          const neededItem = cls ? weaponByClass[cls] : null
+          const hasWeaponEquipped = !!(curItem && neededItem && curItem.id === neededItem)
+          const canAttack = !!(cls && attackSprite && hasWeaponEquipped)
+          if (canAttack) {
+            // Show attack pose and mark active; main loop will revert when time elapses
+            attackUntilRef.current = now + ATTACK_DURATION_MS
+            attackActiveRef.current = true
+            loadImage(attackSprite).then(img => { imagesRef.current.player = img }).catch(()=>{})
+          }
         }
         // Swap selected hotbar item with offhand using F (like Minecraft)
         if ((code === 'f' || code === 'F') && allowFSwapRef.current) {
@@ -1312,6 +1341,12 @@ export default function Game() {
     const step = (now) => {
       const dt = Math.min(0.033, (now - last) / 1000)
       last = now
+
+      // Revert attack pose when its duration has elapsed
+      if (attackActiveRef.current && performance.now() >= attackUntilRef.current) {
+        attackActiveRef.current = false
+        applyCurrentSprite()
+      }
 
       // Layout background based on scene fit mode and compute image frame
       const cw = canvas.clientWidth, ch = canvas.clientHeight
@@ -2490,5 +2525,3 @@ async function playStreamingAudio(readableStream, { mime = 'audio/mpeg', volume 
   })
 }
 
-// Helper to close the shop and play vendor Farewell without overlapping
-// (moved inside component scope below)

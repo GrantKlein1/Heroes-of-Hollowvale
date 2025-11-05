@@ -32,6 +32,14 @@ export const CLASS_SPRITES = {
   dwarf: `${IMAGES_BASE}/dwarf.png`,
 }
 
+// Class attack sprites (single-frame attack pose)
+export const CLASS_ATTACK_SPRITES = {
+  knight: `${IMAGES_BASE}/knightAttack.png`,
+  mage: `${IMAGES_BASE}/mageAttack.png`,
+  thief: `${IMAGES_BASE}/thiefAttack.png`,
+  dwarf: `${IMAGES_BASE}/dwarfAttack.png`,
+}
+
 // Item icon paths (by item id)
 export const ITEM_ICONS = {
   iron_sword: `${IMAGES_BASE}/knightSword.png`,
