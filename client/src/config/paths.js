@@ -17,11 +17,17 @@ export const PATHS = {
   dungeonInterior: `${IMAGES_BASE}/dungeon.png`,
   hiddenTreasureRoom: `${IMAGES_BASE}/hiddenTreasureRoom.png`,
   animatedFireSmallGif: `${IMAGES_BASE}/animatedFireSmall/animatedFireSmall.gif`,
+  animatedFireBallGif: `${IMAGES_BASE}/animatedFireBall/animatedFireBall.gif`,
+  animatedThiefPotionGif: `${IMAGES_BASE}/animatedThiefPotion/animatedThiefPotion.gif`,
+  poisonPotionGif: `${IMAGES_BASE}/poisonPotion.gif`,
   titleBg: `${IMAGES_BASE}/red dragon boss fight room.png`,
   titleLogo: encodeURI(`${IMAGES_BASE}/title screen wider no background.png`),
   // Background music used on the intro screen and in the village
   // Place a file named "intro_village.mp3" under client/public/audio or update this path
   introVillageMusic: `${AUDIO_BASE}/introAndVillageMusic.mp3`,
+  // SFX (optional; safe if missing)
+  fireballCastSfx: `${AUDIO_BASE}/fireballCast.mp3`,
+  fireImpactSfx: `${AUDIO_BASE}/fireImpact.mp3`,
 }
 
 // Class base sprites

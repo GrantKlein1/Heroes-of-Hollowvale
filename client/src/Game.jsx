@@ -130,10 +130,33 @@ export default function Game() {
   const attackUntilRef = useRef(0)
   const ATTACK_DURATION_MS = 1000 // duration to show attack pose; adjust as desired
   const attackActiveRef = useRef(false) // true while attack pose is displayed
+  // Fireball system (mage): projectiles and lingering fires
+  // Tweak these to adjust distance and speed
+  const FIREBALL_SPEED = 420 // pixels per second
+  const FIREBALL_TRAVEL_DISTANCE = 220 // pixels to travel before stopping (adjust here)
+  const FIRE_LINGER_MS = 2000 // how long the small flame remains in place
+  const projectilesRef = useRef([]) // { x,y,w,h, vx,vy, startX,startY, maxDist, img }
+  const firesRef = useRef([]) // { x,y,w,h, until, img }
+  const sfxCacheRef = useRef({})
+  const playSfx = (src, vol = 0.6) => {
+    if (!src) return
+    try {
+      let a = sfxCacheRef.current[src]
+      if (!a) {
+        a = new Audio(src)
+        sfxCacheRef.current[src] = a
+      }
+      a.currentTime = 0
+      a.volume = Math.max(0, Math.min(1, (ttsVolume / 100) * vol))
+      a.play().catch(()=>{})
+    } catch {}
+  }
   // HUD tooltip and selection label
   const [hudTip, setHudTip] = useState({ show: false, text: '', x: 0, y: 0 })
   const [hotbarLabel, setHotbarLabel] = useState({ text: '', show: false })
   const hotbarLabelTimerRef = useRef(null)
+  // Track last movement direction (for projectile aim)
+  const lastDirRef = useRef({ x: 1, y: 0 })
 
   // Player state
   const playerRef = useRef({ x: 0, y: 0, w: 48, h: 48, speed: 160 })
@@ -415,19 +438,29 @@ export default function Game() {
   // Load images and set initial spawn
   useEffect(() => {
     let cancelled = false
+    const safe = (src) => loadImage(src).catch(() => null)
+    // First, load required scene backgrounds; if these fail, we still proceed but warn
     Promise.all([
-      loadImage(ASSETS.villageBg),
-      loadImage(ASSETS.tavernBg),
-      loadImage(ASSETS.marketBg),
-      loadImage(ASSETS.pathBg),
-      loadImage(ASSETS.dungeonBg),
-      loadImage(ASSETS.dungeonInteriorBg),
-      loadImage(ASSETS.treasureBg),
+      safe(ASSETS.villageBg),
+      safe(ASSETS.tavernBg),
+      safe(ASSETS.marketBg),
+      safe(ASSETS.pathBg),
+      safe(ASSETS.dungeonBg),
+      safe(ASSETS.dungeonInteriorBg),
+      safe(ASSETS.treasureBg),
     ]).then(([villageBg, tavernBg, marketBg, pathBg, dungeonBg, dungeonInteriorBg, treasureBg]) => {
       if (cancelled) return
       imagesRef.current = { villageBg, tavernBg, marketBg, pathBg, dungeonBg, dungeonInteriorBg, treasureBg, player: null }
+      // Kick off optional asset loads without blocking readiness
+      safe(PATHS.animatedFireBallGif).then((img) => { if (!cancelled && img) imagesRef.current.fireBallGif = img })
+      safe(PATHS.animatedFireSmallGif).then((img) => { if (!cancelled && img) imagesRef.current.fireSmallGif = img })
+      safe(PATHS.animatedThiefPotionGif).then((img) => { if (!cancelled && img) imagesRef.current.thiefPotionGif = img })
+      safe(PATHS.poisonPotionGif).then((img) => { if (!cancelled && img) imagesRef.current.poisonPotionGif = img })
       setReady(true)
-    }).catch(() => {/* ignore for prototype */})
+    }).catch(() => {
+      // As a last resort, still mark ready to avoid hanging UI; missing images will be null and handled gracefully.
+      if (!cancelled) setReady(true)
+    })
     return () => { cancelled = true }
   }, [])
 
@@ -1220,7 +1253,7 @@ export default function Game() {
           const idx = Number(code) - 1
           setActiveHotbar(idx)
         }
-        // Q: Attack if appropriate weapon is selected; otherwise fallback to drop-one if enabled
+        // Q: Attack or throw consumables depending on class/item
         if (code === 'q' || code === 'Q') {
           // Avoid extending the attack by key-repeat or spamming
           if (e.repeat) return
@@ -1238,11 +1271,75 @@ export default function Game() {
           const neededItem = cls ? weaponByClass[cls] : null
           const hasWeaponEquipped = !!(curItem && neededItem && curItem.id === neededItem)
           const canAttack = !!(cls && attackSprite && hasWeaponEquipped)
+
+          // Thief: throw poison potion if holding it
+          if (cls === 'thief' && curItem && curItem.id === 'poison_vial') {
+            // Start a short action window
+            attackUntilRef.current = now + ATTACK_DURATION_MS
+            attackActiveRef.current = true
+            // Aim and spawn potion projectile
+            const p = playerRef.current
+            const dir = { x: lastDirRef.current.x, y: lastDirRef.current.y }
+            if (Math.abs(dir.x) < 0.001 && Math.abs(dir.y) < 0.001) { dir.x = 1; dir.y = 0 }
+            const len = Math.hypot(dir.x, dir.y); if (len > 0) { dir.x /= len; dir.y /= len }
+            const startX = p.x + p.w / 2 + dir.x * 12
+            const startY = p.y + p.h / 2 + dir.y * 12
+            const gif = imagesRef.current.thiefPotionGif
+            if (gif) {
+              projectilesRef.current.push({
+                x: startX - 14,
+                y: startY - 14,
+                w: 28,
+                h: 28,
+                vx: dir.x * FIREBALL_SPEED,
+                vy: dir.y * FIREBALL_SPEED,
+                startX,
+                startY,
+                maxDist: FIREBALL_TRAVEL_DISTANCE,
+                img: gif,
+                impactKey: 'poisonPotionGif',
+                lingerMs: 2000,
+              })
+            }
+            // Consume one poison vial
+            setInventory((inv) => consumeOneItem(inv, 'poison_vial').next)
+            return
+          }
           if (canAttack) {
             // Show attack pose and mark active; main loop will revert when time elapses
             attackUntilRef.current = now + ATTACK_DURATION_MS
             attackActiveRef.current = true
             loadImage(attackSprite).then(img => { imagesRef.current.player = img }).catch(()=>{})
+            // Mage ranged projectile (fireball)
+            if (cls === 'mage' && neededItem === 'apprentice_staff') {
+              playSfx(PATHS.fireballCastSfx)
+              const p = playerRef.current
+              const dir = { x: lastDirRef.current.x, y: lastDirRef.current.y }
+              // Default facing right if no movement yet
+              if (Math.abs(dir.x) < 0.001 && Math.abs(dir.y) < 0.001) { dir.x = 1; dir.y = 0 }
+              // Normalize
+              const len = Math.hypot(dir.x, dir.y)
+              if (len > 0) { dir.x /= len; dir.y /= len }
+              const startX = p.x + p.w / 2 + dir.x * 12
+              const startY = p.y + p.h / 2 + dir.y * 12
+              const fireballImg = imagesRef.current.fireBallGif
+              if (fireballImg) {
+                projectilesRef.current.push({
+                  x: startX - 16,
+                  y: startY - 16,
+                  w: 32,
+                  h: 32,
+                  vx: dir.x * FIREBALL_SPEED,
+                  vy: dir.y * FIREBALL_SPEED,
+                  startX,
+                  startY,
+                  maxDist: FIREBALL_TRAVEL_DISTANCE,
+                  img: fireballImg,
+                  impactKey: 'fireSmallGif',
+                  lingerMs: FIRE_LINGER_MS,
+                })
+              }
+            }
           }
         }
         // Swap selected hotbar item with offhand using F (like Minecraft)
@@ -1401,6 +1498,8 @@ export default function Game() {
         if (vx !== 0 || vy !== 0) {
           const len = Math.hypot(vx, vy)
           vx /= len; vy /= len
+          // Update last direction for aiming
+          lastDirRef.current = { x: vx, y: vy }
         }
       }
 
@@ -1426,6 +1525,42 @@ export default function Game() {
       }
       playerRef.current.x = next.x
       playerRef.current.y = next.y
+
+      // Update projectiles (fireballs)
+      if (projectilesRef.current.length) {
+        const arr = projectilesRef.current
+        const nowMs = performance.now()
+        for (let i = arr.length - 1; i >= 0; i--) {
+          const pr = arr[i]
+          pr.x += pr.vx * dt
+          pr.y += pr.vy * dt
+          const dist = Math.hypot(pr.x + pr.w/2 - pr.startX, pr.y + pr.h/2 - pr.startY)
+          // Collision with scene colliders (stop early)
+          let hit = false
+          for (const c of collidersPx) {
+            if (intersects({ x: pr.x, y: pr.y, w: pr.w, h: pr.h }, c)) { hit = true; break }
+          }
+          if (dist >= pr.maxDist || hit) {
+            // Spawn lingering small fire and remove projectile
+            const img = pr.impactKey ? imagesRef.current[pr.impactKey] : imagesRef.current.fireSmallGif
+            if (img) {
+              firesRef.current.push({
+                x: pr.x, y: pr.y, w: pr.w, h: pr.h,
+                until: nowMs + (pr.lingerMs || FIRE_LINGER_MS),
+                img
+              })
+              playSfx(PATHS.fireImpactSfx)
+            }
+            arr.splice(i, 1)
+          }
+        }
+      }
+
+      // Expire fires
+      if (firesRef.current.length) {
+        const nowMs = performance.now()
+        firesRef.current = firesRef.current.filter(f => nowMs < f.until)
+      }
 
   // Clamp movement to the image frame so we never drift outside the visible area
   playerRef.current.x = Math.min(Math.max(playerRef.current.x, dx), dx + dw - playerRef.current.w)
@@ -1605,6 +1740,22 @@ export default function Game() {
       }
 
       // Note: no separate bartender sprite is drawn; the bartender is part of the background image.
+
+      // Draw lingering fires (under the player)
+      if (firesRef.current.length) {
+        for (const f of firesRef.current) {
+          const img = f.img
+          if (img) ctx.drawImage(img, f.x, f.y, f.w, f.h)
+        }
+      }
+
+      // Draw projectiles (fireballs) under the player
+      if (projectilesRef.current.length) {
+        for (const pr of projectilesRef.current) {
+          const img = pr.img
+          if (img) ctx.drawImage(img, pr.x, pr.y, pr.w, pr.h)
+        }
+      }
 
       // Draw player
       const pImg = imagesRef.current.player
