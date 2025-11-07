@@ -609,22 +609,22 @@ export default function Game() {
     mana_potion:    { ruby: 0, sapphire: 1, emerald: 0 },
     speed_potion:   { ruby: 0, sapphire: 0, emerald: 2 },
     // Magic
-    apprentice_staff: { ruby: 3, sapphire: 1, emerald: 0 },
-    spellbook:        { ruby: 1, sapphire: 2, emerald: 0 },
+    apprentice_staff: { ruby: 5, sapphire: 2, emerald: 0 },
+    spellbook:        { ruby: 1, sapphire: 3, emerald: 0 },
     // Food
-    apple:     { ruby: 0, sapphire: 0, emerald: 1 },
-    ale_flask: { ruby: 0, sapphire: 1, emerald: 1 },
+    apple:     { ruby: 1, sapphire: 0, emerald: 0 },
+    ale_flask: { ruby: 0, sapphire: 0, emerald: 2 },
     // Weaponry
-    iron_sword:   { ruby: 2, sapphire: 0, emerald: 1 },
-    twin_daggers: { ruby: 2, sapphire: 1, emerald: 0 },
-    battle_axe:   { ruby: 3, sapphire: 0, emerald: 1 },
+    iron_sword:   { ruby: 4, sapphire: 0, emerald: 2 },
+    twin_daggers: { ruby: 3, sapphire: 3, emerald: 0 },
+    battle_axe:   { ruby: 0, sapphire: 4, emerald: 2 },
     // Armor
     chainmail_armor: { ruby: 4, sapphire: 0, emerald: 1 },
     leather_armor:   { ruby: 1, sapphire: 0, emerald: 2 },
     dwarf_armor:     { ruby: 5, sapphire: 1, emerald: 0 },
     cloth_robes:     { ruby: 1, sapphire: 2, emerald: 0 },
     // Tools
-    lockpicks:     { ruby: 0, sapphire: 1, emerald: 1 },
+    lockpicks:     { ruby: 1, sapphire: 2, emerald: 1 },
     dwarf_pickaxe: { ruby: 2, sapphire: 0, emerald: 2 },
   }
 
@@ -761,6 +761,42 @@ export default function Game() {
     }
   }
 
+  // Apply sprite for a specific inventory snapshot (ignores attack-pose update guard)
+  const applySpriteForSnapshot = (invSnap) => {
+    const cls = selectedClassRef.current
+    if (!cls) return
+    const baseSprite = CLASSES[cls]?.sprite
+    const main = invSnap?.hotbar?.[activeHotbarRef.current] || null
+    const offhand = invSnap?.armor?.offhand || null
+
+    const compositeMap = COMPOSITE_SPRITES[cls] || {}
+    const setPlayerImage = (src) => setPlayerImageAsync(src)
+
+    if (!main) {
+      const empty = compositeMap['EmptyHands']
+      if (empty) setPlayerImage(empty)
+      else if (baseSprite) setPlayerImage(baseSprite)
+      return
+    }
+
+    const itemTag = ITEM_SPRITE_TAGS[main.id] || deriveItemTagFromName(getItemDef(main.id)?.name)
+    if (!itemTag) { if (baseSprite) setPlayerImage(baseSprite); return }
+
+    // Knight combined case
+    if (cls === 'knight') {
+      const mainIsSword = ITEM_SPRITE_TAGS[main.id] === 'Sword' || main.id === 'iron_sword'
+      const offIsShield = offhand && (ITEM_SPRITE_TAGS[offhand.id] === 'Shield' || offhand.id === 'wooden_shield')
+      if (mainIsSword && offIsShield && compositeMap['ShieldAndSword']) {
+        setPlayerImage(compositeMap['ShieldAndSword'])
+        return
+      }
+    }
+
+    const composite = compositeMap[itemTag]
+    if (composite) setPlayerImage(composite)
+    else if (baseSprite) setPlayerImage(baseSprite)
+  }
+
   // Update player sprite when the selected hotbar item or offhand changes (unless attack pose is active)
   useEffect(() => {
     if (performance.now() < attackUntilRef.current) return
@@ -790,7 +826,14 @@ export default function Game() {
 
   // ----- Loot/Chest helpers -----
   // Track which treasure chests are opened (same order as scenes.treasureRoom.treasureChests)
-  const [treasureOpened, setTreasureOpened] = useState([false, false, false, false, false])
+  const treasureOpenedRef = useRef(new Set())
+  const [, setTreasureOpenedTick] = useState(0)
+  const isChestOpened = (idx) => treasureOpenedRef.current.has(idx)
+  const markChestOpened = (idx) => {
+    if (treasureOpenedRef.current.has(idx)) return
+    treasureOpenedRef.current.add(idx)
+    setTreasureOpenedTick((t) => (t + 1) % 1000000)
+  }
 
   // Game notices (short on-screen messages)
   const [notice, setNotice] = useState({ show: false, text: '' })
@@ -824,43 +867,93 @@ export default function Game() {
     return { next, consumed: true }
   }
 
-  const addItemAnywhere = (inv, id, count) => {
+  const addItemAnywhere = (inv, id, count, { preferHotbar = false } = {}) => {
     if (!count || count <= 0) return { next: inv, remaining: 0 }
     let remaining = count
     let next = { armor: { ...inv.armor }, storage: inv.storage.slice(), hotbar: inv.hotbar.slice() }
+
+    const sections = preferHotbar
+      ? ['hotbar', 'storage']
+      : ['storage', 'hotbar']
+
     // Merge into existing stacks
-    for (let i = 0; i < next.storage.length && remaining > 0; i++) {
-      const it = next.storage[i]; if (it && it.id === id) { next.storage[i] = { id, count: (it.count || 1) + 1 }; remaining-- }
+    for (const section of sections) {
+      const target = section === 'storage' ? next.storage : next.hotbar
+      for (let i = 0; i < target.length && remaining > 0; i++) {
+        const it = target[i]
+        if (it && it.id === id) {
+          target[i] = { id, count: (it.count || 1) + 1 }
+          remaining--
+        }
+      }
     }
-    for (let i = 0; i < next.hotbar.length && remaining > 0; i++) {
-      const it = next.hotbar[i]; if (it && it.id === id) { next.hotbar[i] = { id, count: (it.count || 1) + 1 }; remaining-- }
+
+    // Place into empty slots
+    for (const section of sections) {
+      const target = section === 'storage' ? next.storage : next.hotbar
+      for (let i = 0; i < target.length && remaining > 0; i++) {
+        if (!target[i]) {
+          target[i] = { id, count: 1 }
+          remaining--
+        }
+      }
     }
-    // Place into empties
-    for (let i = 0; i < next.storage.length && remaining > 0; i++) {
-      if (!next.storage[i]) { next.storage[i] = { id, count: 1 }; remaining-- }
-    }
-    for (let i = 0; i < next.hotbar.length && remaining > 0; i++) {
-      if (!next.hotbar[i]) { next.hotbar[i] = { id, count: 1 }; remaining-- }
-    }
+
     return { next, remaining }
   }
 
-  const addGemsToInventory = (counts) => {
+  const grantLoot = (gemCounts = {}, items = []) => {
+    const overflow = []
     setInventory((inv) => {
-      let next = inv
-      let leftover = 0
-      for (const [id, num] of Object.entries(counts)) {
-        let n = Number(num) || 0
-        while (n > 0) {
-          const res = addItemAnywhere(next, id, 1)
+      let next = {
+        armor: { ...inv.armor },
+        storage: inv.storage.slice(),
+        hotbar: inv.hotbar.slice(),
+      }
+
+      const placeUnits = (id, amount) => {
+        const preferHotbar = !gemIds.includes(id)
+        let remaining = Number(amount) || 0
+        while (remaining > 0) {
+          const res = addItemAnywhere(next, id, 1, { preferHotbar })
           next = res.next
-          if (res.remaining > 0) { leftover += res.remaining; break }
-          n--
+          if (res.remaining > 0) {
+            overflow.push({ id, count: remaining })
+            break
+          }
+          remaining -= 1
         }
       }
-      if (leftover > 0) showNotice('Your packs are full. Some gems could not be taken.')
+
+      Object.entries(gemCounts || {}).forEach(([id, count]) => {
+        if (count) placeUnits(id, count)
+      })
+
+      for (const item of items || []) {
+        if (!item?.id) continue
+        const pref = { preferHotbar: true }
+        let remaining = Number(item.count || 1)
+        while (remaining > 0) {
+          const res = addItemAnywhere(next, item.id, 1, pref)
+          next = res.next
+          if (res.remaining > 0) {
+            overflow.push({ id: item.id, count: remaining })
+            break
+          }
+          remaining -= 1
+        }
+      }
+
       return next
     })
+    return overflow
+  }
+
+  const addGemsToInventory = (counts) => {
+    const overflow = grantLoot(counts, [])
+    if (overflow.some(({ id }) => gemIds.includes(id))) {
+      showNotice('Your packs are full. Some gems could not be taken.')
+    }
   }
 
   const rollGemLoot = () => {
@@ -932,7 +1025,7 @@ export default function Game() {
       if (!canAfford(inv, price)) { showNotice('Not enough gems.'); playVendor('NotEnoughMoney'); return inv }
       if (!hasSpaceForItem(inv, id)) { showNotice('No space in packs.'); return inv }
       const afterSpend = spendGems(inv, price)
-      const res = addItemAnywhere(afterSpend, id, 1)
+      const res = addItemAnywhere(afterSpend, id, 1, { preferHotbar: true })
       if (res.remaining > 0) { showNotice('No space in packs.'); return inv }
       showNotice(`Bought ${getItemDef(id).name}.`)
       // Good choice line (if none currently playing)
@@ -1319,13 +1412,8 @@ export default function Game() {
           const hasWeaponEquipped = !!(curItem && neededItem && curItem.id === neededItem)
           const canAttack = !!(cls && attackSprite && hasWeaponEquipped)
 
-          // Thief: throw poison potion if holding it
+          // Thief: throw poison potion if holding it (no attack pose timer; immediate hand revert)
           if (cls === 'thief' && curItem && curItem.id === 'poison_vial') {
-            // Start a short action window
-            attackUntilRef.current = now + ATTACK_DURATION_MS
-            attackActiveRef.current = true
-            // Cache current sprite for instant revert later
-            prevSpriteImgRef.current = imagesRef.current.player
             // Aim and spawn potion projectile
             const p = playerRef.current
             const dir = { x: lastDirRef.current.x, y: lastDirRef.current.y }
@@ -1349,8 +1437,12 @@ export default function Game() {
               impactKey: 'poisonPotionGif',
               lingerMs: 2000,
             })
-            // Consume one poison vial
-            setInventory((inv) => consumeOneItem(inv, 'poison_vial').next)
+            // Consume one poison vial and immediately revert sprite to new inventory state
+            setInventory((inv) => {
+              const res = consumeOneItem(inv, 'poison_vial')
+              requestAnimationFrame(() => applySpriteForSnapshot(res.next))
+              return res.next
+            })
             return
           }
           if (canAttack) {
@@ -1650,6 +1742,9 @@ export default function Game() {
       const selected = inventoryRef.current?.hotbar?.[activeHotbarRef.current]
       const canConsumeNow = !!(selected && CONSUMABLE_IDS.has(selected.id)) && !chatOpenRef.current && !shopOpenRef.current && !titleOpenRef.current && !optionsOpenRef.current && !inventoryOpenRef.current
       const nowMs = performance.now()
+      if (!eDown && consumeNeedsReleaseRef.current) {
+        consumeNeedsReleaseRef.current = false
+      }
       if (!consumeActiveRef.current) {
         if (eDown && !consumeNeedsReleaseRef.current && canConsumeNow) {
           consumeActiveRef.current = true
@@ -1687,6 +1782,13 @@ export default function Game() {
               if (mm > 0) {
                 const cur = playerRef.current.mana || 0
                 playerRef.current.mana = Math.min(mm, cur + 75)
+              }
+            } else if (id === 'healing_potion') {
+              // Restore 50 health (clamped to hpMax)
+              const hm = playerRef.current.hpMax || 0
+              if (hm > 0) {
+                const cur = playerRef.current.hp || 0
+                playerRef.current.hp = Math.min(hm, cur + 50)
               }
             }
             // Reset consumption; require release before next start
@@ -1798,31 +1900,59 @@ export default function Game() {
         // Treasure room chests (open with E)
         if (sceneRef.current === 'treasureRoom' && Array.isArray(sdef.treasureChests)) {
           for (let i = 0; i < sdef.treasureChests.length; i++) {
-            if (treasureOpened[i]) continue
+            if (isChestOpened(i)) continue
             const chest = sdef.treasureChests[i]
             const cpx = mapRect(chest.rect)
             const playerBox = { x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }
             if (intersects(playerBox, cpx)) {
               if (chest.locked) {
-                let hadLockpick = false
-                setInventory(inv => {
-                  const res = consumeOneItem(inv, 'lockpicks')
-                  hadLockpick = res.consumed
-                  return res.next
-                })
-                if (!hadLockpick) {
+                const invSnapshot = inventoryRef.current
+                const res = consumeOneItem(invSnapshot, 'lockpicks')
+                if (!res.consumed) {
                   showNotice('Locked. Requires lockpicks.')
                   break
                 }
+                setInventory(res.next)
               }
+
               const loot = rollGemLoot()
-              const parts = []
-              if (loot.ruby) parts.push(`${loot.ruby} Rub${loot.ruby>1?'ies':'y'}`)
-              if (loot.sapphire) parts.push(`${loot.sapphire} Sapphire${loot.sapphire>1?'s':''}`)
-              if (loot.emerald) parts.push(`${loot.emerald} Emerald${loot.emerald>1?'s':''}`)
-              addGemsToInventory(loot)
-              showNotice(parts.length ? `You found ${parts.join(', ')}!` : 'The chest was empty...')
-              setTreasureOpened(arr => { const n = arr.slice(); n[i] = true; return n })
+              const gemParts = []
+
+              if (chest.locked) {
+                // Locked chests grant extra gems and rare potions
+                loot.ruby += 8
+                loot.sapphire += 8
+                loot.emerald += 8
+              }
+
+              if (loot.ruby) gemParts.push(`${loot.ruby} Rub${loot.ruby>1?'ies':'y'}`)
+              if (loot.sapphire) gemParts.push(`${loot.sapphire} Sapphire${loot.sapphire>1?'s':''}`)
+              if (loot.emerald) gemParts.push(`${loot.emerald} Emerald${loot.emerald>1?'s':''}`)
+
+              const potionRewards = chest.locked ? [
+                { id: 'healing_potion', count: 1 },
+                { id: 'poison_vial', count: 1 },
+                { id: 'speed_potion', count: 1 },
+              ] : []
+
+              const overflow = grantLoot(loot, potionRewards)
+              const overflowNames = overflow.map(({ id, count }) => `${count}x ${getItemDef(id).name}`)
+
+              if (chest.locked) {
+                const potionNames = potionRewards.map((p) => getItemDef(p.id).name)
+                const segments = []
+                if (gemParts.length) segments.push(gemParts.join(', '))
+                segments.push(`potions (${potionNames.join(', ')})`)
+                let message = `You picked the lock! Loot: ${segments.join(' + ')}`
+                if (overflowNames.length) message += `. No space for ${overflowNames.join(', ')}`
+                showNotice(message)
+              } else {
+                let message = gemParts.length ? `You found ${gemParts.join(', ')}!` : 'The chest was empty...'
+                if (overflowNames.length) message += ` No space for ${overflowNames.join(', ')}`
+                showNotice(message)
+              }
+
+              markChestOpened(i)
               break
             }
           }
@@ -1951,7 +2081,7 @@ export default function Game() {
         if (sdef.toEntrance) prompts.push({ rect: sdef.toEntrance, label: 'Press E to exit' })
         if (Array.isArray(sdef.treasureChests)) {
           sdef.treasureChests.forEach((ch, i) => {
-            if (treasureOpened[i]) return
+            if (isChestOpened(i)) return
             prompts.push({ rect: ch.rect, label: ch.locked ? 'Press E to pick lock' : 'Press E to open chest' })
           })
         }
@@ -2042,6 +2172,12 @@ export default function Game() {
 
   // Sync scene label for React overlay
   useEffect(() => { sceneRef.current = scene }, [scene])
+
+  // Clear lingering projectile/fire effects when changing scenes
+  useEffect(() => {
+    projectilesRef.current = []
+    firesRef.current = []
+  }, [scene])
 
   // Debug mouse handlers
   const handleMouseMove = (e) => {
