@@ -130,6 +130,14 @@ export default function Game() {
   const attackUntilRef = useRef(0)
   const ATTACK_DURATION_MS = 1000 // duration to show attack pose; adjust as desired
   const attackActiveRef = useRef(false) // true while attack pose is displayed
+  // Consumables (hold E to consume)
+  const CONSUME_DURATION_MS = 1000
+  const CONSUMABLE_IDS = new Set(['healing_potion','mana_potion','speed_potion'])
+  const consumeActiveRef = useRef(false)
+  const consumeStartRef = useRef(0)
+  const consumeItemRef = useRef(null) // { id, slot }
+  const consumeNeedsReleaseRef = useRef(false) // require E release before next start
+  const speedBoostUntilRef = useRef(0)
   // Fireball system (mage): projectiles and lingering fires
   // Tweak these to adjust distance and speed
   const FIREBALL_SPEED = 420 // pixels per second
@@ -151,15 +159,45 @@ export default function Game() {
       a.play().catch(()=>{})
     } catch {}
   }
+  // Force a lightweight refresh so DOM GIF overlays update position
+  const [effectsTick, setEffectsTick] = useState(0)
+  useEffect(() => {
+    let rafId
+    const tick = () => {
+      setEffectsTick((t) => (t + 1) % 1000000)
+      rafId = requestAnimationFrame(tick)
+    }
+    rafId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(rafId)
+  }, [])
+  const effectIdRef = useRef(1)
+  // Ensure sprite image swaps don't race: only apply the latest requested sprite
+  const spriteReqIdRef = useRef(0)
+  const setPlayerImageAsync = (src) => {
+    try {
+      const reqId = ++spriteReqIdRef.current
+      loadImage(src).then((img) => {
+        if (spriteReqIdRef.current === reqId) {
+          imagesRef.current.player = img
+        }
+      }).catch(()=>{})
+    } catch {}
+  }
   // HUD tooltip and selection label
   const [hudTip, setHudTip] = useState({ show: false, text: '', x: 0, y: 0 })
   const [hotbarLabel, setHotbarLabel] = useState({ text: '', show: false })
   const hotbarLabelTimerRef = useRef(null)
+  // Store previous (non-attack) sprite image to immediately revert without waiting for load
+  const prevSpriteImgRef = useRef(null)
   // Track last movement direction (for projectile aim)
   const lastDirRef = useRef({ x: 1, y: 0 })
 
   // Player state
-  const playerRef = useRef({ x: 0, y: 0, w: 48, h: 48, speed: 160 })
+  const playerRef = useRef({
+    x: 0, y: 0, w: 48, h: 48, speed: 160,
+    hpMax: 100, hp: 100,
+    manaMax: 0, mana: 0,
+  })
   // Remember where the player left the village (normalized image coords)
   const lastVillagePosRef = useRef({ nx: 0.5, ny: 0.90 })
   // Remember where the player was standing in the dungeon entrance when entering the treasure room
@@ -637,6 +675,16 @@ export default function Game() {
     if (id === 'mage') playerRef.current.speed = 180
     else if (id === 'thief') playerRef.current.speed = 200
     else playerRef.current.speed = 160
+    // Set base vitals
+    playerRef.current.hpMax = 100
+    playerRef.current.hp = playerRef.current.hpMax
+    if (id === 'mage') {
+      playerRef.current.manaMax = 100
+      playerRef.current.mana = 100
+    } else {
+      playerRef.current.manaMax = 0
+      playerRef.current.mana = 0
+    }
     // Seed inventory for chosen class
     setInventory(seedInventoryForClass(id))
   }
@@ -668,16 +716,15 @@ export default function Game() {
   }
 
   // Helper to apply current composite/base sprite
+  // Uses current state (not refs) to avoid order races on first hotbar switch
   const applyCurrentSprite = () => {
-    const cls = selectedClassRef.current
+    const cls = selectedClass
     if (!cls) return
     const baseSprite = CLASSES[cls]?.sprite
-    const main = inventoryRef.current?.hotbar?.[activeHotbarRef.current]
-    const offhand = inventoryRef.current?.armor?.offhand
+    const main = inventory.hotbar[activeHotbar]
+    const offhand = inventory.armor.offhand
 
-    const setPlayerImage = (src) => {
-      loadImage(src).then(img => { imagesRef.current.player = img }).catch(() => {})
-    }
+    const setPlayerImage = (src) => setPlayerImageAsync(src)
 
     const compositeMap = COMPOSITE_SPRITES[cls] || {}
 
@@ -1277,6 +1324,8 @@ export default function Game() {
             // Start a short action window
             attackUntilRef.current = now + ATTACK_DURATION_MS
             attackActiveRef.current = true
+            // Cache current sprite for instant revert later
+            prevSpriteImgRef.current = imagesRef.current.player
             // Aim and spawn potion projectile
             const p = playerRef.current
             const dir = { x: lastDirRef.current.x, y: lastDirRef.current.y }
@@ -1285,33 +1334,43 @@ export default function Game() {
             const startX = p.x + p.w / 2 + dir.x * 12
             const startY = p.y + p.h / 2 + dir.y * 12
             const gif = imagesRef.current.thiefPotionGif
-            if (gif) {
-              projectilesRef.current.push({
-                x: startX - 14,
-                y: startY - 14,
-                w: 28,
-                h: 28,
-                vx: dir.x * FIREBALL_SPEED,
-                vy: dir.y * FIREBALL_SPEED,
-                startX,
-                startY,
-                maxDist: FIREBALL_TRAVEL_DISTANCE,
-                img: gif,
-                impactKey: 'poisonPotionGif',
-                lingerMs: 2000,
-              })
-            }
+            projectilesRef.current.push({
+              id: effectIdRef.current++,
+              x: startX - 21,
+              y: startY - 21,
+              w: 42,
+              h: 42,
+              vx: dir.x * FIREBALL_SPEED,
+              vy: dir.y * FIREBALL_SPEED,
+              startX,
+              startY,
+              maxDist: FIREBALL_TRAVEL_DISTANCE,
+              domSrc: PATHS.animatedThiefPotionGif,
+              impactKey: 'poisonPotionGif',
+              lingerMs: 2000,
+            })
             // Consume one poison vial
             setInventory((inv) => consumeOneItem(inv, 'poison_vial').next)
             return
           }
           if (canAttack) {
+            // If mage, ensure enough mana BEFORE triggering attack pose
+            if (cls === 'mage' && neededItem === 'apprentice_staff') {
+              if ((playerRef.current.mana || 0) < 20) {
+                showNotice('Not enough mana.')
+                return
+              }
+            }
             // Show attack pose and mark active; main loop will revert when time elapses
             attackUntilRef.current = now + ATTACK_DURATION_MS
             attackActiveRef.current = true
-            loadImage(attackSprite).then(img => { imagesRef.current.player = img }).catch(()=>{})
+            // Cache current sprite for instant revert later
+            prevSpriteImgRef.current = imagesRef.current.player
+            setPlayerImageAsync(attackSprite)
             // Mage ranged projectile (fireball)
             if (cls === 'mage' && neededItem === 'apprentice_staff') {
+              // Spend mana now that attack is confirmed
+              playerRef.current.mana = Math.max(0, (playerRef.current.mana || 0) - 20)
               playSfx(PATHS.fireballCastSfx)
               const p = playerRef.current
               const dir = { x: lastDirRef.current.x, y: lastDirRef.current.y }
@@ -1322,23 +1381,22 @@ export default function Game() {
               if (len > 0) { dir.x /= len; dir.y /= len }
               const startX = p.x + p.w / 2 + dir.x * 12
               const startY = p.y + p.h / 2 + dir.y * 12
-              const fireballImg = imagesRef.current.fireBallGif
-              if (fireballImg) {
-                projectilesRef.current.push({
-                  x: startX - 16,
-                  y: startY - 16,
-                  w: 32,
-                  h: 32,
-                  vx: dir.x * FIREBALL_SPEED,
-                  vy: dir.y * FIREBALL_SPEED,
-                  startX,
-                  startY,
-                  maxDist: FIREBALL_TRAVEL_DISTANCE,
-                  img: fireballImg,
-                  impactKey: 'fireSmallGif',
-                  lingerMs: FIRE_LINGER_MS,
-                })
-              }
+              // Spawn regardless of image preloading; DOM <img> will load via src
+              projectilesRef.current.push({
+                id: effectIdRef.current++,
+                x: startX - 16,
+                y: startY - 16,
+                w: 32,
+                h: 32,
+                vx: dir.x * FIREBALL_SPEED,
+                vy: dir.y * FIREBALL_SPEED,
+                startX,
+                startY,
+                maxDist: FIREBALL_TRAVEL_DISTANCE,
+                impactKey: 'fireSmallGif',
+                domSrc: PATHS.animatedFireBallGif,
+                lingerMs: FIRE_LINGER_MS,
+              })
             }
           }
         }
@@ -1442,6 +1500,12 @@ export default function Game() {
       // Revert attack pose when its duration has elapsed
       if (attackActiveRef.current && performance.now() >= attackUntilRef.current) {
         attackActiveRef.current = false
+        // Immediately snap back to the cached pre-attack sprite (avoids async load lag)
+        if (prevSpriteImgRef.current) {
+          imagesRef.current.player = prevSpriteImgRef.current
+          prevSpriteImgRef.current = null
+        }
+        // Then re-derive in case equipment changed
         applyCurrentSprite()
       }
 
@@ -1488,7 +1552,9 @@ export default function Game() {
       }
 
       // Update (pause movement when any overlay is open)
-      const speed = playerRef.current.speed
+  // Effective movement speed (speed potion boost if active)
+  let speed = playerRef.current.speed
+  if (performance.now() < speedBoostUntilRef.current) speed *= 1.5
       let vx = 0, vy = 0
   if (!chatOpenRef.current && !classSelectOpenRef.current && !inventoryOpenRef.current && !titleOpenRef.current && !optionsOpenRef.current && !shopOpenRef.current) {
         if (keysRef.current['w'] || keysRef.current['arrowup']) vy -= 1
@@ -1526,6 +1592,12 @@ export default function Game() {
       playerRef.current.x = next.x
       playerRef.current.y = next.y
 
+      // Mana regen for mage: 5 mana/sec
+      if (selectedClassRef.current === 'mage' && (playerRef.current.manaMax || 0) > 0) {
+        const regen = 5 * dt
+        playerRef.current.mana = Math.min(playerRef.current.manaMax, (playerRef.current.mana || 0) + regen)
+      }
+
       // Update projectiles (fireballs)
       if (projectilesRef.current.length) {
         const arr = projectilesRef.current
@@ -1541,16 +1613,23 @@ export default function Game() {
             if (intersects({ x: pr.x, y: pr.y, w: pr.w, h: pr.h }, c)) { hit = true; break }
           }
           if (dist >= pr.maxDist || hit) {
-            // Spawn lingering small fire and remove projectile
-            const img = pr.impactKey ? imagesRef.current[pr.impactKey] : imagesRef.current.fireSmallGif
-            if (img) {
-              firesRef.current.push({
-                x: pr.x, y: pr.y, w: pr.w, h: pr.h,
-                until: nowMs + (pr.lingerMs || FIRE_LINGER_MS),
-                img
-              })
-              playSfx(PATHS.fireImpactSfx)
-            }
+            // Spawn lingering effect and remove projectile
+            const isPoison = pr.impactKey === 'poisonPotionGif'
+            const src = isPoison ? PATHS.poisonPotionGif : PATHS.animatedFireSmallGif
+            const centerX = pr.x + pr.w / 2
+            const centerY = pr.y + pr.h / 2
+            const scale = isPoison ? 1.0 : 1.75 // enlarge small fire by 25%
+            const newW = Math.round(pr.w * scale)
+            const newH = Math.round(pr.h * scale)
+            const nx = centerX - newW / 2
+            const ny = centerY - newH / 2
+            firesRef.current.push({
+              id: effectIdRef.current++,
+              x: nx, y: ny, w: newW, h: newH,
+              until: nowMs + (pr.lingerMs || FIRE_LINGER_MS),
+              domSrc: src,
+            })
+            playSfx(PATHS.fireImpactSfx)
             arr.splice(i, 1)
           }
         }
@@ -1566,9 +1645,59 @@ export default function Game() {
   playerRef.current.x = Math.min(Math.max(playerRef.current.x, dx), dx + dw - playerRef.current.w)
   playerRef.current.y = Math.min(Math.max(playerRef.current.y, dy), dy + dh - playerRef.current.h)
 
-      // Interact (E)
-  const eDown = !!(keysRef.current['e'])
-  if (!chatOpenRef.current && !shopOpenRef.current && eDown && !interactLatch) {
+      // Consumable handling (hold E to consume selected potion)
+      const eDown = !!(keysRef.current['e'])
+      const selected = inventoryRef.current?.hotbar?.[activeHotbarRef.current]
+      const canConsumeNow = !!(selected && CONSUMABLE_IDS.has(selected.id)) && !chatOpenRef.current && !shopOpenRef.current && !titleOpenRef.current && !optionsOpenRef.current && !inventoryOpenRef.current
+      const nowMs = performance.now()
+      if (!consumeActiveRef.current) {
+        if (eDown && !consumeNeedsReleaseRef.current && canConsumeNow) {
+          consumeActiveRef.current = true
+          consumeStartRef.current = nowMs
+          consumeItemRef.current = { id: selected.id, slot: activeHotbarRef.current }
+        }
+      } else {
+        const slot = consumeItemRef.current?.slot
+        const id = consumeItemRef.current?.id
+        const stillValid = canConsumeNow && slot === activeHotbarRef.current && (inventoryRef.current?.hotbar?.[slot]?.id === id)
+        if (!eDown || !stillValid) {
+          // Cancel if released or item/slot changed
+          consumeActiveRef.current = false
+          if (!eDown) consumeNeedsReleaseRef.current = false
+        } else {
+          const progress = (nowMs - consumeStartRef.current) / CONSUME_DURATION_MS
+          if (progress >= 1) {
+            // Complete: consume one from that hotbar slot
+            const slotIdx = slot
+            const itemId = id
+            setInventory((inv) => {
+              const cur = inv.hotbar[slotIdx]
+              if (!cur || cur.id !== itemId) return inv
+              const cnt = (cur.count || 1) - 1
+              const next = { armor: { ...inv.armor }, storage: inv.storage.slice(), hotbar: inv.hotbar.slice() }
+              next.hotbar[slotIdx] = cnt > 0 ? { id: itemId, count: cnt } : null
+              return next
+            })
+            // Apply effects
+            if (id === 'speed_potion') {
+              speedBoostUntilRef.current = nowMs + 10000 // 10s boost
+            } else if (id === 'mana_potion') {
+              // Restore 75 mana (clamped to manaMax)
+              const mm = playerRef.current.manaMax || 0
+              if (mm > 0) {
+                const cur = playerRef.current.mana || 0
+                playerRef.current.mana = Math.min(mm, cur + 75)
+              }
+            }
+            // Reset consumption; require release before next start
+            consumeActiveRef.current = false
+            consumeNeedsReleaseRef.current = true
+          }
+        }
+      }
+
+      // Interact (E) — disabled only while actively consuming
+      if (!chatOpenRef.current && !shopOpenRef.current && eDown && !interactLatch && !consumeActiveRef.current) {
         interactLatch = true
         // Village enter door
         if (sceneRef.current === 'village' && sdef.door) {
@@ -1741,21 +1870,7 @@ export default function Game() {
 
       // Note: no separate bartender sprite is drawn; the bartender is part of the background image.
 
-      // Draw lingering fires (under the player)
-      if (firesRef.current.length) {
-        for (const f of firesRef.current) {
-          const img = f.img
-          if (img) ctx.drawImage(img, f.x, f.y, f.w, f.h)
-        }
-      }
-
-      // Draw projectiles (fireballs) under the player
-      if (projectilesRef.current.length) {
-        for (const pr of projectilesRef.current) {
-          const img = pr.img
-          if (img) ctx.drawImage(img, pr.x, pr.y, pr.w, pr.h)
-        }
-      }
+      // Note: animated effects (projectiles/fires) are rendered as DOM <img> overlays for proper GIF animation.
 
       // Draw player
       const pImg = imagesRef.current.player
@@ -1768,6 +1883,24 @@ export default function Game() {
       } else {
         ctx.fillStyle = '#ffcc00'
         ctx.fillRect(playerRef.current.x, playerRef.current.y, playerRef.current.w, playerRef.current.h)
+      }
+
+      // Draw consumption progress (small circular bar above player)
+      if (consumeActiveRef.current) {
+        const cx = playerRef.current.x + playerRef.current.w / 2
+        const cy = playerRef.current.y - 16
+        const r = 10
+        const t = (performance.now() - consumeStartRef.current) / CONSUME_DURATION_MS
+        const frac = Math.max(0, Math.min(1, t))
+        ctx.save()
+        ctx.lineWidth = 3
+        // background circle
+        ctx.strokeStyle = 'rgba(0,0,0,0.6)'
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke()
+        // progress arc
+        ctx.strokeStyle = 'rgba(251,191,36,0.9)' // amber-400
+        ctx.beginPath(); ctx.arc(cx, cy, r, -Math.PI/2, -Math.PI/2 + frac * Math.PI * 2); ctx.stroke()
+        ctx.restore()
       }
 
       // UI hints (only after class is selected and start screen closed)
@@ -2061,6 +2194,29 @@ export default function Game() {
           onMouseMove={handleMouseMove}
           onClick={handleClick}
         />
+        {/* Animated effects layer (GIFs rendered as DOM images so they animate) */}
+  <div className="pointer-events-none absolute inset-0 z-10">
+          {/* Projectiles */}
+          {effectsTick >= 0 && projectilesRef.current.map((pr) => (
+            <img
+              key={pr.id}
+              src={pr.domSrc}
+              alt="effect"
+              className="absolute select-none"
+              style={{ left: pr.x, top: pr.y, width: pr.w, height: pr.h, imageRendering: 'pixelated' }}
+            />
+          ))}
+          {/* Lingering fires/poison */}
+          {effectsTick >= 0 && firesRef.current.map((f) => (
+            <img
+              key={f.id}
+              src={f.domSrc}
+              alt="effect"
+              className="absolute select-none"
+              style={{ left: f.x, top: f.y, width: f.w, height: f.h, imageRendering: 'pixelated' }}
+            />
+          ))}
+        </div>
         {chatOpen && (
           <div className="absolute inset-0 flex items-end md:items-center justify-center p-4 md:p-6 z-20">
             <div className="w-full max-w-2xl bg-stone-900/90 backdrop-blur rounded-xl border border-amber-900/40 shadow-lg shadow-black/50">
@@ -2402,10 +2558,7 @@ export default function Game() {
                     <input type="checkbox" checked={ttsEnabled} onChange={(e)=>setTtsEnabled(e.target.checked)} className="accent-amber-500" />
                     <span className="text-stone-200">Speak bartender replies (TTS)</span>
                   </label>
-                  <label className="flex items-center gap-2 select-none">
-                    <input type="checkbox" checked={allowQDrop} onChange={(e)=>setAllowQDrop(e.target.checked)} className="accent-amber-500" />
-                    <span className="text-stone-200">Enable Q to drop one from selected hotbar</span>
-                  </label>
+                  {/* Removed Q-drop option: Q is attack-only now */}
                   <label className="flex items-center gap-2 select-none">
                     <input type="checkbox" checked={allowFSwap} onChange={(e)=>setAllowFSwap(e.target.checked)} className="accent-amber-500" />
                     <span className="text-stone-200">Enable F to swap selected hotbar with offhand</span>
@@ -2439,6 +2592,78 @@ export default function Game() {
         {/* In-game Hotbar HUD (Minecraft-style) */}
         {!titleOpen && !classSelectOpen && !optionsOpen && (
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 select-none">
+            {/* Health bar + (Mage) mana circle */}
+            <div className="flex items-center justify-center gap-3 mb-2">
+              {/* Health bar */}
+              <div className="relative h-3 rounded-full bg-stone-900/60 border border-amber-900/40 overflow-hidden" style={{ width: 340 }}>
+                <div
+                  className="h-full"
+                  style={{
+                    width: `${Math.max(0, Math.min(100, (playerRef.current.hp / playerRef.current.hpMax) * 100 || 0))}%`,
+                    backgroundColor: 'rgba(185, 28, 28, 0.9)' // darker red (~red-700) with slight opacity
+                  }}
+                />
+                {/* subtle shine */}
+                <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(255,255,255,0.15), rgba(0,0,0,0.05))' }} />
+                {/* tick marks at 25/50/75 HP */}
+                {(playerRef.current.hpMax || 100) >= 25 && (
+                  <div
+                    className="absolute bg-stone-200/70"
+                    style={{
+                      width: 2,
+                      height: 10,
+                      top: 1,
+                      left: `${Math.max(0, Math.min(1, 25 / (playerRef.current.hpMax || 100))) * 100}%`,
+                      transform: 'translateX(-1px)',
+                      zIndex: 2,
+                    }}
+                  />
+                )}
+                {(playerRef.current.hpMax || 100) >= 50 && (
+                  <div
+                    className="absolute bg-stone-200/70"
+                    style={{
+                      width: 2,
+                      height: 10,
+                      top: 1,
+                      left: `${Math.max(0, Math.min(1, 50 / (playerRef.current.hpMax || 100))) * 100}%`,
+                      transform: 'translateX(-1px)',
+                      zIndex: 2,
+                    }}
+                  />
+                )}
+                {(playerRef.current.hpMax || 100) >= 75 && (
+                  <div
+                    className="absolute bg-stone-200/70"
+                    style={{
+                      width: 2,
+                      height: 10,
+                      top: 1,
+                      left: `${Math.max(0, Math.min(1, 75 / (playerRef.current.hpMax || 100))) * 100}%`,
+                      transform: 'translateX(-1px)',
+                      zIndex: 2,
+                    }}
+                  />
+                )}
+              </div>
+              {/* Mage mana circle */}
+              {selectedClass === 'mage' && (
+                <div
+                  className="relative w-7 h-7 rounded-full bg-stone-900/60 border border-amber-900/40"
+                  title={`Mana: ${Math.floor(playerRef.current.mana || 0)}/${playerRef.current.manaMax || 0}`}
+                >
+                  <div
+                    className="absolute inset-0 rounded-full"
+                    style={{
+                      background: `conic-gradient(#1e3a8a ${(Math.max(0, Math.min(1, (playerRef.current.mana || 0) / (playerRef.current.manaMax || 1)))) * 360}deg, transparent 0deg)`,
+                      filter: 'drop-shadow(0 0 2px rgba(30,58,138,0.7))',
+                    }}
+                  />
+                  <div className="absolute inset-0.5 rounded-full" style={{ background: 'radial-gradient(circle at 35% 35%, rgba(255,255,255,0.2), rgba(255,255,255,0) 60%)' }} />
+                </div>
+              )}
+            </div>
+
             <div className="flex items-end gap-3">
               {/* Current item name label with fade */}
               <div className={[
