@@ -25,9 +25,15 @@ export const PATHS = {
   // Background music used on the intro screen and in the village
   // Place a file named "intro_village.mp3" under client/public/audio or update this path
   introVillageMusic: `${AUDIO_BASE}/introAndVillageMusic.mp3`,
+  // New background tracks (place these files under client/public/audio)
+  // Tavern ambience (plays quietly while inside the tavern, pauses during bartender chat)
+  tavernBackgroundMusic: `${AUDIO_BASE}/backgroundMusic1.mp3`,
+  // Fight/tense music for the cavern interior scene
+  fightMusic1: `${AUDIO_BASE}/fightMusic1.mp3`,
   // SFX (optional; safe if missing)
   fireballCastSfx: `${AUDIO_BASE}/fireballCast.mp3`,
   fireImpactSfx: `${AUDIO_BASE}/fireImpact.mp3`,
+  goblinArrow: `${IMAGES_BASE}/goblinArrow.png`,
 }
 
 // Class base sprites
@@ -44,6 +50,13 @@ export const CLASS_ATTACK_SPRITES = {
   mage: `${IMAGES_BASE}/mageAttack.png`,
   thief: `${IMAGES_BASE}/thiefAttack.png`,
   dwarf: `${IMAGES_BASE}/dwarfAttack.png`,
+}
+
+// Enemy sprites
+export const ENEMY_SPRITES = {
+  goblin: `${IMAGES_BASE}/goblin.png`,
+  brute: encodeURI(`${IMAGES_BASE}/goblin brute.png`),
+  archer: encodeURI(`${IMAGES_BASE}/goblin archer.png`),
 }
 
 // Item icon paths (by item id)

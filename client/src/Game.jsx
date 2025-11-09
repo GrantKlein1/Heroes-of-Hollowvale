@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react'
 import { sendChat as apiSendChat, fetchTTS as apiFetchTTS, streamTTS as apiStreamTTS } from './lib/api'
-import { PATHS, CLASS_SPRITES, CLASS_ATTACK_SPRITES, ITEM_ICONS, DEFAULT_ITEM_ICON, COMPOSITE_SPRITES, ANIMATED_SWORD_FRAMES } from './config/paths'
+import { PATHS, CLASS_SPRITES, CLASS_ATTACK_SPRITES, ITEM_ICONS, DEFAULT_ITEM_ICON, COMPOSITE_SPRITES, ANIMATED_SWORD_FRAMES, ENEMY_SPRITES } from './config/paths'
 import AnimatedSprite from './components/AnimatedSprite'
 
 // Simple top-down RPG prototype with two scenes: Village and Tavern
@@ -52,6 +52,9 @@ export default function Game() {
   const keysRef = useRef({})
   const imagesRef = useRef({})
   const musicRef = useRef(null)
+  // Separate audio elements for ambient scene music (village/path/title), tavern ambience, and fight music
+  const tavernMusicRef = useRef(null)
+  const fightMusicRef = useRef(null)
   const vendorAudioRef = useRef(null)
   const sceneRef = useRef('village') // 'village' | 'tavern'
   const [ready, setReady] = useState(false)
@@ -89,10 +92,24 @@ export default function Game() {
   const chatOpenRef = useRef(false)
   const classSelectOpenRef = useRef(true)
   const inventoryOpenRef = useRef(false)
-  // Options: simple volume slider persisted for future audio
-  const [volume, setVolume] = useState(() => {
-    const v = Number(localStorage.getItem('volume') ?? 15)
-    return Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : 15
+  // Audio Options
+  // Master music volume and per-track volumes (0-100), persisted
+  const [masterVolume, setMasterVolume] = useState(() => {
+    const v = Number(localStorage.getItem('masterVolume') ?? localStorage.getItem('volume') ?? 50)
+    return Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : 50
+  })
+  const [musicVillageVol, setMusicVillageVol] = useState(() => {
+    const v = Number(localStorage.getItem('musicVillageVol') ?? 100)
+    return Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : 100
+  })
+  const [musicTavernVol, setMusicTavernVol] = useState(() => {
+    // Default lower for ambience by design
+    const v = Number(localStorage.getItem('musicTavernVol') ?? 35)
+    return Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : 35
+  })
+  const [musicFightVol, setMusicFightVol] = useState(() => {
+    const v = Number(localStorage.getItem('musicFightVol') ?? 85)
+    return Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : 85
   })
   // Toggle for bartender speech (TTS)
   const [ttsEnabled, setTtsEnabled] = useState(() => (localStorage.getItem('ttsEnabled') ?? 'true') !== 'false')
@@ -100,9 +117,11 @@ export default function Game() {
   const [ttsVolume, setTtsVolume] = useState(() => {
     const sv = Number(localStorage.getItem('ttsVolume'))
     if (Number.isFinite(sv)) return Math.max(0, Math.min(100, sv))
-    const base = Number(localStorage.getItem('volume'))
+    const base = Number(localStorage.getItem('masterVolume'))
     return Number.isFinite(base) ? Math.max(0, Math.min(100, base)) : 50
   })
+  // Global mute-all toggle for music (does not affect NPC voices)
+  const [muteAllMusic, setMuteAllMusic] = useState(() => (localStorage.getItem('muteAllMusic') ?? 'false') === 'true')
   // Inventory
   const [inventoryOpen, setInventoryOpen] = useState(false)
   // inventory shape: { armor:{head,chest,legs,boots,offhand}, storage: Item[27], hotbar: Item[9] }
@@ -145,6 +164,21 @@ export default function Game() {
   const FIRE_LINGER_MS = 2000 // how long the small flame remains in place
   const projectilesRef = useRef([]) // { x,y,w,h, vx,vy, startX,startY, maxDist, img }
   const firesRef = useRef([]) // { x,y,w,h, until, img }
+  // Enemies in the current scene (spawned only in dungeonInterior)
+  const enemiesRef = useRef([]) // { id,type,hp,hpMax,x,y,w,h,speed, dir:{x,y}, changeAt:number, img }
+  const enemiesSpawnedRef = useRef(false)
+  // Player damage/iFrames and visual hit flash
+  const playerIFrameUntilRef = useRef(0)
+  const playerFlashUntilRef = useRef(0)
+  // Floating combat text (damage numbers)
+  const floatTextsRef = useRef([]) // { id, x, y, text, color, until, alpha }
+  // Dungeon waves
+  const dungeonWaveRef = useRef(1)
+  const nextWaveAtRef = useRef(0)
+  // Game over overlay and killer info
+  const [gameOver, setGameOver] = useState(false)
+  const gameOverRef = useRef(false)
+  const killerRef = useRef(null) // string label like 'Goblin Brute'
   const sfxCacheRef = useRef({})
   const playSfx = (src, vol = 0.6) => {
     if (!src) return
@@ -171,6 +205,22 @@ export default function Game() {
     return () => cancelAnimationFrame(rafId)
   }, [])
   const effectIdRef = useRef(1)
+  const pushFloatText = (x, y, text, color = '#ffd7a1', ms = 700) => {
+    const now = performance.now()
+    floatTextsRef.current.push({ id: effectIdRef.current++, x, y, text, color, until: now + ms, alpha: 1 })
+  }
+  const enemyLabel = (type) => {
+    if (type === 'goblin') return 'Goblin'
+    if (type === 'brute') return 'Goblin Brute'
+    if (type === 'archer') return 'Goblin Archer'
+    return 'Unknown'
+  }
+  const triggerGameOver = (killerType) => {
+    if (gameOverRef.current) return
+    killerRef.current = enemyLabel(killerType || 'Unknown')
+    gameOverRef.current = true
+    setGameOver(true)
+  }
   // Ensure sprite image swaps don't race: only apply the latest requested sprite
   const spriteReqIdRef = useRef(0)
   const setPlayerImageAsync = (src) => {
@@ -490,10 +540,16 @@ export default function Game() {
       if (cancelled) return
       imagesRef.current = { villageBg, tavernBg, marketBg, pathBg, dungeonBg, dungeonInteriorBg, treasureBg, player: null }
       // Kick off optional asset loads without blocking readiness
-      safe(PATHS.animatedFireBallGif).then((img) => { if (!cancelled && img) imagesRef.current.fireBallGif = img })
+  safe(PATHS.animatedFireBallGif).then((img) => { if (!cancelled && img) imagesRef.current.fireBallGif = img })
       safe(PATHS.animatedFireSmallGif).then((img) => { if (!cancelled && img) imagesRef.current.fireSmallGif = img })
       safe(PATHS.animatedThiefPotionGif).then((img) => { if (!cancelled && img) imagesRef.current.thiefPotionGif = img })
       safe(PATHS.poisonPotionGif).then((img) => { if (!cancelled && img) imagesRef.current.poisonPotionGif = img })
+  // Enemy sprites
+  safe(ENEMY_SPRITES.goblin).then((img) => { if (!cancelled && img) imagesRef.current.goblin = img })
+  safe(ENEMY_SPRITES.brute).then((img) => { if (!cancelled && img) imagesRef.current.brute = img })
+  safe(ENEMY_SPRITES.archer).then((img) => { if (!cancelled && img) imagesRef.current.archer = img })
+    // Arrow sprite
+    safe(PATHS.goblinArrow).then((img) => { if (!cancelled && img) imagesRef.current.goblinArrow = img })
       setReady(true)
     }).catch(() => {
       // As a last resort, still mark ready to avoid hanging UI; missing images will be null and handled gracefully.
@@ -1176,10 +1232,14 @@ export default function Game() {
   useEffect(() => { titleOpenRef.current = titleOpen }, [titleOpen])
   useEffect(() => { optionsOpenRef.current = optionsOpen }, [optionsOpen])
   useEffect(() => { shopOpenRef.current = shopOpen }, [shopOpen])
-  useEffect(() => { localStorage.setItem('volume', String(volume)) }, [volume])
+  useEffect(() => { localStorage.setItem('masterVolume', String(masterVolume)) }, [masterVolume])
+  useEffect(() => { localStorage.setItem('musicVillageVol', String(musicVillageVol)) }, [musicVillageVol])
+  useEffect(() => { localStorage.setItem('musicTavernVol', String(musicTavernVol)) }, [musicTavernVol])
+  useEffect(() => { localStorage.setItem('musicFightVol', String(musicFightVol)) }, [musicFightVol])
   useEffect(() => { localStorage.setItem('ttsEnabled', String(ttsEnabled)) }, [ttsEnabled])
   useEffect(() => { localStorage.setItem('ttsVolume', String(ttsVolume)) }, [ttsVolume])
   useEffect(() => { localStorage.setItem('allowFSwap', String(allowFSwap)) }, [allowFSwap])
+  useEffect(() => { localStorage.setItem('muteAllMusic', String(muteAllMusic)) }, [muteAllMusic])
   useEffect(() => { allowFSwapRef.current = allowFSwap }, [allowFSwap])
   // Keep selectedClass/inventory refs in sync for non-reactive event handlers
   useEffect(() => { selectedClassRef.current = selectedClass }, [selectedClass])
@@ -1242,15 +1302,15 @@ export default function Game() {
     if (a) a.volume = Math.max(0, Math.min(1, ttsVolume / 100))
   }, [ttsVolume])
 
-  // Music: play only on Intro (titleOpen) and in Village; pause elsewhere
-  // Create audio lazily and try to start on first user interaction if autoplay is blocked
+  // Music helpers
+  // Existing main music (title + village + path)
   const ensureMusic = () => {
     if (!musicRef.current) {
       try {
         const a = new Audio(PATHS.introVillageMusic)
         a.loop = true
         a.preload = 'auto'
-        a.volume = Math.max(0, Math.min(1, volume / 100))
+        a.volume = Math.max(0, Math.min(1, (masterVolume / 100) * (musicVillageVol / 100)))
         a.addEventListener('error', () => {
           console.warn('[Audio] Failed to load:', PATHS.introVillageMusic)
         }, { once: true })
@@ -1263,33 +1323,148 @@ export default function Game() {
     return musicRef.current
   }
 
-  // React to scene/title and play/pause accordingly
-  useEffect(() => {
-    // Play music on title, village, and path; pause in tavern, market, and all cave scenes
-    const shouldPlay = titleOpen || scene === 'village' || scene === 'path'
-    const audio = ensureMusic()
-    if (!audio) return
-    audio.volume = Math.max(0, Math.min(1, volume / 100))
-    if (shouldPlay) {
-      const tryPlay = () => {
-        const p = audio.play()
-        if (p && typeof p.then === 'function') {
-          p.catch(() => {
-            // Autoplay likely blocked; resume on first pointerdown
-            const unlock = () => {
-              audio.play().finally(() => {
-                document.removeEventListener('pointerdown', unlock)
-              })
-            }
-            document.addEventListener('pointerdown', unlock, { once: true })
-          })
-        }
+  // Tavern ambience (low volume loop)
+  const ensureTavernMusic = () => {
+    if (!tavernMusicRef.current) {
+      try {
+        const a = new Audio(PATHS.tavernBackgroundMusic)
+        a.loop = true
+        a.preload = 'auto'
+        a.volume = 0 // will fade in
+        a.addEventListener('error', () => {
+          console.warn('[Audio] Failed to load tavernBackgroundMusic:', PATHS.tavernBackgroundMusic)
+        }, { once: true })
+        tavernMusicRef.current = a
+      } catch (e) {
+        tavernMusicRef.current = null
       }
-      tryPlay()
-    } else {
-      try { audio.pause() } catch {}
     }
-  }, [titleOpen, scene])
+    return tavernMusicRef.current
+  }
+
+  // Dungeon interior fight music
+  const ensureFightMusic = () => {
+    if (!fightMusicRef.current) {
+      try {
+        const a = new Audio(PATHS.fightMusic1)
+        a.loop = true
+        a.preload = 'auto'
+        a.volume = 0 // will fade in
+        a.addEventListener('error', () => {
+          console.warn('[Audio] Failed to load fightMusic1:', PATHS.fightMusic1)
+        }, { once: true })
+        fightMusicRef.current = a
+      } catch (e) {
+        fightMusicRef.current = null
+      }
+    }
+    return fightMusicRef.current
+  }
+
+  // Compute effective volume for a track with master multiplier
+  const trackLevel = (track) => {
+    if (muteAllMusic) return 0
+    const m = Math.max(0, Math.min(1, masterVolume / 100))
+    let t = 1
+    if (track === 'village') t = Math.max(0, Math.min(1, musicVillageVol / 100))
+    else if (track === 'tavern') t = Math.max(0, Math.min(1, musicTavernVol / 100))
+    else if (track === 'fight') t = Math.max(0, Math.min(1, musicFightVol / 100))
+    return Math.max(0, Math.min(1, m * t))
+  }
+
+  // Generic fade utility
+  const fadeAudio = (audio, targetVol, ms = 600) => {
+    if (!audio) return
+    const start = audio.volume
+    const end = Math.max(0, Math.min(1, targetVol))
+    const startTime = performance.now()
+    const step = () => {
+      const t = (performance.now() - startTime) / ms
+      const frac = Math.max(0, Math.min(1, t))
+      const v = start + (end - start) * frac
+      audio.volume = v
+      if (frac < 1) requestAnimationFrame(step)
+    }
+    requestAnimationFrame(step)
+  }
+
+  // Safely play with autoplay unlock fallback
+  const playWithUnlock = (audio) => {
+    if (!audio) return
+    try {
+      const p = audio.play()
+      if (p && typeof p.then === 'function') {
+        p.catch(() => {
+          const unlock = () => {
+            audio.play().finally(() => document.removeEventListener('pointerdown', unlock))
+          }
+            document.addEventListener('pointerdown', unlock, { once: true })
+        })
+      }
+    } catch {}
+  }
+
+  // Scene-based music controller
+  useEffect(() => {
+    const main = ensureMusic()
+    if (main) main.volume = trackLevel('village')
+    const tavern = ensureTavernMusic()
+    const fight = ensureFightMusic()
+
+    const inTavern = scene === 'tavern'
+    const inFight = scene === 'dungeonInterior'
+    const showTitle = titleOpen
+    const inVillageOrPath = scene === 'village' || scene === 'path'
+
+    // Main music active on title, village, path (not inside tavern or fight scene)
+    if (showTitle || inVillageOrPath) {
+      if (main) {
+        playWithUnlock(main)
+        fadeAudio(main, trackLevel('village'), 700)
+      }
+    } else {
+      if (main) fadeAudio(main, 0, 500)
+      setTimeout(() => { try { main?.pause() } catch {} }, 520)
+    }
+
+    // Fight music only in dungeon interior
+    if (inFight) {
+      if (fight) {
+        playWithUnlock(fight)
+        fadeAudio(fight, trackLevel('fight'), 800)
+      }
+    } else {
+      if (fight && !inFight) fadeAudio(fight, 0, 500)
+      setTimeout(() => { if (fight && !inFight) { try { fight.pause() } catch {} } }, 520)
+    }
+
+    // Tavern ambience only inside tavern AND only when chat not open
+    if (inTavern && !chatOpenRef.current) {
+      if (tavern) {
+        playWithUnlock(tavern)
+        fadeAudio(tavern, trackLevel('tavern'), 600)
+      }
+    } else {
+      if (tavern) fadeAudio(tavern, 0, 400)
+      setTimeout(() => { if (tavern && tavern.volume === 0) { try { tavern.pause() } catch {} } }, 420)
+    }
+  }, [titleOpen, scene, masterVolume, musicVillageVol, musicTavernVol, musicFightVol, muteAllMusic])
+
+  // Pause tavern ambience when bartender chat opens; resume on close if still in tavern
+  useEffect(() => {
+    const tavern = ensureTavernMusic()
+    if (!tavern) return
+    if (scene === 'tavern') {
+      if (chatOpen) {
+        fadeAudio(tavern, 0, 400)
+        setTimeout(() => { if (tavern.volume === 0) { try { tavern.pause() } catch {} } }, 420)
+      } else {
+        playWithUnlock(tavern)
+        // Use computed track level (master * per-track) instead of removed 'volume' state
+        fadeAudio(tavern, trackLevel('tavern'), 600)
+      }
+    }
+  }, [chatOpen, scene, masterVolume, musicTavernVol, muteAllMusic])
 
   // Play vendor greeting when entering the Market scene
   useEffect(() => {
@@ -1299,11 +1474,12 @@ export default function Game() {
     }
   }, [scene])
 
-  // Keep music volume in sync with Options slider
+  // Keep music volumes in sync with option sliders
   useEffect(() => {
-    const a = musicRef.current
-    if (a) a.volume = Math.max(0, Math.min(1, volume / 100))
-  }, [volume])
+    if (musicRef.current) musicRef.current.volume = trackLevel('village')
+    if (tavernMusicRef.current) tavernMusicRef.current.volume = (scene === 'tavern' && !chatOpenRef.current) ? trackLevel('tavern') : tavernMusicRef.current.volume
+    if (fightMusicRef.current) fightMusicRef.current.volume = (scene === 'dungeonInterior') ? trackLevel('fight') : fightMusicRef.current.volume
+  }, [masterVolume, musicVillageVol, musicTavernVol, musicFightVol, scene, muteAllMusic])
 
   // Cleanup on unmount
   useEffect(() => {
@@ -1312,6 +1488,16 @@ export default function Game() {
         try { musicRef.current.pause() } catch {}
         musicRef.current.src = ''
         musicRef.current = null
+      }
+      if (tavernMusicRef.current) {
+        try { tavernMusicRef.current.pause() } catch {}
+        tavernMusicRef.current.src = ''
+        tavernMusicRef.current = null
+      }
+      if (fightMusicRef.current) {
+        try { fightMusicRef.current.pause() } catch {}
+        fightMusicRef.current.src = ''
+        fightMusicRef.current = null
       }
     }
   }, [])
@@ -1436,6 +1622,7 @@ export default function Game() {
               domSrc: PATHS.animatedThiefPotionGif,
               impactKey: 'poisonPotionGif',
               lingerMs: 2000,
+              owner: 'player'
             })
             // Consume one poison vial and immediately revert sprite to new inventory state
             setInventory((inv) => {
@@ -1488,6 +1675,7 @@ export default function Game() {
                 impactKey: 'fireSmallGif',
                 domSrc: PATHS.animatedFireBallGif,
                 lingerMs: FIRE_LINGER_MS,
+                owner: 'player'
               })
             }
           }
@@ -1604,22 +1792,71 @@ export default function Game() {
       // Layout background based on scene fit mode and compute image frame
       const cw = canvas.clientWidth, ch = canvas.clientHeight
       const sdef = scenes[sceneRef.current]
-      const bgImg = imagesRef.current[sdef.bgKey]
+      // Background image with readiness checks and robust fallbacks
+      const firstReady = (...imgs) => imgs.find((im) => im && im.width > 0 && im.height > 0) || null
+      let bgImg = firstReady(
+        imagesRef.current[sdef.bgKey],
+        imagesRef.current.villageBg,
+        imagesRef.current.pathBg,
+        imagesRef.current.marketBg,
+        imagesRef.current.dungeonBg,
+        imagesRef.current.dungeonInteriorBg,
+        imagesRef.current.treasureBg,
+      )
       let dx = 0, dy = 0, dw = cw, dh = ch
-      if (bgImg) {
+      if (bgImg && bgImg.width > 0 && bgImg.height > 0) {
         const scaleContain = Math.min(cw / bgImg.width, ch / bgImg.height)
         const scaleCover = Math.max(cw / bgImg.width, ch / bgImg.height)
         const scale = sdef.fitMode === 'contain' ? scaleContain : scaleCover
-        dw = bgImg.width * scale
-        dh = bgImg.height * scale
-        dx = (cw - dw) / 2
-        dy = (ch - dh) / 2
+        if (Number.isFinite(scale) && scale > 0) {
+          dw = bgImg.width * scale
+          dh = bgImg.height * scale
+          dx = (cw - dw) / 2
+          dy = (ch - dh) / 2
+        } else {
+          bgImg = null
+        }
       }
       // expose frame for mouse mapping
       frameRef.current = { dx, dy, dw, dh }
 
       // Helper to map normalized image-space rect to screen pixels
       const mapRect = (r) => ({ x: dx + r.x * dw, y: dy + r.y * dh, w: r.w * dw, h: r.h * dh })
+
+      // Spawn enemies in dungeon interior once per entry
+      if (sceneRef.current === 'dungeonInterior' && !enemiesSpawnedRef.current && dw > 0 && dh > 0 && (nextWaveAtRef.current === 0 || performance.now() >= nextWaveAtRef.current)) {
+        const wave = dungeonWaveRef.current
+        const makeEnemy = (type, nx, ny) => {
+          const imgs = imagesRef.current
+          const img = imgs[type] || null
+          // Size relative to scene; slightly smaller than player
+          const targetH = Math.max(20, Math.round(0.11 * dh))
+          const ar = (img && img.height) ? (img.width / img.height) : 1
+          const w = Math.max(14, Math.round(targetH * ar))
+          const h = targetH
+          const x = dx + nx * dw - w / 2
+          const y = dy + ny * dh - h / 2
+          let hpMax = 15
+          if (type === 'brute') hpMax = 25
+          else if (type === 'archer') hpMax = 10
+          // Scale by wave for gentle ramp
+          const hpScale = 1 + 0.12 * Math.max(0, wave - 1)
+          hpMax = Math.round(hpMax * hpScale)
+          let speed = type === 'brute' ? 55 : (type === 'archer' ? 80 : 70)
+          speed = speed * (1 + 0.05 * Math.max(0, wave - 1))
+          return { id: `${type}_${Math.random().toString(36).slice(2,7)}`, type, hp: hpMax, hpMax, x, y, w, h, speed, dir: { x: 0, y: 0 }, changeAt: 0, img, fireAt: 0, flashUntil: 0 }
+        }
+        const base = [makeEnemy('goblin', 0.47, 0.28), makeEnemy('goblin', 0.53, 0.31), makeEnemy('brute', 0.50, 0.22), makeEnemy('archer', 0.56, 0.26)]
+        if (wave > 1) {
+          // Scale counts modestly each wave (difficulty ramp)
+            for (let i=1;i<wave;i++) base.push(makeEnemy('goblin', 0.45 + Math.random()*0.12, 0.20 + Math.random()*0.14))
+            if (wave % 2 === 0) base.push(makeEnemy('archer', 0.44 + Math.random()*0.18, 0.20 + Math.random()*0.14))
+            if (wave % 3 === 0) base.push(makeEnemy('brute', 0.44 + Math.random()*0.12, 0.18 + Math.random()*0.10))
+        }
+        enemiesRef.current = base
+        enemiesSpawnedRef.current = true
+        nextWaveAtRef.current = 0
+      }
 
       // Update player size relative to scene image height, preserving sprite aspect ratio
       if (sdef.playerScale && dh > 0) {
@@ -1648,7 +1885,7 @@ export default function Game() {
   let speed = playerRef.current.speed
   if (performance.now() < speedBoostUntilRef.current) speed *= 1.5
       let vx = 0, vy = 0
-  if (!chatOpenRef.current && !classSelectOpenRef.current && !inventoryOpenRef.current && !titleOpenRef.current && !optionsOpenRef.current && !shopOpenRef.current) {
+  if (!chatOpenRef.current && !classSelectOpenRef.current && !inventoryOpenRef.current && !titleOpenRef.current && !optionsOpenRef.current && !shopOpenRef.current && !gameOverRef.current) {
         if (keysRef.current['w'] || keysRef.current['arrowup']) vy -= 1
         if (keysRef.current['s'] || keysRef.current['arrowdown']) vy += 1
         if (keysRef.current['a'] || keysRef.current['arrowleft']) vx -= 1
@@ -1684,14 +1921,134 @@ export default function Game() {
       playerRef.current.x = next.x
       playerRef.current.y = next.y
 
+      // Enemy AI: mild unpredictability, light bias toward player; obey same colliders
+  if (enemiesRef.current.length && !gameOverRef.current) {
+        const nowMs = performance.now()
+        const pCenter = { x: playerRef.current.x + playerRef.current.w/2, y: playerRef.current.y + playerRef.current.h/2 }
+        for (const e of enemiesRef.current) {
+          if (e.hp <= 0) continue
+          if (nowMs >= e.changeAt) {
+            // Bias towards player a little
+            const toP = { x: pCenter.x - (e.x + e.w/2), y: pCenter.y - (e.y + e.h/2) }
+            const len = Math.hypot(toP.x, toP.y) || 1
+            toP.x /= len; toP.y /= len
+            // Random jitter
+            const jitter = { x: (Math.random()*2-1)*0.8, y: (Math.random()*2-1)*0.8 }
+            const mixBase = 0.45
+            const mix = Math.min(0.75, mixBase + 0.05 * Math.max(0, dungeonWaveRef.current - 1)) // ramp steering a bit
+            let dxv = toP.x * mix + jitter.x * (1-mix)
+            let dyv = toP.y * mix + jitter.y * (1-mix)
+            const nlen = Math.hypot(dxv, dyv) || 1
+            e.dir.x = dxv / nlen
+            e.dir.y = dyv / nlen
+            e.changeAt = nowMs + 500 + Math.random()*900
+          }
+          // Archer ranged attack
+          if (e.type === 'archer' && nowMs >= e.fireAt) {
+            const toP = { x: pCenter.x - (e.x + e.w/2), y: pCenter.y - (e.y + e.h/2) }
+            const len = Math.hypot(toP.x, toP.y) || 1
+            const dirX = toP.x / len
+            const dirY = toP.y / len
+            const startX = e.x + e.w/2 + dirX * 8
+            const startY = e.y + e.h/2 + dirY * 8
+            projectilesRef.current.push({
+              id: effectIdRef.current++,
+              x: startX - 6, y: startY - 6, w: 12, h: 12,
+              vx: dirX * 300, vy: dirY * 300,
+              startX, startY, maxDist: 400,
+              impactKey: 'enemyArrow', // special key
+              owner: 'enemy'
+            })
+            e.fireAt = nowMs + 1800 + Math.random()*1200
+          }
+          // Integrate with collision like player
+          const exNext = { ...e }
+          exNext.x += e.dir.x * e.speed * dt
+          // X collision
+          for (const c of collidersPx) {
+            if (intersects({ x: exNext.x, y: e.y, w: e.w, h: e.h }, c)) {
+              if (e.dir.x > 0) exNext.x = c.x - e.w
+              else if (e.dir.x < 0) exNext.x = c.x + c.w
+              // bounce a bit on collision
+              e.dir.x *= -0.4
+            }
+          }
+          exNext.y += e.dir.y * e.speed * dt
+          for (const c of collidersPx) {
+            if (intersects({ x: exNext.x, y: exNext.y, w: e.w, h: e.h }, c)) {
+              if (e.dir.y > 0) exNext.y = c.y - e.h
+              else if (e.dir.y < 0) exNext.y = c.y + c.h
+              e.dir.y *= -0.4
+            }
+          }
+          e.x = exNext.x
+          e.y = exNext.y
+          // Contact damage (touch) to player
+          const playerBox = { x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }
+          if (!gameOverRef.current && intersects({ x: e.x, y: e.y, w: e.w, h: e.h }, playerBox)) {
+            if (performance.now() >= playerIFrameUntilRef.current) {
+              const baseDmg = e.type === 'brute' ? 12 : (e.type === 'archer' ? 6 : 8)
+              const waveScale = 1 + 0.05 * Math.max(0, dungeonWaveRef.current - 1)
+              const dmg = Math.round(baseDmg * waveScale)
+              playerRef.current.hp = Math.max(0, playerRef.current.hp - dmg)
+              playerIFrameUntilRef.current = performance.now() + 900
+              playerFlashUntilRef.current = performance.now() + 200
+              pushFloatText(playerRef.current.x + playerRef.current.w/2, playerRef.current.y - 10, `-${dmg}`, '#ff9f43')
+              if (playerRef.current.hp <= 0) triggerGameOver(e.type)
+            }
+          }
+        }
+        // Cull dead
+        // Handle enemy death side-effects (loot, float text) before culling
+        for (const e of enemiesRef.current) {
+          if (e.hp <= 0 && !e._deathProcessed) {
+            e._deathProcessed = true
+            // Loot probabilities
+            const gems = { ruby: 0, sapphire: 0, emerald: 0 }
+            if (e.type === 'goblin') {
+              if (Math.random() < 0.35) gems.ruby += 1
+              if (Math.random() < 0.15) gems.emerald += 1
+            } else if (e.type === 'brute') {
+              gems.ruby += Math.random() < 0.60 ? 1 : 0
+              gems.sapphire += Math.random() < 0.50 ? 1 : 0
+            } else if (e.type === 'archer') {
+              if (Math.random() < 0.30) gems.sapphire += 1
+            }
+            const items = []
+            if (e.type === 'brute' && Math.random() < 0.25) items.push({ id: 'healing_potion', count: 1 })
+            if (e.type === 'archer' && Math.random() < 0.25) items.push({ id: 'mana_potion', count: 1 })
+            if (e.type === 'goblin' && Math.random() < 0.15) items.push({ id: 'speed_potion', count: 1 })
+            const hadLoot = Object.values(gems).some(v=>v>0) || items.length>0
+            if (hadLoot) {
+              grantLoot(gems, items)
+              const gemParts = []
+              if (gems.ruby) gemParts.push(`${gems.ruby} Ruby` + (gems.ruby>1?'ies':''))
+              if (gems.sapphire) gemParts.push(`${gems.sapphire} Sapphire` + (gems.sapphire>1?'s':''))
+              if (gems.emerald) gemParts.push(`${gems.emerald} Emerald` + (gems.emerald>1?'s':''))
+              const itemNames = items.map(it=>getItemDef(it.id).name)
+              const segs = []
+              if (gemParts.length) segs.push(gemParts.join(', '))
+              if (itemNames.length) segs.push(itemNames.join(', '))
+              if (segs.length) showNotice(`Loot: ${segs.join(' + ')}`)
+            }
+            pushFloatText(e.x + e.w/2, e.y + e.h/2, '✕', '#ff4444', 500)
+          }
+        }
+        enemiesRef.current = enemiesRef.current.filter(en => en.hp > 0)
+        // Wave clear check
+        if (sceneRef.current === 'dungeonInterior' && enemiesRef.current.length === 0 && enemiesSpawnedRef.current) {
+          if (nextWaveAtRef.current === 0) nextWaveAtRef.current = performance.now() + 2500
+        }
+      }
+
       // Mana regen for mage: 5 mana/sec
       if (selectedClassRef.current === 'mage' && (playerRef.current.manaMax || 0) > 0) {
         const regen = 5 * dt
         playerRef.current.mana = Math.min(playerRef.current.manaMax, (playerRef.current.mana || 0) + regen)
       }
 
-      // Update projectiles (fireballs)
-      if (projectilesRef.current.length) {
+      // Update projectiles (fireballs, poison)
+  if (projectilesRef.current.length && !gameOverRef.current) {
         const arr = projectilesRef.current
         const nowMs = performance.now()
         for (let i = arr.length - 1; i >= 0; i--) {
@@ -1699,30 +2056,72 @@ export default function Game() {
           pr.x += pr.vx * dt
           pr.y += pr.vy * dt
           const dist = Math.hypot(pr.x + pr.w/2 - pr.startX, pr.y + pr.h/2 - pr.startY)
+          // Hit enemies first
+          let hitEnemy = false
+          if (enemiesRef.current.length && pr.owner !== 'enemy') {
+            const hitBox = { x: pr.x, y: pr.y, w: pr.w, h: pr.h }
+            for (const e of enemiesRef.current) {
+              // quick distance gate to reduce checks
+              const pcx = pr.x + pr.w/2, pcy = pr.y + pr.h/2
+              const ecx = e.x + e.w/2, ecy = e.y + e.h/2
+              const dx2 = pcx - ecx, dy2 = pcy - ecy
+              if ((dx2*dx2 + dy2*dy2) > 300*300) continue
+              if (intersects(hitBox, { x: e.x, y: e.y, w: e.w, h: e.h })) {
+                // Damage model
+                const dmg = pr.impactKey === 'poisonPotionGif' ? 8 : 10 // reduced mage fireball base dmg by 5
+                e.hp = Math.max(0, e.hp - dmg)
+                e.flashUntil = nowMs + 180
+                pushFloatText(e.x + e.w/2, e.y - 6, `-${dmg}`, '#ff6161')
+                hitEnemy = true
+                break
+              }
+            }
+          }
+          // Enemy projectile hits player
+          if (pr.owner === 'enemy') {
+            const pBox = { x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }
+            if (intersects({ x: pr.x, y: pr.y, w: pr.w, h: pr.h }, pBox)) {
+              if (!gameOverRef.current && performance.now() >= playerIFrameUntilRef.current) {
+                const dmg = 7
+                playerRef.current.hp = Math.max(0, playerRef.current.hp - dmg)
+                playerIFrameUntilRef.current = performance.now() + 900
+                playerFlashUntilRef.current = performance.now() + 250
+                pushFloatText(playerRef.current.x + playerRef.current.w/2, playerRef.current.y - 10, `-${dmg}`, '#ff9f43')
+                if (playerRef.current.hp <= 0) triggerGameOver('archer')
+              }
+              arr.splice(i, 1)
+              continue
+            }
+          }
           // Collision with scene colliders (stop early)
           let hit = false
           for (const c of collidersPx) {
             if (intersects({ x: pr.x, y: pr.y, w: pr.w, h: pr.h }, c)) { hit = true; break }
           }
-          if (dist >= pr.maxDist || hit) {
-            // Spawn lingering effect and remove projectile
-            const isPoison = pr.impactKey === 'poisonPotionGif'
-            const src = isPoison ? PATHS.poisonPotionGif : PATHS.animatedFireSmallGif
-            const centerX = pr.x + pr.w / 2
-            const centerY = pr.y + pr.h / 2
-            const scale = isPoison ? 1.0 : 1.75 // enlarge small fire by 25%
-            const newW = Math.round(pr.w * scale)
-            const newH = Math.round(pr.h * scale)
-            const nx = centerX - newW / 2
-            const ny = centerY - newH / 2
-            firesRef.current.push({
-              id: effectIdRef.current++,
-              x: nx, y: ny, w: newW, h: newH,
-              until: nowMs + (pr.lingerMs || FIRE_LINGER_MS),
-              domSrc: src,
-            })
-            playSfx(PATHS.fireImpactSfx)
-            arr.splice(i, 1)
+          if (hitEnemy || dist >= pr.maxDist || hit) {
+            if (pr.owner === 'enemy') {
+              // Arrows vanish silently
+              arr.splice(i, 1)
+            } else {
+              // Spawn lingering effect and remove projectile
+              const isPoison = pr.impactKey === 'poisonPotionGif'
+              const src = isPoison ? PATHS.poisonPotionGif : PATHS.animatedFireSmallGif
+              const centerX = pr.x + pr.w / 2
+              const centerY = pr.y + pr.h / 2
+              const scale = isPoison ? 1.0 : 1.75 // enlarge small fire by 25%
+              const newW = Math.round(pr.w * scale)
+              const newH = Math.round(pr.h * scale)
+              const nx = centerX - newW / 2
+              const ny = centerY - newH / 2
+              firesRef.current.push({
+                id: effectIdRef.current++,
+                x: nx, y: ny, w: newW, h: newH,
+                until: nowMs + (pr.lingerMs || FIRE_LINGER_MS),
+                domSrc: src,
+              })
+              playSfx(PATHS.fireImpactSfx)
+              arr.splice(i, 1)
+            }
           }
         }
       }
@@ -1731,6 +2130,23 @@ export default function Game() {
       if (firesRef.current.length) {
         const nowMs = performance.now()
         firesRef.current = firesRef.current.filter(f => nowMs < f.until)
+      }
+      // Floating text update
+      if (floatTextsRef.current.length) {
+        const nowMs2 = performance.now()
+        for (const ft of floatTextsRef.current) {
+          const lifeFrac = 1 - Math.max(0, Math.min(1, (ft.until - nowMs2) / 700))
+          ft.y -= 20 * dt
+          ft.alpha = 1 - lifeFrac
+        }
+        floatTextsRef.current = floatTextsRef.current.filter(f => performance.now() < f.until)
+      }
+
+      // Wave spawning after delay
+      if (sceneRef.current === 'dungeonInterior' && nextWaveAtRef.current && performance.now() >= nextWaveAtRef.current) {
+        dungeonWaveRef.current += 1
+        enemiesSpawnedRef.current = false
+        nextWaveAtRef.current = 0
       }
 
   // Clamp movement to the image frame so we never drift outside the visible area
@@ -1799,7 +2215,7 @@ export default function Game() {
       }
 
       // Interact (E) — disabled only while actively consuming
-      if (!chatOpenRef.current && !shopOpenRef.current && eDown && !interactLatch && !consumeActiveRef.current) {
+  if (!chatOpenRef.current && !shopOpenRef.current && eDown && !interactLatch && !consumeActiveRef.current && !gameOverRef.current) {
         interactLatch = true
         // Village enter door
         if (sceneRef.current === 'village' && sdef.door) {
@@ -1990,11 +2406,12 @@ export default function Game() {
       ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight)
 
       // Draw background (cover)
-      if (bgImg) {
+      if (bgImg && bgImg.width > 0 && bgImg.height > 0 && Number.isFinite(dx) && Number.isFinite(dy) && Number.isFinite(dw) && Number.isFinite(dh)) {
         ctx.imageSmoothingEnabled = false
         ctx.drawImage(bgImg, dx, dy, dw, dh)
       } else {
-        ctx.fillStyle = '#2b2b2b'
+        // Hard fallback: solid black if no backgrounds are available
+        ctx.fillStyle = '#000000'
         ctx.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight)
       }
 
@@ -2005,7 +2422,13 @@ export default function Game() {
       // Draw player
       const pImg = imagesRef.current.player
       if (pImg) {
-        ctx.drawImage(pImg, playerRef.current.x, playerRef.current.y, playerRef.current.w, playerRef.current.h)
+        if (performance.now() < playerFlashUntilRef.current) {
+          ctx.globalAlpha = 0.5
+          ctx.drawImage(pImg, playerRef.current.x, playerRef.current.y, playerRef.current.w, playerRef.current.h)
+          ctx.globalAlpha = 1
+        } else {
+          ctx.drawImage(pImg, playerRef.current.x, playerRef.current.y, playerRef.current.w, playerRef.current.h)
+        }
         // subtle outline for visibility
         ctx.strokeStyle = 'rgba(255,255,255,0.4)'
         ctx.lineWidth = 1
@@ -2013,6 +2436,82 @@ export default function Game() {
       } else {
         ctx.fillStyle = '#ffcc00'
         ctx.fillRect(playerRef.current.x, playerRef.current.y, playerRef.current.w, playerRef.current.h)
+      }
+
+      // Draw enemies and their HP labels
+      if (enemiesRef.current.length) {
+        ctx.font = '12px sans-serif'
+        for (const e of enemiesRef.current) {
+          const img = e.img
+          if (img) {
+            if (performance.now() < (e.flashUntil || 0)) {
+              ctx.globalAlpha = 0.6
+              ctx.drawImage(img, e.x, e.y, e.w, e.h)
+              ctx.globalAlpha = 1
+            } else {
+              ctx.drawImage(img, e.x, e.y, e.w, e.h)
+            }
+          } else {
+            ctx.fillStyle = '#66bb66'
+            ctx.fillRect(e.x, e.y, e.w, e.h)
+          }
+          // Health bar above
+          const barW = Math.max(20, e.w)
+          const barH = 4
+          const hx = e.x + (e.w - barW) / 2
+          const hy = e.y - 8
+          ctx.fillStyle = 'rgba(0,0,0,0.6)'
+          ctx.fillRect(hx, hy, barW, barH)
+          const pct = Math.max(0, Math.min(1, e.hp / e.hpMax))
+          ctx.fillStyle = 'rgba(220,38,38,0.9)'
+          ctx.fillRect(hx, hy, barW * pct, barH)
+          // Numeric HP above (as requested)
+          const label = `${Math.ceil(e.hp)}`
+          const tw = ctx.measureText(label).width
+          ctx.fillStyle = 'rgba(0,0,0,0.6)'
+          ctx.fillRect(hx + barW/2 - tw/2 - 3, hy - 14, tw + 6, 12)
+          ctx.fillStyle = '#ffd7a1'
+          ctx.fillText(label, hx + barW/2 - tw/2, hy - 4)
+        }
+      }
+      // Draw enemy projectiles (arrows) using goblinArrow.png if available
+      if (projectilesRef.current.length) {
+        const arrowImg = imagesRef.current.goblinArrow
+        for (const pr of projectilesRef.current) {
+          if (pr.owner !== 'enemy') continue
+          const cx = pr.x + pr.w/2, cy = pr.y + pr.h/2
+          const ang = Math.atan2(pr.vy, pr.vx)
+          ctx.save()
+          ctx.translate(cx, cy)
+          ctx.rotate(ang)
+          if (arrowImg) {
+            // Maintain arrow aspect ratio; scale length to projectile speed direction for consistency
+            const baseW = pr.w
+            const ar = arrowImg.width && arrowImg.height ? arrowImg.width / arrowImg.height : 3
+            const drawW = baseW
+            const drawH = Math.max(4, Math.round(drawW / ar))
+            ctx.drawImage(arrowImg, -drawW/2, -drawH/2, drawW, drawH)
+          } else {
+            // Fallback rectangle if image missing
+            ctx.fillStyle = '#222'
+            ctx.fillRect(-8, -1.5, 16, 3)
+            ctx.fillStyle = '#555'
+            ctx.fillRect(0, -1.5, 8, 3)
+          }
+          ctx.restore()
+        }
+      }
+      // Floating combat text draw
+      if (floatTextsRef.current.length) {
+        ctx.font = '13px sans-serif'
+        ctx.textAlign = 'center'
+        for (const ft of floatTextsRef.current) {
+          ctx.globalAlpha = Math.max(0, Math.min(1, ft.alpha))
+          ctx.fillStyle = ft.color
+          ctx.fillText(ft.text, ft.x, ft.y)
+        }
+        ctx.globalAlpha = 1
+        ctx.textAlign = 'left'
       }
 
       // Draw consumption progress (small circular bar above player)
@@ -2177,6 +2676,17 @@ export default function Game() {
   useEffect(() => {
     projectilesRef.current = []
     firesRef.current = []
+    // Clear enemies when switching scenes; spawn on entering dungeonInterior
+    if (scene !== 'dungeonInterior') {
+      enemiesRef.current = []
+      enemiesSpawnedRef.current = false
+      dungeonWaveRef.current = 1
+      nextWaveAtRef.current = 0
+    } else {
+      // entering dungeon interior
+      dungeonWaveRef.current = 1
+      nextWaveAtRef.current = 0
+    }
   }, [scene])
 
   // Debug mouse handlers
@@ -2441,14 +2951,7 @@ export default function Game() {
           </div>
         )}
         {/* Centered animated fire GIF in dungeon interior */}
-        {scene === 'dungeonInterior' && (
-          <img
-            src={PATHS.animatedFireSmallGif}
-            alt="Animated Fire"
-            className="pointer-events-none select-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-            style={{ width: 96, height: 96, imageRendering: 'pixelated' }}
-          />
-        )}
+        {/* Removed centered fire GIF from dungeon interior as requested */}
         {inventoryOpen && (
           <div className="absolute inset-0 z-20 flex items-center justify-center p-4" onMouseMove={handleInventoryMouseMove}>
             <div className="w-full max-w-4xl bg-stone-900/95 backdrop-blur rounded-2xl border border-amber-900/40 shadow-xl shadow-black/50">
@@ -2661,20 +3164,71 @@ export default function Game() {
             <div className="relative z-10 w-[92%] max-w-xl rounded-xl border border-amber-900/40 bg-stone-900/95 p-6 shadow-xl">
               <h2 className="font-display text-3xl text-amber-200 mb-4">Options</h2>
               <div className="space-y-5">
+                {/* Mute all music */}
+                <label className="flex items-center gap-2 select-none">
+                  <input type="checkbox" checked={muteAllMusic} onChange={(e)=>setMuteAllMusic(e.target.checked)} className="accent-amber-500" />
+                  <span className="text-stone-200">Mute all music</span>
+                </label>
+                {/* Master music volume */}
                 <label className="block">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-stone-200">Music volume</span>
-                    <span className="text-stone-300/80 text-sm">{volume}%</span>
+                    <span className="text-stone-200">Master music volume</span>
+                    <span className="text-stone-300/80 text-sm">{masterVolume}%</span>
                   </div>
                   <input
                     type="range"
                     min={0}
                     max={100}
-                    value={volume}
-                    onChange={(e) => setVolume(Number(e.target.value))}
+                    value={masterVolume}
+                    onChange={(e) => setMasterVolume(Number(e.target.value))}
                     className="w-full accent-amber-500"
                   />
                 </label>
+                {/* Per-song volumes */}
+                <div className="grid grid-cols-1 gap-4">
+                  <label className="block">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-stone-200">Village/Path music</span>
+                      <span className="text-stone-300/80 text-sm">{musicVillageVol}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      value={musicVillageVol}
+                      onChange={(e) => setMusicVillageVol(Number(e.target.value))}
+                      className="w-full accent-amber-500"
+                    />
+                  </label>
+                  <label className="block">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-stone-200">Tavern ambience</span>
+                      <span className="text-stone-300/80 text-sm">{musicTavernVol}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      value={musicTavernVol}
+                      onChange={(e) => setMusicTavernVol(Number(e.target.value))}
+                      className="w-full accent-amber-500"
+                    />
+                  </label>
+                  <label className="block">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-stone-200">Dungeon interior music</span>
+                      <span className="text-stone-300/80 text-sm">{musicFightVol}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      value={musicFightVol}
+                      onChange={(e) => setMusicFightVol(Number(e.target.value))}
+                      className="w-full accent-amber-500"
+                    />
+                  </label>
+                </div>
                 <label className="block">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-stone-200">NPC voice volume</span>
@@ -2903,6 +3457,57 @@ export default function Game() {
         {notice.show && (
           <div className="absolute top-6 left-1/2 -translate-x-1/2 z-30 px-3 py-1.5 rounded bg-stone-900/80 border border-amber-900/50 text-amber-200 shadow">
             {notice.text}
+          </div>
+        )}
+
+        {/* Death Screen Overlay */}
+        {gameOver && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/70" />
+            <div className="relative z-10 w-[90%] max-w-lg rounded-2xl border border-red-900/50 bg-stone-900/95 shadow-2xl p-6 flex flex-col items-center gap-4">
+              <h2 className="text-3xl font-display text-red-400 drop-shadow">You Died</h2>
+              <p className="text-stone-300 text-center">Slain by <span className="text-red-300 font-semibold">{killerRef.current}</span>.</p>
+              <div className="w-full h-1 bg-stone-700 rounded overflow-hidden">
+                <div className="h-full bg-red-600 animate-pulse" style={{ width: '100%' }} />
+              </div>
+              <button
+                onClick={() => {
+                  // Reset state to main menu
+                  setGameOver(false)
+                  gameOverRef.current = false
+                  playerRef.current.hp = playerRef.current.hpMax
+                  // Clear enemies/effects
+                  enemiesRef.current = []
+                  enemiesSpawnedRef.current = false
+                  projectilesRef.current = []
+                  firesRef.current = []
+                  floatTextsRef.current = []
+                  dungeonWaveRef.current = 1
+                  nextWaveAtRef.current = 0
+                  // Return to title
+                  setTitleOpen(true)
+                  titleOpenRef.current = true
+                  setClassSelectOpen(true)
+                  classSelectOpenRef.current = true
+                  // Reset inventory to initial empty until class re-chosen
+                  setInventory({
+                    armor: { head: null, chest: null, legs: null, boots: null, offhand: null },
+                    storage: Array(27).fill(null),
+                    hotbar: Array(9).fill(null),
+                  })
+                  inventoryRef.current = {
+                    armor: { head: null, chest: null, legs: null, boots: null, offhand: null },
+                    storage: Array(27).fill(null),
+                    hotbar: Array(9).fill(null),
+                  }
+                  setScene('village')
+                  sceneRef.current = 'village'
+                  playerRef.current._spawn = { scene: 'village', nx: 0.5, ny: 0.90 }
+                }}
+                className="mt-2 px-6 py-3 rounded-lg bg-red-600 hover:bg-red-500 text-stone-900 font-semibold shadow-lg shadow-red-900/30"
+              >Return to Main Menu</button>
+              <p className="text-xs text-stone-400">Your adventure can begin anew.</p>
+            </div>
           </div>
         )}
 
