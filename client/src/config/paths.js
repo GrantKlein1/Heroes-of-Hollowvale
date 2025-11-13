@@ -20,6 +20,8 @@ export const PATHS = {
   animatedFireBallGif: `${IMAGES_BASE}/animatedFireBall/animatedFireBall.gif`,
   animatedThiefPotionGif: `${IMAGES_BASE}/animatedThiefPotion/animatedThiefPotion.gif`,
   poisonPotionGif: `${IMAGES_BASE}/poisonPotion.gif`,
+  // Life Leech spell projectile (animated gif)
+  lifeLeechSpellGif: `${IMAGES_BASE}/mageSpellBookSpells/lifeLeechSpell.gif`,
   titleBg: `${IMAGES_BASE}/red dragon boss fight room.png`,
   titleLogo: encodeURI(`${IMAGES_BASE}/title screen wider no background.png`),
   // Background music used on the intro screen and in the village
@@ -34,6 +36,13 @@ export const PATHS = {
   fireballCastSfx: `${AUDIO_BASE}/fireballCast.mp3`,
   fireImpactSfx: `${AUDIO_BASE}/fireImpact.mp3`,
   goblinArrow: `${IMAGES_BASE}/goblinArrow.png`,
+  thiefDisappearGif: `${IMAGES_BASE}/thiefDisappear.gif`,
+  thiefSmokeGif: `${IMAGES_BASE}/animatedSmoke/animatedSmoke.gif`,
+  // Mage spellbook spell icons
+  lightningBoltIcon: `${IMAGES_BASE}/mageSpellBookSpellIcons/lightningBoltIcon.png`,
+  manaShieldIcon: `${IMAGES_BASE}/mageSpellBookSpellIcons/manaShieldIcon.png`,
+  blinkIcon: `${IMAGES_BASE}/mageSpellBookSpellIcons/blinkIcon.png`,
+  lifeLeechIcon: `${IMAGES_BASE}/mageSpellBookSpellIcons/lifeLeechIcon.png`,
 }
 
 // Class base sprites

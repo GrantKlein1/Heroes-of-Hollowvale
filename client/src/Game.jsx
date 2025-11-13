@@ -90,7 +90,7 @@ export default function Game() {
   const [chatMode, setChatMode] = useState('topics') // 'topics' | 'free'
   // Live refs for overlay states so the game loop sees latest values
   const chatOpenRef = useRef(false)
-  const classSelectOpenRef = useRef(true)
+  const classSelectOpenRef = useRef(false)
   const inventoryOpenRef = useRef(false)
   // Audio Options
   // Master music volume and per-track volumes (0-100), persisted
@@ -147,15 +147,24 @@ export default function Game() {
   const allowFSwapRef = useRef(allowFSwap)
   // Attack animation state
   const attackUntilRef = useRef(0)
-  const ATTACK_DURATION_MS = 1000 // duration to show attack pose; adjust as desired
+  // Attack timing and damage tuning
+  const ATTACK_DURATION_MS_DEFAULT = 1000 // baseline (used by dwarf and mage)
+  const ATTACK_DURATION_BY_CLASS = {
+    mage: 650,  // unchanged
+    thief: 300,  // fastest
+    knight: 450, // medium
+    dwarf: 600, // slowest (baseline)
+  }
+  const MELEE_DAMAGE_BY_CLASS = { thief: 8, knight: 12, dwarf: 15 }
+  const PLAYER_HITBOX_INSET = 4 // pixels; shrink player hitbox for fairness
   const attackActiveRef = useRef(false) // true while attack pose is displayed
-  // Consumables (hold E to consume)
+  // Consumables (hold K to consume)
   const CONSUME_DURATION_MS = 1000
   const CONSUMABLE_IDS = new Set(['healing_potion','mana_potion','speed_potion'])
   const consumeActiveRef = useRef(false)
   const consumeStartRef = useRef(0)
   const consumeItemRef = useRef(null) // { id, slot }
-  const consumeNeedsReleaseRef = useRef(false) // require E release before next start
+  const consumeNeedsReleaseRef = useRef(false) // require K release before next start
   const speedBoostUntilRef = useRef(0)
   // Fireball system (mage): projectiles and lingering fires
   // Tweak these to adjust distance and speed
@@ -164,6 +173,12 @@ export default function Game() {
   const FIRE_LINGER_MS = 2000 // how long the small flame remains in place
   const projectilesRef = useRef([]) // { x,y,w,h, vx,vy, startX,startY, maxDist, img }
   const firesRef = useRef([]) // { x,y,w,h, until, img }
+  // Thief invisibility ability state
+  const thiefVanishUntilRef = useRef(0) // end of vanish animation (disappear gif)
+  const thiefSmokeUntilRef = useRef(0)  // end of smoke/invincible duration
+  const thiefVanishCooldownUntilRef = useRef(0) // cooldown gate for vanish ability
+  // Mage Life Leech cooldown (10s)
+  const lifeLeechCooldownUntilRef = useRef(0)
   // Enemies in the current scene (spawned only in dungeonInterior)
   const enemiesRef = useRef([]) // { id,type,hp,hpMax,x,y,w,h,speed, dir:{x,y}, changeAt:number, img }
   const enemiesSpawnedRef = useRef(false)
@@ -175,6 +190,22 @@ export default function Game() {
   // Dungeon waves
   const dungeonWaveRef = useRef(1)
   const nextWaveAtRef = useRef(0)
+  // Mage spellbook and spell selection
+  const [spellWheelOpen, setSpellWheelOpen] = useState(false)
+  const spellWheelOpenRef = useRef(false)
+  useEffect(() => { spellWheelOpenRef.current = spellWheelOpen }, [spellWheelOpen])
+  const MAGE_SPELLS = [
+    { id: 'lightning', name: 'Lightning Bolt' },
+    { id: 'shield', name: 'Mana Shield' },
+    { id: 'blink', name: 'Blink' },
+    { id: 'leech', name: 'Life Leech' },
+  ]
+  const mageSelectedSpellRef = useRef('lightning')
+  const setMageSpell = (id) => {
+    const found = MAGE_SPELLS.find(s => s.id === id)
+    mageSelectedSpellRef.current = id
+    showNotice(`Selected ${found ? found.name : id}`)
+  }
   // Game over overlay and killer info
   const [gameOver, setGameOver] = useState(false)
   const gameOverRef = useRef(false)
@@ -543,7 +574,16 @@ export default function Game() {
   safe(PATHS.animatedFireBallGif).then((img) => { if (!cancelled && img) imagesRef.current.fireBallGif = img })
       safe(PATHS.animatedFireSmallGif).then((img) => { if (!cancelled && img) imagesRef.current.fireSmallGif = img })
       safe(PATHS.animatedThiefPotionGif).then((img) => { if (!cancelled && img) imagesRef.current.thiefPotionGif = img })
-      safe(PATHS.poisonPotionGif).then((img) => { if (!cancelled && img) imagesRef.current.poisonPotionGif = img })
+  safe(PATHS.poisonPotionGif).then((img) => { if (!cancelled && img) imagesRef.current.poisonPotionGif = img })
+  safe(PATHS.thiefDisappearGif).then((img) => { if (!cancelled && img) imagesRef.current.thiefDisappearGif = img })
+  safe(PATHS.thiefSmokeGif).then((img) => { if (!cancelled && img) imagesRef.current.thiefSmokeGif = img })
+  // Life Leech projectile gif
+  safe(PATHS.lifeLeechSpellGif).then((img) => { if (!cancelled && img) imagesRef.current.lifeLeechSpellGif = img })
+  // Preload mage spell icons for instant spell wheel rendering
+  safe(PATHS.lightningBoltIcon).then((img) => { if (!cancelled && img) imagesRef.current.lightningBoltIcon = img })
+  safe(PATHS.blinkIcon).then((img) => { if (!cancelled && img) imagesRef.current.blinkIcon = img })
+  safe(PATHS.lifeLeechIcon).then((img) => { if (!cancelled && img) imagesRef.current.lifeLeechIcon = img })
+  safe(PATHS.manaShieldIcon).then((img) => { if (!cancelled && img) imagesRef.current.manaShieldIcon = img })
   // Enemy sprites
   safe(ENEMY_SPRITES.goblin).then((img) => { if (!cancelled && img) imagesRef.current.goblin = img })
   safe(ENEMY_SPRITES.brute).then((img) => { if (!cancelled && img) imagesRef.current.brute = img })
@@ -711,6 +751,25 @@ export default function Game() {
       base.hotbar[1] = makeItem('dwarf_pickaxe')
       base.hotbar[2] = makeItem('ale_flask', 1)
     }
+    // Start everyone with 2 of each gem (ruby/sapphire/emerald) in the HOTBAR, from the far right (end)
+    const placeGemRightHotbar = (gid) => {
+      // Try to stack onto an existing same-gem stack from right to left
+      for (let i = base.hotbar.length - 1; i >= 0; i--) {
+        const it = base.hotbar[i]
+        if (it && it.id === gid) { base.hotbar[i] = { id: gid, count: (it.count || 1) + 2 }; return }
+      }
+      // Otherwise place in the first empty slot scanning right-to-left
+      for (let i = base.hotbar.length - 1; i >= 0; i--) {
+        if (!base.hotbar[i]) { base.hotbar[i] = makeItem(gid, 2); return }
+      }
+      // Fallback: if hotbar full, drop into the last empty storage slot scanning right-to-left
+      for (let i = base.storage.length - 1; i >= 0; i--) {
+        if (!base.storage[i]) { base.storage[i] = makeItem(gid, 2); return }
+      }
+    }
+    placeGemRightHotbar('ruby')
+    placeGemRightHotbar('sapphire')
+    placeGemRightHotbar('emerald')
     return base
   }
 
@@ -1468,7 +1527,7 @@ export default function Game() {
 
   // Play vendor greeting when entering the Market scene
   useEffect(() => {
-    if (scene === 'market') {
+      if (scene === 'market') {
       // Entering market is user initiated (E), so playback should be allowed
       playVendor('Greeting')
     }
@@ -1556,6 +1615,17 @@ export default function Game() {
         }
         return
       }
+      // If spell wheel is open, intercept 1..4 for spell selection
+      if (spellWheelOpenRef.current) {
+        const k = e.key
+        if (k === '1' || k === '2' || k === '3' || k === '4') {
+          e.preventDefault()
+          const idx = Number(k) - 1
+          const mapOrder = ['lightning', 'blink', 'leech', 'shield'] // Top, Right, Bottom, Left ordering mapping to 1..4
+          setMageSpell(mapOrder[idx])
+          return
+        }
+      }
       // Track keys for movement, but movement is paused when overlays are open anyway
       keysRef.current[e.key.toLowerCase()] = true
       // prevent page scroll for arrow keys/space only when not typing into an input/textarea
@@ -1566,21 +1636,23 @@ export default function Game() {
       if (e.key === 'F2' || e.key === 'f2' || e.key === '`') {
         setDebugOn((v) => !v)
       }
-      // Toggle inventory with 'v'
+      // Toggle inventory with 'v' (blocked during thief vanish animation)
       if (!typing && (e.key === 'v' || e.key === 'V')) {
+        if (selectedClassRef.current === 'thief' && performance.now() < thiefVanishUntilRef.current) return
         e.preventDefault()
         if (inventoryOpenRef.current) returnDraggedToInventory()
         setInventoryOpen(v => !v)
       }
       //hotbar number keys 1..9
       if (!typing && !inventoryOpenRef.current && !chatOpenRef.current) {
-        const code = e.key
-        if (code >= '1' && code <= '9') {
-          const idx = Number(code) - 1
+        const key = e.key
+        const codeName = e.code
+        if (key >= '1' && key <= '9') {
+          const idx = Number(key) - 1
           setActiveHotbar(idx)
         }
-        // Q: Attack or throw consumables depending on class/item
-        if (code === 'q' || code === 'Q') {
+        // Space: Attack or throw consumables depending on class/item
+  if (key === ' ' || codeName === 'Space') {
           // Avoid extending the attack by key-repeat or spamming
           if (e.repeat) return
           const now = performance.now()
@@ -1632,24 +1704,59 @@ export default function Game() {
             })
             return
           }
+          // Prevent actions during vanish animation phase
+          if (cls === 'thief' && performance.now() < thiefVanishUntilRef.current) return
+          // Mage Life Leech cast (Space while spellbook in hand & Life Leech selected & off cooldown)
+          if (cls === 'mage' && curItem && curItem.id === 'spellbook' && mageSelectedSpellRef.current === 'leech') {
+            const nowCast = performance.now()
+            if (nowCast < lifeLeechCooldownUntilRef.current) return
+            // Launch leech projectile (uses same speed/dist as fireball)
+            const p = playerRef.current
+            const dir = { x: lastDirRef.current.x, y: lastDirRef.current.y }
+            if (Math.abs(dir.x) < 0.001 && Math.abs(dir.y) < 0.001) { dir.x = 1; dir.y = 0 }
+            const len = Math.hypot(dir.x, dir.y); if (len > 0) { dir.x /= len; dir.y /= len }
+            const startX = p.x + p.w / 2 + dir.x * 12
+            const startY = p.y + p.h / 2 + dir.y * 12
+            projectilesRef.current.push({
+              id: effectIdRef.current++,
+              x: startX - 21,
+              y: startY - 21,
+              w: 42,
+              h: 42,
+              vx: dir.x * FIREBALL_SPEED,
+              vy: dir.y * FIREBALL_SPEED,
+              startX,
+              startY,
+              maxDist: FIREBALL_TRAVEL_DISTANCE,
+              domSrc: PATHS.lifeLeechSpellGif,
+              impactKey: 'lifeLeech',
+              owner: 'player',
+              special: 'lifeLeech'
+            })
+            // Set cooldown (10s)
+            lifeLeechCooldownUntilRef.current = nowCast + 10000
+            showNotice('Cast Life Leech')
+            return
+          }
           if (canAttack) {
             // If mage, ensure enough mana BEFORE triggering attack pose
             if (cls === 'mage' && neededItem === 'apprentice_staff') {
-              if ((playerRef.current.mana || 0) < 20) {
+              if ((playerRef.current.mana || 0) < 15) {
                 showNotice('Not enough mana.')
                 return
               }
             }
             // Show attack pose and mark active; main loop will revert when time elapses
-            attackUntilRef.current = now + ATTACK_DURATION_MS
+            const attackMs = ATTACK_DURATION_BY_CLASS[cls] ?? ATTACK_DURATION_MS_DEFAULT
+            attackUntilRef.current = now + attackMs
             attackActiveRef.current = true
             // Cache current sprite for instant revert later
             prevSpriteImgRef.current = imagesRef.current.player
             setPlayerImageAsync(attackSprite)
             // Mage ranged projectile (fireball)
             if (cls === 'mage' && neededItem === 'apprentice_staff') {
-              // Spend mana now that attack is confirmed
-              playerRef.current.mana = Math.max(0, (playerRef.current.mana || 0) - 20)
+              // Spend mana now that attack is confirmed (reduced cost)
+              playerRef.current.mana = Math.max(0, (playerRef.current.mana || 0) - 15)
               playSfx(PATHS.fireballCastSfx)
               const p = playerRef.current
               const dir = { x: lastDirRef.current.x, y: lastDirRef.current.y }
@@ -1677,11 +1784,45 @@ export default function Game() {
                 lingerMs: FIRE_LINGER_MS,
                 owner: 'player'
               })
+            } else {
+              // Melee attack (knight/thief/dwarf): deal damage in a short frontal area
+              const dmg = MELEE_DAMAGE_BY_CLASS[cls] ?? 0
+              if (dmg > 0 && enemiesRef.current.length) {
+                const p = playerRef.current
+                const dir = { x: lastDirRef.current.x, y: lastDirRef.current.y }
+                if (Math.abs(dir.x) < 0.001 && Math.abs(dir.y) < 0.001) { dir.x = 1; dir.y = 0 }
+                // Determine orientation and build a frontal AABB
+                let atk
+                if (Math.abs(dir.x) >= Math.abs(dir.y)) {
+                  // Horizontal swing
+                  const w = Math.max(14, Math.round(p.w * 0.85))
+                  const h = Math.max(12, Math.round(p.h * 0.55))
+                  const x = dir.x > 0 ? (p.x + p.w) : (p.x - w)
+                  const y = p.y + (p.h - h) / 2
+                  atk = { x, y, w, h }
+                } else {
+                  // Vertical swing
+                  const w = Math.max(12, Math.round(p.w * 0.55))
+                  const h = Math.max(14, Math.round(p.h * 0.85))
+                  const x = p.x + (p.w - w) / 2
+                  const y = dir.y > 0 ? (p.y + p.h) : (p.y - h)
+                  atk = { x, y, w, h }
+                }
+                // Apply damage to any enemies intersecting the attack box
+                for (const e2 of enemiesRef.current) {
+                  if (e2.hp <= 0) continue
+                  if (intersects(atk, { x: e2.x, y: e2.y, w: e2.w, h: e2.h })) {
+                    e2.hp = Math.max(0, e2.hp - dmg)
+                    e2.flashUntil = performance.now() + 120
+                    pushFloatText(e2.x + e2.w/2, e2.y - 6, `-${dmg}`, '#ff6161')
+                  }
+                }
+              }
             }
           }
         }
-        // Swap selected hotbar item with offhand using F (like Minecraft)
-        if ((code === 'f' || code === 'F') && allowFSwapRef.current) {
+  // Swap selected hotbar item with offhand using F (like Minecraft)
+        if ((key === 'f' || key === 'F') && allowFSwapRef.current) {
           setInventory(inv => {
             const next = {
               armor: { ...inv.armor },
@@ -1694,6 +1835,39 @@ export default function Game() {
             next.armor.offhand = a
             return next
           })
+        }
+  // Thief invisibility ability trigger (press J) -> vanish then smoke (invincibility) with cooldown
+        if ((key === 'j' || key === 'J') && selectedClassRef.current === 'thief') {
+          const now2 = performance.now()
+          // Can't start if already in vanish or smoke or overlays/gameover or on cooldown
+          if (now2 < thiefVanishUntilRef.current || now2 < thiefSmokeUntilRef.current) return
+          if (now2 < thiefVanishCooldownUntilRef.current) return
+          if (titleOpenRef.current || optionsOpenRef.current || gameOverRef.current) return
+          // Begin vanish: play disappear gif (no actions allowed during this short animation)
+          const vanishDurationMs = 1000 // adjust if actual gif length differs
+          const smokeDurationMs = 15000
+          const cooldownMs = 10000
+          thiefVanishUntilRef.current = now2 + vanishDurationMs
+          thiefVanishCooldownUntilRef.current = now2 + cooldownMs
+          if (imagesRef.current.thiefDisappearGif) {
+            imagesRef.current.player = imagesRef.current.thiefDisappearGif
+          }
+          // After vanish ends, start smoke form (15s invincible, can act)
+          setTimeout(() => {
+            if (gameOverRef.current || selectedClassRef.current !== 'thief') return
+            thiefSmokeUntilRef.current = performance.now() + smokeDurationMs
+            if (imagesRef.current.thiefSmokeGif) {
+              imagesRef.current.player = imagesRef.current.thiefSmokeGif
+            }
+          }, vanishDurationMs)
+          // After smoke ends, restore class/equipment sprite
+          setTimeout(() => {
+            if (gameOverRef.current || selectedClassRef.current !== 'thief') return
+            const now3 = performance.now()
+            if (now3 >= thiefSmokeUntilRef.current) {
+              applyCurrentSprite()
+            }
+          }, vanishDurationMs + smokeDurationMs + 50)
         }
       }
       // Close chat with Escape
@@ -1766,6 +1940,13 @@ export default function Game() {
     const ctx = canvas.getContext('2d')
     let last = performance.now()
     let interactLatch = false
+    // Helper for slightly smaller player hitbox
+    const playerHitBox = (inset = PLAYER_HITBOX_INSET) => ({
+      x: playerRef.current.x + inset,
+      y: playerRef.current.y + inset,
+      w: playerRef.current.w - inset*2,
+      h: playerRef.current.h - inset*2,
+    })
 
     // mark initial spawn to be resolved after background layout is known
     if (!playerRef.current._spawn) {
@@ -1786,7 +1967,12 @@ export default function Game() {
           prevSpriteImgRef.current = null
         }
         // Then re-derive in case equipment changed
-        applyCurrentSprite()
+        if (selectedClassRef.current === 'thief' && performance.now() < thiefSmokeUntilRef.current && imagesRef.current.thiefSmokeGif) {
+          // During smoke, keep smoke sprite after attack ends
+          imagesRef.current.player = imagesRef.current.thiefSmokeGif
+        } else {
+          applyCurrentSprite()
+        }
       }
 
       // Layout background based on scene fit mode and compute image frame
@@ -1885,7 +2071,7 @@ export default function Game() {
   let speed = playerRef.current.speed
   if (performance.now() < speedBoostUntilRef.current) speed *= 1.5
       let vx = 0, vy = 0
-  if (!chatOpenRef.current && !classSelectOpenRef.current && !inventoryOpenRef.current && !titleOpenRef.current && !optionsOpenRef.current && !shopOpenRef.current && !gameOverRef.current) {
+  if (!chatOpenRef.current && !classSelectOpenRef.current && !inventoryOpenRef.current && !titleOpenRef.current && !optionsOpenRef.current && !shopOpenRef.current && !gameOverRef.current && !(selectedClassRef.current==='thief' && performance.now() < thiefVanishUntilRef.current)) {
         if (keysRef.current['w'] || keysRef.current['arrowup']) vy -= 1
         if (keysRef.current['s'] || keysRef.current['arrowdown']) vy += 1
         if (keysRef.current['a'] || keysRef.current['arrowleft']) vx -= 1
@@ -1984,13 +2170,14 @@ export default function Game() {
           e.x = exNext.x
           e.y = exNext.y
           // Contact damage (touch) to player
-          const playerBox = { x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }
+          const playerBox = playerHitBox()
           if (!gameOverRef.current && intersects({ x: e.x, y: e.y, w: e.w, h: e.h }, playerBox)) {
             if (performance.now() >= playerIFrameUntilRef.current) {
               const baseDmg = e.type === 'brute' ? 12 : (e.type === 'archer' ? 6 : 8)
               const waveScale = 1 + 0.05 * Math.max(0, dungeonWaveRef.current - 1)
               const dmg = Math.round(baseDmg * waveScale)
-              playerRef.current.hp = Math.max(0, playerRef.current.hp - dmg)
+              const invincible = (selectedClassRef.current === 'thief' && performance.now() < thiefSmokeUntilRef.current)
+              if (!invincible) playerRef.current.hp = Math.max(0, playerRef.current.hp - dmg)
               playerIFrameUntilRef.current = performance.now() + 900
               playerFlashUntilRef.current = performance.now() + 200
               pushFloatText(playerRef.current.x + playerRef.current.w/2, playerRef.current.y - 10, `-${dmg}`, '#ff9f43')
@@ -2068,22 +2255,41 @@ export default function Game() {
               if ((dx2*dx2 + dy2*dy2) > 300*300) continue
               if (intersects(hitBox, { x: e.x, y: e.y, w: e.w, h: e.h })) {
                 // Damage model
-                const dmg = pr.impactKey === 'poisonPotionGif' ? 8 : 10 // reduced mage fireball base dmg by 5
-                e.hp = Math.max(0, e.hp - dmg)
-                e.flashUntil = nowMs + 180
-                pushFloatText(e.x + e.w/2, e.y - 6, `-${dmg}`, '#ff6161')
-                hitEnemy = true
-                break
+                if (pr.special === 'lifeLeech') {
+                  // Life Leech: deal 40% of current HP and heal player same amount
+                  const enemyCur = e.hp
+                  const dmg = Math.max(1, Math.floor(enemyCur * 0.4))
+                  e.hp = Math.max(0, enemyCur - dmg)
+                  e.flashUntil = nowMs + 180
+                  pushFloatText(e.x + e.w/2, e.y - 6, `-${dmg}`, '#bb3cff')
+                  // Heal mage
+                  const hpMax = playerRef.current.hpMax || 0
+                  const before = playerRef.current.hp || 0
+                  const after = Math.min(hpMax, before + dmg)
+                  playerRef.current.hp = after
+                  const healed = after - before
+                  if (healed > 0) pushFloatText(playerRef.current.x + playerRef.current.w/2, playerRef.current.y - 12, `+${healed}`, '#7cfc7c')
+                  hitEnemy = true
+                  break
+                } else {
+                  const dmg = pr.impactKey === 'poisonPotionGif' ? 8 : 10 // reduced mage fireball base dmg by 5
+                  e.hp = Math.max(0, e.hp - dmg)
+                  e.flashUntil = nowMs + 180
+                  pushFloatText(e.x + e.w/2, e.y - 6, `-${dmg}`, '#ff6161')
+                  hitEnemy = true
+                  break
+                }
               }
             }
           }
           // Enemy projectile hits player
           if (pr.owner === 'enemy') {
-            const pBox = { x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }
+            const pBox = playerHitBox()
             if (intersects({ x: pr.x, y: pr.y, w: pr.w, h: pr.h }, pBox)) {
               if (!gameOverRef.current && performance.now() >= playerIFrameUntilRef.current) {
                 const dmg = 7
-                playerRef.current.hp = Math.max(0, playerRef.current.hp - dmg)
+                const invincible = (selectedClassRef.current === 'thief' && performance.now() < thiefSmokeUntilRef.current)
+                if (!invincible) playerRef.current.hp = Math.max(0, playerRef.current.hp - dmg)
                 playerIFrameUntilRef.current = performance.now() + 900
                 playerFlashUntilRef.current = performance.now() + 250
                 pushFloatText(playerRef.current.x + playerRef.current.w/2, playerRef.current.y - 10, `-${dmg}`, '#ff9f43')
@@ -2103,32 +2309,59 @@ export default function Game() {
               // Arrows vanish silently
               arr.splice(i, 1)
             } else {
-              // Spawn lingering effect and remove projectile
-              const isPoison = pr.impactKey === 'poisonPotionGif'
-              const src = isPoison ? PATHS.poisonPotionGif : PATHS.animatedFireSmallGif
-              const centerX = pr.x + pr.w / 2
-              const centerY = pr.y + pr.h / 2
-              const scale = isPoison ? 1.0 : 1.75 // enlarge small fire by 25%
-              const newW = Math.round(pr.w * scale)
-              const newH = Math.round(pr.h * scale)
-              const nx = centerX - newW / 2
-              const ny = centerY - newH / 2
-              firesRef.current.push({
-                id: effectIdRef.current++,
-                x: nx, y: ny, w: newW, h: newH,
-                until: nowMs + (pr.lingerMs || FIRE_LINGER_MS),
-                domSrc: src,
-              })
-              playSfx(PATHS.fireImpactSfx)
-              arr.splice(i, 1)
+              if (pr.special === 'lifeLeech') {
+                // Life Leech disappears on impact (no lingering effect)
+                arr.splice(i, 1)
+              } else {
+                // Spawn lingering effect and remove projectile
+                const isPoison = pr.impactKey === 'poisonPotionGif'
+                const src = isPoison ? PATHS.poisonPotionGif : PATHS.animatedFireSmallGif
+                const centerX = pr.x + pr.w / 2
+                const centerY = pr.y + pr.h / 2
+                const scale = isPoison ? 1.0 : 1.75 // enlarge small fire by 25%
+                const newW = Math.round(pr.w * scale)
+                const newH = Math.round(pr.h * scale)
+                const nx = centerX - newW / 2
+                const ny = centerY - newH / 2
+                firesRef.current.push({
+                  id: effectIdRef.current++,
+                  x: nx, y: ny, w: newW, h: newH,
+                  until: nowMs + (pr.lingerMs || FIRE_LINGER_MS),
+                  domSrc: src,
+                })
+                playSfx(PATHS.fireImpactSfx)
+                arr.splice(i, 1)
+              }
             }
           }
         }
       }
 
-      // Expire fires
+      // Lingering small fires: apply DoT to enemies and expire when time elapses
       if (firesRef.current.length) {
         const nowMs = performance.now()
+        // Deal 2 DPS to enemies overlapping mage small fire while on screen
+        if (enemiesRef.current.length) {
+          for (const f of firesRef.current) {
+            const fBox = { x: f.x, y: f.y, w: f.w, h: f.h }
+            const isMageFire = f.domSrc === PATHS.animatedFireSmallGif
+            const isPoisonPuddle = f.domSrc === PATHS.poisonPotionGif
+            if (!isMageFire && !isPoisonPuddle) continue
+            const dps = isMageFire ? 2 : 5
+            for (const e of enemiesRef.current) {
+              if (e.hp <= 0) continue
+              // quick distance gate
+              const ecx = e.x + e.w/2, ecy = e.y + e.h/2
+              const fcx = f.x + f.w/2, fcy = f.y + f.h/2
+              const dx3 = fcx - ecx, dy3 = fcy - ecy
+              if ((dx3*dx3 + dy3*dy3) > 280*280) continue
+              if (intersects(fBox, { x: e.x, y: e.y, w: e.w, h: e.h })) {
+                e.hp = Math.max(0, e.hp - dps * dt)
+              }
+            }
+          }
+        }
+        // Expire fires
         firesRef.current = firesRef.current.filter(f => nowMs < f.until)
       }
       // Floating text update
@@ -2153,16 +2386,31 @@ export default function Game() {
   playerRef.current.x = Math.min(Math.max(playerRef.current.x, dx), dx + dw - playerRef.current.w)
   playerRef.current.y = Math.min(Math.max(playerRef.current.y, dy), dy + dh - playerRef.current.h)
 
-      // Consumable handling (hold E to consume selected potion)
-      const eDown = !!(keysRef.current['e'])
+  // Consumable handling (hold K to consume selected potion) or open Mage spellbook wheel when holding Spellbook
+  const kDown = !!(keysRef.current['k'])
+  // Interact key (E)
+  const eDown = !!(keysRef.current['e'])
       const selected = inventoryRef.current?.hotbar?.[activeHotbarRef.current]
+      const isSpellbookActive = !!(selectedClassRef.current === 'mage' && selected && selected.id === 'spellbook')
       const canConsumeNow = !!(selected && CONSUMABLE_IDS.has(selected.id)) && !chatOpenRef.current && !shopOpenRef.current && !titleOpenRef.current && !optionsOpenRef.current && !inventoryOpenRef.current
       const nowMs = performance.now()
-      if (!eDown && consumeNeedsReleaseRef.current) {
+      // Spell wheel (Mage spellbook): open while holding K on spellbook; close on release or context change
+      if (isSpellbookActive && !chatOpenRef.current && !shopOpenRef.current && !titleOpenRef.current && !optionsOpenRef.current && !inventoryOpenRef.current && !gameOverRef.current) {
+        if (kDown && !spellWheelOpenRef.current) {
+          setSpellWheelOpen(true)
+          // cancel any in-progress consumption
+          consumeActiveRef.current = false
+        } else if (!kDown && spellWheelOpenRef.current) {
+          setSpellWheelOpen(false)
+        }
+      } else if (!kDown && spellWheelOpenRef.current) {
+        setSpellWheelOpen(false)
+      }
+      if (!kDown && consumeNeedsReleaseRef.current) {
         consumeNeedsReleaseRef.current = false
       }
       if (!consumeActiveRef.current) {
-        if (eDown && !consumeNeedsReleaseRef.current && canConsumeNow) {
+        if (kDown && !consumeNeedsReleaseRef.current && canConsumeNow && !isSpellbookActive) {
           consumeActiveRef.current = true
           consumeStartRef.current = nowMs
           consumeItemRef.current = { id: selected.id, slot: activeHotbarRef.current }
@@ -2170,11 +2418,11 @@ export default function Game() {
       } else {
         const slot = consumeItemRef.current?.slot
         const id = consumeItemRef.current?.id
-        const stillValid = canConsumeNow && slot === activeHotbarRef.current && (inventoryRef.current?.hotbar?.[slot]?.id === id)
-        if (!eDown || !stillValid) {
+        const stillValid = !isSpellbookActive && canConsumeNow && slot === activeHotbarRef.current && (inventoryRef.current?.hotbar?.[slot]?.id === id)
+        if (!kDown || !stillValid) {
           // Cancel if released or item/slot changed
           consumeActiveRef.current = false
-          if (!eDown) consumeNeedsReleaseRef.current = false
+          if (!kDown) consumeNeedsReleaseRef.current = false
         } else {
           const progress = (nowMs - consumeStartRef.current) / CONSUME_DURATION_MS
           if (progress >= 1) {
@@ -2200,11 +2448,11 @@ export default function Game() {
                 playerRef.current.mana = Math.min(mm, cur + 75)
               }
             } else if (id === 'healing_potion') {
-              // Restore 50 health (clamped to hpMax)
+              // Restore 70 health (clamped to hpMax)
               const hm = playerRef.current.hpMax || 0
               if (hm > 0) {
                 const cur = playerRef.current.hp || 0
-                playerRef.current.hp = Math.min(hm, cur + 50)
+                playerRef.current.hp = Math.min(hm, cur + 70)
               }
             }
             // Reset consumption; require release before next start
@@ -2214,8 +2462,9 @@ export default function Game() {
         }
       }
 
-      // Interact (E) — disabled only while actively consuming
-  if (!chatOpenRef.current && !shopOpenRef.current && eDown && !interactLatch && !consumeActiveRef.current && !gameOverRef.current) {
+    // Interact (E) — disabled only while actively consuming
+    // NOTE: consumption moved to hold K; ensure we don't block E unless consuming
+  if (!chatOpenRef.current && !shopOpenRef.current && eDown && !interactLatch && !consumeActiveRef.current && !gameOverRef.current && !(selectedClassRef.current==='thief' && performance.now() < thiefVanishUntilRef.current)) {
         interactLatch = true
         // Village enter door
         if (sceneRef.current === 'village' && sdef.door) {
@@ -2321,6 +2570,7 @@ export default function Game() {
             const cpx = mapRect(chest.rect)
             const playerBox = { x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }
             if (intersects(playerBox, cpx)) {
+              // Handle locked chest: require one lockpick and only open if consumed
               if (chest.locked) {
                 const invSnapshot = inventoryRef.current
                 const res = consumeOneItem(invSnapshot, 'lockpicks')
@@ -2328,7 +2578,9 @@ export default function Game() {
                   showNotice('Locked. Requires lockpicks.')
                   break
                 }
+                // Apply inventory update synchronously and also sync the ref to avoid any timing issues
                 setInventory(res.next)
+                inventoryRef.current = res.next
               }
 
               const loot = rollGemLoot()
@@ -2382,7 +2634,7 @@ export default function Game() {
           const playerBox = { x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }
           if (intersects(playerBox, interactZone)) {
             setChatOpen(true)
-            setChatMessages([{ role: 'assistant', content: "Tharos: Hrm. Traveler. Dragon business or town history—what'll it be?" }])
+            setChatMessages([{ role: 'assistant', content: "Tharos: Hrm. Traveler. Dragon business or town history—what'll it be? If you're short on supplies, swing by the Market after this—head to the upper-left gate in the village and press E to browse wares." }])
             setChatTurns(0)
             setChatInput('')
             setChatMode('topics')
@@ -2419,23 +2671,29 @@ export default function Game() {
 
       // Note: animated effects (projectiles/fires) are rendered as DOM <img> overlays for proper GIF animation.
 
-      // Draw player
+      // Draw player (skip during thief vanish animation; during smoke, show canvas only while attacking)
       const pImg = imagesRef.current.player
-      if (pImg) {
-        if (performance.now() < playerFlashUntilRef.current) {
-          ctx.globalAlpha = 0.5
-          ctx.drawImage(pImg, playerRef.current.x, playerRef.current.y, playerRef.current.w, playerRef.current.h)
-          ctx.globalAlpha = 1
+      const nowDraw = performance.now()
+      const thiefVanishing = (selectedClassRef.current === 'thief' && nowDraw < thiefVanishUntilRef.current)
+      const thiefInSmoke = (selectedClassRef.current === 'thief' && nowDraw < thiefSmokeUntilRef.current)
+      const showCanvasPlayer = !thiefVanishing && (!thiefInSmoke || attackActiveRef.current)
+      if (showCanvasPlayer) {
+        if (pImg) {
+          if (nowDraw < playerFlashUntilRef.current) {
+            ctx.globalAlpha = 0.5
+            ctx.drawImage(pImg, playerRef.current.x, playerRef.current.y, playerRef.current.w, playerRef.current.h)
+            ctx.globalAlpha = 1
+          } else {
+            ctx.drawImage(pImg, playerRef.current.x, playerRef.current.y, playerRef.current.w, playerRef.current.h)
+          }
+          // subtle outline for visibility
+          ctx.strokeStyle = 'rgba(255,255,255,0.4)'
+          ctx.lineWidth = 1
+          ctx.strokeRect(playerRef.current.x, playerRef.current.y, playerRef.current.w, playerRef.current.h)
         } else {
-          ctx.drawImage(pImg, playerRef.current.x, playerRef.current.y, playerRef.current.w, playerRef.current.h)
+          ctx.fillStyle = '#ffcc00'
+          ctx.fillRect(playerRef.current.x, playerRef.current.y, playerRef.current.w, playerRef.current.h)
         }
-        // subtle outline for visibility
-        ctx.strokeStyle = 'rgba(255,255,255,0.4)'
-        ctx.lineWidth = 1
-        ctx.strokeRect(playerRef.current.x, playerRef.current.y, playerRef.current.w, playerRef.current.h)
-      } else {
-        ctx.fillStyle = '#ffcc00'
-        ctx.fillRect(playerRef.current.x, playerRef.current.y, playerRef.current.w, playerRef.current.h)
       }
 
       // Draw enemies and their HP labels
@@ -2721,6 +2979,30 @@ export default function Game() {
     }
   }
 
+  // Spell wheel click handler: choose a spell based on click angle relative to the wheel center
+  const handleSpellWheelClick = (e) => {
+    try {
+      const el = e.currentTarget
+      const rect = el.getBoundingClientRect()
+      const cx = rect.left + rect.width / 2
+      const cy = rect.top + rect.height / 2
+      const x = e.clientX - cx
+      const y = e.clientY - cy
+      let deg = (Math.atan2(y, x) * 180 / Math.PI)
+      if (deg < 0) deg += 360
+      // Right (0..45 and 315..360) -> Blink
+      // Bottom (45..135) -> Life Leech
+      // Left (135..225) -> Mana Shield
+      // Top (225..315) -> Lightning Bolt
+      let id = 'lightning'
+      if (deg >= 315 || deg < 45) id = 'blink'
+      else if (deg >= 45 && deg < 135) id = 'leech'
+      else if (deg >= 135 && deg < 225) id = 'shield'
+      else if (deg >= 225 && deg < 315) id = 'lightning'
+      setMageSpell(id)
+    } catch {}
+  }
+
   // Topic-aware RAG hints for better retrieval on short follow-ups
   const TOPIC_RAG_HINTS = {
     dragon: 'Ashfang Cavern, Blackspire Mountains, dragon raids, goblins, traps, hoard, Sword of Aeltharion',
@@ -2862,6 +3144,136 @@ export default function Game() {
               style={{ left: f.x, top: f.y, width: f.w, height: f.h, imageRendering: 'pixelated' }}
             />
           ))}
+        </div>
+        {/* Mage Spell Wheel (hold K while Spellbook selected) */}
+        {spellWheelOpen && selectedClass === 'mage' && (
+          <div className="absolute inset-0 z-40 flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/30" />
+            <div className="relative z-10 w-[240px] h-[240px] select-none" onClick={handleSpellWheelClick}>
+              {/* Wheel background with quarter segmentation */}
+              <div
+                className="absolute inset-0 rounded-full border border-amber-900/50 shadow-xl"
+                style={{
+                  background: 'conic-gradient(#1f2937 0deg 90deg, #111827 90deg 180deg, #1f2937 180deg 270deg, #111827 270deg 360deg)'
+                }}
+                aria-label="Spell selection wheel"
+              />
+              {/* Center dot */}
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-amber-400 shadow" />
+              {/* Top: Lightning Bolt */}
+              <div className="absolute left-1/2 -translate-x-1/2 top-4 flex flex-col items-center gap-1 text-amber-200" title="Lightning Bolt (1)">
+                <img src={PATHS.lightningBoltIcon} alt="Lightning Bolt" className="w-8 h-8 rounded border border-amber-900/40 bg-stone-900/40 object-contain" onError={(e)=>{e.currentTarget.style.visibility='hidden'}} />
+                <div className="text-xs">Lightning Bolt</div>
+                <div className="text-[10px] text-stone-400">[1]</div>
+              </div>
+              {/* Right: Blink */}
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 text-amber-200" title="Blink (2)">
+                <img src={PATHS.blinkIcon} alt="Blink" className="w-8 h-8 rounded border border-amber-900/40 bg-stone-900/40 object-contain" onError={(e)=>{e.currentTarget.style.visibility='hidden'}} />
+                <div className="text-xs">Blink</div>
+                <div className="text-[10px] text-stone-400">[2]</div>
+              </div>
+              {/* Bottom: Life Leech */}
+              <div className="absolute left-1/2 -translate-x-1/2 bottom-4 flex flex-col items-center gap-1 text-amber-200" title="Life Leech (3)">
+                <img src={PATHS.lifeLeechIcon} alt="Life Leech" className="w-8 h-8 rounded border border-amber-900/40 bg-stone-900/40 object-contain" onError={(e)=>{e.currentTarget.style.visibility='hidden'}} />
+                <div className="text-xs">Life Leech</div>
+                <div className="text-[10px] text-stone-400">[3]</div>
+              </div>
+              {/* Left: Mana Shield */}
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 text-amber-200" title="Mana Shield (4)">
+                <img src={PATHS.manaShieldIcon} alt="Mana Shield" className="w-8 h-8 rounded border border-amber-900/40 bg-stone-900/40 object-contain" onError={(e)=>{e.currentTarget.style.visibility='hidden'}} />
+                <div className="text-xs">Mana Shield</div>
+                <div className="text-[10px] text-stone-400">[4]</div>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* Thief ability status (cooldown/active) */}
+        <div className="absolute top-12 left-2 z-30 pointer-events-none select-none">
+          {effectsTick >= 0 && (() => {
+            if (selectedClassRef.current !== 'thief') return null
+            const now = performance.now()
+            const vanishRem = Math.max(0, thiefVanishUntilRef.current - now)
+            const smokeRem = Math.max(0, thiefSmokeUntilRef.current - now)
+            const cdRem = Math.max(0, thiefVanishCooldownUntilRef.current - now)
+            // Status and progress
+            let label = 'Invisibility: Ready'
+            let pct = 0
+            let color = '#86efac' // green-300
+            if (smokeRem > 0 || vanishRem > 0) {
+              const totalRem = smokeRem > 0 ? smokeRem : vanishRem
+              label = `Invisibility: Active ${Math.ceil(totalRem/1000)}s`
+              pct = 1
+              color = '#fbbf24' // amber-400
+            } else if (cdRem > 0) {
+              label = `Invisibility: CD ${Math.ceil(cdRem/1000)}s`
+              pct = Math.min(1, cdRem / 10000)
+              color = '#f87171' // red-400
+            }
+            return (
+              <div className="min-w-[160px] max-w-[200px]">
+                <div className="px-2 py-1 rounded bg-stone-900/80 text-amber-200 border border-amber-900/40 text-xs">
+                  {label}
+                  <div className="mt-1 h-1.5 w-full bg-stone-700/80 rounded overflow-hidden">
+                    <div className="h-full" style={{ width: `${Math.round(pct*100)}%`, backgroundColor: color }} />
+                  </div>
+                  <div className="mt-1 text-[10px] text-stone-400">Attack: Space • Invisibility: J</div>
+                </div>
+              </div>
+            )
+          })()}
+        </div>
+        {/* Mage Life Leech cooldown display */}
+        <div className="absolute top-28 left-2 z-30 pointer-events-none select-none">
+          {effectsTick >= 0 && (() => {
+            if (selectedClassRef.current !== 'mage') return null
+            // Only show if Life Leech spell currently selected
+            if (mageSelectedSpellRef.current !== 'leech') return null
+            const now = performance.now()
+            const cdRem = Math.max(0, lifeLeechCooldownUntilRef.current - now)
+            let label = 'Life Leech: Ready'
+            let pct = 0
+            let color = '#86efac'
+            if (cdRem > 0) {
+              label = `Life Leech: CD ${Math.ceil(cdRem/1000)}s`
+              pct = Math.min(1, cdRem / 10000)
+              color = '#f87171'
+            }
+            return (
+              <div className="min-w-[160px] max-w-[200px]">
+                <div className="px-2 py-1 rounded bg-stone-900/80 text-amber-200 border border-amber-900/40 text-xs">
+                  {label}
+                  <div className="mt-1 h-1.5 w-full bg-stone-700/80 rounded overflow-hidden">
+                    <div className="h-full" style={{ width: `${Math.round(pct*100)}%`, backgroundColor: color }} />
+                  </div>
+                  <div className="mt-1 text-[10px] text-stone-400">Cast: Space (Spellbook)</div>
+                </div>
+              </div>
+            )
+          })()}
+        </div>
+        {/* Thief invisibility overlays (above effects) */}
+        <div className="pointer-events-none absolute inset-0 z-20">
+          {(() => {
+            const now = performance.now()
+            const isThief = selectedClassRef.current === 'thief'
+            if (!isThief) return null
+            const vanishing = now < thiefVanishUntilRef.current
+            const inSmoke = now < thiefSmokeUntilRef.current
+            // During smoke, hide overlay while attack pose is showing
+            const hideDuringAttack = attackActiveRef.current
+            let src = null
+            if (vanishing && imagesRef.current.thiefDisappearGif) src = PATHS.thiefDisappearGif
+            else if (inSmoke && !hideDuringAttack && imagesRef.current.thiefSmokeGif) src = PATHS.thiefSmokeGif
+            if (!src) return null
+            return (
+              <img
+                src={src}
+                alt="thief-stealth"
+                className="absolute select-none"
+                style={{ left: playerRef.current.x, top: playerRef.current.y, width: playerRef.current.w, height: playerRef.current.h, imageRendering: 'pixelated' }}
+              />
+            )
+          })()}
         </div>
         {chatOpen && (
           <div className="absolute inset-0 flex items-end md:items-center justify-center p-4 md:p-6 z-20">
@@ -3487,8 +3899,12 @@ export default function Game() {
                   // Return to title
                   setTitleOpen(true)
                   titleOpenRef.current = true
-                  setClassSelectOpen(true)
-                  classSelectOpenRef.current = true
+                  // Do NOT open class select yet; only after pressing Start on the title
+                  setClassSelectOpen(false)
+                  classSelectOpenRef.current = false
+                  // Clear selected class so a fresh selection is required after Start
+                  setSelectedClass(null)
+                  selectedClassRef.current = null
                   // Reset inventory to initial empty until class re-chosen
                   setInventory({
                     armor: { head: null, chest: null, legs: null, boots: null, offhand: null },
