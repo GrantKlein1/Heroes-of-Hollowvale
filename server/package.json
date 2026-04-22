@@ -6,7 +6,8 @@
   "main": "src/index.js",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "check": "node --check src/index.js && node --check src/routes/chat.js && node --check src/routes/tts.js && node --check src/groqClient.js && node --check src/rag/store.js"
   },
   "dependencies": {
     "@xenova/transformers": "^2.17.1",

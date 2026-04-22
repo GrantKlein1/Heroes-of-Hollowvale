@@ -22,13 +22,24 @@ const ASSETS = {
 
 const LEAVE_PROMPT = `You are the gruff bartender of the Hollowvale Tavern. The traveler has asked many questions and you tire of them. Tell them to leave, in character.`
 
+const imagePromiseCache = new Map()
+
 function loadImage(src) {
-  return new Promise((resolve, reject) => {
+  if (!src) return Promise.reject(new Error('Missing image source'))
+  if (imagePromiseCache.has(src)) return imagePromiseCache.get(src)
+
+  const promise = new Promise((resolve, reject) => {
     const img = new Image()
     img.onload = () => resolve(img)
-    img.onerror = reject
+    img.onerror = (err) => {
+      imagePromiseCache.delete(src)
+      reject(err)
+    }
     img.src = src
   })
+
+  imagePromiseCache.set(src, promise)
+  return promise
 }
 
 // Normalized rect helpers (x,y,w,h in 0..1 of canvas size)
@@ -52,9 +63,12 @@ export default function Game() {
   const keysRef = useRef({})
   const imagesRef = useRef({})
   const musicRef = useRef(null)
-  // Separate audio elements for ambient scene music (village/path/title), tavern ambience, and fight music
+  // Separate audio elements for each soundtrack zone
+  // Intro/Village, Travel/Outside Cave, Tavern ambience, and Cave Fight
+  const travelMusicRef = useRef(null)
   const tavernMusicRef = useRef(null)
   const fightMusicRef = useRef(null)
+  const musicPauseTimersRef = useRef([])
   const vendorAudioRef = useRef(null)
   const sceneRef = useRef('village') // 'village' | 'tavern'
   const [ready, setReady] = useState(false)
@@ -78,6 +92,8 @@ export default function Game() {
   const mouseRef = useRef({ nx: 0, ny: 0 })
   const pickStartRef = useRef(null)
   const [debugOn, setDebugOn] = useState(false)
+  const [showColliderDebug, setShowColliderDebug] = useState(false)
+  const showColliderDebugRef = useRef(false)
 
   // Chat overlay state (bartender)
   const [chatOpen, setChatOpen] = useState(false)
@@ -106,6 +122,10 @@ export default function Game() {
     // Default lower for ambience by design
     const v = Number(localStorage.getItem('musicTavernVol') ?? 35)
     return Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : 35
+  })
+  const [musicTravelVol, setMusicTravelVol] = useState(() => {
+    const v = Number(localStorage.getItem('musicTravelVol') ?? localStorage.getItem('musicVillageVol') ?? 80)
+    return Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : 80
   })
   const [musicFightVol, setMusicFightVol] = useState(() => {
     const v = Number(localStorage.getItem('musicFightVol') ?? 85)
@@ -160,17 +180,24 @@ export default function Game() {
   const attackActiveRef = useRef(false) // true while attack pose is displayed
   // Consumables (hold K to consume)
   const CONSUME_DURATION_MS = 1000
-  const CONSUMABLE_IDS = new Set(['healing_potion','mana_potion','speed_potion'])
+  const CONSUMABLE_IDS = new Set(['healing_potion','mana_potion','speed_potion','apple','ale_flask'])
   const consumeActiveRef = useRef(false)
   const consumeStartRef = useRef(0)
   const consumeItemRef = useRef(null) // { id, slot }
   const consumeNeedsReleaseRef = useRef(false) // require K release before next start
   const speedBoostUntilRef = useRef(0)
+  const aleBoostUntilRef = useRef(0)   // ale flask drunk window
+  const appleRegenUntilRef = useRef(0) // apple regen window
   // Fireball system (mage): projectiles and lingering fires
   // Tweak these to adjust distance and speed
   const FIREBALL_SPEED = 420 // pixels per second
   const FIREBALL_TRAVEL_DISTANCE = 220 // pixels to travel before stopping (adjust here)
   const FIRE_LINGER_MS = 2000 // how long the small flame remains in place
+  const BLINK_DISTANCE = 140 // mage blink teleport range in pixels
+  const BLINK_COOLDOWN_MS = 10000
+  const MANA_SHIELD_EXTRA_HP = 100
+  const MANA_SHIELD_DURATION_MS = 8000
+  const MANA_SHIELD_COOLDOWN_MS = 20000
   const projectilesRef = useRef([]) // { x,y,w,h, vx,vy, startX,startY, maxDist, img }
   const firesRef = useRef([]) // { x,y,w,h, until, img }
   // Thief invisibility ability state
@@ -179,6 +206,13 @@ export default function Game() {
   const thiefVanishCooldownUntilRef = useRef(0) // cooldown gate for vanish ability
   // Mage Life Leech cooldown (10s)
   const lifeLeechCooldownUntilRef = useRef(0)
+  // Mage Frost Bolt cooldown (8s)
+  const frostBoltCooldownUntilRef = useRef(0)
+  const blinkCooldownUntilRef = useRef(0)
+  const manaShieldActiveUntilRef = useRef(0)
+  const manaShieldCooldownUntilRef = useRef(0)
+  const manaShieldLastCastRef = useRef(0)
+  const manaShieldHpRef = useRef(0)
   // Enemies in the current scene (spawned only in dungeonInterior)
   const enemiesRef = useRef([]) // { id,type,hp,hpMax,x,y,w,h,speed, dir:{x,y}, changeAt:number, img }
   const enemiesSpawnedRef = useRef(false)
@@ -195,12 +229,12 @@ export default function Game() {
   const spellWheelOpenRef = useRef(false)
   useEffect(() => { spellWheelOpenRef.current = spellWheelOpen }, [spellWheelOpen])
   const MAGE_SPELLS = [
-    { id: 'lightning', name: 'Lightning Bolt' },
+    { id: 'frost', name: 'Frost Bolt' },
     { id: 'shield', name: 'Mana Shield' },
     { id: 'blink', name: 'Blink' },
     { id: 'leech', name: 'Life Leech' },
   ]
-  const mageSelectedSpellRef = useRef('lightning')
+  const mageSelectedSpellRef = useRef('frost')
   const setMageSpell = (id) => {
     const found = MAGE_SPELLS.find(s => s.id === id)
     mageSelectedSpellRef.current = id
@@ -228,14 +262,27 @@ export default function Game() {
   const [effectsTick, setEffectsTick] = useState(0)
   useEffect(() => {
     let rafId
-    const tick = () => {
-      setEffectsTick((t) => (t + 1) % 1000000)
+    let lastUiTick = 0
+    const tick = (ts) => {
+      // Only refresh React overlay state when animated overlays or cooldown HUDs are relevant.
+      const cls = selectedClassRef.current
+      const needsUiTick =
+        projectilesRef.current.length > 0 ||
+        firesRef.current.length > 0 ||
+        cls === 'mage' ||
+        cls === 'thief'
+
+      if (needsUiTick && ts - lastUiTick >= 33) {
+        lastUiTick = ts
+        setEffectsTick((t) => (t + 1) % 1000000)
+      }
       rafId = requestAnimationFrame(tick)
     }
     rafId = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(rafId)
   }, [])
   const effectIdRef = useRef(1)
+  const collidersRef = useRef([])
   const pushFloatText = (x, y, text, color = '#ffd7a1', ms = 700) => {
     const now = performance.now()
     floatTextsRef.current.push({ id: effectIdRef.current++, x, y, text, color, until: now + ms, alpha: 1 })
@@ -297,14 +344,17 @@ export default function Game() {
         nrect(0, 1, 1, 0.02), // bottom wall
         nrect(-0.02, 0, 0.02, 1), // left wall
         nrect(1, 0, 0.02, 1), // right wall
-        // Tavern building blocks (approx top-center), leaving a door gap in the very middle
-        // Adjusted to match the visual mug/door area centered on the image
-        nrect(0.788, 0.684, 0.195, 0.219),
-        nrect(0.775, 0.169, 0.193, 0.141),
-        nrect(0.004, 0.089, 0.222, 0.239),
-        nrect(0.008, 0.006, 0.983, 0.198),
-        nrect(0.309, 0.250, 0.377, 0.394),
-        nrect(0.004, 0.819, 0.208, 0.158)
+        // Tavern building blocks (split to keep the front-door approach open)
+        nrect(0.312, 0.236, 0.377, 0.265),
+        nrect(0.338, 0.505, 0.120, 0.133),
+        nrect(0.543, 0.505, 0.120, 0.133),
+        // Other houses and structures
+        nrect(0.000, 0.092, 0.238, 0.240),
+        nrect(0.000, 0.773, 0.220, 0.220),
+        nrect(0.770, 0.670, 0.230, 0.250),
+        nrect(0.760, 0.155, 0.240, 0.150),
+        // Trees behind the tavern
+        nrect(0.250, 0.020, 0.500, 0.240),
       ],
   // Door centered beneath the mug: moved further down based on feedback
   door: nrect(0.47, 0.60, 0.06, 0.06),
@@ -343,8 +393,18 @@ export default function Game() {
         nrect(0, 1, 1, 0.02),
         nrect(-0.02, 0, 0.02, 1),
         nrect(1, 0, 0.02, 1),
-        // Bar counter across the room
-        nrect(0.15, 0.35, 0.70, 0.06),
+        // Bar and shelf
+        nrect(0.060, 0.500, 0.880, 0.100),
+        nrect(0.190, 0.200, 0.620, 0.270),
+        // Floor tables
+        nrect(0.030, 0.640, 0.330, 0.200),
+        nrect(0.560, 0.650, 0.380, 0.200),
+        // Stools near the bar and tables
+        nrect(0.140, 0.580, 0.080, 0.090),
+        nrect(0.380, 0.580, 0.080, 0.090),
+        nrect(0.630, 0.580, 0.080, 0.090),
+        nrect(0.110, 0.840, 0.080, 0.100),
+        nrect(0.690, 0.860, 0.090, 0.100),
       ],
       bartender: { nx: 0.5, ny: 0.45, w: 64, h: 64 },
       // Optional: exit back to village if pressing E near bottom center
@@ -366,19 +426,21 @@ export default function Game() {
         nrect(0, 1, 1, 0.02),
         nrect(-0.02, 0, 0.02, 1),
         nrect(1, 0, 0.02, 1),
-        nrect(0.002, 0.001, 0.432, 0.203),
-        nrect(0.714, 0.011, 0.278, 0.144),
-        nrect(0.627, 0.158, 0.362, 0.065),
-        nrect(0.735, 0.273, 0.265, 0.065),
-        nrect(0.852, 0.401, 0.140, 0.220),
-        nrect(0.612, 0.493, 0.388, 0.134),
-        nrect(0.706, 0.645, 0.288, 0.095),
-        nrect(0.746, 0.850, 0.237, 0.020),
-        nrect(0.466, 0.774, 0.055, 0.031),
-        nrect(0.008, 0.001, 0.371, 0.209),
-        nrect(0.013, 0.227, 0.267, 0.110),
-        nrect(0.008, 0.350, 0.303, 0.249),
-        nrect(0.004, 0.658, 0.191, 0.335)
+        // Tree lines and forest masses flanking the road
+        nrect(0.000, 0.000, 0.410, 0.230),
+        nrect(0.620, 0.000, 0.380, 0.240),
+        nrect(0.000, 0.200, 0.340, 0.200),
+        nrect(0.640, 0.200, 0.360, 0.240),
+        nrect(0.000, 0.400, 0.290, 0.200),
+        nrect(0.580, 0.420, 0.420, 0.220),
+        nrect(0.000, 0.620, 0.280, 0.240),
+        nrect(0.620, 0.660, 0.380, 0.240),
+        nrect(0.000, 0.840, 0.400, 0.160),
+        nrect(0.720, 0.880, 0.280, 0.120),
+        // Ponds
+        nrect(0.620, 0.310, 0.140, 0.060),
+        nrect(0.070, 0.430, 0.120, 0.070),
+        nrect(0.440, 0.670, 0.110, 0.060),
       ],
       // Exit back to village at TOP-center
       toVillage: nrect(0.45, 0.05, 0.10, 0.06),
@@ -579,8 +641,10 @@ export default function Game() {
   safe(PATHS.thiefSmokeGif).then((img) => { if (!cancelled && img) imagesRef.current.thiefSmokeGif = img })
   // Life Leech projectile gif
   safe(PATHS.lifeLeechSpellGif).then((img) => { if (!cancelled && img) imagesRef.current.lifeLeechSpellGif = img })
+  // Frost Bolt spell gif
+  safe(PATHS.frostBoltSpellGif).then((img) => { if (!cancelled && img) imagesRef.current.frostBoltSpellGif = img })
   // Preload mage spell icons for instant spell wheel rendering
-  safe(PATHS.lightningBoltIcon).then((img) => { if (!cancelled && img) imagesRef.current.lightningBoltIcon = img })
+  safe(PATHS.frostBoltIcon).then((img) => { if (!cancelled && img) imagesRef.current.frostBoltIcon = img })
   safe(PATHS.blinkIcon).then((img) => { if (!cancelled && img) imagesRef.current.blinkIcon = img })
   safe(PATHS.lifeLeechIcon).then((img) => { if (!cancelled && img) imagesRef.current.lifeLeechIcon = img })
   safe(PATHS.manaShieldIcon).then((img) => { if (!cancelled && img) imagesRef.current.manaShieldIcon = img })
@@ -614,7 +678,7 @@ export default function Game() {
       id: 'mage',
       name: 'Mage',
       sprite: CLASS_SPRITES.mage,
-      description: 'A master of arcane forces, fragile in body but devastating in spellcraft. Mages bend fire, frost, and lightning to their will.',
+      description: 'A master of arcane forces, fragile in body but devastating in spellcraft. Mages bend fire, frost, and frost to their will.',
       strengths: ['High magic damage', 'Ranged attacks', 'Versatile elemental spells'],
       weaknesses: ['Low health', 'Weak physical defense', 'Relies on mana'],
       abilities: ['[Z] Firebolt (ranged fire)', '[X] Frost Nova (freeze nearby)', '[C] Arcane Shield (magic barrier)'],
@@ -738,8 +802,8 @@ export default function Game() {
     } else if (id === 'mage') {
       base.armor.chest = makeItem('cloth_robes')
       base.hotbar[0] = makeItem('apprentice_staff')
-      base.storage[0] = makeItem('spellbook')
       base.hotbar[1] = makeItem('mana_potion', 2)
+      base.hotbar[2] = makeItem('spellbook')
     } else if (id === 'thief') {
       base.armor.chest = makeItem('leather_armor')
       base.hotbar[0] = makeItem('twin_daggers')
@@ -957,6 +1021,31 @@ export default function Game() {
     setNotice({ show: true, text })
     if (noticeTimerRef.current) clearTimeout(noticeTimerRef.current)
     noticeTimerRef.current = setTimeout(() => setNotice({ show: false, text: '' }), ms)
+  }
+
+  const startManaShieldCooldown = (now = performance.now(), noticeText = '') => {
+    manaShieldActiveUntilRef.current = 0
+    if (manaShieldHpRef.current > 0) manaShieldHpRef.current = 0
+    const mandatoryLockout = manaShieldLastCastRef.current
+      ? manaShieldLastCastRef.current + MANA_SHIELD_DURATION_MS + MANA_SHIELD_COOLDOWN_MS
+      : 0
+    const target = Math.max(now + MANA_SHIELD_COOLDOWN_MS, mandatoryLockout)
+    if (target > manaShieldCooldownUntilRef.current) {
+      manaShieldCooldownUntilRef.current = target
+    }
+    if (noticeText) showNotice(noticeText)
+  }
+
+  const absorbWithManaShield = (damage) => {
+    if (damage <= 0 || manaShieldHpRef.current <= 0) return damage
+    const before = manaShieldHpRef.current
+    const absorbed = Math.min(before, damage)
+    manaShieldHpRef.current = before - absorbed
+    const remaining = damage - absorbed
+    if (manaShieldHpRef.current <= 0) {
+      startManaShieldCooldown(performance.now(), 'Mana Shield shattered!')
+    }
+    return remaining
   }
 
   // Search/consume/add inventory helpers
@@ -1291,9 +1380,11 @@ export default function Game() {
   useEffect(() => { titleOpenRef.current = titleOpen }, [titleOpen])
   useEffect(() => { optionsOpenRef.current = optionsOpen }, [optionsOpen])
   useEffect(() => { shopOpenRef.current = shopOpen }, [shopOpen])
+  useEffect(() => { showColliderDebugRef.current = showColliderDebug }, [showColliderDebug])
   useEffect(() => { localStorage.setItem('masterVolume', String(masterVolume)) }, [masterVolume])
   useEffect(() => { localStorage.setItem('musicVillageVol', String(musicVillageVol)) }, [musicVillageVol])
   useEffect(() => { localStorage.setItem('musicTavernVol', String(musicTavernVol)) }, [musicTavernVol])
+  useEffect(() => { localStorage.setItem('musicTravelVol', String(musicTravelVol)) }, [musicTravelVol])
   useEffect(() => { localStorage.setItem('musicFightVol', String(musicFightVol)) }, [musicFightVol])
   useEffect(() => { localStorage.setItem('ttsEnabled', String(ttsEnabled)) }, [ttsEnabled])
   useEffect(() => { localStorage.setItem('ttsVolume', String(ttsVolume)) }, [ttsVolume])
@@ -1362,7 +1453,7 @@ export default function Game() {
   }, [ttsVolume])
 
   // Music helpers
-  // Existing main music (title + village + path)
+  // Intro + village music
   const ensureMusic = () => {
     if (!musicRef.current) {
       try {
@@ -1380,6 +1471,25 @@ export default function Game() {
       }
     }
     return musicRef.current
+  }
+
+  // Travel/outside-cave ambience (path + cave exterior)
+  const ensureTravelMusic = () => {
+    if (!travelMusicRef.current) {
+      try {
+        const a = new Audio(PATHS.travelBackgroundMusic)
+        a.loop = true
+        a.preload = 'auto'
+        a.volume = 0 // will fade in
+        a.addEventListener('error', () => {
+          console.warn('[Audio] Failed to load travelBackgroundMusic:', PATHS.travelBackgroundMusic)
+        }, { once: true })
+        travelMusicRef.current = a
+      } catch (e) {
+        travelMusicRef.current = null
+      }
+    }
+    return travelMusicRef.current
   }
 
   // Tavern ambience (low volume loop)
@@ -1405,12 +1515,12 @@ export default function Game() {
   const ensureFightMusic = () => {
     if (!fightMusicRef.current) {
       try {
-        const a = new Audio(PATHS.fightMusic1)
+        const a = new Audio(PATHS.caveFightMusic)
         a.loop = true
         a.preload = 'auto'
         a.volume = 0 // will fade in
         a.addEventListener('error', () => {
-          console.warn('[Audio] Failed to load fightMusic1:', PATHS.fightMusic1)
+          console.warn('[Audio] Failed to load caveFightMusic:', PATHS.caveFightMusic)
         }, { once: true })
         fightMusicRef.current = a
       } catch (e) {
@@ -1426,6 +1536,7 @@ export default function Game() {
     const m = Math.max(0, Math.min(1, masterVolume / 100))
     let t = 1
     if (track === 'village') t = Math.max(0, Math.min(1, musicVillageVol / 100))
+    else if (track === 'travel') t = Math.max(0, Math.min(1, musicTravelVol / 100))
     else if (track === 'tavern') t = Math.max(0, Math.min(1, musicTavernVol / 100))
     else if (track === 'fight') t = Math.max(0, Math.min(1, musicFightVol / 100))
     return Math.max(0, Math.min(1, m * t))
@@ -1463,27 +1574,62 @@ export default function Game() {
     } catch {}
   }
 
+  const clearMusicPauseTimers = () => {
+    if (!musicPauseTimersRef.current.length) return
+    for (const id of musicPauseTimersRef.current) {
+      clearTimeout(id)
+    }
+    musicPauseTimersRef.current = []
+  }
+
+  const scheduleMusicPause = (fn, ms) => {
+    const id = setTimeout(() => {
+      try {
+        fn()
+      } finally {
+        musicPauseTimersRef.current = musicPauseTimersRef.current.filter((t) => t !== id)
+      }
+    }, ms)
+    musicPauseTimersRef.current.push(id)
+  }
+
   // Scene-based music controller
   useEffect(() => {
+    clearMusicPauseTimers()
+
     const main = ensureMusic()
     if (main) main.volume = trackLevel('village')
+    const travel = ensureTravelMusic()
+    if (travel) travel.volume = trackLevel('travel')
     const tavern = ensureTavernMusic()
     const fight = ensureFightMusic()
 
     const inTavern = scene === 'tavern'
     const inFight = scene === 'dungeonInterior'
     const showTitle = titleOpen
-    const inVillageOrPath = scene === 'village' || scene === 'path'
+    const inVillage = scene === 'village' || scene === 'market'
+    const inTravel = !showTitle && (scene === 'path' || scene === 'dungeon')
 
-    // Main music active on title, village, path (not inside tavern or fight scene)
-    if (showTitle || inVillageOrPath) {
+    // Intro/Village music active on title and village-adjacent scenes
+    if (showTitle || inVillage) {
       if (main) {
         playWithUnlock(main)
         fadeAudio(main, trackLevel('village'), 700)
       }
     } else {
       if (main) fadeAudio(main, 0, 500)
-      setTimeout(() => { try { main?.pause() } catch {} }, 520)
+      scheduleMusicPause(() => { try { main?.pause() } catch {} }, 520)
+    }
+
+    // Travel music active while walking to the cave and at the cave exterior
+    if (inTravel) {
+      if (travel) {
+        playWithUnlock(travel)
+        fadeAudio(travel, trackLevel('travel'), 700)
+      }
+    } else {
+      if (travel) fadeAudio(travel, 0, 500)
+      scheduleMusicPause(() => { if (travel) { try { travel.pause() } catch {} } }, 520)
     }
 
     // Fight music only in dungeon interior
@@ -1494,7 +1640,7 @@ export default function Game() {
       }
     } else {
       if (fight && !inFight) fadeAudio(fight, 0, 500)
-      setTimeout(() => { if (fight && !inFight) { try { fight.pause() } catch {} } }, 520)
+      scheduleMusicPause(() => { if (fight && !inFight) { try { fight.pause() } catch {} } }, 520)
     }
 
     // Tavern ambience only inside tavern AND only when chat not open
@@ -1505,23 +1651,29 @@ export default function Game() {
       }
     } else {
       if (tavern) fadeAudio(tavern, 0, 400)
-      setTimeout(() => { if (tavern && tavern.volume === 0) { try { tavern.pause() } catch {} } }, 420)
+      scheduleMusicPause(() => { if (tavern && tavern.volume === 0) { try { tavern.pause() } catch {} } }, 420)
     }
-  }, [titleOpen, scene, masterVolume, musicVillageVol, musicTavernVol, musicFightVol, muteAllMusic])
+
+    return () => clearMusicPauseTimers()
+  }, [titleOpen, scene, masterVolume, musicVillageVol, musicTravelVol, musicTavernVol, musicFightVol, muteAllMusic])
 
   // Pause tavern ambience when bartender chat opens; resume on close if still in tavern
   useEffect(() => {
     const tavern = ensureTavernMusic()
     if (!tavern) return
+    let pauseId
     if (scene === 'tavern') {
       if (chatOpen) {
         fadeAudio(tavern, 0, 400)
-        setTimeout(() => { if (tavern.volume === 0) { try { tavern.pause() } catch {} } }, 420)
+        pauseId = setTimeout(() => { if (tavern.volume === 0) { try { tavern.pause() } catch {} } }, 420)
       } else {
         playWithUnlock(tavern)
         // Use computed track level (master * per-track) instead of removed 'volume' state
         fadeAudio(tavern, trackLevel('tavern'), 600)
       }
+    }
+    return () => {
+      if (pauseId) clearTimeout(pauseId)
     }
   }, [chatOpen, scene, masterVolume, musicTavernVol, muteAllMusic])
 
@@ -1536,17 +1688,24 @@ export default function Game() {
   // Keep music volumes in sync with option sliders
   useEffect(() => {
     if (musicRef.current) musicRef.current.volume = trackLevel('village')
+    if (travelMusicRef.current) travelMusicRef.current.volume = trackLevel('travel')
     if (tavernMusicRef.current) tavernMusicRef.current.volume = (scene === 'tavern' && !chatOpenRef.current) ? trackLevel('tavern') : tavernMusicRef.current.volume
     if (fightMusicRef.current) fightMusicRef.current.volume = (scene === 'dungeonInterior') ? trackLevel('fight') : fightMusicRef.current.volume
-  }, [masterVolume, musicVillageVol, musicTavernVol, musicFightVol, scene, muteAllMusic])
+  }, [masterVolume, musicVillageVol, musicTravelVol, musicTavernVol, musicFightVol, scene, muteAllMusic])
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
+      clearMusicPauseTimers()
       if (musicRef.current) {
         try { musicRef.current.pause() } catch {}
         musicRef.current.src = ''
         musicRef.current = null
+      }
+      if (travelMusicRef.current) {
+        try { travelMusicRef.current.pause() } catch {}
+        travelMusicRef.current.src = ''
+        travelMusicRef.current = null
       }
       if (tavernMusicRef.current) {
         try { tavernMusicRef.current.pause() } catch {}
@@ -1557,6 +1716,11 @@ export default function Game() {
         try { fightMusicRef.current.pause() } catch {}
         fightMusicRef.current.src = ''
         fightMusicRef.current = null
+      }
+      if (vendorAudioRef.current) {
+        try { vendorAudioRef.current.pause() } catch {}
+        vendorAudioRef.current.src = ''
+        vendorAudioRef.current = null
       }
     }
   }, [])
@@ -1621,7 +1785,7 @@ export default function Game() {
         if (k === '1' || k === '2' || k === '3' || k === '4') {
           e.preventDefault()
           const idx = Number(k) - 1
-          const mapOrder = ['lightning', 'blink', 'leech', 'shield'] // Top, Right, Bottom, Left ordering mapping to 1..4
+          const mapOrder = ['frost', 'blink', 'leech', 'shield'] // Top, Right, Bottom, Left ordering mapping to 1..4
           setMageSpell(mapOrder[idx])
           return
         }
@@ -1706,37 +1870,133 @@ export default function Game() {
           }
           // Prevent actions during vanish animation phase
           if (cls === 'thief' && performance.now() < thiefVanishUntilRef.current) return
-          // Mage Life Leech cast (Space while spellbook in hand & Life Leech selected & off cooldown)
-          if (cls === 'mage' && curItem && curItem.id === 'spellbook' && mageSelectedSpellRef.current === 'leech') {
-            const nowCast = performance.now()
-            if (nowCast < lifeLeechCooldownUntilRef.current) return
-            // Launch leech projectile (uses same speed/dist as fireball)
-            const p = playerRef.current
-            const dir = { x: lastDirRef.current.x, y: lastDirRef.current.y }
-            if (Math.abs(dir.x) < 0.001 && Math.abs(dir.y) < 0.001) { dir.x = 1; dir.y = 0 }
-            const len = Math.hypot(dir.x, dir.y); if (len > 0) { dir.x /= len; dir.y /= len }
-            const startX = p.x + p.w / 2 + dir.x * 12
-            const startY = p.y + p.h / 2 + dir.y * 12
-            projectilesRef.current.push({
-              id: effectIdRef.current++,
-              x: startX - 21,
-              y: startY - 21,
-              w: 42,
-              h: 42,
-              vx: dir.x * FIREBALL_SPEED,
-              vy: dir.y * FIREBALL_SPEED,
-              startX,
-              startY,
-              maxDist: FIREBALL_TRAVEL_DISTANCE,
-              domSrc: PATHS.lifeLeechSpellGif,
-              impactKey: 'lifeLeech',
-              owner: 'player',
-              special: 'lifeLeech'
-            })
-            // Set cooldown (10s)
-            lifeLeechCooldownUntilRef.current = nowCast + 10000
-            showNotice('Cast Life Leech')
-            return
+          if (cls === 'mage' && curItem && curItem.id === 'spellbook') {
+            const selectedSpell = mageSelectedSpellRef.current
+
+            if (selectedSpell === 'frost') {
+              const nowCast = performance.now()
+              if (nowCast < frostBoltCooldownUntilRef.current) {
+                showNotice(`Frost Bolt on cooldown (${Math.ceil((frostBoltCooldownUntilRef.current - nowCast)/1000)}s)`) 
+                return
+              }
+              const p = playerRef.current
+              const dir = { x: lastDirRef.current.x, y: lastDirRef.current.y }
+              if (Math.abs(dir.x) < 0.001 && Math.abs(dir.y) < 0.001) { dir.x = 1; dir.y = 0 }
+              const len = Math.hypot(dir.x, dir.y); if (len > 0) { dir.x /= len; dir.y /= len }
+              const startX = p.x + p.w / 2 + dir.x * 12
+              const startY = p.y + p.h / 2 + dir.y * 12
+              projectilesRef.current.push({
+                id: effectIdRef.current++,
+                x: startX - 16,
+                y: startY - 16,
+                w: 32,
+                h: 32,
+                vx: dir.x * FIREBALL_SPEED,
+                vy: dir.y * FIREBALL_SPEED,
+                startX,
+                startY,
+                maxDist: FIREBALL_TRAVEL_DISTANCE,
+                domSrc: PATHS.frostBoltSpellGif,
+                impactKey: 'frostBolt',
+                owner: 'player',
+                special: 'frostField'
+              })
+              frostBoltCooldownUntilRef.current = nowCast + 12000
+              showNotice('Cast Frost Bolt')
+              return
+            }
+
+            if (selectedSpell === 'blink') {
+              const nowCast = performance.now()
+              if (nowCast < blinkCooldownUntilRef.current) {
+                showNotice(`Blink on cooldown (${Math.ceil((blinkCooldownUntilRef.current - nowCast)/1000)}s)`) 
+                return
+              }
+              const frame = frameRef.current || { dx: 0, dy: 0, dw: 0, dh: 0 }
+              if (frame.dw <= 0 || frame.dh <= 0) {
+                showNotice('Blink fizzled (scene not ready)')
+                return
+              }
+              const p = playerRef.current
+              const dir = { x: lastDirRef.current.x, y: lastDirRef.current.y }
+              if (Math.abs(dir.x) < 0.001 && Math.abs(dir.y) < 0.001) { dir.x = 1; dir.y = 0 }
+              const len = Math.hypot(dir.x, dir.y) || 1
+              dir.x /= len; dir.y /= len
+              const stepCount = 12
+              const colliders = collidersRef.current || []
+              let blocked = false
+              for (let i = 1; i <= stepCount; i++) {
+                const t = (BLINK_DISTANCE * i) / stepCount
+                const sample = { x: p.x + dir.x * t, y: p.y + dir.y * t, w: p.w, h: p.h }
+                if (sample.x < frame.dx || sample.y < frame.dy || (sample.x + sample.w) > frame.dx + frame.dw || (sample.y + sample.h) > frame.dy + frame.dh) {
+                  blocked = true
+                  break
+                }
+                for (const c of colliders) {
+                  if (intersects(sample, c)) {
+                    blocked = true
+                    break
+                  }
+                }
+                if (blocked) break
+              }
+              if (blocked) {
+                showNotice('Blink fizzled (blocked)')
+                return
+              }
+              playerRef.current.x = p.x + dir.x * BLINK_DISTANCE
+              playerRef.current.y = p.y + dir.y * BLINK_DISTANCE
+              blinkCooldownUntilRef.current = nowCast + BLINK_COOLDOWN_MS
+              playerFlashUntilRef.current = performance.now() + 150
+              showNotice('Blink!')
+              return
+            }
+
+            if (selectedSpell === 'shield') {
+              const nowCast = performance.now()
+              if (nowCast < manaShieldCooldownUntilRef.current) {
+                return
+              }
+              if (nowCast < manaShieldActiveUntilRef.current) {
+                return
+              }
+              manaShieldHpRef.current = MANA_SHIELD_EXTRA_HP
+              manaShieldActiveUntilRef.current = nowCast + MANA_SHIELD_DURATION_MS
+              manaShieldLastCastRef.current = nowCast
+              showNotice('Mana Shield active!')
+              pushFloatText(playerRef.current.x + playerRef.current.w/2, playerRef.current.y - 14, '+Shield', '#60a5fa')
+              return
+            }
+
+            if (selectedSpell === 'leech') {
+              const nowCast = performance.now()
+              if (nowCast < lifeLeechCooldownUntilRef.current) return
+              const p = playerRef.current
+              const dir = { x: lastDirRef.current.x, y: lastDirRef.current.y }
+              if (Math.abs(dir.x) < 0.001 && Math.abs(dir.y) < 0.001) { dir.x = 1; dir.y = 0 }
+              const len = Math.hypot(dir.x, dir.y); if (len > 0) { dir.x /= len; dir.y /= len }
+              const startX = p.x + p.w / 2 + dir.x * 12
+              const startY = p.y + p.h / 2 + dir.y * 12
+              projectilesRef.current.push({
+                id: effectIdRef.current++,
+                x: startX - 21,
+                y: startY - 21,
+                w: 42,
+                h: 42,
+                vx: dir.x * FIREBALL_SPEED,
+                vy: dir.y * FIREBALL_SPEED,
+                startX,
+                startY,
+                maxDist: FIREBALL_TRAVEL_DISTANCE,
+                domSrc: PATHS.lifeLeechSpellGif,
+                impactKey: 'lifeLeech',
+                owner: 'player',
+                special: 'lifeLeech'
+              })
+              lifeLeechCooldownUntilRef.current = nowCast + 10000
+              showNotice('Cast Life Leech')
+              return
+            }
           }
           if (canAttack) {
             // If mage, ensure enough mana BEFORE triggering attack pose
@@ -1747,7 +2007,8 @@ export default function Game() {
               }
             }
             // Show attack pose and mark active; main loop will revert when time elapses
-            const attackMs = ATTACK_DURATION_BY_CLASS[cls] ?? ATTACK_DURATION_MS_DEFAULT
+            const aleDrunkSlow = performance.now() < aleBoostUntilRef.current ? 1.5 : 1
+            const attackMs = (ATTACK_DURATION_BY_CLASS[cls] ?? ATTACK_DURATION_MS_DEFAULT) * aleDrunkSlow
             attackUntilRef.current = now + attackMs
             attackActiveRef.current = true
             // Cache current sprite for instant revert later
@@ -1786,32 +2047,37 @@ export default function Game() {
               })
             } else {
               // Melee attack (knight/thief/dwarf): deal damage in a short frontal area
-              const dmg = MELEE_DAMAGE_BY_CLASS[cls] ?? 0
+              const aleDmgBoost = performance.now() < aleBoostUntilRef.current ? 1.35 : 1
+              const dmg = Math.round((MELEE_DAMAGE_BY_CLASS[cls] ?? 0) * aleDmgBoost)
               if (dmg > 0 && enemiesRef.current.length) {
                 const p = playerRef.current
                 const dir = { x: lastDirRef.current.x, y: lastDirRef.current.y }
                 if (Math.abs(dir.x) < 0.001 && Math.abs(dir.y) < 0.001) { dir.x = 1; dir.y = 0 }
-                // Determine orientation and build a frontal AABB
+                // Build swing AABB — centred on the player's mid-body, extends in the attack direction
                 let atk
                 if (Math.abs(dir.x) >= Math.abs(dir.y)) {
-                  // Horizontal swing
-                  const w = Math.max(14, Math.round(p.w * 0.85))
-                  const h = Math.max(12, Math.round(p.h * 0.55))
-                  const x = dir.x > 0 ? (p.x + p.w) : (p.x - w)
-                  const y = p.y + (p.h - h) / 2
+                  // Horizontal swing: reach ~1.1× player width from sprite centre, cover 70% of height
+                  const w = Math.max(16, Math.round(p.w * 1.1))
+                  const h = Math.max(12, Math.round(p.h * 0.70))
+                  const pivot = p.x + Math.round(p.w * 0.5)
+                  const x = dir.x > 0 ? pivot : pivot - w
+                  const y = p.y + Math.round(p.h * 0.18)
                   atk = { x, y, w, h }
                 } else {
-                  // Vertical swing
-                  const w = Math.max(12, Math.round(p.w * 0.55))
-                  const h = Math.max(14, Math.round(p.h * 0.85))
+                  // Vertical swing: cover 80% width centred, reach ~1.0× height from foot pivot
+                  const w = Math.max(12, Math.round(p.w * 0.80))
+                  const h = Math.max(16, Math.round(p.h * 1.0))
                   const x = p.x + (p.w - w) / 2
-                  const y = dir.y > 0 ? (p.y + p.h) : (p.y - h)
+                  const pivot = p.y + Math.round(p.h * 0.60)
+                  const y = dir.y > 0 ? pivot : pivot - h
                   atk = { x, y, w, h }
                 }
-                // Apply damage to any enemies intersecting the attack box
+                // Apply damage to enemies whose body box overlaps the swing arc
                 for (const e2 of enemiesRef.current) {
                   if (e2.hp <= 0) continue
-                  if (intersects(atk, { x: e2.x, y: e2.y, w: e2.w, h: e2.h })) {
+                  const e2fw = Math.round(e2.w * 0.15), e2fh = Math.round(e2.h * 0.25)
+                  const e2Body = { x: e2.x + e2fw, y: e2.y + e2fh, w: e2.w - e2fw * 2, h: Math.round(e2.h * 0.65) }
+                  if (intersects(atk, e2Body)) {
                     e2.hp = Math.max(0, e2.hp - dmg)
                     e2.flashUntil = performance.now() + 120
                     pushFloatText(e2.x + e2.w/2, e2.y - 6, `-${dmg}`, '#ff6161')
@@ -1940,13 +2206,20 @@ export default function Game() {
     const ctx = canvas.getContext('2d')
     let last = performance.now()
     let interactLatch = false
-    // Helper for slightly smaller player hitbox
-    const playerHitBox = (inset = PLAYER_HITBOX_INSET) => ({
-      x: playerRef.current.x + inset,
-      y: playerRef.current.y + inset,
-      w: playerRef.current.w - inset*2,
-      h: playerRef.current.h - inset*2,
-    })
+    // Foot-print box: lower body area used for wall/scene collider resolution (upper body can visually overlap objects)
+    const playerFootHitBox = () => {
+      const p = playerRef.current
+      const xInset = Math.round(p.w * 0.18)
+      const yOffset = Math.round(p.h * 0.55)
+      return { x: p.x + xInset, y: p.y + yOffset, w: p.w - xInset * 2, h: p.h - yOffset }
+    }
+    // Body box: torso/centre area used for combat and damage hit detection
+    const playerHitBox = () => {
+      const p = playerRef.current
+      const xInset = Math.round(p.w * 0.14)
+      const yOffset = Math.round(p.h * 0.25)
+      return { x: p.x + xInset, y: p.y + yOffset, w: p.w - xInset * 2, h: Math.round(p.h * 0.65) }
+    }
 
     // mark initial spawn to be resolved after background layout is known
     if (!playerRef.current._spawn) {
@@ -1957,6 +2230,11 @@ export default function Game() {
     const step = (now) => {
       const dt = Math.min(0.033, (now - last) / 1000)
       last = now
+
+      if (manaShieldActiveUntilRef.current > 0 && now >= manaShieldActiveUntilRef.current) {
+        const hadShieldRemaining = manaShieldHpRef.current > 0
+        startManaShieldCooldown(now, hadShieldRemaining ? 'Mana Shield faded.' : '')
+      }
 
       // Revert attack pose when its duration has elapsed
       if (attackActiveRef.current && performance.now() >= attackUntilRef.current) {
@@ -2070,6 +2348,7 @@ export default function Game() {
   // Effective movement speed (speed potion boost if active)
   let speed = playerRef.current.speed
   if (performance.now() < speedBoostUntilRef.current) speed *= 1.5
+  if (performance.now() < aleBoostUntilRef.current) speed *= 0.80 // ale slows movement
       let vx = 0, vy = 0
   if (!chatOpenRef.current && !classSelectOpenRef.current && !inventoryOpenRef.current && !titleOpenRef.current && !optionsOpenRef.current && !shopOpenRef.current && !gameOverRef.current && !(selectedClassRef.current==='thief' && performance.now() < thiefVanishUntilRef.current)) {
         if (keysRef.current['w'] || keysRef.current['arrowup']) vy -= 1
@@ -2084,28 +2363,48 @@ export default function Game() {
         }
       }
 
-      // Move with simple AABB collisions
-      const next = { ...playerRef.current }
-      next.x += vx * speed * dt
-      // X axis collisions (map colliders to image frame)
+      // Shared swept per-axis stepping for actor movement against scene colliders.
+      // This avoids teleport-like snaps when multiple colliders are touched in one frame.
       const collidersPx = sdef.colliders.map(mapRect)
-      for (const c of collidersPx) {
-        if (intersects({ x: next.x, y: playerRef.current.y, w: next.w, h: next.h }, c)) {
-          // Resolve by moving back along x
-          if (vx > 0) next.x = c.x - next.w
-          else if (vx < 0) next.x = c.x + c.w
+      collidersRef.current = collidersPx
+      const sweepMoveFootActor = (actor, deltaX, deltaY, footInsetX, footInsetY, maxStepPx = 3) => {
+        const footAt = (x, y) => ({
+          x: x + footInsetX,
+          y: y + footInsetY,
+          w: actor.w - footInsetX * 2,
+          h: actor.h - footInsetY,
+        })
+        const isBlockedAt = (x, y) => {
+          const foot = footAt(x, y)
+          if (foot.x < dx || foot.y < dy || foot.x + foot.w > dx + dw || foot.y + foot.h > dy + dh) return true
+          for (const c of collidersPx) {
+            if (intersects(foot, c)) return true
+          }
+          return false
+        }
+        const moveAxis = (axis, delta) => {
+          if (!delta) return false
+          const steps = Math.max(1, Math.ceil(Math.abs(delta) / Math.max(0.5, maxStepPx)))
+          const stepDelta = delta / steps
+          for (let i = 0; i < steps; i++) {
+            const tx = axis === 'x' ? actor.x + stepDelta : actor.x
+            const ty = axis === 'y' ? actor.y + stepDelta : actor.y
+            if (isBlockedAt(tx, ty)) return true
+            actor.x = tx
+            actor.y = ty
+          }
+          return false
+        }
+        return {
+          blockedX: moveAxis('x', deltaX),
+          blockedY: moveAxis('y', deltaY),
         }
       }
-      // Y axis
-      next.y += vy * speed * dt
-      for (const c of collidersPx) {
-        if (intersects({ x: next.x, y: next.y, w: next.w, h: next.h }, c)) {
-          if (vy > 0) next.y = c.y - next.h
-          else if (vy < 0) next.y = c.y + c.h
-        }
-      }
-      playerRef.current.x = next.x
-      playerRef.current.y = next.y
+
+      const p = playerRef.current
+      const pfw = Math.round(p.w * 0.18)
+      const pfh = Math.round(p.h * 0.55)
+      sweepMoveFootActor(p, vx * speed * dt, vy * speed * dt, pfw, pfh, 2.5)
 
       // Enemy AI: mild unpredictability, light bias toward player; obey same colliders
   if (enemiesRef.current.length && !gameOverRef.current) {
@@ -2147,41 +2446,36 @@ export default function Game() {
             })
             e.fireAt = nowMs + 1800 + Math.random()*1200
           }
-          // Integrate with collision like player
-          const exNext = { ...e }
-          exNext.x += e.dir.x * e.speed * dt
-          // X collision
-          for (const c of collidersPx) {
-            if (intersects({ x: exNext.x, y: e.y, w: e.w, h: e.h }, c)) {
-              if (e.dir.x > 0) exNext.x = c.x - e.w
-              else if (e.dir.x < 0) exNext.x = c.x + c.w
-              // bounce a bit on collision
-              e.dir.x *= -0.4
-            }
-          }
-          exNext.y += e.dir.y * e.speed * dt
-          for (const c of collidersPx) {
-            if (intersects({ x: exNext.x, y: exNext.y, w: e.w, h: e.h }, c)) {
-              if (e.dir.y > 0) exNext.y = c.y - e.h
-              else if (e.dir.y < 0) exNext.y = c.y + c.h
-              e.dir.y *= -0.4
-            }
-          }
-          e.x = exNext.x
-          e.y = exNext.y
-          // Contact damage (touch) to player
+          // Integrate with the same swept collision solver as the player.
+          // Apply slow multiplier if active.
+          const slowActive = nowMs < (e.slowUntil || 0)
+          const speedEff = e.speed * (slowActive ? 0.5 : 1)
+          const efw = Math.round(e.w * 0.15)
+          const efh = Math.round(e.h * 0.55)
+          const enemyMove = sweepMoveFootActor(e, e.dir.x * speedEff * dt, e.dir.y * speedEff * dt, efw, efh, 2.5)
+          if (enemyMove.blockedX) e.dir.x *= -0.4
+          if (enemyMove.blockedY) e.dir.y *= -0.4
+          // Contact damage: compare shrunken body boxes to avoid unfair sprite-edge hits
           const playerBox = playerHitBox()
-          if (!gameOverRef.current && intersects({ x: e.x, y: e.y, w: e.w, h: e.h }, playerBox)) {
+          const eBodyBox = { x: e.x + efw, y: e.y + Math.round(e.h * 0.25), w: e.w - efw * 2, h: Math.round(e.h * 0.65) }
+          if (!gameOverRef.current && intersects(eBodyBox, playerBox)) {
             if (performance.now() >= playerIFrameUntilRef.current) {
               const baseDmg = e.type === 'brute' ? 12 : (e.type === 'archer' ? 6 : 8)
               const waveScale = 1 + 0.05 * Math.max(0, dungeonWaveRef.current - 1)
               const dmg = Math.round(baseDmg * waveScale)
               const invincible = (selectedClassRef.current === 'thief' && performance.now() < thiefSmokeUntilRef.current)
-              if (!invincible) playerRef.current.hp = Math.max(0, playerRef.current.hp - dmg)
-              playerIFrameUntilRef.current = performance.now() + 900
-              playerFlashUntilRef.current = performance.now() + 200
-              pushFloatText(playerRef.current.x + playerRef.current.w/2, playerRef.current.y - 10, `-${dmg}`, '#ff9f43')
-              if (playerRef.current.hp <= 0) triggerGameOver(e.type)
+              if (!invincible) {
+                const overflow = absorbWithManaShield(dmg)
+                playerIFrameUntilRef.current = performance.now() + 900
+                playerFlashUntilRef.current = performance.now() + 200
+                if (overflow > 0) {
+                  playerRef.current.hp = Math.max(0, playerRef.current.hp - overflow)
+                  pushFloatText(playerRef.current.x + playerRef.current.w/2, playerRef.current.y - 10, `-${overflow}`, '#ff9f43')
+                  if (playerRef.current.hp <= 0) triggerGameOver(e.type)
+                } else {
+                  pushFloatText(playerRef.current.x + playerRef.current.w/2, playerRef.current.y - 10, 'Guarded', '#60a5fa')
+                }
+              }
             }
           }
         }
@@ -2234,6 +2528,23 @@ export default function Game() {
         playerRef.current.mana = Math.min(playerRef.current.manaMax, (playerRef.current.mana || 0) + regen)
       }
 
+      // Food & drink regen ticks
+      if (!gameOverRef.current) {
+        const nowR = performance.now()
+        const hpMax = playerRef.current.hpMax || 100
+        // Apple: 5 HP/sec, capped at hpMax
+        if (nowR < appleRegenUntilRef.current) {
+          playerRef.current.hp = Math.min(hpMax, (playerRef.current.hp || 0) + 5 * dt)
+        }
+        // Ale: 8 HP/sec, can push up to hpMax + 50 (overhealth)
+        if (nowR < aleBoostUntilRef.current) {
+          playerRef.current.hp = Math.min(hpMax + 50, (playerRef.current.hp || 0) + 8 * dt)
+        } else if ((playerRef.current.hp || 0) > hpMax) {
+          // Overhealth decays at 5 HP/sec once ale expires
+          playerRef.current.hp = Math.max(hpMax, playerRef.current.hp - 5 * dt)
+        }
+      }
+
       // Update projectiles (fireballs, poison)
   if (projectilesRef.current.length && !gameOverRef.current) {
         const arr = projectilesRef.current
@@ -2246,20 +2557,25 @@ export default function Game() {
           // Hit enemies first
           let hitEnemy = false
           if (enemiesRef.current.length && pr.owner !== 'enemy') {
-            const hitBox = { x: pr.x, y: pr.y, w: pr.w, h: pr.h }
+            // Use the centre core of the projectile sprite for accurate hit detection
+            const psx = pr.w * 0.25, psy = pr.h * 0.25
+            const hitBox = { x: pr.x + psx, y: pr.y + psy, w: pr.w - psx * 2, h: pr.h - psy * 2 }
             for (const e of enemiesRef.current) {
               // quick distance gate to reduce checks
               const pcx = pr.x + pr.w/2, pcy = pr.y + pr.h/2
               const ecx = e.x + e.w/2, ecy = e.y + e.h/2
               const dx2 = pcx - ecx, dy2 = pcy - ecy
               if ((dx2*dx2 + dy2*dy2) > 300*300) continue
-              if (intersects(hitBox, { x: e.x, y: e.y, w: e.w, h: e.h })) {
+              // Enemy body box: ignores transparent head/feet pixels in the sprite sheet
+              const pefw = Math.round(e.w * 0.15), pefh = Math.round(e.h * 0.25)
+              const eBody = { x: e.x + pefw, y: e.y + pefh, w: e.w - pefw * 2, h: Math.round(e.h * 0.65) }
+              if (intersects(hitBox, eBody)) {
                 // Damage model
                 if (pr.special === 'lifeLeech') {
                   // Life Leech: deal 40% of current HP and heal player same amount
                   const enemyCur = e.hp
                   const dmg = Math.max(1, Math.floor(enemyCur * 0.4))
-                  e.hp = Math.max(0, enemyCur - dmg)
+                  e.hp = Math.max(0, dmg)
                   e.flashUntil = nowMs + 180
                   pushFloatText(e.x + e.w/2, e.y - 6, `-${dmg}`, '#bb3cff')
                   // Heal mage
@@ -2272,7 +2588,12 @@ export default function Game() {
                   hitEnemy = true
                   break
                 } else {
-                  const dmg = pr.impactKey === 'poisonPotionGif' ? 8 : 10 // reduced mage fireball base dmg by 5
+                  let dmg = pr.impactKey === 'poisonPotionGif' ? 8 : 10 // reduced mage fireball base dmg by 5
+                  const isFireballProj = pr.impactKey === 'fireSmallGif'
+                  // Frozen (slowed by frost) take 50% more fireball damage
+                  if (isFireballProj && nowMs < (e.slowUntil || 0)) {
+                    dmg = Math.round(dmg * 1.5)
+                  }
                   e.hp = Math.max(0, e.hp - dmg)
                   e.flashUntil = nowMs + 180
                   pushFloatText(e.x + e.w/2, e.y - 6, `-${dmg}`, '#ff6161')
@@ -2282,18 +2603,27 @@ export default function Game() {
               }
             }
           }
-          // Enemy projectile hits player
+          // Enemy projectile hits player — use centre of arrow and player body box for fairness
           if (pr.owner === 'enemy') {
             const pBox = playerHitBox()
-            if (intersects({ x: pr.x, y: pr.y, w: pr.w, h: pr.h }, pBox)) {
+            const asx = pr.w * 0.25, asy = pr.h * 0.25
+            const arrowBox = { x: pr.x + asx, y: pr.y + asy, w: pr.w - asx * 2, h: pr.h - asy * 2 }
+            if (intersects(arrowBox, pBox)) {
               if (!gameOverRef.current && performance.now() >= playerIFrameUntilRef.current) {
                 const dmg = 7
                 const invincible = (selectedClassRef.current === 'thief' && performance.now() < thiefSmokeUntilRef.current)
-                if (!invincible) playerRef.current.hp = Math.max(0, playerRef.current.hp - dmg)
-                playerIFrameUntilRef.current = performance.now() + 900
-                playerFlashUntilRef.current = performance.now() + 250
-                pushFloatText(playerRef.current.x + playerRef.current.w/2, playerRef.current.y - 10, `-${dmg}`, '#ff9f43')
-                if (playerRef.current.hp <= 0) triggerGameOver('archer')
+                if (!invincible) {
+                  const overflow = absorbWithManaShield(dmg)
+                  playerIFrameUntilRef.current = performance.now() + 900
+                  playerFlashUntilRef.current = performance.now() + 250
+                  if (overflow > 0) {
+                    playerRef.current.hp = Math.max(0, playerRef.current.hp - overflow)
+                    pushFloatText(playerRef.current.x + playerRef.current.w/2, playerRef.current.y - 10, `-${overflow}`, '#ff9f43')
+                    if (playerRef.current.hp <= 0) triggerGameOver('archer')
+                  } else {
+                    pushFloatText(playerRef.current.x + playerRef.current.w/2, playerRef.current.y - 10, 'Guarded', '#60a5fa')
+                  }
+                }
               }
               arr.splice(i, 1)
               continue
@@ -2311,6 +2641,20 @@ export default function Game() {
             } else {
               if (pr.special === 'lifeLeech') {
                 // Life Leech disappears on impact (no lingering effect)
+                arr.splice(i, 1)
+              } else if (pr.special === 'frostField') {
+                // Frost Bolt impact: spawn stationary frost AoE (6s) applying slow & 5 DPS; larger size
+                const centerX = pr.x + pr.w / 2
+                const centerY = pr.y + pr.h / 2
+                const size = 96
+                const nx = Math.round(centerX - size / 2)
+                const ny = Math.round(centerY - size / 2)
+                firesRef.current.push({
+                  id: effectIdRef.current++,
+                  x: nx, y: ny, w: size, h: size,
+                  until: performance.now() + 6000,
+                  domSrc: PATHS.frostBoltSpellGif,
+                })
                 arr.splice(i, 1)
               } else {
                 // Spawn lingering effect and remove projectile
@@ -2337,17 +2681,19 @@ export default function Game() {
         }
       }
 
-      // Lingering small fires: apply DoT to enemies and expire when time elapses
+      // Lingering small fires and fields: apply DoT to enemies and expire when time elapses
       if (firesRef.current.length) {
         const nowMs = performance.now()
-        // Deal 2 DPS to enemies overlapping mage small fire while on screen
+        // Deal DPS to enemies overlapping effects
         if (enemiesRef.current.length) {
           for (const f of firesRef.current) {
             const fBox = { x: f.x, y: f.y, w: f.w, h: f.h }
             const isMageFire = f.domSrc === PATHS.animatedFireSmallGif
             const isPoisonPuddle = f.domSrc === PATHS.poisonPotionGif
-            if (!isMageFire && !isPoisonPuddle) continue
-            const dps = isMageFire ? 2 : 5
+            const isFrostField = f.domSrc === PATHS.frostBoltSpellGif
+            if (!isMageFire && !isPoisonPuddle && !isFrostField) continue
+            // Halve Frost field DPS from 5 to 2.5
+            const dps = isMageFire ? 2 : (isPoisonPuddle ? 5 : (isFrostField ? 2.5 : 5))
             for (const e of enemiesRef.current) {
               if (e.hp <= 0) continue
               // quick distance gate
@@ -2357,6 +2703,11 @@ export default function Game() {
               if ((dx3*dx3 + dy3*dy3) > 280*280) continue
               if (intersects(fBox, { x: e.x, y: e.y, w: e.w, h: e.h })) {
                 e.hp = Math.max(0, e.hp - dps * dt)
+                // Apply slow while in frost and for 3s after leaving
+                if (isFrostField) {
+                  const extend = nowMs + 3000
+                  e.slowUntil = Math.max(e.slowUntil || 0, extend)
+                }
               }
             }
           }
@@ -2454,6 +2805,15 @@ export default function Game() {
                 const cur = playerRef.current.hp || 0
                 playerRef.current.hp = Math.min(hm, cur + 70)
               }
+            } else if (id === 'apple') {
+              // Apple: gradual regen over 8s, capped at hpMax
+              appleRegenUntilRef.current = nowMs + 8000
+              showNotice('Munching apple... +5 HP/sec for 8s')
+            } else if (id === 'ale_flask') {
+              // Ale: regen + overhealth + damage boost + sluggishness for 15s
+              aleBoostUntilRef.current = nowMs + 15000
+              showNotice('Ale! +8 HP/sec, +35% dmg, slower movement & attacks (15s)')
+              pushFloatText(playerRef.current.x + playerRef.current.w / 2, playerRef.current.y - 18, '🍺 Ale!', '#fbbf24', 1800)
             }
             // Reset consumption; require release before next start
             consumeActiveRef.current = false
@@ -2723,13 +3083,20 @@ export default function Game() {
           const pct = Math.max(0, Math.min(1, e.hp / e.hpMax))
           ctx.fillStyle = 'rgba(220,38,38,0.9)'
           ctx.fillRect(hx, hy, barW * pct, barH)
-          // Numeric HP above (as requested)
+          // Numeric HP above + status icons
           const label = `${Math.ceil(e.hp)}`
           const tw = ctx.measureText(label).width
           ctx.fillStyle = 'rgba(0,0,0,0.6)'
           ctx.fillRect(hx + barW/2 - tw/2 - 3, hy - 14, tw + 6, 12)
           ctx.fillStyle = '#ffd7a1'
           ctx.fillText(label, hx + barW/2 - tw/2, hy - 4)
+          // Slow icon next to HP when affected
+          const slowActive = performance.now() < (e.slowUntil || 0)
+          if (slowActive) {
+            ctx.fillStyle = '#a5f3fc' // cyan-200
+            ctx.font = '12px sans-serif'
+            ctx.fillText('❄', hx + barW/2 + tw/2 + 8, hy - 4)
+          }
         }
       }
       // Draw enemy projectiles (arrows) using goblinArrow.png if available
@@ -2796,7 +3163,7 @@ export default function Game() {
         ctx.fillRect(8, 8, 380, 56)
         ctx.fillStyle = '#fff'
         ctx.font = '14px sans-serif'
-        ctx.fillText('WASD: Move    E: Interact    V: Inventory', 16, 28)
+        ctx.fillText('WASD: Move    E: Interact    V: Inventory    K: Ability    Space: Attack', 16, 28)
         let hudLine = ''
         if (sceneRef.current === 'village') {
           hudLine = 'Find the tavern door or travel south; press E when prompted'
@@ -2993,12 +3360,12 @@ export default function Game() {
       // Right (0..45 and 315..360) -> Blink
       // Bottom (45..135) -> Life Leech
       // Left (135..225) -> Mana Shield
-      // Top (225..315) -> Lightning Bolt
-      let id = 'lightning'
+      // Top (225..315) -> frost Bolt
+      let id = 'frost'
       if (deg >= 315 || deg < 45) id = 'blink'
       else if (deg >= 45 && deg < 135) id = 'leech'
       else if (deg >= 135 && deg < 225) id = 'shield'
-      else if (deg >= 225 && deg < 315) id = 'lightning'
+      else if (deg >= 225 && deg < 315) id = 'frost'
       setMageSpell(id)
     } catch {}
   }
@@ -3160,10 +3527,10 @@ export default function Game() {
               />
               {/* Center dot */}
               <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-amber-400 shadow" />
-              {/* Top: Lightning Bolt */}
-              <div className="absolute left-1/2 -translate-x-1/2 top-4 flex flex-col items-center gap-1 text-amber-200" title="Lightning Bolt (1)">
-                <img src={PATHS.lightningBoltIcon} alt="Lightning Bolt" className="w-8 h-8 rounded border border-amber-900/40 bg-stone-900/40 object-contain" onError={(e)=>{e.currentTarget.style.visibility='hidden'}} />
-                <div className="text-xs">Lightning Bolt</div>
+              {/* Top: Frost Bolt */}
+              <div className="absolute left-1/2 -translate-x-1/2 top-4 flex flex-col items-center gap-1 text-amber-200" title="Frost Bolt (1)">
+                <img src={PATHS.frostBoltIcon} alt="Frost Bolt" className="w-8 h-8 rounded border border-amber-900/40 bg-stone-900/40 object-contain" onError={(e)=>{e.currentTarget.style.visibility='hidden'}} />
+                <div className="text-xs">Frost Bolt</div>
                 <div className="text-[10px] text-stone-400">[1]</div>
               </div>
               {/* Right: Blink */}
@@ -3222,12 +3589,10 @@ export default function Game() {
             )
           })()}
         </div>
-        {/* Mage Life Leech cooldown display */}
+        {/* Mage Life Leech cooldown display (always visible for Mage) */}
         <div className="absolute top-28 left-2 z-30 pointer-events-none select-none">
           {effectsTick >= 0 && (() => {
             if (selectedClassRef.current !== 'mage') return null
-            // Only show if Life Leech spell currently selected
-            if (mageSelectedSpellRef.current !== 'leech') return null
             const now = performance.now()
             const cdRem = Math.max(0, lifeLeechCooldownUntilRef.current - now)
             let label = 'Life Leech: Ready'
@@ -3246,6 +3611,92 @@ export default function Game() {
                     <div className="h-full" style={{ width: `${Math.round(pct*100)}%`, backgroundColor: color }} />
                   </div>
                   <div className="mt-1 text-[10px] text-stone-400">Cast: Space (Spellbook)</div>
+                </div>
+              </div>
+            )
+          })()}
+        </div>
+        {/* Mage Frost Bolt cooldown display (stacked under Life Leech, slightly lower) */}
+        <div className="absolute top-44 left-2 z-30 pointer-events-none select-none">
+          {effectsTick >= 0 && (() => {
+            if (selectedClassRef.current !== 'mage') return null
+            const now = performance.now()
+            const cdRem = Math.max(0, frostBoltCooldownUntilRef.current - now)
+            let label = 'Frost Bolt: Ready'
+            let pct = 0
+            let color = '#86efac'
+            if (cdRem > 0) {
+              label = `Frost Bolt: CD ${Math.ceil(cdRem/1000)}s`
+              pct = Math.min(1, cdRem / 8000)
+              color = '#60a5fa' // blue-400
+            }
+            return (
+              <div className="min-w-[160px] max-w-[200px]">
+                <div className="px-2 py-1 rounded bg-stone-900/80 text-amber-200 border border-amber-900/40 text-xs">
+                  {label}
+                  <div className="mt-1 h-1.5 w-full bg-stone-700/80 rounded overflow-hidden">
+                    <div className="h-full" style={{ width: `${Math.round(pct*100)}%`, backgroundColor: color }} />
+                  </div>
+                  <div className="mt-1 text-[10px] text-stone-400">Cast: Space (Spellbook)</div>
+                </div>
+              </div>
+            )
+          })()}
+        </div>
+        {/* Mage Blink cooldown display */}
+        <div className="absolute top-60 left-2 z-30 pointer-events-none select-none">
+          {effectsTick >= 0 && (() => {
+            if (selectedClassRef.current !== 'mage') return null
+            const now = performance.now()
+            const cdRem = Math.max(0, blinkCooldownUntilRef.current - now)
+            let label = 'Blink: Ready'
+            let pct = 0
+            let color = '#86efac'
+            if (cdRem > 0) {
+              label = `Blink: CD ${Math.ceil(cdRem/1000)}s`
+              pct = Math.min(1, cdRem / BLINK_COOLDOWN_MS)
+              color = '#38bdf8'
+            }
+            return (
+              <div className="min-w-[160px] max-w-[200px]">
+                <div className="px-2 py-1 rounded bg-stone-900/80 text-amber-200 border border-amber-900/40 text-xs">
+                  {label}
+                  <div className="mt-1 h-1.5 w-full bg-stone-700/80 rounded overflow-hidden">
+                    <div className="h-full" style={{ width: `${Math.round(pct*100)}%`, backgroundColor: color }} />
+                  </div>
+                  <div className="mt-1 text-[10px] text-stone-400">Teleport: Space (Spellbook)</div>
+                </div>
+              </div>
+            )
+          })()}
+        </div>
+        {/* Mage Mana Shield cooldown/active display */}
+        <div className="absolute top-[19rem] left-2 z-30 pointer-events-none select-none">
+          {effectsTick >= 0 && (() => {
+            if (selectedClassRef.current !== 'mage') return null
+            const now = performance.now()
+            const activeRem = Math.max(0, manaShieldActiveUntilRef.current - now)
+            const cdRem = activeRem > 0 ? 0 : Math.max(0, manaShieldCooldownUntilRef.current - now)
+            let label = 'Mana Shield: Ready'
+            let pct = 0
+            let color = '#86efac'
+            if (activeRem > 0) {
+              label = `Mana Shield: Active ${Math.ceil(activeRem/1000)}s`
+              pct = Math.min(1, activeRem / MANA_SHIELD_DURATION_MS)
+              color = '#38bdf8'
+            } else if (cdRem > 0) {
+              label = `Mana Shield: CD ${Math.ceil(cdRem/1000)}s`
+              pct = Math.min(1, cdRem / MANA_SHIELD_COOLDOWN_MS)
+              color = '#f87171'
+            }
+            return (
+              <div className="min-w-[160px] max-w-[200px]">
+                <div className="px-2 py-1 rounded bg-stone-900/80 text-amber-200 border border-amber-900/40 text-xs">
+                  {label}
+                  <div className="mt-1 h-1.5 w-full bg-stone-700/80 rounded overflow-hidden">
+                    <div className="h-full" style={{ width: `${Math.round(pct*100)}%`, backgroundColor: color }} />
+                  </div>
+                  <div className="mt-1 text-[10px] text-stone-400">Barrier: Space (Spellbook)</div>
                 </div>
               </div>
             )
@@ -3600,7 +4051,7 @@ export default function Game() {
                 <div className="grid grid-cols-1 gap-4">
                   <label className="block">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-stone-200">Village/Path music</span>
+                      <span className="text-stone-200">Intro/Village music</span>
                       <span className="text-stone-300/80 text-sm">{musicVillageVol}%</span>
                     </div>
                     <input
@@ -3609,6 +4060,20 @@ export default function Game() {
                       max={100}
                       value={musicVillageVol}
                       onChange={(e) => setMusicVillageVol(Number(e.target.value))}
+                      className="w-full accent-amber-500"
+                    />
+                  </label>
+                  <label className="block">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-stone-200">Travel/Outside cave music</span>
+                      <span className="text-stone-300/80 text-sm">{musicTravelVol}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      value={musicTravelVol}
+                      onChange={(e) => setMusicTravelVol(Number(e.target.value))}
                       className="w-full accent-amber-500"
                     />
                   </label>
@@ -3698,13 +4163,33 @@ export default function Game() {
             <div className="flex items-center justify-center gap-3 mb-2">
               {/* Health bar */}
               <div className="relative h-3 rounded-full bg-stone-900/60 border border-amber-900/40 overflow-hidden" style={{ width: 340 }}>
+                {/* Normal HP segment (capped at 100%) */}
                 <div
-                  className="h-full"
+                  className="absolute h-full left-0 top-0"
                   style={{
-                    width: `${Math.max(0, Math.min(100, (playerRef.current.hp / playerRef.current.hpMax) * 100 || 0))}%`,
-                    backgroundColor: 'rgba(185, 28, 28, 0.9)' // darker red (~red-700) with slight opacity
+                    width: `${Math.max(0, Math.min(100, ((Math.min(playerRef.current.hp, playerRef.current.hpMax)) / playerRef.current.hpMax) * 100 || 0))}%`,
+                    backgroundColor: 'rgba(185, 28, 28, 0.9)',
                   }}
                 />
+                {/* Overhealth segment (gold, only when hp > hpMax) */}
+                {(playerRef.current.hp || 0) > (playerRef.current.hpMax || 100) && (
+                  <div
+                    className="absolute h-full top-0"
+                    style={{
+                      left: '100%',
+                      width: `${Math.min(50, (playerRef.current.hp - playerRef.current.hpMax) / playerRef.current.hpMax * 100)}%`,
+                      backgroundColor: 'rgba(251, 191, 36, 0.95)',
+                      transform: 'translateX(-100%)',
+                      borderLeft: '2px solid rgba(255,255,255,0.5)',
+                    }}
+                  />
+                )}
+                {selectedClass === 'mage' && (manaShieldHpRef.current || 0) > 0 && (
+                  <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{ backgroundColor: 'rgba(59, 130, 246, 0.35)', zIndex: 1 }}
+                  />
+                )}
                 {/* subtle shine */}
                 <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(255,255,255,0.15), rgba(0,0,0,0.05))' }} />
                 {/* tick marks at 25/50/75 HP */}

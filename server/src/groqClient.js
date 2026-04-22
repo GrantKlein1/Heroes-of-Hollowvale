@@ -1,6 +1,15 @@
 const axios = require('axios');
 const { GROQ_API_URL } = require('./config/paths');
 
+const groqHttp = axios.create({
+  timeout: 30000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+const DEFAULT_MODEL = 'llama-3.1-8b-instant';
+
 /**
  * Calls Groq chat completions API using an OpenAI-compatible endpoint.
  * @param {Object} opts
@@ -15,10 +24,7 @@ async function chatCompletion({ systemPrompt, messages, model }) {
     throw new Error('GROQ_API_KEY is not set. Set it in your .env to enable real replies.');
   }
 
-  // Enforce instant mode only (performance/cost optimized)
-  const candidates = [
-    'llama-3.1-8b-instant'
-  ];
+  const candidates = [model || DEFAULT_MODEL, DEFAULT_MODEL].filter((m, i, arr) => m && arr.indexOf(m) === i);
 
   // Ensure first message is system
   let msgs = messages || [];
@@ -26,13 +32,11 @@ async function chatCompletion({ systemPrompt, messages, model }) {
     msgs = [{ role: 'system', content: systemPrompt || '' }, ...msgs];
   }
 
-  const url = GROQ_API_URL;
-
   let lastErr;
   for (const m of candidates) {
     try {
-      const response = await axios.post(
-        url,
+      const response = await groqHttp.post(
+        GROQ_API_URL,
         {
           model: m,
           messages: msgs,
@@ -44,9 +48,7 @@ async function chatCompletion({ systemPrompt, messages, model }) {
         {
           headers: {
             Authorization: `Bearer ${apiKey}`,
-            'Content-Type': 'application/json',
           },
-          timeout: 30000,
         }
       );
       const choice = response?.data?.choices?.[0];

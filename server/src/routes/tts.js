@@ -1,9 +1,19 @@
 const express = require('express')
+const http = require('http')
+const https = require('https')
 const axios = require('axios')
 
 const router = express.Router()
 
 const DEFAULT_VOICE_ID = process.env.ELEVENLABS_VOICE_ID || 'N2lVS1w4EtoT3dr4eOWO' // Callum
+const MAX_TTS_TEXT_LENGTH = Number(process.env.MAX_TTS_TEXT_LENGTH || 2000)
+
+const elevenlabsHttp = axios.create({
+  timeout: 30000,
+  responseType: 'stream',
+  httpAgent: new http.Agent({ keepAlive: true }),
+  httpsAgent: new https.Agent({ keepAlive: true }),
+})
 
 // POST /api/tts -> returns MP3 audio for given text using ElevenLabs
 router.post('/tts', async (req, res, next) => {
@@ -28,12 +38,17 @@ router.post('/tts', async (req, res, next) => {
       err.status = 400
       throw err
     }
+    if (text.length > MAX_TTS_TEXT_LENGTH) {
+      const err = new Error(`Text too long for TTS (max ${MAX_TTS_TEXT_LENGTH} characters)`)
+      err.status = 400
+      throw err
+    }
 
     // Stream endpoint returns audio bytes directly
     const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream`
 
     // Stream response directly without buffering to enable incremental playback in the client
-    const response = await axios.post(
+    const response = await elevenlabsHttp.post(
       url,
       {
         text,
@@ -48,14 +63,22 @@ router.post('/tts', async (req, res, next) => {
           'Content-Type': 'application/json',
           'Accept': 'audio/mpeg',
         },
-        timeout: 30000,
       }
     )
 
     res.setHeader('Content-Type', 'audio/mpeg')
+    res.setHeader('Cache-Control', 'no-store')
     // Do not set Content-Length to allow chunked transfer encoding
-    response.data.on('error', (e) => next(e))
-    response.data.pipe(res)
+    const upstream = response.data
+    const cleanup = () => {
+      try {
+        if (upstream && !upstream.destroyed) upstream.destroy()
+      } catch {}
+    }
+    req.on('close', cleanup)
+    res.on('close', cleanup)
+    upstream.on('error', (e) => next(e))
+    upstream.pipe(res)
     return
   } catch (err) {
     const status = err?.response?.status || err.status || 500

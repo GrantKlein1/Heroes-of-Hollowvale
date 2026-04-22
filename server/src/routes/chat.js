@@ -5,17 +5,17 @@ const { chatCompletion } = require('../groqClient');
 const { retrieveLoreForQuery } = require('../rag/store');
 
 // --- Helpers ---------------------------------------------------------------
-function truncateToSentences(text = '', max = 8) {
-  if (!text || max <= 0) return '';
-  // Split into sentences, keeping terminal punctuation if present.
-  const parts = String(text)
-    .replace(/\s+/g, ' ')
-    .trim()
-    .match(/[^.!?]+[.!?]?\s*/g);
-  if (!parts) return text.trim();
-  const out = parts.slice(0, max).join('').trim();
-  return out;
-}
+const MAX_CLIENT_CONTEXT_MESSAGES = 5;
+const MAX_MODEL_CONTEXT_MESSAGES = 10;
+
+const BREVITY_SYSTEM_POLICY = [
+  'Brevity policy:',
+  '- Keep replies concise, natural, and in character.',
+  '- Target 4 to 6 sentences; use 7 only when truly needed.',
+  '- Keep each sentence under about 16 words.',
+  '- Avoid numbered lists unless specifically requested.',
+  '- Ground answers in provided lore when relevant.'
+].join('\n');
 
 function classifyRequest(message, priorUserCount) {
   const m = String(message || '').toLowerCase();
@@ -47,40 +47,19 @@ router.post('/chat', async (req, res, next) => {
 
   const history = memory.getHistory(npc);
 
-    // Normalize optional context from client (take last 5 entries, valid roles only)
-    let extraContext = Array.isArray(context) ? context.filter(m => m && (m.role === 'user' || m.role === 'assistant') && m.content).slice(-5) : [];
+    // Normalize optional context from client (last few valid entries only)
+    const extraContext = Array.isArray(context)
+      ? context
+          .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && m.content)
+          .slice(-MAX_CLIENT_CONTEXT_MESSAGES)
+      : [];
 
   // Determine brevity rules based on the request and prior Q count
   const priorUserCount = history.filter(m => m && m.role === 'user').length;
   const caps = classifyRequest(message, priorUserCount);
 
-  // Combine persona with global brevity policy (model guidance)
-  const systemPrompt = [
-    npcDef.systemPrompt,
-    '',
-    'Brevity policy:',
-    '- Keep replies concise, natural, and helpful.',
-    '- Do not exceed 6 sentences unless absolutely necessary, Never exceed 7 sentences.',
-    '- All sentences should be less than 16 words long',
-    '- Before responding, verify that sentence count and word count per sentence are within limits.',
-    '- Prefer short paragraphs; avoid numbered lists unless specifically requested.',
-    '- Here are 3 examples to provide guidance on response length only, not tone, lore, accuracy or anything else.:',
-    ' EXAMPLE1: Ashfang Cavern lies beyond the Blackspire Mountains, cloaked in mist and legend.',
-    '      From the tavern, follow the winding road directly south of here.',
-    '      Take the path through the forest winding and narrow, lined with whispering pines.',
-    '      The trail turns sharply right, stones shifting beneath your boots.',
-    '      Soon, the mountain yawns open: a jagged mouth of shadow and silence.', 
-    'EXAMPLE2: Ashfang Cavern rests beyond the Blackspire Mountains, hidden behind mist and pine.',
-    '      Leave the tavern, follow the cobbled road south past the market and old windmill.',
-    '      Take the path narrow, winding, and lined with moss-covered stones.',
-    '      The trail climbs steadily, wind whispering through the trees.',
-    '      Eventually, the mountain opens: a dark mouth carved into jagged rock.',
-    'EXAMPLE3: Ashfang Cavern waits in the Blackspires, cloaked in fog and silence.',
-    '       From the tavern, take the road that twists past the market and windmill.',
-    '       Go left at the fork—steep, slick, and shadowed by looming cliffs.',
-    '       The path narrows, stones loose beneath your boots.',
-    '       Soon, the cavern appears: wide, dark, and watching.'
-  ].join('\n')
+    // Combine persona with concise global brevity policy.
+    const systemPrompt = `${npcDef.systemPrompt}\n\n${BREVITY_SYSTEM_POLICY}`;
 
     // Build retrieval query with optional hints to improve grounding on short prompts
     let retrievalQuery = message
@@ -104,14 +83,24 @@ router.post('/chat', async (req, res, next) => {
         }
       : null
 
-    // Compose messages: system + (server history + extra context) + latest user
+    // Compose messages while preserving system/lore entries.
+    // We only trim the conversational tail.
+    const mergedContext = [...history, ...extraContext];
+    const dedupedContext = [];
+    const seen = new Set();
+    for (const m of mergedContext) {
+      const key = `${m.role}:${m.content}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      dedupedContext.push(m);
+    }
+    const conversationalTail = [...dedupedContext, { role: 'user', content: message }]
+      .slice(-MAX_MODEL_CONTEXT_MESSAGES);
     const baseMessages = [
       { role: 'system', content: systemPrompt },
       ...(loreSystem ? [loreSystem] : []),
-      ...history,
-      ...extraContext,
-      { role: 'user', content: message }
-    ].slice(-12); // system + lore + up to 10 more
+      ...conversationalTail,
+    ];
 
     const hasKey = !!process.env.GROQ_API_KEY;
 

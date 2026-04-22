@@ -24,6 +24,10 @@ A small AI‑powered, top‑down browser game. Explore the village, tavern, and 
 ## Quick Start (Windows)
 
 1) Install dependencies
+- Workspace root (recommended)
+  ```powershell
+  npm install
+  ```
 - Server
   ```powershell
   cd ".\server"
@@ -56,6 +60,10 @@ RAG_DEBUG=1
   This writes `server/src/rag/lore.json`.
 
 4) Run
+- Recommended from workspace root
+  ```powershell
+  npm run dev
+  ```
 - Server (from server/)
   ```powershell
   node ".\src\index.js"
@@ -66,6 +74,11 @@ RAG_DEBUG=1
   npx vite --host
   ```
   UI at http://localhost:5173
+
+Validation check (server syntax + client build):
+```powershell
+npm run check
+```
 
 Notes:
 - Do not commit .env files or keys.

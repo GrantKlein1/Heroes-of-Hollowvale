@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 /**
  * Simple animated sprite that cycles through a list of frame image URLs.
@@ -13,12 +13,12 @@ export default function AnimatedSprite({ frames = [], fps = 12, className = '', 
   const [idx, setIdx] = useState(0)
   const timerRef = useRef(null)
 
-  // Preload frames to avoid flicker
-  const images = useMemo(() => {
-    return frames.map((src) => {
+  // Preload frames to avoid flicker during first cycle.
+  useEffect(() => {
+    if (!frames.length) return
+    frames.forEach((src) => {
       const img = new Image()
       img.src = src
-      return img
     })
   }, [frames])
 

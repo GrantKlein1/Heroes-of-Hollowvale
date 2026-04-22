@@ -22,16 +22,18 @@ export const PATHS = {
   poisonPotionGif: `${IMAGES_BASE}/poisonPotion.gif`,
   // Life Leech spell projectile (animated gif)
   lifeLeechSpellGif: `${IMAGES_BASE}/mageSpellBookSpells/lifeLeechSpell.gif`,
+  // Frost Bolt spell field (animated gif)
+  frostBoltSpellGif: `${IMAGES_BASE}/mageSpellBookSpells/frostBoltSpell.gif`,
   titleBg: `${IMAGES_BASE}/red dragon boss fight room.png`,
   titleLogo: encodeURI(`${IMAGES_BASE}/title screen wider no background.png`),
-  // Background music used on the intro screen and in the village
-  // Place a file named "intro_village.mp3" under client/public/audio or update this path
-  introVillageMusic: `${AUDIO_BASE}/introAndVillageMusic.mp3`,
-  // New background tracks (place these files under client/public/audio)
+  // Background music used on the loading screen and in the starting village
+  introVillageMusic: `${AUDIO_BASE}/intro_village.mp3`,
   // Tavern ambience (plays quietly while inside the tavern, pauses during bartender chat)
-  tavernBackgroundMusic: `${AUDIO_BASE}/backgroundMusic1.mp3`,
-  // Fight/tense music for the cavern interior scene
-  fightMusic1: `${AUDIO_BASE}/fightMusic1.mp3`,
+  tavernBackgroundMusic: `${AUDIO_BASE}/tavern.mp3`,
+  // Travel music for the road to the cave and the cave exterior scene
+  travelBackgroundMusic: `${AUDIO_BASE}/traveling.mp3`,
+  // Combat/tense music for the cavern interior goblin fights
+  caveFightMusic: `${AUDIO_BASE}/fight.mp3`,
   // SFX (optional; safe if missing)
   fireballCastSfx: `${AUDIO_BASE}/fireballCast.mp3`,
   fireImpactSfx: `${AUDIO_BASE}/fireImpact.mp3`,
@@ -39,7 +41,7 @@ export const PATHS = {
   thiefDisappearGif: `${IMAGES_BASE}/thiefDisappear.gif`,
   thiefSmokeGif: `${IMAGES_BASE}/animatedSmoke/animatedSmoke.gif`,
   // Mage spellbook spell icons
-  lightningBoltIcon: `${IMAGES_BASE}/mageSpellBookSpellIcons/lightningBoltIcon.png`,
+  frostBoltIcon: `${IMAGES_BASE}/mageSpellBookSpellIcons/frostBoltIcon.png`,
   manaShieldIcon: `${IMAGES_BASE}/mageSpellBookSpellIcons/manaShieldIcon.png`,
   blinkIcon: `${IMAGES_BASE}/mageSpellBookSpellIcons/blinkIcon.png`,
   lifeLeechIcon: `${IMAGES_BASE}/mageSpellBookSpellIcons/lifeLeechIcon.png`,
