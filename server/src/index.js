@@ -6,11 +6,11 @@ const dotenv = require('dotenv');
 
 // Load env
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
-dotenv.config(); // also load from project root if present
 
 const app = express();
 const PORT = process.env.PORT || 5051;
 const { API_ROUTE_PREFIX } = require('./config/paths');
+app.disable('x-powered-by');
 
 // Middleware
 app.use(helmet({

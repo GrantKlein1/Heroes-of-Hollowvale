@@ -5,6 +5,29 @@ const { LORE_JSON_PATH } = require('../config/paths')
 
 let LORE = [] // [{ id, text, embedding: number[] }]
 
+function tokenize(text) {
+  return String(text).toLowerCase().match(/[a-z0-9]+/g) || []
+}
+
+function l2norm(vec) {
+  if (!Array.isArray(vec) || !vec.length) return 0
+  let sum = 0
+  for (let i = 0; i < vec.length; i++) {
+    const v = Number(vec[i]) || 0
+    sum += v * v
+  }
+  return Math.sqrt(sum)
+}
+
+function dot(a, b) {
+  if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return 0
+  let acc = 0
+  for (let i = 0; i < a.length; i++) {
+    acc += (a[i] || 0) * (b[i] || 0)
+  }
+  return acc
+}
+
 function loadLore() {
   const file = LORE_JSON_PATH
   if (!fs.existsSync(file)) {
@@ -16,7 +39,19 @@ function loadLore() {
     const raw = fs.readFileSync(file, 'utf8')
     const arr = JSON.parse(raw)
     if (!Array.isArray(arr)) throw new Error('Invalid lore.json format (expected an array)')
-    LORE = arr.filter(x => x && typeof x.text === 'string' && Array.isArray(x.embedding))
+    LORE = arr
+      .filter(x => x && typeof x.text === 'string' && Array.isArray(x.embedding))
+      .map((x) => {
+        const tokenSet = new Set(tokenize(x.text))
+        const embeddingNorm = l2norm(x.embedding)
+        return {
+          id: x.id,
+          text: x.text,
+          embedding: x.embedding,
+          embeddingNorm,
+          tokenSet,
+        }
+      })
     console.info(`[RAG] Loaded ${LORE.length} lore chunks`)
   } catch (e) {
     console.error('[RAG] Failed to load lore.json:', e.message)
@@ -53,8 +88,15 @@ async function retrieveLoreForQuery(query, topK = 3) {
   const embeds = await embedTexts([query])
   if (embeds && Array.isArray(embeds[0])) {
     const q = embeds[0]
+    const qNorm = l2norm(q)
     const scored = LORE
-      .map((c) => ({ chunk: c, score: cosine(q, c.embedding) }))
+      .map((c) => {
+        if (!qNorm || !c.embeddingNorm) {
+          return { chunk: c, score: cosine(q, c.embedding) }
+        }
+        const score = dot(q, c.embedding) / (qNorm * c.embeddingNorm)
+        return { chunk: c, score }
+      })
       .sort((a, b) => b.score - a.score)
       .slice(0, Math.max(1, topK))
       .filter(x => Number.isFinite(x.score) && x.score > 0)
@@ -63,17 +105,14 @@ async function retrieveLoreForQuery(query, topK = 3) {
 
   // Fallback: simple token-overlap similarity (no external API)
   try {
-    const tokenize = (s) => (String(s).toLowerCase().match(/[a-z0-9]+/g) || [])
     const qTokens = tokenize(query)
     const qSet = new Set(qTokens)
     const qLen = qSet.size || 1
     const scored = LORE.map((c) => {
-      const t = tokenize(c.text)
-      const tSet = new Set(t)
       let shared = 0
-      for (const tok of qSet) if (tSet.has(tok)) shared++
+      for (const tok of qSet) if (c.tokenSet.has(tok)) shared++
       // Length-normalized overlap (cosine on binary vectors)
-      const denom = Math.sqrt(qLen) * Math.sqrt(tSet.size || 1)
+      const denom = Math.sqrt(qLen) * Math.sqrt(c.tokenSet.size || 1)
       const score = denom ? (shared / denom) : 0
       return { chunk: c, score }
     })
