@@ -1,12 +1,18 @@
 import React from 'react'
-import Game from './Game'
-import { EventBus } from './game/EventBus'
+import PhaserGame from './components/PhaserGame'
+import GameHUD from './components/GameHUD'
+import DialogueModal from './components/DialogueModal'
 
-// Ensure React ↔ game EventBus is initialized with the app shell
-void EventBus
-
+/**
+ * Main layout: Phaser canvas fills the viewport; React HUD / dialogue
+ * overlays sit above it via absolute positioning.
+ */
 export default function App() {
   return (
-    <Game />
+    <div className="relative h-screen w-full overflow-hidden bg-black">
+      <PhaserGame />
+      <GameHUD />
+      <DialogueModal />
+    </div>
   )
 }

@@ -1,7 +1,9 @@
-import Phaser from 'phaser';
+import Phaser from 'phaser'
 
 /**
- * Shared EventEmitter for React UI ↔ game engine communication
- * (dialogue boxes, health bars, movement, triggers, etc.).
+ * Shared EventEmitter bridging Phaser scenes and React UI.
+ * Scenes emit game-state events; React overlays emit UI commands.
  */
-export const EventBus = new Phaser.Events.EventEmitter();
+export const EventBus = new Phaser.Events.EventEmitter()
+
+export default EventBus
