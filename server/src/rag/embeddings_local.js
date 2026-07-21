@@ -63,4 +63,4 @@ function cosine(a, b) {
   return dot / (Math.sqrt(na) * Math.sqrt(nb))
 }
 
-module.exports = { embedTexts, cosine }
+export { embedTexts, cosine }

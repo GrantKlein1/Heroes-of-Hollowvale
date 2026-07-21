@@ -13,4 +13,4 @@ function getNPC(id) {
 
 const NPC_IDS = Object.keys(NPCS);
 
-module.exports = { NPCS, getNPC, NPC_IDS };
+export { NPCS, getNPC, NPC_IDS };

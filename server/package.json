@@ -2,7 +2,7 @@
   "name": "neural-tavern-server",
   "private": true,
   "version": "0.1.0",
-  "type": "commonjs",
+  "type": "module",
   "main": "src/index.js",
   "scripts": {
     "dev": "nodemon src/index.js",

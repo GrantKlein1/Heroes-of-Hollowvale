@@ -1,5 +1,9 @@
 // Centralized server paths and URLs
-const path = require('path')
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 // Route prefix for the API (must match client proxy and API_BASE)
 const API_ROUTE_PREFIX = process.env.API_ROUTE_PREFIX || '/api'
@@ -10,4 +14,4 @@ const LORE_JSON_PATH = process.env.LORE_JSON_PATH || path.resolve(__dirname, '..
 // Groq API endpoint (OpenAI-compatible)
 const GROQ_API_URL = process.env.GROQ_API_URL || 'https://api.groq.com/openai/v1/chat/completions'
 
-module.exports = { API_ROUTE_PREFIX, LORE_JSON_PATH, GROQ_API_URL }
+export { API_ROUTE_PREFIX, LORE_JSON_PATH, GROQ_API_URL }
