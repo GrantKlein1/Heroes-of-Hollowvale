@@ -1,7 +1,21 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react'
-import { sendChat as apiSendChat, fetchTTS as apiFetchTTS, streamTTS as apiStreamTTS } from './lib/api'
+import { sendChat as apiSendChat } from './lib/api'
 import { PATHS, CLASS_SPRITES, CLASS_ATTACK_SPRITES, ITEM_ICONS, DEFAULT_ITEM_ICON, COMPOSITE_SPRITES, ANIMATED_SWORD_FRAMES, ENEMY_SPRITES } from './config/paths'
 import AnimatedSprite from './components/AnimatedSprite'
+import { eventBus, GameEvents } from './lib/eventBus'
+import { speakNpcDialogue, cancelNpcSpeech } from './lib/dialogueAudio'
+import {
+  preloadSceneAudio,
+  setSfxVolume,
+  onPlayerMove,
+  onDoorOpen,
+  onMeleeSwing,
+  onMeleeHit,
+  onSpellCast,
+  onSpellImpact,
+  onPlayerHurt,
+  emitNpcInteract,
+} from './game/MainGameScene'
 
 // Simple top-down RPG prototype with two scenes: Village and Tavern
 
@@ -120,6 +134,13 @@ export default function Game() {
     const base = Number(localStorage.getItem('masterVolume'))
     return Number.isFinite(base) ? Math.max(0, Math.min(100, base)) : 50
   })
+  // SFX volume (footsteps, doors, combat) — independent of NPC voice
+  const [sfxVolume, setSfxVolumeState] = useState(() => {
+    const v = Number(localStorage.getItem('sfxVolume') ?? 70)
+    return Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : 70
+  })
+  const ttsEnabledRef = useRef(true)
+  const ttsVolumeRef = useRef(50)
   // Global mute-all toggle for music (does not affect NPC voices)
   const [muteAllMusic, setMuteAllMusic] = useState(() => (localStorage.getItem('muteAllMusic') ?? 'false') === 'true')
   // Inventory
@@ -210,20 +231,7 @@ export default function Game() {
   const [gameOver, setGameOver] = useState(false)
   const gameOverRef = useRef(false)
   const killerRef = useRef(null) // string label like 'Goblin Brute'
-  const sfxCacheRef = useRef({})
-  const playSfx = (src, vol = 0.6) => {
-    if (!src) return
-    try {
-      let a = sfxCacheRef.current[src]
-      if (!a) {
-        a = new Audio(src)
-        sfxCacheRef.current[src] = a
-      }
-      a.currentTime = 0
-      a.volume = Math.max(0, Math.min(1, (ttsVolume / 100) * vol))
-      a.play().catch(()=>{})
-    } catch {}
-  }
+  // SFX is handled by the Web Audio sfxEngine via MainGameScene helpers
   // Force a lightweight refresh so DOM GIF overlays update position
   const [effectsTick, setEffectsTick] = useState(0)
   useEffect(() => {
@@ -313,18 +321,21 @@ export default function Game() {
       // Market entrance at upper-left, around 20% down from top
       toMarket: nrect(0.02, 0.30, 0.10, 0.06),
       onEnter: () => {
+        onDoorOpen()
         sceneRef.current = 'tavern'
         setScene('tavern')
         // Spawn just inside tavern entrance (relative to tavern image frame)
         playerRef.current._spawn = { scene: 'tavern', nx: 0.5, ny: 0.85 }
       },
       onTravelSouth: () => {
+        onDoorOpen()
         sceneRef.current = 'path'
         setScene('path')
         // Spawn at top-middle of the path scene
         playerRef.current._spawn = { scene: 'path', nx: 0.5, ny: 0.10 }
       },
       onEnterMarket: () => {
+        onDoorOpen()
         sceneRef.current = 'market'
         setScene('market')
         // Spawn at bottom-middle of the market scene
@@ -350,6 +361,7 @@ export default function Game() {
       // Optional: exit back to village if pressing E near bottom center
       exit: nrect(0.45, 0.95, 0.10, 0.06),
       onExit: () => {
+        onDoorOpen()
         sceneRef.current = 'village'
         setScene('village')
         playerRef.current._spawn = { scene: 'village', nx: 0.5, ny: 0.72 }
@@ -385,6 +397,7 @@ export default function Game() {
       // Enter dungeon at BOTTOM-center
       toDungeon: nrect(0.54, 0.94, 0.12, 0.06),
       onReturn: () => {
+        onDoorOpen()
         sceneRef.current = 'village'
         setScene('village')
         // Return to where the player left (bottom-middle area), using saved normalized coords
@@ -395,6 +408,7 @@ export default function Game() {
         playerRef.current._spawn = { scene: 'village', nx, ny }
       },
       onEnterDungeon: () => {
+        onDoorOpen()
         sceneRef.current = 'dungeon'
         setScene('dungeon')
         // Spawn bottom-left area of the dungeon entrance image
@@ -430,11 +444,13 @@ export default function Game() {
   // Secret entrance to the tavern near top-left around (0.235, 0.110)
   toTavern: nrect(0.20, 0.075, 0.07, 0.07),
       onExitToPath: () => {
+        onDoorOpen()
         sceneRef.current = 'path'
         setScene('path')
         playerRef.current._spawn = { scene: 'path', nx: 0.65, ny: 0.92 }
       },
       onEnterInterior: () => {
+        onDoorOpen()
         sceneRef.current = 'dungeonInterior'
         setScene('dungeonInterior')
         // Spawn just inside the dungeon interior near bottom-middle
@@ -442,6 +458,7 @@ export default function Game() {
       },
       onEnterTavern: () => {
         // Rewired: secret entrance now leads to hidden treasure room
+        onDoorOpen()
         sceneRef.current = 'treasureRoom'
         setScene('treasureRoom')
         // Enter at top-middle inside the treasure room
@@ -470,6 +487,7 @@ export default function Game() {
       // Exit back to village at bottom-middle
       toVillage: nrect(0.45, 0.95, 0.10, 0.06),
       onExitToVillage: () => {
+        onDoorOpen()
         sceneRef.current = 'village'
         setScene('village')
         // Return to the village near the market entrance (upper-left area ~20% down)
@@ -501,6 +519,7 @@ export default function Game() {
       // Exit back to the entrance at BOTTOM-center
       toEntrance: nrect(0.45, 0.95, 0.10, 0.06),
       onExitToEntrance: () => {
+        onDoorOpen()
         sceneRef.current = 'dungeon'
         setScene('dungeon')
         // Spawn near top-middle of the entrance image
@@ -542,6 +561,7 @@ export default function Game() {
       // Exit zone placed at the top-middle, right where the player spawns
       toEntrance: nrect(0.45, 0.08, 0.10, 0.06),
       onExitToEntrance: () => {
+        onDoorOpen()
         sceneRef.current = 'dungeon'
         setScene('dungeon')
         // Return the player to the exact spot they entered from (normalized coords saved earlier)
@@ -1297,12 +1317,65 @@ export default function Game() {
   useEffect(() => { localStorage.setItem('musicFightVol', String(musicFightVol)) }, [musicFightVol])
   useEffect(() => { localStorage.setItem('ttsEnabled', String(ttsEnabled)) }, [ttsEnabled])
   useEffect(() => { localStorage.setItem('ttsVolume', String(ttsVolume)) }, [ttsVolume])
+  useEffect(() => { localStorage.setItem('sfxVolume', String(sfxVolume)) }, [sfxVolume])
   useEffect(() => { localStorage.setItem('allowFSwap', String(allowFSwap)) }, [allowFSwap])
   useEffect(() => { localStorage.setItem('muteAllMusic', String(muteAllMusic)) }, [muteAllMusic])
   useEffect(() => { allowFSwapRef.current = allowFSwap }, [allowFSwap])
+  useEffect(() => { ttsEnabledRef.current = ttsEnabled }, [ttsEnabled])
+  useEffect(() => { ttsVolumeRef.current = ttsVolume }, [ttsVolume])
+  useEffect(() => { setSfxVolume(Math.max(0, Math.min(1, sfxVolume / 100))) }, [sfxVolume])
   // Keep selectedClass/inventory refs in sync for non-reactive event handlers
   useEffect(() => { selectedClassRef.current = selectedClass }, [selectedClass])
   useEffect(() => { inventoryRef.current = inventory }, [inventory])
+
+  // EventBus: NPC interact → open dialogue; npc:speak → stream ElevenLabs TTS via Web Audio
+  useEffect(() => {
+    const BARTENDER_GREETING =
+      "Tharos: Hrm. Traveler. Dragon business or town history—what'll it be? If you're short on supplies, swing by the Market after this—head to the upper-left gate in the village and press E to browse wares."
+
+    const onInteract = ({ npc, greeting } = {}) => {
+      if (npc && npc !== 'bartender') return
+      const line = greeting || BARTENDER_GREETING
+      setChatOpen(true)
+      setChatMessages([{ role: 'assistant', content: line }])
+      setChatTurns(0)
+      setChatInput('')
+      setChatMode('topics')
+      setChatTopic(null)
+      // Kick off streamed greeting TTS when voice is enabled
+      if (ttsEnabledRef.current) {
+        const speakText = line.replace(/^Tharos:\s*/i, '')
+        eventBus.emit(GameEvents.NPC_SPEAK, { npc: 'bartender', text: speakText })
+      }
+    }
+
+    const onSpeak = ({ text } = {}) => {
+      if (!text || !ttsEnabledRef.current) return
+      const vol = Math.max(0, Math.min(1, (ttsVolumeRef.current || 100) / 100))
+      speakNpcDialogue(text, { volume: vol, enabled: true }).catch(() => {})
+    }
+
+    const onClose = () => {
+      cancelNpcSpeech()
+    }
+
+    const offInteract = eventBus.on(GameEvents.NPC_INTERACT, onInteract)
+    const offSpeak = eventBus.on(GameEvents.NPC_SPEAK, onSpeak)
+    const offClose = eventBus.on(GameEvents.CHAT_CLOSE, onClose)
+    return () => {
+      offInteract()
+      offSpeak()
+      offClose()
+      cancelNpcSpeech()
+    }
+  }, [])
+
+  // Stop TTS when the chat overlay closes
+  useEffect(() => {
+    if (!chatOpen) {
+      eventBus.emit(GameEvents.CHAT_CLOSE)
+    }
+  }, [chatOpen])
 
   // ----- Vendor voice lines (market) -----
   const VENDOR_AUDIO_BASE = '/audio/vendor'
@@ -1757,7 +1830,7 @@ export default function Game() {
             if (cls === 'mage' && neededItem === 'apprentice_staff') {
               // Spend mana now that attack is confirmed (reduced cost)
               playerRef.current.mana = Math.max(0, (playerRef.current.mana || 0) - 15)
-              playSfx(PATHS.fireballCastSfx)
+              onSpellCast()
               const p = playerRef.current
               const dir = { x: lastDirRef.current.x, y: lastDirRef.current.y }
               // Default facing right if no movement yet
@@ -1786,6 +1859,7 @@ export default function Game() {
               })
             } else {
               // Melee attack (knight/thief/dwarf): deal damage in a short frontal area
+              onMeleeSwing()
               const dmg = MELEE_DAMAGE_BY_CLASS[cls] ?? 0
               if (dmg > 0 && enemiesRef.current.length) {
                 const p = playerRef.current
@@ -1809,14 +1883,17 @@ export default function Game() {
                   atk = { x, y, w, h }
                 }
                 // Apply damage to any enemies intersecting the attack box
+                let landedHit = false
                 for (const e2 of enemiesRef.current) {
                   if (e2.hp <= 0) continue
                   if (intersects(atk, { x: e2.x, y: e2.y, w: e2.w, h: e2.h })) {
                     e2.hp = Math.max(0, e2.hp - dmg)
                     e2.flashUntil = performance.now() + 120
                     pushFloatText(e2.x + e2.w/2, e2.y - 6, `-${dmg}`, '#ff6161')
+                    landedHit = true
                   }
                 }
+                if (landedHit) onMeleeHit()
               }
             }
           }
@@ -2104,6 +2181,8 @@ export default function Game() {
           else if (vy < 0) next.y = c.y + c.h
         }
       }
+      // Footstep SFX while moving (throttled inside MainGameScene)
+      onPlayerMove({ moving: vx !== 0 || vy !== 0 })
       playerRef.current.x = next.x
       playerRef.current.y = next.y
 
@@ -2177,7 +2256,10 @@ export default function Game() {
               const waveScale = 1 + 0.05 * Math.max(0, dungeonWaveRef.current - 1)
               const dmg = Math.round(baseDmg * waveScale)
               const invincible = (selectedClassRef.current === 'thief' && performance.now() < thiefSmokeUntilRef.current)
-              if (!invincible) playerRef.current.hp = Math.max(0, playerRef.current.hp - dmg)
+              if (!invincible) {
+                playerRef.current.hp = Math.max(0, playerRef.current.hp - dmg)
+                onPlayerHurt()
+              }
               playerIFrameUntilRef.current = performance.now() + 900
               playerFlashUntilRef.current = performance.now() + 200
               pushFloatText(playerRef.current.x + playerRef.current.w/2, playerRef.current.y - 10, `-${dmg}`, '#ff9f43')
@@ -2289,7 +2371,10 @@ export default function Game() {
               if (!gameOverRef.current && performance.now() >= playerIFrameUntilRef.current) {
                 const dmg = 7
                 const invincible = (selectedClassRef.current === 'thief' && performance.now() < thiefSmokeUntilRef.current)
-                if (!invincible) playerRef.current.hp = Math.max(0, playerRef.current.hp - dmg)
+                if (!invincible) {
+                  playerRef.current.hp = Math.max(0, playerRef.current.hp - dmg)
+                  onPlayerHurt()
+                }
                 playerIFrameUntilRef.current = performance.now() + 900
                 playerFlashUntilRef.current = performance.now() + 250
                 pushFloatText(playerRef.current.x + playerRef.current.w/2, playerRef.current.y - 10, `-${dmg}`, '#ff9f43')
@@ -2329,7 +2414,7 @@ export default function Game() {
                   until: nowMs + (pr.lingerMs || FIRE_LINGER_MS),
                   domSrc: src,
                 })
-                playSfx(PATHS.fireImpactSfx)
+                onSpellImpact()
                 arr.splice(i, 1)
               }
             }
@@ -2633,11 +2718,11 @@ export default function Game() {
           const interactZone = { x: bx - 12, y: by - 12, w: b.w + 24, h: b.h + 24 }
           const playerBox = { x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }
           if (intersects(playerBox, interactZone)) {
-            setChatOpen(true)
-            setChatMessages([{ role: 'assistant', content: "Tharos: Hrm. Traveler. Dragon business or town history—what'll it be? If you're short on supplies, swing by the Market after this—head to the upper-left gate in the village and press E to browse wares." }])
-            setChatTurns(0)
-            setChatInput('')
-            setChatMode('topics')
+            // Bridge canvas interact → React dialogue + streamed TTS via EventBus
+            emitNpcInteract({
+              npc: 'bartender',
+              greeting: "Tharos: Hrm. Traveler. Dragon business or town history—what'll it be? If you're short on supplies, swing by the Market after this—head to the upper-left gate in the village and press E to browse wares.",
+            })
           }
         }
         // Market vendor interact -> open shop overlay
@@ -3024,42 +3109,9 @@ export default function Game() {
       const res = await apiSendChat(payload)
       const reply = res?.reply || ''
       setChatMessages(msgs => [...msgs, { role: 'assistant', content: reply }])
-      // Speak bartender reply (text-to-speech)
+      // Stream bartender reply over EventBus → Web Audio TTS player
       if (ttsEnabled && reply) {
-        // Prefer streaming playback via MediaSource; fall back to blob if unavailable
-        const mime = 'audio/mpeg'
-        const canStream = typeof window !== 'undefined' && window.MediaSource && typeof window.MediaSource.isTypeSupported === 'function' && window.MediaSource.isTypeSupported(mime)
-        if (canStream) {
-          try {
-            const bodyStream = await apiStreamTTS({ text: reply })
-            await playStreamingAudio(bodyStream, { mime, volume: Math.max(0, Math.min(1, (ttsVolume || 100) / 100)) })
-          } catch (e) {
-            if (process.env.NODE_ENV !== 'production') console.warn('[TTS] Streaming failed, falling back to blob:', e?.message || e)
-            // Fallback to blob-based playback
-            try {
-              const audioBlob = await apiFetchTTS({ text: reply })
-              const url = URL.createObjectURL(audioBlob)
-              const audio = new Audio(url)
-              audio.addEventListener('ended', () => URL.revokeObjectURL(url), { once: true })
-              audio.volume = Math.max(0, Math.min(1, (ttsVolume || 100) / 100))
-              await audio.play().catch(() => {/* autoplay may block */})
-            } catch (e2) {
-              if (process.env.NODE_ENV !== 'production') console.warn('[TTS] Fallback playback failed:', e2?.message || e2)
-            }
-          }
-        } else {
-          // No MSE support: fallback
-          try {
-            const audioBlob = await apiFetchTTS({ text: reply })
-            const url = URL.createObjectURL(audioBlob)
-            const audio = new Audio(url)
-            audio.addEventListener('ended', () => URL.revokeObjectURL(url), { once: true })
-            audio.volume = Math.max(0, Math.min(1, (ttsVolume || 100) / 100))
-            await audio.play().catch(() => {/* autoplay may block */})
-          } catch (e) {
-            if (process.env.NODE_ENV !== 'production') console.warn('[TTS] Failed to play audio:', e?.message || e)
-          }
-        }
+        eventBus.emit(GameEvents.NPC_SPEAK, { npc: 'bartender', text: reply })
       }
     } catch (err) {
       setChatMessages(msgs => [...msgs, { role: 'assistant', content: `Bartender (annoyed): ${err.message}` }])
@@ -3557,7 +3609,12 @@ export default function Game() {
               />
               <div className="flex gap-4">
                 <button
-                  onClick={() => { setTitleOpen(false); setClassSelectOpen(true) }}
+                  onClick={() => {
+                    setTitleOpen(false)
+                    setClassSelectOpen(true)
+                    // Unlock AudioContext + preload SFX on the user gesture
+                    preloadSceneAudio().catch(() => {})
+                  }}
                   className="px-6 py-3 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-900 font-semibold shadow-lg shadow-amber-900/30"
                 >Start Game</button>
                 <button
@@ -3652,6 +3709,20 @@ export default function Game() {
                     max={100}
                     value={ttsVolume}
                     onChange={(e) => setTtsVolume(Number(e.target.value))}
+                    className="w-full accent-amber-500"
+                  />
+                </label>
+                <label className="block">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-stone-200">SFX volume</span>
+                    <span className="text-stone-300/80 text-sm">{sfxVolume}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    value={sfxVolume}
+                    onChange={(e) => setSfxVolumeState(Number(e.target.value))}
                     className="w-full accent-amber-500"
                   />
                 </label>
@@ -3980,81 +4051,5 @@ export default function Game() {
       </div>
     </div>
   )
-}
-
-// Stream an MP3 over a ReadableStream into MediaSource for immediate playback
-async function playStreamingAudio(readableStream, { mime = 'audio/mpeg', volume = 1.0 } = {}) {
-  return new Promise((resolve, reject) => {
-    try {
-      const mediaSource = new MediaSource()
-      const url = URL.createObjectURL(mediaSource)
-      const audio = new Audio(url)
-      audio.volume = Math.max(0, Math.min(1, volume))
-
-      let sourceBuffer = null
-      let reader = null
-      const queue = []
-      let streamEnded = false
-
-      const onError = (e) => {
-        try { URL.revokeObjectURL(url) } catch {}
-        reject(e instanceof Error ? e : new Error(String(e)))
-      }
-
-      mediaSource.addEventListener('sourceopen', async () => {
-        try {
-          sourceBuffer = mediaSource.addSourceBuffer(mime)
-          reader = readableStream.getReader()
-
-          const feed = () => {
-            if (!sourceBuffer || sourceBuffer.updating) return
-            const chunk = queue.shift()
-            if (chunk) {
-              try { sourceBuffer.appendBuffer(chunk) } catch (e) { onError(e) }
-            } else if (streamEnded) {
-              try { mediaSource.endOfStream() } catch {}
-            }
-          }
-
-          sourceBuffer.addEventListener('updateend', feed)
-
-          // Start pulling chunks
-          ;(async function pump() {
-            try {
-              while (true) {
-                const { value, done } = await reader.read()
-                if (done) {
-                  streamEnded = true
-                  feed()
-                  break
-                }
-                const chunk = value && value.buffer ? new Uint8Array(value.buffer) : new Uint8Array(value || [])
-                queue.push(chunk)
-                feed()
-              }
-            } catch (e) {
-              onError(e)
-            }
-          })()
-        } catch (e) {
-          onError(e)
-        }
-      }, { once: true })
-
-      audio.addEventListener('ended', () => {
-        try { URL.revokeObjectURL(url) } catch {}
-        resolve()
-      }, { once: true })
-      audio.addEventListener('error', (e) => onError(new Error('Audio element error')), { once: true })
-
-      // Try to begin playback; browser may wait for buffer
-      const p = audio.play()
-      if (p && typeof p.then === 'function') {
-        p.catch(() => { /* autoplay might be blocked; user gesture will start it */ })
-      }
-    } catch (e) {
-      reject(e)
-    }
-  })
 }
 
