@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { GROQ_API_URL } = require('./config/paths');
+const { getGroqApiKey } = require('./config/secrets');
 
 /**
  * Calls Groq chat completions API using an OpenAI-compatible endpoint.
@@ -10,9 +11,9 @@ const { GROQ_API_URL } = require('./config/paths');
  * @returns {Promise<{text:string, raw?:any}>}
  */
 async function chatCompletion({ systemPrompt, messages, model }) {
-  const apiKey = process.env.GROQ_API_KEY;
+  const apiKey = getGroqApiKey();
   if (!apiKey) {
-    throw new Error('GROQ_API_KEY is not set. Set it in your .env to enable real replies.');
+    throw new Error('Groq API key is not set (expected GROQ_API_KEY or groqCloudKey).');
   }
 
   // Enforce instant mode only (performance/cost optimized)

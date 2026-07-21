@@ -8,6 +8,8 @@ const dotenv = require('dotenv');
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 dotenv.config(); // also load from project root if present
 
+const { getElevenLabsApiKey, getGroqApiKey } = require('./config/secrets');
+
 const app = express();
 const PORT = process.env.PORT || 5051;
 const { API_ROUTE_PREFIX } = require('./config/paths');
@@ -21,7 +23,15 @@ app.use(express.json({ limit: '1mb' }));
 
 // Health
 app.get(`${API_ROUTE_PREFIX}/health`, (req, res) => {
-  res.json({ status: 'ok', service: 'neural-tavern', time: new Date().toISOString() });
+  res.json({
+    status: 'ok',
+    service: 'neural-tavern',
+    time: new Date().toISOString(),
+    keys: {
+      groq: !!getGroqApiKey(),
+      elevenLabs: !!getElevenLabsApiKey(),
+    },
+  });
 });
 
 // Routes
@@ -36,4 +46,5 @@ app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Neural Tavern server listening on http://localhost:${PORT}${API_ROUTE_PREFIX}`);
+  console.log(`[keys] groq=${!!getGroqApiKey()} elevenLabs=${!!getElevenLabsApiKey()}`);
 });

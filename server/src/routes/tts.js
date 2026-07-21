@@ -1,9 +1,10 @@
 const express = require('express')
 const axios = require('axios')
+const { getElevenLabsApiKey, getElevenLabsVoiceId } = require('../config/secrets')
 
 const router = express.Router()
 
-const DEFAULT_VOICE_ID = process.env.ELEVENLABS_VOICE_ID || 'N2lVS1w4EtoT3dr4eOWO' // Callum
+const DEFAULT_VOICE_ID = getElevenLabsVoiceId() || 'N2lVS1w4EtoT3dr4eOWO' // Callum
 
 /**
  * POST /api/tts
@@ -13,9 +14,11 @@ const DEFAULT_VOICE_ID = process.env.ELEVENLABS_VOICE_ID || 'N2lVS1w4EtoT3dr4eOW
 router.post('/tts', async (req, res, next) => {
   let upstream = null
   try {
-    const apiKey = process.env.ELEVENLABS_API_KEY
+    const apiKey = getElevenLabsApiKey()
     if (!apiKey) {
-      const err = new Error('ELEVENLABS_API_KEY is not set on the server')
+      const err = new Error(
+        'ElevenLabs API key is not set (expected ELEVENLABS_API_KEY or elevenLabsKey)'
+      )
       err.status = 501
       throw err
     }
