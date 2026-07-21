@@ -1,7 +1,5 @@
 /**
- * Seeded PRNG contract — Phase 0 stub.
- *
- * Track B replaces this with a real mulberry32 implementation.
+ * Seeded PRNG — mulberry32 + FNV-1a string hash.
  *
  * @typedef {{
  *   next: () => number,
@@ -12,7 +10,7 @@
  */
 
 /**
- * Hash a string into a uint32 seed.
+ * Hash a string into a uint32 seed (FNV-1a 32-bit).
  * @param {string} str
  * @returns {number}
  */
@@ -27,21 +25,30 @@ export function hashSeed(str) {
 }
 
 /**
+ * Mulberry32: fast 32-bit PRNG. Returns values in [0, 1).
+ * @param {number} seed
+ * @returns {() => number}
+ */
+function mulberry32(seed) {
+  let state = seed >>> 0
+  return () => {
+    state = (state + 0x6d2b79f5) >>> 0
+    let t = state
+    t = Math.imul(t ^ (t >>> 15), t | 1)
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+/**
  * Create a deterministic RNG from a seed.
- * Stub: returns a fixed sequence derived from seed so callers compile;
- * Track B must replace with mulberry32 (or equivalent).
  * @param {number|string} seed
  * @returns {Rng}
  */
 export function createRng(seed) {
-  let state = typeof seed === 'number' ? (seed >>> 0) : hashSeed(String(seed))
-  if (state === 0) state = 1
-
-  const next = () => {
-    // Minimal LCG placeholder — NOT the final mulberry32. Track B replaces this.
-    state = (Math.imul(1664525, state) + 1013904223) >>> 0
-    return state / 0x100000000
-  }
+  let s = typeof seed === 'number' ? (seed >>> 0) : hashSeed(String(seed))
+  if (s === 0) s = 1
+  const next = mulberry32(s)
 
   return {
     next,
@@ -56,7 +63,7 @@ export function createRng(seed) {
     },
     weighted(items) {
       if (!items || !items.length) throw new Error('createRng.weighted: empty array')
-      const total = items.reduce((s, it) => s + (Number(it.weight) || 1), 0)
+      const total = items.reduce((sum, it) => sum + (Number(it.weight) || 1), 0)
       let r = next() * total
       for (const it of items) {
         r -= Number(it.weight) || 1
