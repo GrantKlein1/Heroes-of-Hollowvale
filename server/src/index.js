@@ -1,8 +1,17 @@
-const path = require('path');
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const dotenv = require('dotenv');
+import path from 'path';
+import { fileURLToPath } from 'url';
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import dotenv from 'dotenv';
+
+import { API_ROUTE_PREFIX } from './config/paths.js';
+import chatRouter from './routes/chat.js';
+import ttsRouter from './routes/tts.js';
+import errorHandler from './middleware/errorHandler.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Load env
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
@@ -10,7 +19,6 @@ dotenv.config(); // also load from project root if present
 
 const app = express();
 const PORT = process.env.PORT || 5051;
-const { API_ROUTE_PREFIX } = require('./config/paths');
 
 // Middleware
 app.use(helmet({
@@ -25,13 +33,10 @@ app.get(`${API_ROUTE_PREFIX}/health`, (req, res) => {
 });
 
 // Routes
-const chatRouter = require('./routes/chat');
 app.use(API_ROUTE_PREFIX, chatRouter);
-const ttsRouter = require('./routes/tts');
 app.use(API_ROUTE_PREFIX, ttsRouter);
 
 // Error handler
-const errorHandler = require('./middleware/errorHandler');
 app.use(errorHandler);
 
 app.listen(PORT, () => {

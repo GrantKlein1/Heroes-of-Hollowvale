@@ -1,7 +1,7 @@
-const fs = require('fs')
+import fs from 'fs'
 // Use local embeddings implementation to avoid external API issues
-const { embedTexts, cosine } = require('./embeddings_local')
-const { LORE_JSON_PATH } = require('../config/paths')
+import { embedTexts, cosine } from './embeddings_local.js'
+import { LORE_JSON_PATH } from '../config/paths.js'
 
 let LORE = [] // [{ id, text, embedding: number[] }]
 
@@ -90,4 +90,4 @@ async function retrieveLoreForQuery(query, topK = 3) {
   return []
 }
 
-module.exports = { retrieveLoreForQuery, loadLore }
+export { retrieveLoreForQuery, loadLore }
