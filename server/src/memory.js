@@ -23,4 +23,4 @@ function reset(npcId) {
   store[npcId] = [];
 }
 
-module.exports = { getHistory, addExchange, reset };
+export { getHistory, addExchange, reset };

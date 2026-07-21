@@ -1,9 +1,9 @@
-const { Router } = require('express');
-const { getNPC, NPC_IDS } = require('../npcData');
-const memory = require('../memory');
-const { chatCompletion } = require('../groqClient');
-const { retrieveLoreForQuery } = require('../rag/store');
-const { getGroqApiKey } = require('../config/secrets');
+import { Router } from 'express';
+import { getNPC, NPC_IDS } from '../npcData.js';
+import * as memory from '../memory.js';
+import { chatCompletion } from '../groqClient.js';
+import { retrieveLoreForQuery } from '../rag/store.js';
+import { getGroqApiKey } from '../config/secrets.js';
 
 // --- Helpers ---------------------------------------------------------------
 function truncateToSentences(text = '', max = 8) {
@@ -144,4 +144,4 @@ router.post('/chat', async (req, res, next) => {
   }
 });
 
-module.exports = router;
+export default router;

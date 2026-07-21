@@ -1,6 +1,6 @@
-const express = require('express')
-const axios = require('axios')
-const { getElevenLabsApiKey, getElevenLabsVoiceId } = require('../config/secrets')
+import express from 'express'
+import axios from 'axios'
+import { getElevenLabsApiKey, getElevenLabsVoiceId } from '../config/secrets.js'
 
 const router = express.Router()
 
@@ -124,4 +124,4 @@ router.post('/tts', async (req, res, next) => {
   }
 })
 
-module.exports = router
+export default router

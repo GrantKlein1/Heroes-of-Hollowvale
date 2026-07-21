@@ -9,7 +9,7 @@ function firstDefined(...vals) {
   return undefined
 }
 
-function getElevenLabsApiKey() {
+export function getElevenLabsApiKey() {
   return firstDefined(
     process.env.ELEVENLABS_API_KEY,
     process.env.elevenLabsKey,
@@ -18,23 +18,17 @@ function getElevenLabsApiKey() {
   )
 }
 
-function getElevenLabsVoiceId() {
+export function getElevenLabsVoiceId() {
   return firstDefined(
     process.env.ELEVENLABS_VOICE_ID,
     process.env.elevenLabsVoiceId,
   )
 }
 
-function getGroqApiKey() {
+export function getGroqApiKey() {
   return firstDefined(
     process.env.GROQ_API_KEY,
     process.env.groqCloudKey,
     process.env.GROQ_CLOUD_KEY,
   )
-}
-
-module.exports = {
-  getElevenLabsApiKey,
-  getElevenLabsVoiceId,
-  getGroqApiKey,
 }

@@ -1,6 +1,6 @@
-const axios = require('axios');
-const { GROQ_API_URL } = require('./config/paths');
-const { getGroqApiKey } = require('./config/secrets');
+import axios from 'axios';
+import { GROQ_API_URL } from './config/paths.js';
+import { getGroqApiKey } from './config/secrets.js';
 
 /**
  * Calls Groq chat completions API using an OpenAI-compatible endpoint.
@@ -90,4 +90,4 @@ async function chatCompletion({ systemPrompt, messages, model }) {
   throw finalErr;
 }
 
-module.exports = { chatCompletion };
+export { chatCompletion };

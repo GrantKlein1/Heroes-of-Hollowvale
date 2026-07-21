@@ -5,10 +5,14 @@
  *   node server/tools/embed_lore.js path\to\newLore.txt
  * Writes to: server/src/rag/lore.json
  */
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const { embedTexts } = require('../src/rag/embeddings_local');
+import { embedTexts } from '../src/rag/embeddings_local.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function chunkText(text, chunkWords = 600) {
   const words = String(text || '').split(/\s+/).filter(Boolean);
