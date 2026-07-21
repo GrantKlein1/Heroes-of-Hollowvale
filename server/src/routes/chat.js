@@ -3,6 +3,7 @@ import { getNPC, NPC_IDS } from '../npcData.js';
 import * as memory from '../memory.js';
 import { chatCompletion } from '../groqClient.js';
 import { retrieveLoreForQuery } from '../rag/store.js';
+import { getGroqApiKey } from '../config/secrets.js';
 
 // --- Helpers ---------------------------------------------------------------
 function truncateToSentences(text = '', max = 8) {
@@ -113,7 +114,7 @@ router.post('/chat', async (req, res, next) => {
       { role: 'user', content: message }
     ].slice(-12); // system + lore + up to 10 more
 
-    const hasKey = !!process.env.GROQ_API_KEY;
+    const hasKey = !!getGroqApiKey();
 
   let replyText;
 

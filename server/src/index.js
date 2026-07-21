@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 
 import { API_ROUTE_PREFIX } from './config/paths.js';
+import { getElevenLabsApiKey, getGroqApiKey } from './config/secrets.js';
 import chatRouter from './routes/chat.js';
 import ttsRouter from './routes/tts.js';
 import errorHandler from './middleware/errorHandler.js';
@@ -29,7 +30,15 @@ app.use(express.json({ limit: '1mb' }));
 
 // Health
 app.get(`${API_ROUTE_PREFIX}/health`, (req, res) => {
-  res.json({ status: 'ok', service: 'neural-tavern', time: new Date().toISOString() });
+  res.json({
+    status: 'ok',
+    service: 'neural-tavern',
+    time: new Date().toISOString(),
+    keys: {
+      groq: !!getGroqApiKey(),
+      elevenLabs: !!getElevenLabsApiKey(),
+    },
+  });
 });
 
 // Routes
@@ -41,4 +50,5 @@ app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Neural Tavern server listening on http://localhost:${PORT}${API_ROUTE_PREFIX}`);
+  console.log(`[keys] groq=${!!getGroqApiKey()} elevenLabs=${!!getElevenLabsApiKey()}`);
 });

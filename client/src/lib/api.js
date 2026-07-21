@@ -13,27 +13,32 @@ export async function sendChat({ npc, message, context, ragHints }) {
   return res.json()
 }
 
-export async function fetchTTS({ text, voiceId, modelId, outputFormat } = {}) {
+export async function fetchTTS({ text, voiceId, modelId, outputFormat, signal } = {}) {
   const res = await fetch(`${API_BASE}/tts`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text, voiceId, modelId, outputFormat })
+    body: JSON.stringify({ text, voiceId, modelId, outputFormat }),
+    signal,
   })
   if (!res.ok) {
     const textErr = await res.text().catch(() => '')
     throw new Error(`TTS error: ${res.status} ${textErr}`)
   }
-  // Return audio blob (mp3)
+  // Return audio blob (mp3) — legacy full-download path
   const blob = await res.blob()
   return blob
 }
 
-// Stream TTS audio (chunked) and return the ReadableStream of audio bytes
-export async function streamTTS({ text, voiceId, modelId, outputFormat } = {}) {
+/**
+ * Stream TTS audio chunks from the ElevenLabs proxy.
+ * Returns the Response body ReadableStream (audio/mpeg) for Web Audio playback.
+ */
+export async function streamTTS({ text, voiceId, modelId, outputFormat, signal } = {}) {
   const res = await fetch(`${API_BASE}/tts`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text, voiceId, modelId, outputFormat })
+    body: JSON.stringify({ text, voiceId, modelId, outputFormat }),
+    signal,
   })
   if (!res.ok) {
     const textErr = await res.text().catch(() => '')

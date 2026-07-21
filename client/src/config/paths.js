@@ -32,9 +32,15 @@ export const PATHS = {
   tavernBackgroundMusic: `${AUDIO_BASE}/backgroundMusic1.mp3`,
   // Fight/tense music for the cavern interior scene
   fightMusic1: `${AUDIO_BASE}/fightMusic1.mp3`,
-  // SFX (optional; safe if missing)
+  // SFX (optional; safe if missing) — preloaded by sfxEngine / MainGameScene
   fireballCastSfx: `${AUDIO_BASE}/fireballCast.mp3`,
   fireImpactSfx: `${AUDIO_BASE}/fireImpact.mp3`,
+  sfxFootstep: `${AUDIO_BASE}/sfx/footstep.mp3`,
+  sfxDoorOpen: `${AUDIO_BASE}/sfx/door_open.mp3`,
+  sfxHit: `${AUDIO_BASE}/sfx/hit.mp3`,
+  sfxSpellCast: `${AUDIO_BASE}/sfx/spell_cast.mp3`,
+  sfxFireImpact: `${AUDIO_BASE}/sfx/fire_impact.mp3`,
+  sfxMeleeSwing: `${AUDIO_BASE}/sfx/melee_swing.mp3`,
   goblinArrow: `${IMAGES_BASE}/goblinArrow.png`,
   thiefDisappearGif: `${IMAGES_BASE}/thiefDisappear.gif`,
   thiefSmokeGif: `${IMAGES_BASE}/animatedSmoke/animatedSmoke.gif`,
