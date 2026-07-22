@@ -56,8 +56,9 @@ const layoutB = generateScreen({
   exits: { north: false, south: true, east: true, west: false },
 })
 assert(layoutA.groundTileId === layoutB.groundTileId, 'generateScreen deterministic ground')
-assert(JSON.stringify(layoutA.objects) === JSON.stringify(layoutB.objects), 'generateScreen deterministic objects')
+assert(JSON.stringify(layoutA.tiles?.cells) === JSON.stringify(layoutB.tiles?.cells), 'generateScreen deterministic tiles')
 assert(Array.isArray(layoutA.colliders) && layoutA.colliders.length >= 4, 'generateScreen has border colliders')
+assert(layoutA.tiles?.cells?.some((c) => c.kind === 'path'), 'generateScreen carves path cells')
 assert(fixtureLayout.objects.length > 0, 'fixtureLayout has objects')
 
 assert(getNode(WILDERNESS_ENTRANCE_ID)?.id === WILDERNESS_ENTRANCE_ID, 'entrance node exists')
