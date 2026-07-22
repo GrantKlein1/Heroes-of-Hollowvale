@@ -1,9 +1,10 @@
 /**
- * Wilderness draw + collider helpers — Phase 0 stub.
+ * Wilderness draw + collider helpers (Track D).
  *
- * Track D owns the real implementation and Phaser wiring.
- * Color-box fallback: if a sprite is missing from imagesById, draw a tinted
- * rectangle by category so Track D never blocks on Track A art.
+ * `drawWilderness` is the Canvas2D path used by MainGameScene (offscreen
+ * canvas → Phaser texture). Color-box fallback: if a sprite is missing from
+ * imagesById, draw a tinted rectangle by category (ground=greenish,
+ * object=brown) so integration never blocks on Track A art.
  *
  * @typedef {{ dx: number, dy: number, dw: number, dh: number }} Frame
  */
@@ -47,7 +48,7 @@ export function drawWilderness(ctx, layout, imagesById, frame) {
   const ground = getAsset(layout.groundTileId)
   const groundImg = imagesById?.[layout.groundTileId]
   if (groundImg) {
-    // Simple cover draw; Track D may implement true tiling with ground.w/h
+    // Simple cover draw; true tiling can use ground.w/h when Track A art lands
     ctx.drawImage(groundImg, frame.dx, frame.dy, frame.dw, frame.dh)
   } else {
     ctx.fillStyle = FALLBACK_COLORS.ground

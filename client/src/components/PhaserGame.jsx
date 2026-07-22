@@ -43,6 +43,8 @@ export default function PhaserGame({ className = '' }) {
 
     const game = new Phaser.Game(config)
     gameRef.current = game
+    // Dev-only: expose for browser console / agent smoke checks
+    if (import.meta.env.DEV) window.__HOH_GAME = game
 
     EventBus.emit('game-ready', game)
 
