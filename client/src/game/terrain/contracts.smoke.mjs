@@ -31,7 +31,8 @@ function assert(cond, msg) {
 }
 
 assert(Array.isArray(TERRAIN_ASSETS) && TERRAIN_ASSETS.length >= 4, 'TERRAIN_ASSETS populated')
-assert(getAsset('fixture_grass')?.category === 'ground', 'getAsset(fixture_grass)')
+assert(getAsset('grass_version1')?.category === 'ground', 'getAsset(grass_version1)')
+assert(getAsset('path_top_bottom')?.tileType === 'path', 'getAsset(path_top_bottom)')
 assert(assetsForBiome('emberwood_forest').length > 0, 'assetsForBiome(emberwood_forest)')
 assert(FIXTURE_MANIFEST.every((a) => a.id && a.w && a.h), 'fixture manifest shape')
 
