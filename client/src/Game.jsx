@@ -315,11 +315,11 @@ export default function Game() {
         nrect(0.004, 0.819, 0.208, 0.158)
       ],
   // Door centered beneath the mug: moved further down based on feedback
-  door: nrect(0.47, 0.60, 0.06, 0.06),
-      // Travel zone at bottom-middle to enter the path scene
-      toPath: nrect(0.45, 0.94, 0.10, 0.06),
+  door: nrect(0.44, 0.55, 0.12, 0.14),
+      // Travel zone at bottom-middle to enter the path scene (lifted above the HUD hotbar)
+      toPath: nrect(0.40, 0.82, 0.20, 0.16),
       // Market entrance at upper-left, around 20% down from top
-      toMarket: nrect(0.02, 0.30, 0.10, 0.06),
+      toMarket: nrect(0.02, 0.24, 0.14, 0.18),
       onEnter: () => {
         onDoorOpen()
         sceneRef.current = 'tavern'
@@ -358,8 +358,8 @@ export default function Game() {
         nrect(0.15, 0.35, 0.70, 0.06),
       ],
       bartender: { nx: 0.5, ny: 0.45, w: 64, h: 64 },
-      // Optional: exit back to village if pressing E near bottom center
-      exit: nrect(0.45, 0.95, 0.10, 0.06),
+      // Optional: exit back to village if pressing E near bottom center (lifted above HUD)
+      exit: nrect(0.40, 0.84, 0.20, 0.14),
       onExit: () => {
         onDoorOpen()
         sceneRef.current = 'village'
@@ -393,9 +393,9 @@ export default function Game() {
         nrect(0.004, 0.658, 0.191, 0.335)
       ],
       // Exit back to village at TOP-center
-      toVillage: nrect(0.45, 0.05, 0.10, 0.06),
-      // Enter dungeon at BOTTOM-center
-      toDungeon: nrect(0.54, 0.94, 0.12, 0.06),
+      toVillage: nrect(0.40, 0.04, 0.20, 0.14),
+      // Enter dungeon at BOTTOM-center (lifted above HUD)
+      toDungeon: nrect(0.46, 0.82, 0.20, 0.16),
       onReturn: () => {
         onDoorOpen()
         sceneRef.current = 'village'
@@ -440,7 +440,7 @@ export default function Game() {
       // Exit back to path near bottom-left where player spawns
       toPath: nrect(0.04, 0.82, 0.20, 0.14),
       // Enter the dungeon interior at TOP-center
-      toInterior: nrect(0.45, 0.16, 0.10, 0.06),
+      toInterior: nrect(0.40, 0.10, 0.20, 0.16),
   // Secret entrance to the tavern near top-left around (0.235, 0.110)
   toTavern: nrect(0.20, 0.075, 0.07, 0.07),
       onExitToPath: () => {
@@ -484,8 +484,8 @@ export default function Game() {
       ],
       // Market owner interaction zone at screen center
       vendor: nrect(0.45, 0.52, 0.10, 0.10),
-      // Exit back to village at bottom-middle
-      toVillage: nrect(0.45, 0.95, 0.10, 0.06),
+      // Exit back to village at bottom-middle (lifted above HUD)
+      toVillage: nrect(0.40, 0.84, 0.20, 0.14),
       onExitToVillage: () => {
         onDoorOpen()
         sceneRef.current = 'village'
@@ -516,8 +516,8 @@ export default function Game() {
         nrect(0.203, 0.716, 0.032, 0.021),
         nrect(0.006, 0.665, 0.087, 0.194)
       ],
-      // Exit back to the entrance at BOTTOM-center
-      toEntrance: nrect(0.45, 0.95, 0.10, 0.06),
+      // Exit back to the entrance at BOTTOM-center (lifted above HUD)
+      toEntrance: nrect(0.40, 0.84, 0.20, 0.14),
       onExitToEntrance: () => {
         onDoorOpen()
         sceneRef.current = 'dungeon'
@@ -559,7 +559,7 @@ export default function Game() {
         { rect: nrect(0.140, 0.806, 0.150, 0.050), locked: true },
       ],
       // Exit zone placed at the top-middle, right where the player spawns
-      toEntrance: nrect(0.45, 0.08, 0.10, 0.06),
+      toEntrance: nrect(0.40, 0.04, 0.20, 0.14),
       onExitToEntrance: () => {
         onDoorOpen()
         sceneRef.current = 'dungeon'
@@ -2899,45 +2899,120 @@ export default function Game() {
         ctx.fillText(hudLine, 16, 50)
       }
 
-      // Door/exit/travel prompts for current scene
+      // Door/exit/travel prompts for current scene.
+      // Each prompt has: rect (trigger zone), label (full "Press E ..." banner text),
+      // short (persistent beacon caption) and kind ('exit' door/travel | 'talk' | 'loot').
       const prompts = []
       if (sceneRef.current === 'village') {
-        if (sdef.door) prompts.push({ rect: sdef.door, label: 'Press E to enter' })
-        if (sdef.toPath) prompts.push({ rect: sdef.toPath, label: 'Press E to travel' })
-        if (sdef.toMarket) prompts.push({ rect: sdef.toMarket, label: 'Press E to enter market' })
+        if (sdef.door) prompts.push({ rect: sdef.door, label: 'Press E to enter the Tavern', short: 'Tavern', kind: 'exit' })
+        if (sdef.toPath) prompts.push({ rect: sdef.toPath, label: 'Press E to travel the Path', short: 'Path (South)', kind: 'exit' })
+        if (sdef.toMarket) prompts.push({ rect: sdef.toMarket, label: 'Press E to enter the Market', short: 'Market', kind: 'exit' })
       } else if (sceneRef.current === 'tavern') {
-        if (sdef.exit) prompts.push({ rect: sdef.exit, label: 'Press E to exit' })
+        if (sdef.exit) prompts.push({ rect: sdef.exit, label: 'Press E to exit to the Village', short: 'Village', kind: 'exit' })
       } else if (sceneRef.current === 'market') {
-        if (sdef.toVillage) prompts.push({ rect: sdef.toVillage, label: 'Press E to exit' })
-        if (sdef.vendor) prompts.push({ rect: sdef.vendor, label: 'Press E to talk to vendor' })
+        if (sdef.toVillage) prompts.push({ rect: sdef.toVillage, label: 'Press E to exit to the Village', short: 'Village', kind: 'exit' })
+        if (sdef.vendor) prompts.push({ rect: sdef.vendor, label: 'Press E to talk to the Vendor', short: 'Vendor', kind: 'talk' })
       } else if (sceneRef.current === 'path') {
-        if (sdef.toVillage) prompts.push({ rect: sdef.toVillage, label: 'Press E to return' })
-        if (sdef.toDungeon) prompts.push({ rect: sdef.toDungeon, label: 'Press E to enter dungeon' })
+        if (sdef.toVillage) prompts.push({ rect: sdef.toVillage, label: 'Press E to return to the Village', short: 'Village (North)', kind: 'exit' })
+        if (sdef.toDungeon) prompts.push({ rect: sdef.toDungeon, label: 'Press E to enter the Dungeon', short: 'Dungeon (South)', kind: 'exit' })
       } else if (sceneRef.current === 'dungeon') {
-        if (sdef.toPath) prompts.push({ rect: sdef.toPath, label: 'Press E to return' })
-        if (sdef.toInterior) prompts.push({ rect: sdef.toInterior, label: 'Press E to enter dungeon' })
-        if (sdef.toTavern) prompts.push({ rect: sdef.toTavern, label: 'Press E to enter hidden room' })
+        if (sdef.toPath) prompts.push({ rect: sdef.toPath, label: 'Press E to return to the Path', short: 'Path', kind: 'exit' })
+        if (sdef.toInterior) prompts.push({ rect: sdef.toInterior, label: 'Press E to descend into the Dungeon', short: 'Descend', kind: 'exit' })
+        if (sdef.toTavern) prompts.push({ rect: sdef.toTavern, label: 'Press E to enter the hidden room', short: 'Secret', kind: 'exit' })
       } else if (sceneRef.current === 'dungeonInterior') {
-        if (sdef.toEntrance) prompts.push({ rect: sdef.toEntrance, label: 'Press E to exit' })
+        if (sdef.toEntrance) prompts.push({ rect: sdef.toEntrance, label: 'Press E to exit the Dungeon', short: 'Exit', kind: 'exit' })
       } else if (sceneRef.current === 'treasureRoom') {
-        if (sdef.toEntrance) prompts.push({ rect: sdef.toEntrance, label: 'Press E to exit' })
+        if (sdef.toEntrance) prompts.push({ rect: sdef.toEntrance, label: 'Press E to exit', short: 'Exit', kind: 'exit' })
         if (Array.isArray(sdef.treasureChests)) {
           sdef.treasureChests.forEach((ch, i) => {
             if (isChestOpened(i)) return
-            prompts.push({ rect: ch.rect, label: ch.locked ? 'Press E to pick lock' : 'Press E to open chest' })
+            prompts.push({ rect: ch.rect, label: ch.locked ? 'Press E to pick the lock' : 'Press E to open the chest', short: ch.locked ? 'Locked' : 'Chest', kind: 'loot' })
           })
         }
       }
+
+      // Persistent beacons: always show WHERE the player can go / interact, so
+      // exits are never invisible. Highlight and surface a banner when standing on one.
+      const nowPulse = performance.now()
+      const pulse = 0.5 + 0.5 * Math.sin(nowPulse / 350)
+      const pBox = { x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }
+      let activeLabel = null
+      ctx.textAlign = 'left'
       for (const p of prompts) {
         const pr = mapRect(p.rect)
-        if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, pr)) {
-          ctx.fillStyle = 'rgba(0,0,0,0.6)'
-          const tw = ctx.measureText(p.label).width + 16
-          ctx.fillRect(pr.x, pr.y - 24, Math.max(140, tw), 20)
-          ctx.fillStyle = '#ffeb99'
-          ctx.font = '12px sans-serif'
-          ctx.fillText(p.label, pr.x + 8, pr.y - 10)
-        }
+        const on = intersects(pBox, pr)
+        if (on) activeLabel = p.label
+        const cx = pr.x + pr.w / 2
+        // Colors by kind
+        const base = p.kind === 'talk' ? [96, 165, 250] : p.kind === 'loot' ? [251, 191, 36] : [16, 185, 129]
+        const [r, g, b] = base
+        // Glow ring over the zone
+        ctx.save()
+        ctx.strokeStyle = `rgba(${r},${g},${b},${on ? 0.95 : 0.35 + 0.35 * pulse})`
+        ctx.lineWidth = on ? 3 : 2
+        ctx.setLineDash([8, 6])
+        ctx.lineDashOffset = -(nowPulse / 40) % 14
+        ctx.strokeRect(pr.x, pr.y, pr.w, pr.h)
+        ctx.setLineDash([])
+        ctx.restore()
+        // Floating caption pill above the zone
+        ctx.font = 'bold 13px sans-serif'
+        const tw = ctx.measureText(p.short).width
+        const padX = 10
+        const pillW = tw + padX * 2
+        const pillH = 22
+        const pillX = cx - pillW / 2
+        const pillY = Math.max(4, pr.y - pillH - 8)
+        ctx.fillStyle = on ? `rgba(${r},${g},${b},0.95)` : 'rgba(15,23,42,0.82)'
+        const rr = 6
+        ctx.beginPath()
+        ctx.moveTo(pillX + rr, pillY)
+        ctx.arcTo(pillX + pillW, pillY, pillX + pillW, pillY + pillH, rr)
+        ctx.arcTo(pillX + pillW, pillY + pillH, pillX, pillY + pillH, rr)
+        ctx.arcTo(pillX, pillY + pillH, pillX, pillY, rr)
+        ctx.arcTo(pillX, pillY, pillX + pillW, pillY, rr)
+        ctx.closePath()
+        ctx.fill()
+        ctx.strokeStyle = `rgba(${r},${g},${b},0.9)`
+        ctx.lineWidth = 1.5
+        ctx.stroke()
+        ctx.fillStyle = on ? '#0b1220' : '#e8f5ee'
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.fillText(p.short, cx, pillY + pillH / 2 + 0.5)
+        ctx.textAlign = 'left'
+        ctx.textBaseline = 'alphabetic'
+      }
+
+      // Prominent centered banner when standing on any interact/exit zone
+      if (activeLabel) {
+        ctx.save()
+        ctx.font = 'bold 20px sans-serif'
+        const tw = ctx.measureText(activeLabel).width
+        const bw = tw + 44
+        const bh = 40
+        const bx = cw / 2 - bw / 2
+        const by = Math.round(ch * 0.14)
+        ctx.fillStyle = 'rgba(15,23,42,0.9)'
+        const rr = 10
+        ctx.beginPath()
+        ctx.moveTo(bx + rr, by)
+        ctx.arcTo(bx + bw, by, bx + bw, by + bh, rr)
+        ctx.arcTo(bx + bw, by + bh, bx, by + bh, rr)
+        ctx.arcTo(bx, by + bh, bx, by, rr)
+        ctx.arcTo(bx, by, bx + bw, by, rr)
+        ctx.closePath()
+        ctx.fill()
+        ctx.strokeStyle = 'rgba(251,191,36,0.95)'
+        ctx.lineWidth = 2
+        ctx.stroke()
+        ctx.fillStyle = '#ffe9a8'
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.fillText(activeLabel, cw / 2, by + bh / 2 + 1)
+        ctx.restore()
+        ctx.textAlign = 'left'
+        ctx.textBaseline = 'alphabetic'
       }
 
       // Bartender interact hint (tavern): show when close enough to talk
