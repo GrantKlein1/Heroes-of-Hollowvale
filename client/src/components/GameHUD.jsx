@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { EventBus } from '../game/EventBus'
+import { EventBus, GameEvents } from '../game/EventBus'
 
 /**
  * React HUD overlay layered above the Phaser canvas.
@@ -15,16 +15,16 @@ export default function GameHUD() {
     const onMaxHealth = (value) => setMaxHealth(value)
     const onDialogue = () => setHintVisible(false)
 
-    EventBus.on('player-health-changed', onHealth)
-    EventBus.on('player-max-health-changed', onMaxHealth)
-    EventBus.on('start-dialogue', onDialogue)
+    EventBus.on(GameEvents.PLAYER_HEALTH, onHealth)
+    EventBus.on(GameEvents.PLAYER_MAX_HEALTH, onMaxHealth)
+    EventBus.on(GameEvents.START_DIALOGUE, onDialogue)
 
     const hintTimer = setTimeout(() => setHintVisible(false), 8000)
 
     return () => {
-      EventBus.off('player-health-changed', onHealth)
-      EventBus.off('player-max-health-changed', onMaxHealth)
-      EventBus.off('start-dialogue', onDialogue)
+      EventBus.off(GameEvents.PLAYER_HEALTH, onHealth)
+      EventBus.off(GameEvents.PLAYER_MAX_HEALTH, onMaxHealth)
+      EventBus.off(GameEvents.START_DIALOGUE, onDialogue)
       clearTimeout(hintTimer)
     }
   }, [])

@@ -32,7 +32,7 @@ export const PATHS = {
   tavernBackgroundMusic: `${AUDIO_BASE}/backgroundMusic1.mp3`,
   // Fight/tense music for the cavern interior scene
   fightMusic1: `${AUDIO_BASE}/fightMusic1.mp3`,
-  // SFX (optional; safe if missing) — preloaded by sfxEngine / MainGameScene
+  // SFX — preloaded by Phaser Sound Manager in MainGameScene
   fireballCastSfx: `${AUDIO_BASE}/fireballCast.mp3`,
   fireImpactSfx: `${AUDIO_BASE}/fireImpact.mp3`,
   sfxFootstep: `${AUDIO_BASE}/sfx/footstep.mp3`,

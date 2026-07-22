@@ -1,6 +1,6 @@
 /**
  * React helper: speak NPC dialogue via streaming ElevenLabs TTS (Web Audio).
- * Used by Game.jsx when EventBus fires npc:speak / after chat replies.
+ * Used by DialogueModal when Phaser EventBus fires npc:speak / chat replies.
  */
 
 import { streamTTS } from './api'
