@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import { EventBus } from '../EventBus'
 import { PATHS, CLASS_SPRITES } from '../../config/paths'
+import { TERRAIN_ASSETS } from '../../config/terrainAssets.js'
 import {
   WILDERNESS_ENTRANCE_ID,
   getNeighbors,
@@ -52,10 +53,19 @@ export default class MainGameScene extends Phaser.Scene {
   preload() {
     this.load.image('village', PATHS.villageBg)
     this.load.image('player', CLASS_SPRITES.knight)
+    // Only preload ground tiles that exist on disk (prop art still pending)
+    for (const asset of TERRAIN_ASSETS) {
+      if (asset.category !== 'ground') continue
+      this.load.image(asset.id, asset.src)
+    }
   }
 
   create() {
     this.physics.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT)
+
+    // Always start in the town hub (familiar village + townsfolk)
+    this.mode = 'hub'
+    this.wildernessNodeId = null
 
     this.hubBg = this.add.image(0, 0, 'village').setOrigin(0, 0)
     const scaleX = WORLD_WIDTH / this.hubBg.width
@@ -124,6 +134,18 @@ export default class MainGameScene extends Phaser.Scene {
     EventBus.emit('scene-ready', this)
     EventBus.emit('player-health-changed', this.playerHealth)
     EventBus.emit('player-max-health-changed', this.maxHealth)
+  }
+
+  /** Build CanvasImageSource map from preloaded Phaser textures. */
+  _terrainImagesById() {
+    /** @type {Record<string, CanvasImageSource>} */
+    const images = {}
+    for (const asset of TERRAIN_ASSETS) {
+      if (!this.textures.exists(asset.id)) continue
+      const src = this.textures.get(asset.id).getSourceImage()
+      if (src) images[asset.id] = /** @type {CanvasImageSource} */ (src)
+    }
+    return images
   }
 
   _cleanupEventBus() {
@@ -313,8 +335,7 @@ export default class MainGameScene extends Phaser.Scene {
     canvas.width = WORLD_WIDTH
     canvas.height = WORLD_HEIGHT
     const ctx = canvas.getContext('2d')
-    // Empty imagesById → color-box fallback (fixtures / missing Track A art)
-    drawWilderness(ctx, layout, {}, FRAME)
+    drawWilderness(ctx, layout, this._terrainImagesById(), FRAME)
 
     const key = 'wilderness-screen'
     if (this.textures.exists(key)) {

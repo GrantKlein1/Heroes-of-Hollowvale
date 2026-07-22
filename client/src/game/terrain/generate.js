@@ -1,27 +1,38 @@
 /**
- * Seeded terrain screen generator — Phase 0 stub.
+ * Seeded terrain screen generator.
  *
- * Track B owns the real implementation:
- *  1. Choose ground tile from biome
- *  2. Carve walkable corridors from every active exit → central hub
- *  3. Seeded jittered-grid object scatter with footprint rejection
- *  4. Emit objects + nrect colliders + exits (+ 4 border walls)
+ * Builds a coarse tile grid: grass fill + walkable path corridors from every
+ * active exit into a central hub. Path cells resolve to a concrete asset id
+ * + rotation from neighbor connections.
  *
- * Stub returns a clone of the fixture layout so Tracks C/D can integrate
- * without waiting on Track B. Same (nodeId, seed) is still deterministic.
+ * @typedef {{
+ *   kind: 'grass'|'path',
+ *   assetId: string,
+ *   rotation: number
+ * }} TerrainTileCell
  *
  * @typedef {{
  *   biome: string,
  *   groundTileId: string,
  *   objects: Array<{ assetId: string, nx: number, ny: number, scale: number, collide: boolean }>,
  *   colliders: Array<{ x: number, y: number, w: number, h: number }>,
- *   exits: { north?: boolean, south?: boolean, east?: boolean, west?: boolean }
+ *   exits: { north?: boolean, south?: boolean, east?: boolean, west?: boolean },
+ *   tiles?: { cols: number, rows: number, cells: TerrainTileCell[] }
  * }} TerrainLayout
  */
 
-import fixtureLayout from './__fixtures__/fixtureLayout.js'
 import { getBiome } from './biomes.js'
-import { hashSeed } from './rng.js'
+import { createRng, hashSeed } from './rng.js'
+import {
+  pickGrassVariantId,
+  pathTileForConnections,
+  DEFAULT_GROUND_ID,
+  DEFAULT_PATH_ID,
+} from '../../config/terrainAssets.js'
+
+/** Coarse grid — high-res 1024px art reads well around ~80px on a 1920×1080 frame. */
+export const GRID_COLS = 24
+export const GRID_ROWS = 14
 
 /**
  * @param {{
@@ -41,34 +52,119 @@ export function generateScreen({ nodeId, seed, biome, exits }) {
     west: !!exits?.west,
   }
 
-  // Deterministic stub: clone fixture, stamp biome/exits, nudge by seed hash
-  // so different seeds are distinguishable until Track B lands for real.
-  const h = hashSeed(`${nodeId}:${seed ?? 0}:${biome}`)
-  const nudge = ((h % 1000) / 1000) * 0.02 // tiny, keeps corridors intact
+  const rng = createRng(hashSeed(`${nodeId}:${seed ?? 0}:${biome}`))
+  const cols = GRID_COLS
+  const rows = GRID_ROWS
+  /** @type {number[]} 0 = grass, 1 = path */
+  const mask = new Array(cols * rows).fill(0)
 
-  /** @type {TerrainLayout} */
-  const layout = {
-    biome: recipe.id,
-    groundTileId: recipe.groundTileId,
-    objects: fixtureLayout.objects.map((o) => ({
-      ...o,
-      nx: clamp01(o.nx + nudge),
-      ny: clamp01(o.ny + nudge * 0.5),
-    })),
-    colliders: [
-      // World borders (match existing scene convention)
-      { x: 0, y: -0.02, w: 1, h: 0.02 },
-      { x: 0, y: 1, w: 1, h: 0.02 },
-      { x: -0.02, y: 0, w: 0.02, h: 1 },
-      { x: 1, y: 0, w: 0.02, h: 1 },
-      ...fixtureLayout.colliders.map((c) => ({ ...c })),
-    ],
-    exits: resolvedExits,
+  const cx = Math.floor(cols / 2)
+  const cy = Math.floor(rows / 2)
+
+  // Hub cell at center — corridors meet here
+  setPath(mask, cols, rows, cx, cy)
+
+  if (resolvedExits.north) carveVertical(mask, cols, rows, cx, 0, cy)
+  if (resolvedExits.south) carveVertical(mask, cols, rows, cx, cy, rows - 1)
+  if (resolvedExits.west) carveHorizontal(mask, cols, rows, cy, 0, cx)
+  if (resolvedExits.east) carveHorizontal(mask, cols, rows, cy, cx, cols - 1)
+
+  // Keep corridors 1 cell wide — path PNGs already include grass margins
+
+  const grassVariants = recipe.grassVariants || [recipe.groundTileId || DEFAULT_GROUND_ID]
+  /** @type {import('./generate.js').TerrainTileCell[]} */
+  const cells = new Array(cols * rows)
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const i = row * cols + col
+      if (mask[i] === 1) {
+        const conn = {
+          top: isPath(mask, cols, rows, col, row - 1) || (row === 0 && resolvedExits.north),
+          bottom: isPath(mask, cols, rows, col, row + 1) || (row === rows - 1 && resolvedExits.south),
+          left: isPath(mask, cols, rows, col - 1, row) || (col === 0 && resolvedExits.west),
+          right: isPath(mask, cols, rows, col + 1, row) || (col === cols - 1 && resolvedExits.east),
+        }
+        const pick = pathTileForConnections(conn)
+        cells[i] = {
+          kind: 'path',
+          assetId: pick?.id || recipe.pathTileId || DEFAULT_PATH_ID,
+          rotation: pick?.rotation || 0,
+        }
+      } else {
+        cells[i] = {
+          kind: 'grass',
+          assetId: pickGrassVariantId(grassVariants, rng.next()),
+          rotation: 0,
+        }
+      }
+    }
   }
 
-  return layout
+  // Soft border walls with exit gaps (normalized rects)
+  const border = 0.02
+  const gap = 0.22
+  const gapStart = (1 - gap) / 2
+  /** @type {Array<{ x: number, y: number, w: number, h: number }>} */
+  const colliders = []
+
+  if (resolvedExits.north) {
+    colliders.push({ x: 0, y: -border, w: gapStart, h: border })
+    colliders.push({ x: gapStart + gap, y: -border, w: gapStart, h: border })
+  } else {
+    colliders.push({ x: 0, y: -border, w: 1, h: border })
+  }
+  if (resolvedExits.south) {
+    colliders.push({ x: 0, y: 1, w: gapStart, h: border })
+    colliders.push({ x: gapStart + gap, y: 1, w: gapStart, h: border })
+  } else {
+    colliders.push({ x: 0, y: 1, w: 1, h: border })
+  }
+  if (resolvedExits.west) {
+    colliders.push({ x: -border, y: 0, w: border, h: gapStart })
+    colliders.push({ x: -border, y: gapStart + gap, w: border, h: gapStart })
+  } else {
+    colliders.push({ x: -border, y: 0, w: border, h: 1 })
+  }
+  if (resolvedExits.east) {
+    colliders.push({ x: 1, y: 0, w: border, h: gapStart })
+    colliders.push({ x: 1, y: gapStart + gap, w: border, h: gapStart })
+  } else {
+    colliders.push({ x: 1, y: 0, w: border, h: 1 })
+  }
+
+  return {
+    biome: recipe.id,
+    groundTileId: recipe.groundTileId || DEFAULT_GROUND_ID,
+    objects: [],
+    colliders,
+    exits: resolvedExits,
+    tiles: { cols, rows, cells },
+  }
 }
 
-function clamp01(n) {
-  return Math.max(0, Math.min(1, n))
+/** @param {number[]} mask @param {number} cols @param {number} rows @param {number} x @param {number} y */
+function isPath(mask, cols, rows, x, y) {
+  if (x < 0 || y < 0 || x >= cols || y >= rows) return false
+  return mask[y * cols + x] === 1
+}
+
+/** @param {number[]} mask @param {number} cols @param {number} rows @param {number} x @param {number} y */
+function setPath(mask, cols, rows, x, y) {
+  if (x < 0 || y < 0 || x >= cols || y >= rows) return
+  mask[y * cols + x] = 1
+}
+
+/** @param {number[]} mask @param {number} cols @param {number} rows @param {number} x @param {number} y0 @param {number} y1 */
+function carveVertical(mask, cols, rows, x, y0, y1) {
+  const lo = Math.min(y0, y1)
+  const hi = Math.max(y0, y1)
+  for (let y = lo; y <= hi; y++) setPath(mask, cols, rows, x, y)
+}
+
+/** @param {number[]} mask @param {number} cols @param {number} rows @param {number} y @param {number} x0 @param {number} x1 */
+function carveHorizontal(mask, cols, rows, y, x0, x1) {
+  const lo = Math.min(x0, x1)
+  const hi = Math.max(x0, x1)
+  for (let x = lo; x <= hi; x++) setPath(mask, cols, rows, x, y)
 }

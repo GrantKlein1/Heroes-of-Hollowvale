@@ -9,7 +9,7 @@
  */
 
 import { generateScreen } from './generate.js'
-import { getNode, getNeighbors } from './worldGraph.js'
+import { getNode, getNeighbors, WILDERNESS_ENTRANCE_ID } from './worldGraph.js'
 
 /** @type {Map<string, import('./generate.js').TerrainLayout>} */
 const cache = new Map()
@@ -44,7 +44,8 @@ export function getLayout(nodeId) {
 
   const neighbors = getNeighbors(nodeId)
   const exits = {
-    north: !!neighbors.north,
+    // Entrance north returns to the village hub (not a graph neighbor)
+    north: !!neighbors.north || nodeId === WILDERNESS_ENTRANCE_ID,
     south: !!neighbors.south,
     east: !!neighbors.east,
     west: !!neighbors.west,
