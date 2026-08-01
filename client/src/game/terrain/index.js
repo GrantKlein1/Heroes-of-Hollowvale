@@ -14,3 +14,17 @@ export {
 } from './worldGraph.js'
 export { getLayout, preloadNeighbors, evictBeyond, clearCache } from './screenCache.js'
 export { drawWilderness, wildernessCollidersPx } from './render.js'
+export {
+  WILDERNESS_FRAME_W,
+  WILDERNESS_FRAME_H,
+  HUB_RETURN_SPAWN,
+  spawnAtEdge,
+  spawnFromHub,
+  wildernessFrame,
+  loadWildernessScreen,
+  resolveEdgeTransition,
+  detectCrossedEdge,
+  wildernessExitPrompts,
+  collidersWithExitGaps,
+  preloadTerrainImages,
+} from './wildernessBridge.js'
