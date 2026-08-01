@@ -16,6 +16,20 @@ import {
   onPlayerHurt,
   emitNpcInteract,
 } from './game/MainGameScene'
+import { drawWilderness } from './game/terrain/render'
+import {
+  WILDERNESS_ENTRANCE_ID,
+  HUB_RETURN_SPAWN,
+  spawnAtEdge,
+  spawnFromHub,
+  wildernessFrame,
+  loadWildernessScreen,
+  resolveEdgeTransition,
+  detectCrossedEdge,
+  wildernessExitPrompts,
+  collidersWithExitGaps,
+  preloadTerrainImages,
+} from './game/terrain/wildernessBridge'
 
 // Simple top-down RPG prototype with two scenes: Village and Tavern
 
@@ -291,6 +305,10 @@ export default function Game() {
   const lastVillagePosRef = useRef({ nx: 0.5, ny: 0.90 })
   // Remember where the player was standing in the dungeon entrance when entering the treasure room
   const treasureReturnPosRef = useRef({ nx: 0.235, ny: 0.20 })
+  // Procedural wilderness: current graph node + layout + brief edge-transition latch
+  const wildernessNodeIdRef = useRef(WILDERNESS_ENTRANCE_ID)
+  const wildernessLayoutRef = useRef(null)
+  const wildernessEdgeLatchUntilRef = useRef(0)
 
   // Scene definitions with simple colliders and interact zones (normalized)
   const scenes = {
@@ -396,6 +414,8 @@ export default function Game() {
       toVillage: nrect(0.40, 0.04, 0.20, 0.14),
       // Enter dungeon at BOTTOM-center (lifted above HUD)
       toDungeon: nrect(0.46, 0.82, 0.20, 0.16),
+      // Enter procedural wilderness (mid-path, walkable corridor)
+      toWilderness: nrect(0.48, 0.52, 0.14, 0.12),
       onReturn: () => {
         onDoorOpen()
         sceneRef.current = 'village'
@@ -413,6 +433,17 @@ export default function Game() {
         setScene('dungeon')
         // Spawn bottom-left area of the dungeon entrance image
         playerRef.current._spawn = { scene: 'dungeon', nx: 0.12, ny: 0.88 }
+      },
+      onEnterWilderness: () => {
+        onDoorOpen()
+        const nodeId = WILDERNESS_ENTRANCE_ID
+        wildernessNodeIdRef.current = nodeId
+        wildernessLayoutRef.current = loadWildernessScreen(nodeId)
+        wildernessEdgeLatchUntilRef.current = performance.now() + 600
+        const sp = spawnFromHub()
+        sceneRef.current = 'wilderness'
+        setScene('wilderness')
+        playerRef.current._spawn = { scene: 'wilderness', nx: sp.nx, ny: sp.ny }
       },
       // Default spawn when entering path directly
       spawn: { nx: 0.5, ny: 0.10 },
@@ -571,7 +602,15 @@ export default function Game() {
       },
       spawn: { nx: 0.5, ny: 0.10 },
       playerScale: 0.13,
-    }
+    },
+    // Procedural wilderness — bg drawn via drawWilderness; colliders come from layout each frame
+    wilderness: {
+      bgKey: null,
+      fitMode: 'contain',
+      colliders: [],
+      spawn: { nx: 0.5, ny: 0.12 },
+      playerScale: 0.11,
+    },
   });
 
   // Load images and set initial spawn
@@ -590,6 +629,10 @@ export default function Game() {
     ]).then(([villageBg, tavernBg, marketBg, pathBg, dungeonBg, dungeonInteriorBg, treasureBg]) => {
       if (cancelled) return
       imagesRef.current = { villageBg, tavernBg, marketBg, pathBg, dungeonBg, dungeonInteriorBg, treasureBg, player: null }
+      // Terrain sprites for wilderness draw (missing → color-box fallback in drawWilderness)
+      preloadTerrainImages(safe).then((terrainById) => {
+        if (!cancelled) imagesRef.current.terrainById = terrainById
+      })
       // Kick off optional asset loads without blocking readiness
   safe(PATHS.animatedFireBallGif).then((img) => { if (!cancelled && img) imagesRef.current.fireBallGif = img })
       safe(PATHS.animatedFireSmallGif).then((img) => { if (!cancelled && img) imagesRef.current.fireSmallGif = img })
@@ -1546,7 +1589,7 @@ export default function Game() {
     const inTavern = scene === 'tavern'
     const inFight = scene === 'dungeonInterior'
     const showTitle = titleOpen
-    const inVillageOrPath = scene === 'village' || scene === 'path'
+    const inVillageOrPath = scene === 'village' || scene === 'path' || scene === 'wilderness'
 
     // Main music active on title, village, path (not inside tavern or fight scene)
     if (showTitle || inVillageOrPath) {
@@ -2055,9 +2098,10 @@ export default function Game() {
       // Layout background based on scene fit mode and compute image frame
       const cw = canvas.clientWidth, ch = canvas.clientHeight
       const sdef = scenes[sceneRef.current]
+      const isWilderness = sceneRef.current === 'wilderness'
       // Background image with readiness checks and robust fallbacks
       const firstReady = (...imgs) => imgs.find((im) => im && im.width > 0 && im.height > 0) || null
-      let bgImg = firstReady(
+      let bgImg = isWilderness ? null : firstReady(
         imagesRef.current[sdef.bgKey],
         imagesRef.current.villageBg,
         imagesRef.current.pathBg,
@@ -2067,7 +2111,15 @@ export default function Game() {
         imagesRef.current.treasureBg,
       )
       let dx = 0, dy = 0, dw = cw, dh = ch
-      if (bgImg && bgImg.width > 0 && bgImg.height > 0) {
+      if (isWilderness) {
+        const frame = wildernessFrame(cw, ch)
+        dx = frame.dx; dy = frame.dy; dw = frame.dw; dh = frame.dh
+        if (!wildernessLayoutRef.current) {
+          const nodeId = wildernessNodeIdRef.current || WILDERNESS_ENTRANCE_ID
+          wildernessNodeIdRef.current = nodeId
+          wildernessLayoutRef.current = loadWildernessScreen(nodeId)
+        }
+      } else if (bgImg && bgImg.width > 0 && bgImg.height > 0) {
         const scaleContain = Math.min(cw / bgImg.width, ch / bgImg.height)
         const scaleCover = Math.max(cw / bgImg.width, ch / bgImg.height)
         const scale = sdef.fitMode === 'contain' ? scaleContain : scaleCover
@@ -2165,7 +2217,11 @@ export default function Game() {
       const next = { ...playerRef.current }
       next.x += vx * speed * dt
       // X axis collisions (map colliders to image frame)
-      const collidersPx = sdef.colliders.map(mapRect)
+      const wildLayout = isWilderness ? wildernessLayoutRef.current : null
+      const colliderSrc = isWilderness && wildLayout
+        ? collidersWithExitGaps(wildLayout)
+        : (sdef.colliders || [])
+      const collidersPx = colliderSrc.map(mapRect)
       for (const c of collidersPx) {
         if (intersects({ x: next.x, y: playerRef.current.y, w: next.w, h: next.h }, c)) {
           // Resolve by moving back along x
@@ -2185,6 +2241,38 @@ export default function Game() {
       onPlayerMove({ moving: vx !== 0 || vy !== 0 })
       playerRef.current.x = next.x
       playerRef.current.y = next.y
+
+      // Wilderness edge crossings: walk off N/S/E/W into neighbor (or hub from entrance north)
+      if (isWilderness && wildLayout && performance.now() >= wildernessEdgeLatchUntilRef.current
+          && !chatOpenRef.current && !classSelectOpenRef.current && !inventoryOpenRef.current
+          && !titleOpenRef.current && !optionsOpenRef.current && !shopOpenRef.current && !gameOverRef.current) {
+        const pxCenterX = playerRef.current.x + playerRef.current.w / 2
+        const pxCenterY = playerRef.current.y + playerRef.current.h / 2
+        const pnx = Math.max(0, Math.min(1, (pxCenterX - dx) / dw))
+        const pny = Math.max(0, Math.min(1, (pxCenterY - dy) / dh))
+        const edge = detectCrossedEdge(pnx, pny, wildLayout)
+        if (edge) {
+          const result = resolveEdgeTransition(wildernessNodeIdRef.current, edge)
+          if (result?.type === 'hub') {
+            onDoorOpen()
+            wildernessLayoutRef.current = null
+            sceneRef.current = HUB_RETURN_SPAWN.scene
+            setScene(HUB_RETURN_SPAWN.scene)
+            playerRef.current._spawn = {
+              scene: HUB_RETURN_SPAWN.scene,
+              nx: HUB_RETURN_SPAWN.nx,
+              ny: HUB_RETURN_SPAWN.ny,
+            }
+            wildernessEdgeLatchUntilRef.current = performance.now() + 600
+          } else if (result?.type === 'neighbor') {
+            wildernessNodeIdRef.current = result.nodeId
+            wildernessLayoutRef.current = loadWildernessScreen(result.nodeId)
+            const sp = spawnAtEdge(result.appearAt)
+            playerRef.current._spawn = { scene: 'wilderness', nx: sp.nx, ny: sp.ny }
+            wildernessEdgeLatchUntilRef.current = performance.now() + 600
+          }
+        }
+      }
 
       // Enemy AI: mild unpredictability, light bias toward player; obey same colliders
   if (enemiesRef.current.length && !gameOverRef.current) {
@@ -2599,6 +2687,13 @@ export default function Game() {
             sdef.onReturn?.()
           }
         }
+        // Path enter wilderness
+        if (sceneRef.current === 'path' && sdef.toWilderness) {
+          const zonePx = mapRect(sdef.toWilderness)
+          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
+            sdef.onEnterWilderness?.()
+          }
+        }
         // Market exit to village (bottom-middle)
         if (sceneRef.current === 'market' && sdef.toVillage) {
           const zonePx = mapRect(sdef.toVillage)
@@ -2742,8 +2837,16 @@ export default function Game() {
       // Render
       ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight)
 
-      // Draw background (cover)
-      if (bgImg && bgImg.width > 0 && bgImg.height > 0 && Number.isFinite(dx) && Number.isFinite(dy) && Number.isFinite(dw) && Number.isFinite(dh)) {
+      // Draw background (cover) — wilderness uses procedural drawWilderness
+      if (isWilderness && wildernessLayoutRef.current) {
+        ctx.imageSmoothingEnabled = false
+        drawWilderness(
+          ctx,
+          wildernessLayoutRef.current,
+          imagesRef.current.terrainById || {},
+          { dx, dy, dw, dh }
+        )
+      } else if (bgImg && bgImg.width > 0 && bgImg.height > 0 && Number.isFinite(dx) && Number.isFinite(dy) && Number.isFinite(dw) && Number.isFinite(dh)) {
         ctx.imageSmoothingEnabled = false
         ctx.drawImage(bgImg, dx, dy, dw, dh)
       } else {
@@ -2888,7 +2991,9 @@ export default function Game() {
         } else if (sceneRef.current === 'tavern') {
           hudLine = 'Explore the tavern. Press E near bottom to exit'
         } else if (sceneRef.current === 'path') {
-          hudLine = 'Walk the path. Press E near top to return or near bottom to enter dungeon'
+          hudLine = 'Path: E near top=Village, mid=Wilderness, bottom=Dungeon'
+        } else if (sceneRef.current === 'wilderness') {
+          hudLine = 'Wilderness. Walk yellow exits to travel; north on entrance returns'
         } else if (sceneRef.current === 'dungeon') {
           hudLine = 'Dungeon entrance. Press E near bottom-left to return to path'
         } else if (sceneRef.current === 'dungeonInterior') {
@@ -2914,7 +3019,12 @@ export default function Game() {
         if (sdef.vendor) prompts.push({ rect: sdef.vendor, label: 'Press E to talk to the Vendor', short: 'Vendor', kind: 'talk' })
       } else if (sceneRef.current === 'path') {
         if (sdef.toVillage) prompts.push({ rect: sdef.toVillage, label: 'Press E to return to the Village', short: 'Village (North)', kind: 'exit' })
+        if (sdef.toWilderness) prompts.push({ rect: sdef.toWilderness, label: 'Press E to enter the Wilderness', short: 'Wilderness', kind: 'exit' })
         if (sdef.toDungeon) prompts.push({ rect: sdef.toDungeon, label: 'Press E to enter the Dungeon', short: 'Dungeon (South)', kind: 'exit' })
+      } else if (sceneRef.current === 'wilderness' && wildernessLayoutRef.current) {
+        for (const p of wildernessExitPrompts(wildernessLayoutRef.current, wildernessNodeIdRef.current)) {
+          prompts.push(p)
+        }
       } else if (sceneRef.current === 'dungeon') {
         if (sdef.toPath) prompts.push({ rect: sdef.toPath, label: 'Press E to return to the Path', short: 'Path', kind: 'exit' })
         if (sdef.toInterior) prompts.push({ rect: sdef.toInterior, label: 'Press E to descend into the Dungeon', short: 'Descend', kind: 'exit' })
