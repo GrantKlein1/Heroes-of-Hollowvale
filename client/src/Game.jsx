@@ -414,8 +414,6 @@ export default function Game() {
       toVillage: nrect(0.40, 0.04, 0.20, 0.14),
       // Enter dungeon at BOTTOM-center (lifted above HUD)
       toDungeon: nrect(0.46, 0.82, 0.20, 0.16),
-      // Enter procedural wilderness (mid-path, walkable corridor)
-      toWilderness: nrect(0.48, 0.52, 0.14, 0.12),
       onReturn: () => {
         onDoorOpen()
         sceneRef.current = 'village'
@@ -433,17 +431,6 @@ export default function Game() {
         setScene('dungeon')
         // Spawn bottom-left area of the dungeon entrance image
         playerRef.current._spawn = { scene: 'dungeon', nx: 0.12, ny: 0.88 }
-      },
-      onEnterWilderness: () => {
-        onDoorOpen()
-        const nodeId = WILDERNESS_ENTRANCE_ID
-        wildernessNodeIdRef.current = nodeId
-        wildernessLayoutRef.current = loadWildernessScreen(nodeId)
-        wildernessEdgeLatchUntilRef.current = performance.now() + 600
-        const sp = spawnFromHub()
-        sceneRef.current = 'wilderness'
-        setScene('wilderness')
-        playerRef.current._spawn = { scene: 'wilderness', nx: sp.nx, ny: sp.ny }
       },
       // Default spawn when entering path directly
       spawn: { nx: 0.5, ny: 0.10 },
@@ -474,6 +461,8 @@ export default function Game() {
       toInterior: nrect(0.40, 0.10, 0.20, 0.16),
   // Secret entrance to the tavern near top-left around (0.235, 0.110)
   toTavern: nrect(0.20, 0.075, 0.07, 0.07),
+      // Wilderness trailhead on the painted dirt at the bottom-right
+      toWilderness: nrect(0.78, 0.83, 0.18, 0.13),
       onExitToPath: () => {
         onDoorOpen()
         sceneRef.current = 'path'
@@ -494,6 +483,18 @@ export default function Game() {
         setScene('treasureRoom')
         // Enter at top-middle inside the treasure room
         playerRef.current._spawn = { scene: 'treasureRoom', nx: 0.5, ny: 0.10 }
+      },
+      onEnterWilderness: () => {
+        onDoorOpen()
+        const nodeId = WILDERNESS_ENTRANCE_ID
+        const layout = loadWildernessScreen(nodeId)
+        wildernessNodeIdRef.current = nodeId
+        wildernessLayoutRef.current = layout
+        wildernessEdgeLatchUntilRef.current = performance.now() + 600
+        const sp = spawnFromHub(layout)
+        sceneRef.current = 'wilderness'
+        setScene('wilderness')
+        playerRef.current._spawn = { scene: 'wilderness', nx: sp.nx, ny: sp.ny }
       },
       // Default spawn in bottom-left region
       spawn: { nx: 0.12, ny: 0.88 },
@@ -2246,11 +2247,15 @@ export default function Game() {
       if (isWilderness && wildLayout && performance.now() >= wildernessEdgeLatchUntilRef.current
           && !chatOpenRef.current && !classSelectOpenRef.current && !inventoryOpenRef.current
           && !titleOpenRef.current && !optionsOpenRef.current && !shopOpenRef.current && !gameOverRef.current) {
-        const pxCenterX = playerRef.current.x + playerRef.current.w / 2
-        const pxCenterY = playerRef.current.y + playerRef.current.h / 2
-        const pnx = Math.max(0, Math.min(1, (pxCenterX - dx) / dw))
-        const pny = Math.max(0, Math.min(1, (pxCenterY - dy) / dh))
-        const edge = detectCrossedEdge(pnx, pny, wildLayout)
+        // Leading-edge test: the sprite rect is clamped inside the frame, so a
+        // center-based test can never reach the border for a tall sprite.
+        const pRect = {
+          x: (playerRef.current.x - dx) / dw,
+          y: (playerRef.current.y - dy) / dh,
+          w: playerRef.current.w / dw,
+          h: playerRef.current.h / dh,
+        }
+        const edge = detectCrossedEdge(pRect, wildLayout)
         if (edge) {
           const result = resolveEdgeTransition(wildernessNodeIdRef.current, edge)
           if (result?.type === 'hub') {
@@ -2265,9 +2270,10 @@ export default function Game() {
             }
             wildernessEdgeLatchUntilRef.current = performance.now() + 600
           } else if (result?.type === 'neighbor') {
+            const nextLayout = loadWildernessScreen(result.nodeId)
             wildernessNodeIdRef.current = result.nodeId
-            wildernessLayoutRef.current = loadWildernessScreen(result.nodeId)
-            const sp = spawnAtEdge(result.appearAt)
+            wildernessLayoutRef.current = nextLayout
+            const sp = spawnAtEdge(result.appearAt, nextLayout)
             playerRef.current._spawn = { scene: 'wilderness', nx: sp.nx, ny: sp.ny }
             wildernessEdgeLatchUntilRef.current = performance.now() + 600
           }
@@ -2687,13 +2693,6 @@ export default function Game() {
             sdef.onReturn?.()
           }
         }
-        // Path enter wilderness
-        if (sceneRef.current === 'path' && sdef.toWilderness) {
-          const zonePx = mapRect(sdef.toWilderness)
-          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
-            sdef.onEnterWilderness?.()
-          }
-        }
         // Market exit to village (bottom-middle)
         if (sceneRef.current === 'market' && sdef.toVillage) {
           const zonePx = mapRect(sdef.toVillage)
@@ -2713,6 +2712,13 @@ export default function Game() {
           const zonePx = mapRect(sdef.toInterior)
           if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
             sdef.onEnterInterior?.()
+          }
+        }
+        // Dungeon trailhead into the wilderness at bottom-right
+        if (sceneRef.current === 'dungeon' && sdef.toWilderness) {
+          const zonePx = mapRect(sdef.toWilderness)
+          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
+            sdef.onEnterWilderness?.()
           }
         }
         // Dungeon secret entrance to tavern (now hidden treasure room) at top-left
@@ -2991,11 +2997,11 @@ export default function Game() {
         } else if (sceneRef.current === 'tavern') {
           hudLine = 'Explore the tavern. Press E near bottom to exit'
         } else if (sceneRef.current === 'path') {
-          hudLine = 'Path: E near top=Village, mid=Wilderness, bottom=Dungeon'
+          hudLine = 'Walk the path. Press E near top to return or near bottom to enter dungeon'
         } else if (sceneRef.current === 'wilderness') {
-          hudLine = 'Wilderness. Walk yellow exits to travel; north on entrance returns'
+          hudLine = 'Wilderness. Walk through a marked gap to travel onward'
         } else if (sceneRef.current === 'dungeon') {
-          hudLine = 'Dungeon entrance. Press E near bottom-left to return to path'
+          hudLine = 'Dungeon entrance. E: bottom-left=Path, bottom-right=Wilderness'
         } else if (sceneRef.current === 'dungeonInterior') {
           hudLine = 'Dungeon interior. Press E near bottom to exit to entrance'
         } else if (sceneRef.current === 'treasureRoom') {
@@ -3019,7 +3025,6 @@ export default function Game() {
         if (sdef.vendor) prompts.push({ rect: sdef.vendor, label: 'Press E to talk to the Vendor', short: 'Vendor', kind: 'talk' })
       } else if (sceneRef.current === 'path') {
         if (sdef.toVillage) prompts.push({ rect: sdef.toVillage, label: 'Press E to return to the Village', short: 'Village (North)', kind: 'exit' })
-        if (sdef.toWilderness) prompts.push({ rect: sdef.toWilderness, label: 'Press E to enter the Wilderness', short: 'Wilderness', kind: 'exit' })
         if (sdef.toDungeon) prompts.push({ rect: sdef.toDungeon, label: 'Press E to enter the Dungeon', short: 'Dungeon (South)', kind: 'exit' })
       } else if (sceneRef.current === 'wilderness' && wildernessLayoutRef.current) {
         for (const p of wildernessExitPrompts(wildernessLayoutRef.current, wildernessNodeIdRef.current)) {
@@ -3029,6 +3034,7 @@ export default function Game() {
         if (sdef.toPath) prompts.push({ rect: sdef.toPath, label: 'Press E to return to the Path', short: 'Path', kind: 'exit' })
         if (sdef.toInterior) prompts.push({ rect: sdef.toInterior, label: 'Press E to descend into the Dungeon', short: 'Descend', kind: 'exit' })
         if (sdef.toTavern) prompts.push({ rect: sdef.toTavern, label: 'Press E to enter the hidden room', short: 'Secret', kind: 'exit' })
+        if (sdef.toWilderness) prompts.push({ rect: sdef.toWilderness, label: 'Press E to follow the trail into the Wilderness', short: 'Wilderness', kind: 'exit' })
       } else if (sceneRef.current === 'dungeonInterior') {
         if (sdef.toEntrance) prompts.push({ rect: sdef.toEntrance, label: 'Press E to exit the Dungeon', short: 'Exit', kind: 'exit' })
       } else if (sceneRef.current === 'treasureRoom') {

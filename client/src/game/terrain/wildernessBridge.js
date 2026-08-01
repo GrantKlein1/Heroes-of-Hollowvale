@@ -15,64 +15,93 @@ import { getLayout, preloadNeighbors, evictBeyond } from './screenCache.js'
 export const WILDERNESS_FRAME_W = 1024
 export const WILDERNESS_FRAME_H = 1536
 
-/** Hub return spawn on the path scene (near toWilderness zone). */
-export const HUB_RETURN_SPAWN = { scene: 'path', nx: 0.55, ny: 0.58 }
-
-/** Normalized exit strip thickness for walk-across detection. */
-const EDGE_MARGIN = 0.045
-/** Corridor width around center for N/S exits (and mid for E/W). */
-const EDGE_CORRIDOR = 0.22
+/** Canvas rows reserved for the health bar + hotbar overlay. */
+const HUD_RESERVE_PX = 104
 
 /**
+ * Where leaving the wilderness northward puts the player: the painted path at
+ * the bottom-right of the dungeon entrance, i.e. the zone they entered from.
+ */
+export const HUB_RETURN_SPAWN = { scene: 'dungeon', nx: 0.87, ny: 0.88 }
+
+/**
+ * How close a sprite edge must get to the frame border to count as crossing.
+ * Tested against the leading edge rather than the sprite centre, because
+ * Game.jsx clamps the whole sprite rect inside the frame — a centre-based test
+ * is unreachable for any sprite taller/wider than 2x the margin.
+ */
+const EDGE_MARGIN = 0.012
+
+/** Fallback corridor band when a layout predates `exitBands`. */
+const DEFAULT_BAND = { start: 0.39, end: 0.61 }
+
+/**
+ * @param {import('./generate.js').TerrainLayout} layout
  * @param {'north'|'south'|'east'|'west'} edge
+ * @returns {{ start: number, end: number }}
+ */
+function bandFor(layout, edge) {
+  return layout?.exitBands?.[edge] || DEFAULT_BAND
+}
+
+/**
+ * Spawn just inside `edge`, centred on that edge's corridor.
+ * @param {'north'|'south'|'east'|'west'} edge
+ * @param {import('./generate.js').TerrainLayout} [layout]
  * @returns {{ nx: number, ny: number }}
  */
-export function spawnAtEdge(edge) {
-  const map = {
-    north: { nx: 0.5, ny: 0.12 },
-    south: { nx: 0.5, ny: 0.88 },
-    east: { nx: 0.88, ny: 0.5 },
-    west: { nx: 0.12, ny: 0.5 },
+export function spawnAtEdge(edge, layout) {
+  const band = bandFor(layout, edge)
+  const mid = (band.start + band.end) / 2
+  const inset = 0.12
+  switch (edge) {
+    case 'south':
+      return { nx: mid, ny: 1 - inset }
+    case 'west':
+      return { nx: inset, ny: mid }
+    case 'east':
+      return { nx: 1 - inset, ny: mid }
+    default:
+      return { nx: mid, ny: inset }
   }
-  return map[edge] || map.north
 }
 
 /**
  * Spawn just inside the north edge when arriving from the hub.
+ * @param {import('./generate.js').TerrainLayout} [layout]
  * @returns {{ nx: number, ny: number }}
  */
-export function spawnFromHub() {
-  return spawnAtEdge('north')
+export function spawnFromHub(layout) {
+  return spawnAtEdge('north', layout)
 }
 
 /**
- * Contain-fit the virtual wilderness frame into the canvas.
+ * Contain-fit the virtual wilderness frame into the canvas, leaving room for
+ * the HUD so the south exit is never hidden behind the hotbar.
  * @param {number} cw
  * @param {number} ch
  * @returns {{ dx: number, dy: number, dw: number, dh: number }}
  */
 export function wildernessFrame(cw, ch) {
-  const scale = Math.min(cw / WILDERNESS_FRAME_W, ch / WILDERNESS_FRAME_H)
+  const usableH = Math.max(120, ch - HUD_RESERVE_PX)
+  const scale = Math.min(cw / WILDERNESS_FRAME_W, usableH / WILDERNESS_FRAME_H)
   const dw = WILDERNESS_FRAME_W * scale
   const dh = WILDERNESS_FRAME_H * scale
   return {
     dx: (cw - dw) / 2,
-    dy: (ch - dh) / 2,
+    dy: (usableH - dh) / 2,
     dw,
     dh,
   }
 }
 
 /**
- * Load layout for a node and kick cache warm/evict policy.
+ * Build a fresh layout for a node.
  * @param {string} nodeId
  * @returns {import('./generate.js').TerrainLayout}
  */
 export function loadWildernessScreen(nodeId) {
-  const layout = getLayout(nodeId)
-  preloadNeighbors(nodeId)
-  evictBeyond(nodeId)
-  return layout
+  return getLayout(nodeId)
 }
 
 /**
@@ -94,126 +123,86 @@ export function resolveEdgeTransition(nodeId, edge) {
 }
 
 /**
- * Detect walk-across of an open exit corridor.
- * @param {number} nx player center in [0,1]
- * @param {number} ny
+ * Detect the player walking out through an open exit corridor.
+ * @param {{ x: number, y: number, w: number, h: number }} rect player sprite in normalized frame space
  * @param {import('./generate.js').TerrainLayout} layout
  * @returns {'north'|'south'|'east'|'west'|null}
  */
-export function detectCrossedEdge(nx, ny, layout) {
-  if (!layout?.exits) return null
-  const half = EDGE_CORRIDOR / 2
-  const inBand = (t) => t >= 0.5 - half && t <= 0.5 + half
+export function detectCrossedEdge(rect, layout) {
+  if (!layout?.exits || !rect) return null
+  const cx = rect.x + rect.w / 2
+  const cy = rect.y + rect.h / 2
+  const within = (t, edge) => {
+    const band = bandFor(layout, edge)
+    return t >= band.start && t <= band.end
+  }
 
-  if (layout.exits.north && ny < EDGE_MARGIN && inBand(nx)) return 'north'
-  if (layout.exits.south && ny > 1 - EDGE_MARGIN && inBand(nx)) return 'south'
-  if (layout.exits.west && nx < EDGE_MARGIN && inBand(ny)) return 'west'
-  if (layout.exits.east && nx > 1 - EDGE_MARGIN && inBand(ny)) return 'east'
+  if (layout.exits.north && rect.y <= EDGE_MARGIN && within(cx, 'north')) return 'north'
+  if (layout.exits.south && rect.y + rect.h >= 1 - EDGE_MARGIN && within(cx, 'south')) return 'south'
+  if (layout.exits.west && rect.x <= EDGE_MARGIN && within(cy, 'west')) return 'west'
+  if (layout.exits.east && rect.x + rect.w >= 1 - EDGE_MARGIN && within(cy, 'east')) return 'east'
   return null
 }
 
 /**
  * Normalized prompt rects for open wilderness exits (HUD beacons).
  * @param {import('./generate.js').TerrainLayout} layout
- * @returns {Array<{ edge: string, rect: { x:number,y:number,w:number,h:number }, short: string, label: string }>}
+ * @param {string} nodeId
+ * @returns {Array<{ edge: string, rect: { x:number,y:number,w:number,h:number }, short: string, label: string, kind: string }>}
  */
 export function wildernessExitPrompts(layout, nodeId) {
   const exits = layout?.exits || {}
   const prompts = []
-  const strip = 0.06
-  const band = EDGE_CORRIDOR
-  const x0 = 0.5 - band / 2
+  const strip = 0.045
+
+  const add = (edge, rect, short, label) =>
+    prompts.push({ edge, rect, short, label, kind: 'exit' })
 
   if (exits.north) {
+    const b = bandFor(layout, 'north')
     const toHub = nodeId === WILDERNESS_ENTRANCE_ID
-    prompts.push({
-      edge: 'north',
-      rect: { x: x0, y: 0, w: band, h: strip },
-      short: toHub ? 'Hub (North)' : 'North',
-      label: toHub ? 'Walk north to return to the Path' : 'Walk north to continue',
-      kind: 'exit',
-    })
+    add(
+      'north',
+      { x: b.start, y: 0, w: b.end - b.start, h: strip },
+      toHub ? 'Dungeon Entrance' : 'North',
+      toHub ? 'Walk north to return to the Dungeon Entrance' : 'Walk north to continue'
+    )
   }
   if (exits.south) {
-    prompts.push({
-      edge: 'south',
-      rect: { x: x0, y: 1 - strip, w: band, h: strip },
-      short: 'South',
-      label: 'Walk south to continue',
-      kind: 'exit',
-    })
+    const b = bandFor(layout, 'south')
+    add('south', { x: b.start, y: 1 - strip, w: b.end - b.start, h: strip }, 'South', 'Walk south to continue')
   }
   if (exits.west) {
-    prompts.push({
-      edge: 'west',
-      rect: { x: 0, y: x0, w: strip, h: band },
-      short: 'West',
-      label: 'Walk west to continue',
-      kind: 'exit',
-    })
+    const b = bandFor(layout, 'west')
+    add('west', { x: 0, y: b.start, w: strip, h: b.end - b.start }, 'West', 'Walk west to continue')
   }
   if (exits.east) {
-    prompts.push({
-      edge: 'east',
-      rect: { x: 1 - strip, y: x0, w: strip, h: band },
-      short: 'East',
-      label: 'Walk east to continue',
-      kind: 'exit',
-    })
+    const b = bandFor(layout, 'east')
+    add('east', { x: 1 - strip, y: b.start, w: strip, h: b.end - b.start }, 'East', 'Walk east to continue')
   }
   return prompts
 }
 
 /**
- * Identify stub full-side border walls from generateScreen.
- * @param {{ x:number,y:number,w:number,h:number }} c
- * @returns {'north'|'south'|'east'|'west'|null}
- */
-function borderEdge(c) {
-  if (c.y < 0 && c.w >= 0.99) return 'north'
-  if (c.y >= 0.99 && c.w >= 0.99) return 'south'
-  if (c.x < 0 && c.h >= 0.99) return 'west'
-  if (c.x >= 0.99 && c.h >= 0.99) return 'east'
-  return null
-}
-
-/**
- * Layout colliders with center gaps on open exits so the player can cross.
+ * Colliders for a layout. The generator already carves border gaps aligned to
+ * each corridor, so this is a straight pass-through kept for call-site clarity.
  * @param {import('./generate.js').TerrainLayout} layout
- * @param {number} [gap=0.24]
  * @returns {Array<{ x:number,y:number,w:number,h:number }>}
  */
-export function collidersWithExitGaps(layout, gap = 0.24) {
-  const exits = layout?.exits || {}
-  const out = []
-  for (const c of layout?.colliders || []) {
-    const edge = borderEdge(c)
-    if (!edge || !exits[edge]) {
-      out.push(c)
-      continue
-    }
-    const g0 = 0.5 - gap / 2
-    const g1 = 0.5 + gap / 2
-    if (edge === 'north' || edge === 'south') {
-      out.push({ x: 0, y: c.y, w: g0, h: c.h })
-      out.push({ x: g1, y: c.y, w: 1 - g1, h: c.h })
-    } else {
-      out.push({ x: c.x, y: 0, w: c.w, h: g0 })
-      out.push({ x: c.x, y: g1, w: c.w, h: 1 - g1 })
-    }
-  }
-  return out
+export function collidersWithExitGaps(layout) {
+  return layout?.colliders || []
 }
 
 /**
- * Preload terrain PNGs keyed by asset id (missing files → omitted; render color-boxes).
+ * Preload terrain PNGs keyed by asset id. Assets with no `src` (prop art that
+ * has not shipped) are skipped so nothing 404s; render draws color boxes.
  * @param {(src: string) => Promise<CanvasImageSource|null>} loadSafe
  * @returns {Promise<Record<string, CanvasImageSource>>}
  */
 export async function preloadTerrainImages(loadSafe) {
   const byId = {}
   await Promise.all(
-    TERRAIN_ASSETS.map(async (a) => {
+    TERRAIN_ASSETS.filter((a) => a.src).map(async (a) => {
       try {
         const img = await loadSafe(a.src)
         if (img) byId[a.id] = img
