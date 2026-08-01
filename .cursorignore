@@ -1,0 +1,39 @@
+# Images
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tif
+*.tiff
+*.webp
+*.svg
+*.ico
+*.avif
+*.heic
+*.heif
+
+# Video
+*.mp4
+*.mov
+*.wmv
+*.flv
+*.avi
+*.mkv
+*.webm
+*.m4v
+
+# Audio
+*.mp3
+*.wav
+*.wma
+*.ogg
+*.flac
+*.aac
+*.m4a
+*.opus
+*.aiff
+
+# Asset folders in this project
+client/public/images/
+client/public/audio/
