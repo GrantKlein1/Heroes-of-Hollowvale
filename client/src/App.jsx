@@ -1,18 +1,13 @@
 import React from 'react'
-import PhaserGame from './components/PhaserGame'
-import GameHUD from './components/GameHUD'
-import DialogueModal from './components/DialogueModal'
+import Game from './Game'
 
 /**
- * Main layout: Phaser canvas fills the viewport; React HUD / dialogue
- * overlays sit above it via absolute positioning.
+ * Main layout: the full canvas RPG (`Game.jsx`) owns the scene state machine,
+ * HUD, dialogue, inventory and all overlays. The experimental Phaser host
+ * (`components/PhaserGame.jsx`) remains in the tree for the procedural-terrain
+ * track but is intentionally not mounted here — it only renders a single,
+ * zoomed-in village with no scene transitions, which is not the playable game.
  */
 export default function App() {
-  return (
-    <div className="relative h-screen w-full overflow-hidden bg-black">
-      <PhaserGame />
-      <GameHUD />
-      <DialogueModal />
-    </div>
-  )
+  return <Game />
 }
