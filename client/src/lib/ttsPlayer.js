@@ -8,7 +8,12 @@
 
 let sharedCtx = null
 let sharedGain = null
+let sharedVoiceInput = null
 let currentStop = null
+
+// Slows playback (and, since pitch tracks rate here, lowers it) so the
+// bartender's voice reads as older, deeper, and more deliberate.
+const BARTENDER_PLAYBACK_RATE = 0.9
 
 function getAudioGraph() {
   const AC = window.AudioContext || window.webkitAudioContext
@@ -16,9 +21,25 @@ function getAudioGraph() {
   if (!sharedCtx) {
     sharedCtx = new AC()
     sharedGain = sharedCtx.createGain()
+
+    // Gravelly-old-tavern-keeper coloration: boost the low end for boominess,
+    // trim the highs so the voice sounds worn and gruff rather than crisp.
+    const lowBoost = sharedCtx.createBiquadFilter()
+    lowBoost.type = 'lowshelf'
+    lowBoost.frequency.value = 250
+    lowBoost.gain.value = 6
+
+    const highCut = sharedCtx.createBiquadFilter()
+    highCut.type = 'highshelf'
+    highCut.frequency.value = 3200
+    highCut.gain.value = -7
+
+    lowBoost.connect(highCut)
+    highCut.connect(sharedGain)
     sharedGain.connect(sharedCtx.destination)
+    sharedVoiceInput = lowBoost
   }
-  return { ctx: sharedCtx, gain: sharedGain }
+  return { ctx: sharedCtx, gain: sharedGain, voiceInput: sharedVoiceInput }
 }
 
 export async function unlockTtsAudio() {
@@ -84,7 +105,7 @@ export async function playStreamingAudio(readableStream, {
 }
 
 async function playViaMediaSource(readableStream, { mime, graph, signal }) {
-  const { ctx, gain } = graph
+  const { ctx, voiceInput } = graph
 
   return new Promise((resolve, reject) => {
     const mediaSource = new MediaSource()
@@ -93,11 +114,18 @@ async function playViaMediaSource(readableStream, { mime, graph, signal }) {
     audio.preload = 'auto'
     audio.src = objectUrl
 
+    // Slow the element down without pitch-correction so the voice drops in
+    // pitch too — reads as deeper and gravellier, not just slower.
+    audio.playbackRate = BARTENDER_PLAYBACK_RATE
+    audio.preservesPitch = false
+    audio.mozPreservesPitch = false
+    audio.webkitPreservesPitch = false
+
     // Route HTMLMediaElement into the shared Web Audio graph
     let elementSource = null
     try {
       elementSource = ctx.createMediaElementSource(audio)
-      elementSource.connect(gain)
+      elementSource.connect(voiceInput)
     } catch (e) {
       // createMediaElementSource can only be called once per element; ignore
     }
@@ -188,7 +216,7 @@ async function playViaMediaSource(readableStream, { mime, graph, signal }) {
  * Single request — no second TTS fetch.
  */
 async function playViaDecode(readableStream, { graph, signal }) {
-  const { ctx, gain } = graph
+  const { ctx, voiceInput } = graph
   const reader = readableStream.getReader()
   const chunks = []
   let total = 0
@@ -222,7 +250,10 @@ async function playViaDecode(readableStream, { graph, signal }) {
   return new Promise((resolve, reject) => {
     const src = ctx.createBufferSource()
     src.buffer = audioBuffer
-    src.connect(gain)
+    // AudioBufferSourceNode has no pitch-preservation option, so slowing the
+    // rate here naturally deepens the voice as a side effect.
+    src.playbackRate.value = BARTENDER_PLAYBACK_RATE
+    src.connect(voiceInput)
 
     let settled = false
     const finish = (err) => {

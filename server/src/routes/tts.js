@@ -46,11 +46,15 @@ router.post('/tts', async (req, res, next) => {
         text,
         model_id: modelId,
         output_format: outputFormat,
+        // Defaults tuned for a gruff, weathered old tavern keeper: high stability
+        // and low style keep delivery flat/gravelly instead of expressive, and a
+        // slowed-down speed reads as deeper and more deliberate.
         voice_settings: voiceSettings || {
-          stability: 0.3,
-          similarity_boost: 0.90,
-          style: 0.5,
-          speed: 1.1,
+          stability: 0.75,
+          similarity_boost: 0.85,
+          style: 0.25,
+          speed: 0.85,
+          use_speaker_boost: true,
         },
       },
       {
