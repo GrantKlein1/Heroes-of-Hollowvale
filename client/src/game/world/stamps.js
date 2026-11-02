@@ -4,7 +4,8 @@
  * on the world function. Baked Tiled JSON is written by generateTileset.mjs.
  */
 
-import { isRoad } from './roads.js'
+import { LEAGUE_H, LEAGUE_MAX_X, LEAGUE_MAX_Y, LEAGUE_MIN_X, LEAGUE_MIN_Y, LEAGUE_W, STRIDE_X, STRIDE_Y } from './metrics.js'
+import { RUINWATCH, isRoad } from './roads.js'
 
 function brackenford(wx, wy) {
   if (wy < 1 || wy > 10 || wx < 1 || wx > 18) return null
@@ -38,13 +39,36 @@ function hearthmile(wx, wy) {
   return null
 }
 
+function ruinwatch(wx, wy) {
+  if (isRoad(wx, wy)) return null
+  const dx = Math.abs(wx - RUINWATCH.wx)
+  const dy = Math.abs(wy - RUINWATCH.wy)
+  if (dx <= 2 && dy <= 1) return 'cobble'
+  return null
+}
+
 export function stampKind(wx, wy) {
   if (wy >= 0 && wy <= 11 && wx >= 0 && wx <= 19) return brackenford(wx, wy)
   if (wy >= 44 && wy <= 55 && wx >= 0 && wx <= 19) return hearthmile(wx, wy)
+  if (Math.abs(wx - RUINWATCH.wx) <= 3 && Math.abs(wy - RUINWATCH.wy) <= 3) return ruinwatch(wx, wy)
   return null
 }
+
+function leagueContaining(wx, wy) {
+  for (let ly = LEAGUE_MIN_Y; ly <= LEAGUE_MAX_Y; ly++) {
+    for (let lx = LEAGUE_MIN_X; lx <= LEAGUE_MAX_X; lx++) {
+      const x0 = lx * STRIDE_X
+      const y0 = ly * STRIDE_Y
+      if (wx >= x0 && wx < x0 + LEAGUE_W && wy >= y0 && wy < y0 + LEAGUE_H) return { lx, ly }
+    }
+  }
+  return { lx: 0, ly: 0 }
+}
+
+const campLeague = leagueContaining(RUINWATCH.wx, RUINWATCH.wy)
 
 export const STAMP_LEAGUES = [
   { lx: 0, ly: 0, key: 'brackenford', name: 'Brackenford' },
   { lx: 0, ly: 4, key: 'hearthmile', name: 'Hearthmile Stone' },
+  { lx: campLeague.lx, ly: campLeague.ly, key: 'ruinwatch', name: 'Ruinwatch' },
 ]

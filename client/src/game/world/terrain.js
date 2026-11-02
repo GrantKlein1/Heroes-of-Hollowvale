@@ -14,15 +14,23 @@ function rimKind(wx, wy) {
   if (wy <= MIN_WY + 1 || wy >= MAX_WY - 1) return 'thicket'
   if (wx <= MIN_WX + 1) return 'thicket'
   if (wx >= MAX_WX - 1) return 'water'
-  // The west-northwest exit stops in a brake. The road itself ends at wx -4.
-  if (wx === -6 && wy >= 44 && wy <= 51) return 'thicket'
-  if (wx === -5 && wy >= 45 && wy <= 49) return 'thicket'
   return null
 }
 
 function biomeKind(wx, wy, seed) {
-  const dx = 9.5 - wx
   const h = unit(seed, wx, wy, 1)
+  // Northern eaves: the wood is south of the road, open country north of it.
+  if (wx < -4) {
+    const traveled = -4 - wx
+    const roadY = 46 - Math.floor(traveled / 5)
+    const southOfRoad = wy - roadY
+    if (southOfRoad >= 5) return h < 0.86 ? 'forest' : 'grass'
+    if (southOfRoad >= 2) return h < 0.45 + (southOfRoad - 2) * 0.12 ? 'forest' : 'grass'
+    if (southOfRoad <= -5) return h < 0.8 ? 'plains' : 'grass'
+    if (southOfRoad <= -2) return h < 0.25 + (-southOfRoad - 2) * 0.12 ? 'plains' : 'grass'
+    return 'grass'
+  }
+  const dx = 9.5 - wx
   const south = Math.max(0, Math.min(1, (wy - 11) / 44))
   if (dx >= 6) return h < 0.82 ? 'forest' : 'grass'
   if (dx >= 3) {

@@ -7,6 +7,18 @@
  * and directions are from newLore_expanded.txt.
  */
 
+import { EAVES_MARKS, RUINWATCH, isRoad } from './roads.js'
+
+function offRoad(wx, wy) {
+  let y = wy
+  for (let i = 0; i < 5; i++) {
+    const edge = ((y % 11) + 11) % 11 === 0 || ((wx % 19) + 19) % 19 === 0
+    if (!isRoad(wx, y) && !edge) return { wx, wy: y }
+    y += 1
+  }
+  return { wx, wy: y }
+}
+
 export const RESPAWN_LEAGUES = 2
 export const RESPAWN_MS = 45000
 
@@ -14,7 +26,7 @@ export const SPAWNS = {
   start: { wx: 10, wy: 5 },
   flagon: { wx: 10, wy: 5 },
   market: { wx: 6, wy: 4 },
-  stub: { wx: -3, wy: 47 },
+  stub: { wx: RUINWATCH.wx + 1, wy: RUINWATCH.wy },
 }
 
 export const STONE = { wx: 7, wy: 49 }
@@ -47,6 +59,14 @@ export const FIXED_PROPS = [
   { kind: 'lamp', variant: 1, wx: 12, wy: 6 },
   { kind: 'sign', variant: 0, wx: 8, wy: 9 },
   { kind: 'board', variant: 0, wx: 7, wy: 5 },
+  { kind: 'campfire', variant: 0, wx: RUINWATCH.wx, wy: RUINWATCH.wy + 1 },
+  { kind: 'rock', variant: 0, wx: RUINWATCH.wx - 2, wy: RUINWATCH.wy - 1 },
+  { kind: 'rock', variant: 1, wx: RUINWATCH.wx + 2, wy: RUINWATCH.wy - 1 },
+  { kind: 'rock', variant: 2, wx: RUINWATCH.wx - 2, wy: RUINWATCH.wy + 1 },
+  { kind: 'rock', variant: 3, wx: RUINWATCH.wx + 2, wy: RUINWATCH.wy + 1 },
+  { kind: 'cart', variant: 1, wx: EAVES_MARKS[0].wx + 3, wy: EAVES_MARKS[0].wy + 3 },
+  { kind: 'hay', variant: 0, wx: EAVES_MARKS[1].wx + 3, wy: EAVES_MARKS[1].wy + 3 },
+  { kind: 'log', variant: 1, wx: EAVES_MARKS[2].wx + 3, wy: EAVES_MARKS[2].wy + 3 },
 ]
 
 export const FIXED_LOOT = [
@@ -89,6 +109,25 @@ export const FIXED_LOOT = [
     short: 'Offering',
     items: [],
     gems: { ruby: 0, sapphire: 0, emerald: 1 },
+  },
+  {
+    id: 'eaves-strongbox',
+    ...offRoad(EAVES_MARKS[0].wx + 2, EAVES_MARKS[0].wy + 2),
+    marker: 'cache',
+    label: 'Press E to open the strongbox',
+    short: 'Strongbox',
+    items: [{ id: 'apple', count: 1 }],
+    gems: { ruby: 1, sapphire: 0, emerald: 0 },
+  },
+  {
+    id: 'ruinwatch-cache',
+    wx: RUINWATCH.wx + 2,
+    wy: RUINWATCH.wy,
+    marker: 'cache',
+    label: 'Press E to open the camp cache',
+    short: 'Cache',
+    items: [{ id: 'healing_potion', count: 1 }],
+    gems: null,
   },
 ]
 
@@ -180,9 +219,21 @@ export const INTERACTABLES = [
     text: 'HEARTHMILE. Four leagues north, Brackenford. West-northwest, the eaves road: Ruinwatch sixteen leagues, the Cavern of Embers beyond. Yselle Dorn\'s writ ends at this stone. Offerings left here are for the road, not for the dead. (The wording of the cutting is a guess. The distances are the Keeper\'s.)',
   },
   {
-    id: 'ruinwatch-stub',
-    wx: -4,
-    wy: 47,
+    id: 'ruinwatch-sign',
+    wx: RUINWATCH.wx,
+    wy: RUINWATCH.wy,
+    w: 1,
+    h: 1,
+    kind: 'talk',
+    action: 'read',
+    label: 'Press E to read the camp stone',
+    short: 'Ruinwatch',
+    text: 'RUINWATCH. Sixteen leagues back along the eaves to Hearthmile Stone. The road north from here is eight leagues to the Cavern mouth, and that leg is not blazed on this map. Korvhal\'s broken towers stand three leagues due south. Camp if you must. The Firefang tax the decision. (The cutting is a guess. The distances are the Keeper\'s.)',
+  },
+  {
+    id: 'cavern-track',
+    wx: RUINWATCH.wx - 1,
+    wy: RUINWATCH.wy,
     w: 1,
     h: 1,
     kind: 'exit',
@@ -192,6 +243,22 @@ export const INTERACTABLES = [
     label: 'Press E to take the old trail toward the Cavern',
     short: 'Old trail',
   },
+  ...EAVES_MARKS.map((mark, index) => {
+    const spot = offRoad(mark.wx, mark.wy + 2)
+    const league = 4 * (index + 1)
+    return {
+      id: `eaves-mark-${league}`,
+      wx: spot.wx,
+      wy: spot.wy,
+      w: 1,
+      h: 1,
+      kind: 'talk',
+      action: 'read',
+      label: 'Press E to read the mile post',
+      short: `${league} leagues`,
+      text: `Ember Road. ${league} leagues from Hearthmile Stone, toward Ruinwatch. The eaves are south. The open ground is north. Goblin archers keep to the trees. (A mile post every four leagues is a guess. The sixteen-league length is the Keeper's.)`,
+    }
+  }),
 ]
 
 export const ENCOUNTER_TABLES = {
@@ -223,6 +290,9 @@ export const SCRIPTED_ENCOUNTERS = [
   { id: 'scout-eaves', wx: -8, wy: 18, type: 'goblin', name: 'Goblin Scout', table: 'forest' },
   { id: 'archer-eaves', wx: -10, wy: 36, type: 'archer', name: 'Firefang Archer', table: 'forest' },
   { id: 'dike-bruiser', wx: 16, wy: 24, type: 'brute', name: 'Dike Bruiser', table: 'plains' },
+  { id: 'eaves-archer', wx: EAVES_MARKS[0].wx - 2, wy: EAVES_MARKS[0].wy + 4, type: 'archer', name: 'Firefang Archer', table: 'forest' },
+  { id: 'eaves-brute', wx: EAVES_MARKS[1].wx - 2, wy: EAVES_MARKS[1].wy + 4, type: 'brute', name: 'Firefang Brute', table: 'forest' },
+  { id: 'ruinwatch-tax', wx: RUINWATCH.wx + 3, wy: RUINWATCH.wy + 1, type: 'goblin', name: 'Goblin Scout', table: 'forest' },
 ]
 
 export const HERB_RULE = {

@@ -18,9 +18,9 @@ export const SCREEN_H = LEAGUE_H * TILE
 
 export const WORLD_SEED = 'hollowvale-1477'
 
-export const LEAGUE_MIN_X = -2
+export const LEAGUE_MIN_X = -18
 export const LEAGUE_MAX_X = 2
-export const LEAGUE_MIN_Y = -1
+export const LEAGUE_MIN_Y = -4
 export const LEAGUE_MAX_Y = 5
 
 export const MIN_WX = LEAGUE_MIN_X * STRIDE_X

@@ -17,8 +17,9 @@ import {
 } from './metrics.js'
 import { T, collisionForTile } from './tileCatalog.js'
 import { SOUTH_GATE, STONE } from './content.js'
+import { STAMP_LEAGUES } from './stamps.js'
 import { DECORATION_KINDS, containsPoint } from './props.js'
-import { isRoad } from './roads.js'
+import { RUINWATCH, isRoad } from './roads.js'
 
 const MAP_DIR = new URL('../../../public/maps/', import.meta.url)
 
@@ -125,6 +126,33 @@ test('the Ember Road is continuous from the south gate to Hearthmile Stone', () 
   assert.equal(stoneProp.wy, STONE.wy)
 })
 
+test('the eaves road runs from the Hearthmile bend to Ruinwatch', () => {
+  const world = createWorld(WORLD_SEED)
+  const start = { wx: -4, wy: 46 }
+  const seen = new Set([`${start.wx},${start.wy}`])
+  const q = [start]
+  let qi = 0
+  while (qi < q.length) {
+    const cur = q[qi++]
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const wx = cur.wx + dx
+      const wy = cur.wy + dy
+      const key = `${wx},${wy}`
+      if (seen.has(key)) continue
+      const kind = world.kindAt(wx, wy)
+      if (kind !== 'road' && kind !== 'gate') continue
+      seen.add(key)
+      q.push({ wx, wy })
+    }
+  }
+  let near = false
+  for (const key of seen) {
+    const [x, y] = key.split(',').map(Number)
+    if (Math.abs(x - RUINWATCH.wx) <= 2 && Math.abs(y - RUINWATCH.wy) <= 2) near = true
+  }
+  assert.equal(near, true, `road never reaches ${RUINWATCH.wx},${RUINWATCH.wy}`)
+})
+
 test('decoration props do not block the road or an entrance', () => {
   const world = createWorld(WORLD_SEED)
   for (const prop of world.props) {
@@ -159,7 +187,8 @@ test('tree trunks collide on a partial footprint and canopy tiles do not', () =>
 
 test('stamped Tiled maps match the generated leagues', () => {
   const world = getWorld(WORLD_SEED)
-  for (const [file, lx, ly] of [['brackenford.json', 0, 0], ['hearthmile.json', 0, 4]]) {
+  const camp = STAMP_LEAGUES.find((s) => s.key === 'ruinwatch')
+  for (const [file, lx, ly] of [['brackenford.json', 0, 0], ['hearthmile.json', 0, 4], ['ruinwatch.json', camp.lx, camp.ly]]) {
     const map = JSON.parse(readFileSync(new URL(file, MAP_DIR), 'utf8'))
     const layer = map.layers.find((l) => l.name === 'ground')
     const view = world.league(lx, ly)

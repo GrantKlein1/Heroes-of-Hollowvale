@@ -160,6 +160,7 @@ export default class HollowvaleScene extends Phaser.Scene {
     this.load.image('bandit', '/maps/bandit.png')
     this.load.tilemapTiledJSON('brackenford', '/maps/brackenford.json')
     this.load.tilemapTiledJSON('hearthmile', '/maps/hearthmile.json')
+    this.load.tilemapTiledJSON('ruinwatch', '/maps/ruinwatch.json')
   }
 
   create() {
