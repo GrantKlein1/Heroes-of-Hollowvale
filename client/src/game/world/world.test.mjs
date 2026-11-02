@@ -15,7 +15,10 @@ import {
   forEachLeague,
   tileCenter,
 } from './metrics.js'
+import { PNG } from 'pngjs'
 import { T, collisionForTile } from './tileCatalog.js'
+import { auditRects } from './packMap.js'
+import { PROP_KINDS, propSprite } from './props.js'
 import { SOUTH_GATE, STONE } from './content.js'
 import { DECORATION_KINDS, containsPoint } from './props.js'
 import { isRoad } from './roads.js'
@@ -155,6 +158,68 @@ test('tree trunks collide on a partial footprint and canopy tiles do not', () =>
   assert.equal(collisionForTile(T.ford), null)
   assert.equal(collisionForTile(T.bridgeH), null)
   assert.deepEqual(collisionForTile(T.wall), { x: 0, y: 0, w: 16, h: 16 })
+})
+
+function rectProblem(png, rect) {
+  let opaque = 0
+  let minR = 255
+  let minG = 255
+  let minB = 255
+  let maxR = 0
+  let maxG = 0
+  let maxB = 0
+  const area = rect.w * rect.h
+  for (let y = 0; y < rect.h; y++) {
+    for (let x = 0; x < rect.w; x++) {
+      const sx = rect.x + x
+      const sy = rect.y + y
+      if (sx < 0 || sy < 0 || sx >= png.width || sy >= png.height) continue
+      const i = (sy * png.width + sx) * 4
+      if (png.data[i + 3] < 24) continue
+      opaque++
+      const r = png.data[i]
+      const g = png.data[i + 1]
+      const b = png.data[i + 2]
+      if (r < minR) minR = r
+      if (g < minG) minG = g
+      if (b < minB) minB = b
+      if (r > maxR) maxR = r
+      if (g > maxG) maxG = g
+      if (b > maxB) maxB = b
+    }
+  }
+  if (opaque < 12) return 'empty'
+  const flat = maxR - minR < 8 && maxG - minG < 8 && maxB - minB < 8
+  const black = maxR < 28 && maxG < 28 && maxB < 28
+  const magenta = minR > 160 && minB > 160 && maxG < 80
+  if (flat && (black || magenta)) return black ? 'solid-black' : 'solid-magenta'
+  if (opaque / area < 0.02) return 'empty'
+  return null
+}
+
+test('mapped atlas frames are not empty or solid black', () => {
+  const png = PNG.sync.read(readFileSync(new URL('../../../public/maps/ninja-adventure/tileset.png', import.meta.url)))
+  const rects = auditRects()
+  for (const [kind, def] of Object.entries(PROP_KINDS)) {
+    if (def.tall) continue
+    const count = def.sprites ? def.sprites.length : def.frames.length
+    for (let i = 0; i < count; i++) {
+      const spec = propSprite(kind, i)
+      rects.push({
+        name: `${kind}-${i}`,
+        x: spec.col * 16,
+        y: spec.row * 16,
+        w: (spec.tw || 1) * 16,
+        h: (spec.th || 1) * 16,
+      })
+    }
+  }
+  const bad = []
+  for (const rect of rects) {
+    const problem = rectProblem(png, rect)
+    if (problem) bad.push(`${rect.name} ${problem} @${rect.x},${rect.y}`)
+  }
+  assert.deepEqual(bad, [])
 })
 
 test('stamped Tiled maps match the generated leagues', () => {

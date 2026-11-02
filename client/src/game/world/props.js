@@ -9,53 +9,56 @@ import { TILE } from './metrics.js'
 
 export const PROP_KINDS = {
   tree: {
-    frames: [0, 1, 2, 3],
+    frames: [0],
     tall: true,
     blocks: true,
     collision: { x: 5, y: 6, w: 6, h: 8 },
   },
   bush: {
-    frames: [T.bush, T.bushB, T.bushC, T.bushD],
+    frames: [T.bush, T.bushB],
+    sprites: [
+      { col: 0, row: 6, tw: 1, th: 1 },
+      { col: 0, row: 8, tw: 1, th: 1 },
+    ],
     blocks: true,
     collision: { x: 3, y: 6, w: 10, h: 8 },
   },
   rock: {
-    frames: [T.rock, T.rockB, T.rockC, T.rockD],
+    frames: [T.rock, T.rockB],
+    sprites: [
+      { col: 1, row: 7, tw: 1, th: 1 },
+      { col: 0, row: 7, tw: 1, th: 1 },
+    ],
     blocks: true,
     collision: { x: 3, y: 6, w: 10, h: 8 },
   },
   log: {
-    frames: [T.log, T.logB, T.logC],
-    sprites: [
-      { col: 7, row: 8, tw: 1, th: 1 },
-      { col: 1, row: 6, tw: 1, th: 1 },
-      { col: 5, row: 8, tw: 2, th: 1 },
-    ],
+    frames: [T.log],
+    sprites: [{ col: 7, row: 8, tw: 1, th: 1 }],
     blocks: true,
-    collision: { x: 1, y: 8, w: 14, h: 6 },
+    collision: { x: 2, y: 8, w: 12, h: 6 },
   },
   fence: {
-    frames: [T.fencePost, T.fenceE, T.fenceW],
+    frames: [T.fencePost, T.fenceE],
     sprites: [
       { col: 6, row: 27, tw: 1, th: 1 },
       { col: 7, row: 27, tw: 1, th: 1 },
-      { col: 20, row: 4, tw: 1, th: 1 },
     ],
     blocks: true,
     collision: { x: 4, y: 3, w: 8, h: 12 },
   },
   milestone: {
-    frames: [T.milestone, T.milestoneB],
+    frames: [T.milestone],
     blocks: true,
     collision: { x: 4, y: 2, w: 8, h: 14 },
   },
   flower: {
-    frames: [T.flower, T.flowerB, T.flowerC, T.flowerD],
+    frames: [T.flower, T.flowerB],
     blocks: false,
     collision: null,
   },
   mushroom: {
-    frames: [T.mushroom, T.mushroomB, T.fungi, T.fungiB],
+    frames: [T.mushroom, T.mushroomB],
     blocks: false,
     collision: null,
   },
@@ -100,8 +103,11 @@ export const PROP_KINDS = {
     collision: { x: 2, y: 4, w: 12, h: 10 },
   },
   lamp: {
-    frames: [T.reed],
-    sprites: [{ col: 10, row: 6, tw: 1, th: 1 }],
+    frames: [4 + 6 * 28, 5 + 6 * 28],
+    sprites: [
+      { col: 4, row: 6, tw: 1, th: 1 },
+      { col: 5, row: 6, tw: 1, th: 1 },
+    ],
     blocks: false,
     collision: null,
   },

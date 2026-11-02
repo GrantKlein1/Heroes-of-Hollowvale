@@ -10,9 +10,7 @@ import { T } from './tileCatalog.js'
 import {
   buildingCell,
   cobbleTile,
-  forestTile,
   grassTile,
-  plainsTile,
   roadTile,
   shoreTile,
   wallTile,
@@ -26,6 +24,16 @@ function roadMask(wx, wy, kindAt) {
   if (ROAD_LIKE.has(kindAt(wx + 1, wy))) mask |= 2
   if (ROAD_LIKE.has(kindAt(wx, wy + 1))) mask |= 4
   if (ROAD_LIKE.has(kindAt(wx - 1, wy))) mask |= 8
+  return mask
+}
+
+function cobbleMask(wx, wy, kindAt) {
+  const stone = (x, y) => kindAt(x, y) === 'cobble'
+  let mask = 0
+  if (stone(wx, wy - 1)) mask |= 1
+  if (stone(wx + 1, wy)) mask |= 2
+  if (stone(wx, wy + 1)) mask |= 4
+  if (stone(wx - 1, wy)) mask |= 8
   return mask
 }
 
@@ -63,14 +71,13 @@ export function tileIndex(wx, wy, kindAt, seed) {
   if (STRUCTURAL.has(kind)) return dedicated(kind, wx, wy, seed)
   if (kind === 'road') return roadTile(roadMask(wx, wy, kindAt), mix(seed, wx, wy, 7))
   if (kind === 'water') return T.water
+  if (kind === 'cobble') return cobbleTile(cobbleMask(wx, wy, kindAt), mix(seed, wx, wy, 7))
   const bank = waterMask(wx, wy, kindAt)
-  if (bank !== 0 && kind !== 'cobble') {
+  if (bank !== 0) {
     const shore = shoreTile(bank)
     if (shore != null) return shore
   }
-  const h = mix(seed, wx, wy, 7)
-  if (kind === 'forest') return forestTile(h)
-  if (kind === 'plains') return plainsTile(h)
-  if (kind === 'cobble') return cobbleTile(h)
-  return grassTile(h)
+  // Forest, plains, and meadow share one grass. The wood edge is the
+  // trees and bushes placed on it, not a darker ground block.
+  return grassTile(mix(seed, wx, wy, 7))
 }

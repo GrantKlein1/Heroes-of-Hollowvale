@@ -6,8 +6,8 @@
 
 import { eventBus, GameEvents } from '../../lib/eventBus.js'
 import { session } from '../session.js'
-import { SHEET_COLS, TILE_COUNT, T, speedFactor } from './tileCatalog.js'
-import { TREES, WATER_COL, WATER_ROW } from './packMap.js'
+import { SHEET_COLS, TILE_COUNT, speedFactor } from './tileCatalog.js'
+import { BUILDINGS, TREES, WATER_COL, WATER_ROW } from './packMap.js'
 import { propSprite } from './props.js'
 import {
   LEAGUE_H,
@@ -69,7 +69,8 @@ export class OverworldController {
     this._teardown()
     this._build()
     const spot = this._resolveSpawn(spawn)
-    this.scene._playerPixelH = 22
+    this.scene._playerPixelH = 24
+    this.scene._pixelHIsVisible = true
     this.scene.unit = 0.5
     this.scene.worldW = SCREEN_W
     this.scene.worldH = SCREEN_H
@@ -83,6 +84,7 @@ export class OverworldController {
     this.active = false
     this._teardown()
     this.scene._playerPixelH = 0
+    this.scene._pixelHIsVisible = false
   }
 
   speed() {
@@ -219,6 +221,7 @@ export class OverworldController {
       const view = this.world.league(lx, ly)
       for (let i = 0; i < view.props.length; i++) this._addProp(view.props[i], view)
     })
+    for (let i = 0; i < BUILDINGS.length; i++) this._addBuilding(BUILDINGS[i])
 
     this._buildSolids()
     this.built = true
@@ -286,51 +289,28 @@ export class OverworldController {
     this._waterBase = ctx.getImageData(WATER_COL * TILE, WATER_ROW * TILE, 16, 16)
   }
 
-  _treeKey(variant) {
-    const spec = TREES[variant % TREES.length]
-    const key = `hv-tree-${spec.col}-${spec.row}`
+  _cutKey(name, x, y, w, h) {
+    const key = `hv-cut-${name}-${x}-${y}-${w}-${h}`
     if (this.scene.textures.exists(key)) return key
     const src = this.scene.textures.get('hollowvale').getSourceImage()
-    const canvas = this.scene.textures.createCanvas(key, spec.tw * TILE, spec.th * TILE)
+    const canvas = this.scene.textures.createCanvas(key, w, h)
     const ctx = canvas.getContext()
     ctx.imageSmoothingEnabled = false
-    ctx.clearRect(0, 0, spec.tw * TILE, spec.th * TILE)
-    ctx.drawImage(
-      src,
-      spec.col * TILE,
-      spec.row * TILE,
-      spec.tw * TILE,
-      spec.th * TILE,
-      0,
-      0,
-      spec.tw * TILE,
-      spec.th * TILE,
-    )
+    ctx.clearRect(0, 0, w, h)
+    ctx.drawImage(src, x, y, w, h, 0, 0, w, h)
     canvas.refresh()
     return key
   }
 
+  _treeKey(variant) {
+    const spec = TREES[variant % TREES.length]
+    return this._cutKey(spec.name, spec.x, spec.y, spec.w, spec.h)
+  }
+
   _propKey(spec) {
-    const key = `hv-prop-${spec.col}-${spec.row}-${spec.tw}-${spec.th}`
-    if (this.scene.textures.exists(key)) return key
-    const src = this.scene.textures.get('hollowvale').getSourceImage()
-    const canvas = this.scene.textures.createCanvas(key, spec.tw * TILE, spec.th * TILE)
-    const ctx = canvas.getContext()
-    ctx.imageSmoothingEnabled = false
-    ctx.clearRect(0, 0, spec.tw * TILE, spec.th * TILE)
-    ctx.drawImage(
-      src,
-      spec.col * TILE,
-      spec.row * TILE,
-      spec.tw * TILE,
-      spec.th * TILE,
-      0,
-      0,
-      spec.tw * TILE,
-      spec.th * TILE,
-    )
-    canvas.refresh()
-    return key
+    const w = (spec.tw || 1) * TILE
+    const h = (spec.th || 1) * TILE
+    return this._cutKey('prop', spec.col * TILE, spec.row * TILE, w, h)
   }
 
   _addProp(prop, view) {
@@ -338,27 +318,36 @@ export class OverworldController {
       const loot = view.loot.find((item) => item.wx === prop.wx && item.wy === prop.wy)
       if (loot && this.taken.has(loot.id)) return
     }
+    const tree = prop.tall ? TREES[prop.variant % TREES.length] : null
     const spec = prop.tall ? null : propSprite(prop.kind, prop.variant)
-    const span = prop.tall ? 2 : (spec.tw || 1)
+    const spanW = tree ? tree.w : (spec.tw || 1) * TILE
+    const spanH = tree ? tree.h : (spec.th || 1) * TILE
     const x = prop.wx * TILE + TILE / 2
     const y = prop.wy * TILE + TILE
-    let sprite
-    if (prop.tall) {
-      sprite = this.scene.add.image(x, y, this._treeKey(prop.variant))
-    } else if (span > 1 || spec.th > 1) {
-      sprite = this.scene.add.image(x, y, this._propKey(spec))
-    } else {
-      const frame = prop.frame ?? T.flower
-      sprite = this.scene.add.image(x, y, 'hollowvale-live', String(frame))
-    }
+    const sprite = this.scene.add.image(
+      x,
+      y,
+      prop.tall ? this._treeKey(prop.variant) : this._propKey(spec),
+    )
     sprite.setOrigin(0.5, 1)
+    sprite.setDisplaySize(spanW, spanH)
     sprite.setDepth(y + DEPTH_BIAS)
-    const shadow = this.scene.add.ellipse(x, y - 1, prop.tall ? 18 : 8 + span * 4, 4, 0x000000, 0.32)
+    const shadow = this.scene.add.ellipse(x, y - 1, Math.min(spanW - 4, 28), 4, 0x000000, 0.32)
     shadow.setDepth(y + DEPTH_BIAS - 1)
     this.sprites.push(shadow)
     sprite.propKind = prop.kind
     sprite.wx = prop.wx
     sprite.wy = prop.wy
+    this.sprites.push(sprite)
+  }
+
+  _addBuilding(spec) {
+    const x = spec.wx * TILE
+    const y = (spec.wy + 1) * TILE
+    const sprite = this.scene.add.image(x, y, this._cutKey(spec.name, spec.x, spec.y, spec.w, spec.h))
+    sprite.setOrigin(0, 1)
+    sprite.setDisplaySize(spec.w, spec.h)
+    sprite.setDepth(y + DEPTH_BIAS)
     this.sprites.push(sprite)
   }
 
