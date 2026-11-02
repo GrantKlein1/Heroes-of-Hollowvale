@@ -1,18 +1,20 @@
 # Art pipeline (Aseprite → Phaser)
 
-Base tile size is **16×16**. One league is one screen of **20×12** tiles (320×192 pixels). Neighboring screens overlap by one tile, so a shared edge is the same world cells. Painted 1024×1536 backdrops remain for interiors (the Embered Flagon, the market, the Cavern stand-in).
+Base tile size is **16×16**. One league is one screen of **20×12** tiles (320×192 pixels). Neighboring screens overlap by one tile, so a shared edge is the same world cells. The Embered Flagon and the market use interiors cut from the same sheet.
 
-## Starter tileset
+## Tileset
 
-`npm run tileset` runs `client/tools/generateTileset.mjs` (pngjs only). It writes:
+Overworld art is the **Ninja Adventure** asset pack by Pixel-Boy and AAA, 16×16 top-down, released under [CC0 1.0 Universal](https://pixel-boy.itch.io/ninja-adventure-asset-pack). Attribution is not required. The sheet, one character frame, and the license text live in `client/public/maps/ninja-adventure/` (`LICENSE.txt` is the CC0 legal text from the pack). The GameDev Market "Pro" redistribution is a different license and is not used.
 
-- `client/public/maps/hollowvale.png` — 16×16 sheet, 16 columns. Light is from the top-left. Ground tiles are opaque and seamless; trees, rocks, plants, and markers use alpha.
-- `client/public/maps/hollowvale.tsj` — Tiled tileset. Water, walls, roofs, and building walls are full-tile collision. Tree trunks, rocks, logs, bushes, fences, and the milestone use a partial footprint. Canopy tiles, fords, and bridges have none.
-- `client/public/maps/brackenford.json` and `hearthmile.json` — Tiled maps baked from the hand-authored kind grids in `client/src/game/world/stamps.js`. Phaser loads them with `tilemapTiledJSON`. Regenerate after editing the grids so the JSON stays in lockstep (the world test checks this).
-- `client/public/maps/preview.png` — the sheet plus the Brackenford-to-Hearthmile corridor.
-- `client/public/maps/aseprite/` — plain PNG slices (`01-ground.png`, `02-props.png`, `03-transitions.png`, and the full sheet) for editing in Aseprite. Open a slice, edit on the 16×16 grid, export over `hollowvale.png`, and keep the tile order. Do not add margin or spacing.
+`npm run tileset` runs `client/tools/generateTileset.mjs`. It copies `ninja-adventure/tileset.png` to `hollowvale.png`, fills transparent roof and fence pixels with grass, and writes:
 
-Rows 5–15 are dual-grid transitions, one pair per row, column = 4-bit corner mask (NW=1, NE=2, SW=4, SE=8). A mask of 0 or 15 is the seamless base tile. Trees are two tiles: canopy on row 3, trunk directly below on row 4, columns 0–3. The game stitches those into a 16×32 sprite so the canopy sorts above the player.
+- `client/public/maps/hollowvale.png` — the 28×40 pack sheet (448×640).
+- `client/public/maps/hollowvale.tsj` — Tiled tileset. Water and walls are full-tile collision. Tree stems, rocks, logs, and fences use a partial footprint. Canopy cells, fords, and bridges have none. The stem box is the trunk, not the dirt oval under the canopy.
+- `client/public/maps/brackenford.json` and `hearthmile.json` — Tiled maps baked from `client/src/game/world/stamps.js`. Regenerate after editing the grids (the world test checks this).
+- `tavern-interior.png`, `market-interior.png`, and `bandit.png` (one frame of the pack's hooded character).
+- `preview.png` — the Brackenford-to-Hearthmile corridor.
+
+Cell choice lives in `client/src/game/world/packMap.js`. Roads use the pack's sand-path edge tiles (north/east/south/west and corners). Deep water is the pond center; the orange bank tiles sit on the land beside it. Round trees are 32×32 sprites (canopy over the dirt base) drawn above the player. Cottages are slices of the sheet's houses.
 
 ## Sprite sheets
 

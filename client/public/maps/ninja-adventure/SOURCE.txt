@@ -1,0 +1,7 @@
+Ninja Adventure asset pack
+Authors: Pixel-Boy and AAA
+License: CC0 1.0 Universal (see LICENSE.txt in this folder)
+https://pixel-boy.itch.io/ninja-adventure-asset-pack
+
+The tileset and character sheet in this folder are the CC0 release.
+A paid "Pro Licence" listing of the same art on other storefronts is not used.
