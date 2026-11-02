@@ -1,35 +1,16 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react'
 import { sendChat as apiSendChat } from './lib/api'
-import { PATHS, CLASS_SPRITES, CLASS_ATTACK_SPRITES, ITEM_ICONS, DEFAULT_ITEM_ICON, COMPOSITE_SPRITES, ANIMATED_SWORD_FRAMES, ENEMY_SPRITES } from './config/paths'
+import { PATHS, CLASS_SPRITES, ITEM_ICONS, DEFAULT_ITEM_ICON, COMPOSITE_SPRITES, ANIMATED_SWORD_FRAMES } from './config/paths'
 import AnimatedSprite from './components/AnimatedSprite'
+import PhaserGame from './components/PhaserGame'
 import { eventBus, GameEvents } from './lib/eventBus'
 import { speakNpcDialogue, cancelNpcSpeech } from './lib/dialogueAudio'
 import {
   preloadSceneAudio,
   setSfxVolume,
-  onPlayerMove,
-  onDoorOpen,
-  onMeleeSwing,
-  onMeleeHit,
-  onSpellCast,
-  onSpellImpact,
-  onPlayerHurt,
-  emitNpcInteract,
 } from './game/MainGameScene'
-import { drawWilderness } from './game/terrain/render'
-import {
-  WILDERNESS_ENTRANCE_ID,
-  HUB_RETURN_SPAWN,
-  spawnAtEdge,
-  spawnFromHub,
-  wildernessFrame,
-  loadWildernessScreen,
-  resolveEdgeTransition,
-  detectCrossedEdge,
-  wildernessExitPrompts,
-  collidersWithExitGaps,
-  preloadTerrainImages,
-} from './game/terrain/wildernessBridge'
+import { session } from './game/session'
+import { SCENE_HINTS } from './game/sceneCatalog'
 
 // Simple top-down RPG prototype with two scenes: Village and Tavern
 
@@ -50,35 +31,8 @@ const ASSETS = {
 
 const LEAVE_PROMPT = `You are the gruff bartender of the Hollowvale Tavern. The traveler has asked many questions and you tire of them. Tell them to leave, in character.`
 
-function loadImage(src) {
-  return new Promise((resolve, reject) => {
-    const img = new Image()
-    img.onload = () => resolve(img)
-    img.onerror = reject
-    img.src = src
-  })
-}
-
-// Normalized rect helpers (x,y,w,h in 0..1 of canvas size)
-function nrect(x, y, w, h) { return { x, y, w, h } }
-function toPixels(rect, width, height) {
-  return {
-    x: rect.x * width,
-    y: rect.y * height,
-    w: rect.w * width,
-    h: rect.h * height,
-  }
-}
-
-function intersects(a, b) {
-  return !(a.x + a.w <= b.x || a.x >= b.x + b.w || a.y + a.h <= b.y || a.y >= b.y + b.h)
-}
-
 export default function Game() {
-  const canvasRef = useRef(null)
-  const rafRef = useRef(null)
   const keysRef = useRef({})
-  const imagesRef = useRef({})
   const musicRef = useRef(null)
   // Separate audio elements for ambient scene music (village/path/title), tavern ambience, and fight music
   const tavernMusicRef = useRef(null)
@@ -101,11 +55,6 @@ export default function Game() {
   const [selectedClass, setSelectedClass] = useState(null)
   // Live ref for selectedClass so key handlers see the latest value
   const selectedClassRef = useRef(null)
-  // Debug picker state
-  const frameRef = useRef({ dx: 0, dy: 0, dw: 1, dh: 1 })
-  const mouseRef = useRef({ nx: 0, ny: 0 })
-  const pickStartRef = useRef(null)
-  const [debugOn, setDebugOn] = useState(false)
 
   // Chat overlay state (bartender)
   const [chatOpen, setChatOpen] = useState(false)
@@ -180,51 +129,6 @@ export default function Game() {
   // Options toggles for hotbar behaviors
   const [allowFSwap, setAllowFSwap] = useState(() => (localStorage.getItem('allowFSwap') ?? 'true') !== 'false')
   const allowFSwapRef = useRef(allowFSwap)
-  // Attack animation state
-  const attackUntilRef = useRef(0)
-  // Attack timing and damage tuning
-  const ATTACK_DURATION_MS_DEFAULT = 1000 // baseline (used by dwarf and mage)
-  const ATTACK_DURATION_BY_CLASS = {
-    mage: 650,  // unchanged
-    thief: 300,  // fastest
-    knight: 450, // medium
-    dwarf: 600, // slowest (baseline)
-  }
-  const MELEE_DAMAGE_BY_CLASS = { thief: 8, knight: 12, dwarf: 15 }
-  const PLAYER_HITBOX_INSET = 4 // pixels; shrink player hitbox for fairness
-  const attackActiveRef = useRef(false) // true while attack pose is displayed
-  // Consumables (hold K to consume)
-  const CONSUME_DURATION_MS = 1000
-  const CONSUMABLE_IDS = new Set(['healing_potion','mana_potion','speed_potion'])
-  const consumeActiveRef = useRef(false)
-  const consumeStartRef = useRef(0)
-  const consumeItemRef = useRef(null) // { id, slot }
-  const consumeNeedsReleaseRef = useRef(false) // require K release before next start
-  const speedBoostUntilRef = useRef(0)
-  // Fireball system (mage): projectiles and lingering fires
-  // Tweak these to adjust distance and speed
-  const FIREBALL_SPEED = 420 // pixels per second
-  const FIREBALL_TRAVEL_DISTANCE = 220 // pixels to travel before stopping (adjust here)
-  const FIRE_LINGER_MS = 2000 // how long the small flame remains in place
-  const projectilesRef = useRef([]) // { x,y,w,h, vx,vy, startX,startY, maxDist, img }
-  const firesRef = useRef([]) // { x,y,w,h, until, img }
-  // Thief invisibility ability state
-  const thiefVanishUntilRef = useRef(0) // end of vanish animation (disappear gif)
-  const thiefSmokeUntilRef = useRef(0)  // end of smoke/invincible duration
-  const thiefVanishCooldownUntilRef = useRef(0) // cooldown gate for vanish ability
-  // Mage Life Leech cooldown (10s)
-  const lifeLeechCooldownUntilRef = useRef(0)
-  // Enemies in the current scene (spawned only in dungeonInterior)
-  const enemiesRef = useRef([]) // { id,type,hp,hpMax,x,y,w,h,speed, dir:{x,y}, changeAt:number, img }
-  const enemiesSpawnedRef = useRef(false)
-  // Player damage/iFrames and visual hit flash
-  const playerIFrameUntilRef = useRef(0)
-  const playerFlashUntilRef = useRef(0)
-  // Floating combat text (damage numbers)
-  const floatTextsRef = useRef([]) // { id, x, y, text, color, until, alpha }
-  // Dungeon waves
-  const dungeonWaveRef = useRef(1)
-  const nextWaveAtRef = useRef(0)
   // Mage spellbook and spell selection
   const [spellWheelOpen, setSpellWheelOpen] = useState(false)
   const spellWheelOpenRef = useRef(false)
@@ -239,429 +143,23 @@ export default function Game() {
   const setMageSpell = (id) => {
     const found = MAGE_SPELLS.find(s => s.id === id)
     mageSelectedSpellRef.current = id
+    session.spellId = id
     showNotice(`Selected ${found ? found.name : id}`)
   }
   // Game over overlay and killer info
   const [gameOver, setGameOver] = useState(false)
+  const [vitals, setVitals] = useState({ hp: 100, hpMax: 100, mana: 0, manaMax: 0 })
+  const [activePrompt, setActivePrompt] = useState('')
+  const [abilityNow, setAbilityNow] = useState(0)
   const gameOverRef = useRef(false)
-  const killerRef = useRef(null) // string label like 'Goblin Brute'
-  // SFX is handled by the Web Audio sfxEngine via MainGameScene helpers
-  // Force a lightweight refresh so DOM GIF overlays update position
-  const [effectsTick, setEffectsTick] = useState(0)
-  useEffect(() => {
-    let rafId
-    const tick = () => {
-      setEffectsTick((t) => (t + 1) % 1000000)
-      rafId = requestAnimationFrame(tick)
-    }
-    rafId = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(rafId)
-  }, [])
-  const effectIdRef = useRef(1)
-  const pushFloatText = (x, y, text, color = '#ffd7a1', ms = 700) => {
-    const now = performance.now()
-    floatTextsRef.current.push({ id: effectIdRef.current++, x, y, text, color, until: now + ms, alpha: 1 })
-  }
-  const enemyLabel = (type) => {
-    if (type === 'goblin') return 'Goblin'
-    if (type === 'brute') return 'Goblin Brute'
-    if (type === 'archer') return 'Goblin Archer'
-    return 'Unknown'
-  }
-  const triggerGameOver = (killerType) => {
-    if (gameOverRef.current) return
-    killerRef.current = enemyLabel(killerType || 'Unknown')
-    gameOverRef.current = true
-    setGameOver(true)
-  }
-  // Ensure sprite image swaps don't race: only apply the latest requested sprite
-  const spriteReqIdRef = useRef(0)
+  const killerRef = useRef(null)
   const setPlayerImageAsync = (src) => {
-    try {
-      const reqId = ++spriteReqIdRef.current
-      loadImage(src).then((img) => {
-        if (spriteReqIdRef.current === reqId) {
-          imagesRef.current.player = img
-        }
-      }).catch(()=>{})
-    } catch {}
+    session.spriteUrl = src || ''
   }
   // HUD tooltip and selection label
   const [hudTip, setHudTip] = useState({ show: false, text: '', x: 0, y: 0 })
   const [hotbarLabel, setHotbarLabel] = useState({ text: '', show: false })
   const hotbarLabelTimerRef = useRef(null)
-  // Store previous (non-attack) sprite image to immediately revert without waiting for load
-  const prevSpriteImgRef = useRef(null)
-  // Track last movement direction (for projectile aim)
-  const lastDirRef = useRef({ x: 1, y: 0 })
-
-  // Player state
-  const playerRef = useRef({
-    x: 0, y: 0, w: 48, h: 48, speed: 160,
-    hpMax: 100, hp: 100,
-    manaMax: 0, mana: 0,
-  })
-  // Remember where the player left the village (normalized image coords)
-  const lastVillagePosRef = useRef({ nx: 0.5, ny: 0.90 })
-  // Remember where the player was standing in the dungeon entrance when entering the treasure room
-  const treasureReturnPosRef = useRef({ nx: 0.235, ny: 0.20 })
-  // Procedural wilderness: current graph node + layout + brief edge-transition latch
-  const wildernessNodeIdRef = useRef(WILDERNESS_ENTRANCE_ID)
-  const wildernessLayoutRef = useRef(null)
-  const wildernessEdgeLatchUntilRef = useRef(0)
-
-  // Scene definitions with simple colliders and interact zones (normalized)
-  const scenes = {
-    village: {
-      bgKey: 'villageBg',
-      fitMode: 'contain', // show entire image
-      // Colliders use coordinates normalized to the image frame (0..1 in that image's drawn rect)
-      // Create a gap for the tavern door by splitting the building into left/right blocks
-      colliders: [
-        // World border padding (keeps player within image area)
-        nrect(0, -0.02, 1, 0.02), // top wall
-        nrect(0, 1, 1, 0.02), // bottom wall
-        nrect(-0.02, 0, 0.02, 1), // left wall
-        nrect(1, 0, 0.02, 1), // right wall
-        // Tavern building blocks (approx top-center), leaving a door gap in the very middle
-        // Adjusted to match the visual mug/door area centered on the image
-        nrect(0.788, 0.684, 0.195, 0.219),
-        nrect(0.775, 0.169, 0.193, 0.141),
-        nrect(0.004, 0.089, 0.222, 0.239),
-        nrect(0.008, 0.006, 0.983, 0.198),
-        nrect(0.309, 0.250, 0.377, 0.394),
-        nrect(0.004, 0.819, 0.208, 0.158)
-      ],
-  // Door centered beneath the mug: moved further down based on feedback
-  door: nrect(0.44, 0.55, 0.12, 0.14),
-      // Travel zone at bottom-middle to enter the path scene (lifted above the HUD hotbar)
-      toPath: nrect(0.40, 0.82, 0.20, 0.16),
-      // Market entrance at upper-left, around 20% down from top
-      toMarket: nrect(0.02, 0.24, 0.14, 0.18),
-      onEnter: () => {
-        onDoorOpen()
-        sceneRef.current = 'tavern'
-        setScene('tavern')
-        // Spawn just inside tavern entrance (relative to tavern image frame)
-        playerRef.current._spawn = { scene: 'tavern', nx: 0.5, ny: 0.85 }
-      },
-      onTravelSouth: () => {
-        onDoorOpen()
-        sceneRef.current = 'path'
-        setScene('path')
-        // Spawn at top-middle of the path scene
-        playerRef.current._spawn = { scene: 'path', nx: 0.5, ny: 0.10 }
-      },
-      onEnterMarket: () => {
-        onDoorOpen()
-        sceneRef.current = 'market'
-        setScene('market')
-        // Spawn at bottom-middle of the market scene
-        playerRef.current._spawn = { scene: 'market', nx: 0.5, ny: 0.90 }
-      },
-      // Spawn near bottom-center on initial load
-      spawn: { nx: 0.5, ny: 0.90 },
-  playerScale: 0.13, // slightly larger: sprite height as fraction of image height
-    },
-    tavern: {
-  bgKey: 'tavernBg',
-  fitMode: 'contain', // show entire interior so spawn is always visible
-      colliders: [
-        // World borders
-        nrect(0, -0.02, 1, 0.02),
-        nrect(0, 1, 1, 0.02),
-        nrect(-0.02, 0, 0.02, 1),
-        nrect(1, 0, 0.02, 1),
-        // Bar counter across the room
-        nrect(0.15, 0.35, 0.70, 0.06),
-      ],
-      bartender: { nx: 0.5, ny: 0.45, w: 64, h: 64 },
-      // Optional: exit back to village if pressing E near bottom center (lifted above HUD)
-      exit: nrect(0.40, 0.84, 0.20, 0.14),
-      onExit: () => {
-        onDoorOpen()
-        sceneRef.current = 'village'
-        setScene('village')
-        playerRef.current._spawn = { scene: 'village', nx: 0.5, ny: 0.72 }
-      },
-  spawn: { nx: 0.5, ny: 0.82 },
-  playerScale: 0.13,
-    },
-    path: {
-      bgKey: 'pathBg',
-      fitMode: 'contain',
-      colliders: [
-        // World borders
-        nrect(0, -0.02, 1, 0.02),
-        nrect(0, 1, 1, 0.02),
-        nrect(-0.02, 0, 0.02, 1),
-        nrect(1, 0, 0.02, 1),
-        nrect(0.002, 0.001, 0.432, 0.203),
-        nrect(0.714, 0.011, 0.278, 0.144),
-        nrect(0.627, 0.158, 0.362, 0.065),
-        nrect(0.735, 0.273, 0.265, 0.065),
-        nrect(0.852, 0.401, 0.140, 0.220),
-        nrect(0.612, 0.493, 0.388, 0.134),
-        nrect(0.706, 0.645, 0.288, 0.095),
-        nrect(0.746, 0.850, 0.237, 0.020),
-        nrect(0.466, 0.774, 0.055, 0.031),
-        nrect(0.008, 0.001, 0.371, 0.209),
-        nrect(0.013, 0.227, 0.267, 0.110),
-        nrect(0.008, 0.350, 0.303, 0.249),
-        nrect(0.004, 0.658, 0.191, 0.335)
-      ],
-      // Exit back to village at TOP-center
-      toVillage: nrect(0.40, 0.04, 0.20, 0.14),
-      // Enter dungeon at BOTTOM-center (lifted above HUD)
-      toDungeon: nrect(0.46, 0.82, 0.20, 0.16),
-      onReturn: () => {
-        onDoorOpen()
-        sceneRef.current = 'village'
-        setScene('village')
-        // Return to where the player left (bottom-middle area), using saved normalized coords
-        const nx = Number.isFinite(lastVillagePosRef.current?.nx) ? lastVillagePosRef.current.nx : 0.5
-        const nyRaw = Number.isFinite(lastVillagePosRef.current?.ny) ? lastVillagePosRef.current.ny : 0.90
-        // Clamp inside the visible frame just a bit
-        const ny = Math.max(0.02, Math.min(0.98, nyRaw))
-        playerRef.current._spawn = { scene: 'village', nx, ny }
-      },
-      onEnterDungeon: () => {
-        onDoorOpen()
-        sceneRef.current = 'dungeon'
-        setScene('dungeon')
-        // Spawn bottom-left area of the dungeon entrance image
-        playerRef.current._spawn = { scene: 'dungeon', nx: 0.12, ny: 0.88 }
-      },
-      // Default spawn when entering path directly
-      spawn: { nx: 0.5, ny: 0.10 },
-      playerScale: 0.13,
-    },
-    dungeon: {
-      bgKey: 'dungeonBg',
-      fitMode: 'contain',
-      colliders: [
-        // World borders
-        nrect(0, -0.02, 1, 0.02),
-        nrect(0, 1, 1, 0.02),
-        nrect(-0.02, 0, 0.02, 1),
-        nrect(1, 0, 0.02, 1),
-        nrect(0.049, 0.613, 0.174, 0.075),
-        nrect(0.144, 0.282, 0.081, 0.165),
-        nrect(0.189, 0.147, 0.239, 0.085),
-        nrect(0.278, 0.076, 0.712, 0.064),
-        nrect(0.356, 0.000, 0.631, 0.062),
-        nrect(0.684, 0.169, 0.284, 0.110),
-        nrect(0.744, 0.463, 0.089, 0.062),
-        nrect(0.873, 0.665, 0.064, 0.037),
-        nrect(0.712, 0.614, 0.044, 0.020)
-      ],
-      // Exit back to path near bottom-left where player spawns
-      toPath: nrect(0.04, 0.82, 0.20, 0.14),
-      // Enter the dungeon interior at TOP-center
-      toInterior: nrect(0.40, 0.10, 0.20, 0.16),
-  // Secret entrance to the tavern near top-left around (0.235, 0.110)
-  toTavern: nrect(0.20, 0.075, 0.07, 0.07),
-      // Wilderness trailhead on the painted dirt at the bottom-right
-      toWilderness: nrect(0.78, 0.83, 0.18, 0.13),
-      onExitToPath: () => {
-        onDoorOpen()
-        sceneRef.current = 'path'
-        setScene('path')
-        playerRef.current._spawn = { scene: 'path', nx: 0.65, ny: 0.92 }
-      },
-      onEnterInterior: () => {
-        onDoorOpen()
-        sceneRef.current = 'dungeonInterior'
-        setScene('dungeonInterior')
-        // Spawn just inside the dungeon interior near bottom-middle
-        playerRef.current._spawn = { scene: 'dungeonInterior', nx: 0.5, ny: 0.90 }
-      },
-      onEnterTavern: () => {
-        // Rewired: secret entrance now leads to hidden treasure room
-        onDoorOpen()
-        sceneRef.current = 'treasureRoom'
-        setScene('treasureRoom')
-        // Enter at top-middle inside the treasure room
-        playerRef.current._spawn = { scene: 'treasureRoom', nx: 0.5, ny: 0.10 }
-      },
-      onEnterWilderness: () => {
-        onDoorOpen()
-        const nodeId = WILDERNESS_ENTRANCE_ID
-        const layout = loadWildernessScreen(nodeId)
-        wildernessNodeIdRef.current = nodeId
-        wildernessLayoutRef.current = layout
-        wildernessEdgeLatchUntilRef.current = performance.now() + 600
-        const sp = spawnFromHub(layout)
-        sceneRef.current = 'wilderness'
-        setScene('wilderness')
-        playerRef.current._spawn = { scene: 'wilderness', nx: sp.nx, ny: sp.ny }
-      },
-      // Default spawn in bottom-left region
-      spawn: { nx: 0.12, ny: 0.88 },
-      playerScale: 0.13,
-    }
-  };
-
-  // Add Dungeon Interior scene after base scenes definition
-  Object.assign(scenes, {
-    market: {
-      bgKey: 'marketBg',
-      fitMode: 'contain',
-      colliders: [
-        nrect(0, -0.02, 1, 0.02),
-        nrect(0, 1, 1, 0.02),
-        nrect(-0.02, 0, 0.02, 1),
-        nrect(1, 0, 0.02, 1),
-        nrect(0.008, 0.466, 0.980, 0.117)
-      ],
-      // Market owner interaction zone at screen center
-      vendor: nrect(0.45, 0.52, 0.10, 0.10),
-      // Exit back to village at bottom-middle (lifted above HUD)
-      toVillage: nrect(0.40, 0.84, 0.20, 0.14),
-      onExitToVillage: () => {
-        onDoorOpen()
-        sceneRef.current = 'village'
-        setScene('village')
-        // Return to the village near the market entrance (upper-left area ~20% down)
-        playerRef.current._spawn = { scene: 'village', nx: 0.11, ny: 0.40 }
-      },
-      // Default spawn in market is bottom-middle
-      spawn: { nx: 0.5, ny: 0.90 },
-      playerScale: 0.13,
-    },
-    dungeonInterior: {
-      bgKey: 'dungeonInteriorBg',
-      fitMode: 'contain',
-      colliders: [
-        // World borders only for now
-        nrect(0, -0.02, 1, 0.02),
-        nrect(0, 1, 1, 0.02),
-        nrect(-0.02, 0, 0.02, 1),
-        nrect(1, 0, 0.02, 1),
-        nrect(0.915, 0.452, 0.087, 0.415),
-        nrect(0.968, 0.226, 0.047, 0.188),
-        nrect(0.686, 0.017, 0.220, 0.179),
-        nrect(0.019, 0.017, 0.297, 0.169),
-        nrect(0.275, 0.016, 0.051, 0.157),
-        nrect(0.002, 0.175, 0.178, 0.096),
-        nrect(0.008, 0.404, 0.076, 0.234),
-        nrect(0.203, 0.716, 0.032, 0.021),
-        nrect(0.006, 0.665, 0.087, 0.194)
-      ],
-      // Exit back to the entrance at BOTTOM-center (lifted above HUD)
-      toEntrance: nrect(0.40, 0.84, 0.20, 0.14),
-      onExitToEntrance: () => {
-        onDoorOpen()
-        sceneRef.current = 'dungeon'
-        setScene('dungeon')
-        // Spawn near top-middle of the entrance image
-        playerRef.current._spawn = { scene: 'dungeon', nx: 0.55, ny: 0.22 }
-      },
-      // Default spawn just inside at bottom-middle
-      spawn: { nx: 0.5, ny: 0.90 },
-      playerScale: 0.13,
-    },
-    treasureRoom: {
-      bgKey: 'treasureBg',
-      fitMode: 'contain',
-      colliders: [
-        nrect(0, -0.02, 1, 0.02),
-        nrect(0, 1, 1, 0.02),
-        nrect(-0.02, 0, 0.02, 1),
-        nrect(1, 0, 0.02, 1),
-        nrect(0.008, 0.329, 0.114, 0.041),
-        nrect(0.114, 0.583, 0.089, 0.034),
-        nrect(0.172, 0.782, 0.083, 0.064),
-        nrect(0.674, 0.831, 0.053, 0.034),
-        nrect(0.803, 0.624, 0.112, 0.059),
-        nrect(0.790, 0.398, 0.176, 0.042),
-        nrect(0.665, 0.006, 0.326, 0.168),
-        nrect(0.008, 0.011, 0.305, 0.169),
-        nrect(0.816, 0.185, 0.117, 0.028)
-
-      ],
-      // Hidden chests: 5 total; indices 1 and 3 are locked and require lockpick
-      treasureChests: [
-        { rect: nrect(0.053, 0.339, 0.102, 0.035), locked: false },
-        { rect: nrect(0.126, 0.579, 0.106, 0.041), locked: false },
-        { rect: nrect(0.811, 0.171, 0.102, 0.054), locked: false },
-        { rect: nrect(0.776, 0.424, 0.140, 0.039), locked: false },
-        { rect: nrect(0.801, 0.640, 0.110, 0.049), locked: false },
-        { rect: nrect(0.650, 0.843, 0.124, 0.031), locked: true },
-        { rect: nrect(0.140, 0.806, 0.150, 0.050), locked: true },
-      ],
-      // Exit zone placed at the top-middle, right where the player spawns
-      toEntrance: nrect(0.40, 0.04, 0.20, 0.14),
-      onExitToEntrance: () => {
-        onDoorOpen()
-        sceneRef.current = 'dungeon'
-        setScene('dungeon')
-        // Return the player to the exact spot they entered from (normalized coords saved earlier)
-        const nx = Number.isFinite(treasureReturnPosRef.current?.nx) ? treasureReturnPosRef.current.nx : 0.235
-        const ny = Number.isFinite(treasureReturnPosRef.current?.ny) ? treasureReturnPosRef.current.ny : 0.20
-        playerRef.current._spawn = { scene: 'dungeon', nx, ny }
-      },
-      spawn: { nx: 0.5, ny: 0.10 },
-      playerScale: 0.13,
-    },
-    // Procedural wilderness — bg drawn via drawWilderness; colliders come from layout each frame
-    wilderness: {
-      bgKey: null,
-      fitMode: 'contain',
-      colliders: [],
-      spawn: { nx: 0.5, ny: 0.12 },
-      playerScale: 0.11,
-    },
-  });
-
-  // Load images and set initial spawn
-  useEffect(() => {
-    let cancelled = false
-    const safe = (src) => loadImage(src).catch(() => null)
-    // First, load required scene backgrounds; if these fail, we still proceed but warn
-    Promise.all([
-      safe(ASSETS.villageBg),
-      safe(ASSETS.tavernBg),
-      safe(ASSETS.marketBg),
-      safe(ASSETS.pathBg),
-      safe(ASSETS.dungeonBg),
-      safe(ASSETS.dungeonInteriorBg),
-      safe(ASSETS.treasureBg),
-    ]).then(([villageBg, tavernBg, marketBg, pathBg, dungeonBg, dungeonInteriorBg, treasureBg]) => {
-      if (cancelled) return
-      imagesRef.current = { villageBg, tavernBg, marketBg, pathBg, dungeonBg, dungeonInteriorBg, treasureBg, player: null }
-      // Terrain sprites for wilderness draw (missing → color-box fallback in drawWilderness)
-      preloadTerrainImages(safe).then((terrainById) => {
-        if (!cancelled) imagesRef.current.terrainById = terrainById
-      })
-      // Kick off optional asset loads without blocking readiness
-  safe(PATHS.animatedFireBallGif).then((img) => { if (!cancelled && img) imagesRef.current.fireBallGif = img })
-      safe(PATHS.animatedFireSmallGif).then((img) => { if (!cancelled && img) imagesRef.current.fireSmallGif = img })
-      safe(PATHS.animatedThiefPotionGif).then((img) => { if (!cancelled && img) imagesRef.current.thiefPotionGif = img })
-  safe(PATHS.poisonPotionGif).then((img) => { if (!cancelled && img) imagesRef.current.poisonPotionGif = img })
-  safe(PATHS.thiefDisappearGif).then((img) => { if (!cancelled && img) imagesRef.current.thiefDisappearGif = img })
-  safe(PATHS.thiefSmokeGif).then((img) => { if (!cancelled && img) imagesRef.current.thiefSmokeGif = img })
-  // Life Leech projectile gif
-  safe(PATHS.lifeLeechSpellGif).then((img) => { if (!cancelled && img) imagesRef.current.lifeLeechSpellGif = img })
-  // Preload mage spell icons for instant spell wheel rendering
-  safe(PATHS.lightningBoltIcon).then((img) => { if (!cancelled && img) imagesRef.current.lightningBoltIcon = img })
-  safe(PATHS.blinkIcon).then((img) => { if (!cancelled && img) imagesRef.current.blinkIcon = img })
-  safe(PATHS.lifeLeechIcon).then((img) => { if (!cancelled && img) imagesRef.current.lifeLeechIcon = img })
-  safe(PATHS.manaShieldIcon).then((img) => { if (!cancelled && img) imagesRef.current.manaShieldIcon = img })
-  // Enemy sprites
-  safe(ENEMY_SPRITES.goblin).then((img) => { if (!cancelled && img) imagesRef.current.goblin = img })
-  safe(ENEMY_SPRITES.brute).then((img) => { if (!cancelled && img) imagesRef.current.brute = img })
-  safe(ENEMY_SPRITES.archer).then((img) => { if (!cancelled && img) imagesRef.current.archer = img })
-    // Arrow sprite
-    safe(PATHS.goblinArrow).then((img) => { if (!cancelled && img) imagesRef.current.goblinArrow = img })
-      setReady(true)
-    }).catch(() => {
-      // As a last resort, still mark ready to avoid hanging UI; missing images will be null and handled gracefully.
-      if (!cancelled) setReady(true)
-    })
-    return () => { cancelled = true }
-  }, [])
-
   // Player classes
   const CLASSES = {
     knight: {
@@ -840,31 +338,17 @@ export default function Game() {
   async function chooseClass(id) {
     const def = CLASSES[id]
     if (!def) return
-    try {
-      const img = await loadImage(def.sprite)
-      imagesRef.current.player = img
-      setSelectedClass(id)
-      setClassSelectOpen(false)
-    } catch (e) {
-      // fallback: keep rectangle if sprite missing
-      setSelectedClass(id)
-      setClassSelectOpen(false)
-    }
-    // Adjust movement speed per class (mage/thief slightly faster)
-    if (id === 'mage') playerRef.current.speed = 180
-    else if (id === 'thief') playerRef.current.speed = 200
-    else playerRef.current.speed = 160
-    // Set base vitals
-    playerRef.current.hpMax = 100
-    playerRef.current.hp = playerRef.current.hpMax
-    if (id === 'mage') {
-      playerRef.current.manaMax = 100
-      playerRef.current.mana = 100
-    } else {
-      playerRef.current.manaMax = 0
-      playerRef.current.mana = 0
-    }
-    // Seed inventory for chosen class
+    const speed = id === 'mage' ? 180 : id === 'thief' ? 200 : 160
+    session.classId = id
+    session.baseSpeed = speed
+    session.spriteUrl = def.sprite
+    session.hp = 100
+    session.hpMax = 100
+    session.manaMax = id === 'mage' ? 100 : 0
+    session.mana = session.manaMax
+    setVitals({ hp: 100, hpMax: 100, mana: session.mana, manaMax: session.manaMax })
+    setSelectedClass(id)
+    setClassSelectOpen(false)
     setInventory(seedInventoryForClass(id))
   }
 
@@ -976,9 +460,11 @@ export default function Game() {
     else if (baseSprite) setPlayerImage(baseSprite)
   }
 
-  // Update player sprite when the selected hotbar item or offhand changes (unless attack pose is active)
+  // Push the equipped item and composite sprite into the Phaser session.
   useEffect(() => {
-    if (performance.now() < attackUntilRef.current) return
+    const it = inventory.hotbar[activeHotbar]
+    session.equippedId = it ? it.id : null
+    session.hotbarSlot = activeHotbar
     applyCurrentSprite()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedClass, activeHotbar, inventory.hotbar[activeHotbar]?.id, inventory.armor.offhand?.id])
@@ -1143,6 +629,52 @@ export default function Game() {
     const counts = { ruby:0, sapphire:0, emerald:0 }
     for (let i=0;i<total;i++) counts[kinds[ri(0,2)]]++
     return counts
+  }
+
+  const openChest = (index, locked) => {
+    if (locked) {
+      const res = consumeOneItem(inventoryRef.current, 'lockpicks')
+      if (!res.consumed) {
+        showNotice('Locked. Requires lockpicks.')
+        return false
+      }
+      setInventory(res.next)
+      inventoryRef.current = res.next
+    }
+    const loot = rollGemLoot()
+    if (locked) {
+      loot.ruby += 8
+      loot.sapphire += 8
+      loot.emerald += 8
+    }
+    const potionRewards = locked
+      ? [
+          { id: 'healing_potion', count: 1 },
+          { id: 'poison_vial', count: 1 },
+          { id: 'speed_potion', count: 1 },
+        ]
+      : []
+    const overflow = grantLoot(loot, potionRewards)
+    const gemParts = []
+    if (loot.ruby) gemParts.push(`${loot.ruby} Rub${loot.ruby > 1 ? 'ies' : 'y'}`)
+    if (loot.sapphire) gemParts.push(`${loot.sapphire} Sapphire${loot.sapphire > 1 ? 's' : ''}`)
+    if (loot.emerald) gemParts.push(`${loot.emerald} Emerald${loot.emerald > 1 ? 's' : ''}`)
+    const overflowNames = overflow.map(({ id, count }) => `${count}x ${getItemDef(id).name}`)
+    if (locked) {
+      const potionNames = potionRewards.map((p) => getItemDef(p.id).name)
+      const segments = []
+      if (gemParts.length) segments.push(gemParts.join(', '))
+      segments.push(`potions (${potionNames.join(', ')})`)
+      let message = `You picked the lock! Loot: ${segments.join(' + ')}`
+      if (overflowNames.length) message += `. No space for ${overflowNames.join(', ')}`
+      showNotice(message)
+    } else {
+      let message = gemParts.length ? `You found ${gemParts.join(', ')}!` : 'The chest was empty...'
+      if (overflowNames.length) message += ` No space for ${overflowNames.join(', ')}`
+      showNotice(message)
+    }
+    void index
+    return true
   }
 
   // ----- Market helpers: gem accounting and purchasing -----
@@ -1749,13 +1281,9 @@ export default function Game() {
       if (!typing && ['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].includes(e.key.toLowerCase())) {
         e.preventDefault()
       }
-      // Toggle debug collider picker with F2 or backtick
-      if (e.key === 'F2' || e.key === 'f2' || e.key === '`') {
-        setDebugOn((v) => !v)
-      }
       // Toggle inventory with 'v' (blocked during thief vanish animation)
       if (!typing && (e.key === 'v' || e.key === 'V')) {
-        if (selectedClassRef.current === 'thief' && performance.now() < thiefVanishUntilRef.current) return
+        if (session.classId === 'thief' && performance.now() < session.thiefVanishUntil) return
         e.preventDefault()
         if (inventoryOpenRef.current) returnDraggedToInventory()
         setInventoryOpen(v => !v)
@@ -1767,180 +1295,6 @@ export default function Game() {
         if (key >= '1' && key <= '9') {
           const idx = Number(key) - 1
           setActiveHotbar(idx)
-        }
-        // Space: Attack or throw consumables depending on class/item
-  if (key === ' ' || codeName === 'Space') {
-          // Avoid extending the attack by key-repeat or spamming
-          if (e.repeat) return
-          const now = performance.now()
-          if (now < attackUntilRef.current) return
-          const cls = selectedClassRef.current
-          const curItem = inventoryRef.current?.hotbar?.[activeHotbarRef.current]
-          const weaponByClass = {
-            knight: 'iron_sword',
-            mage: 'apprentice_staff',
-            thief: 'twin_daggers',
-            dwarf: 'battle_axe',
-          }
-          const attackSprite = cls ? CLASS_ATTACK_SPRITES[cls] : null
-          const neededItem = cls ? weaponByClass[cls] : null
-          const hasWeaponEquipped = !!(curItem && neededItem && curItem.id === neededItem)
-          const canAttack = !!(cls && attackSprite && hasWeaponEquipped)
-
-          // Thief: throw poison potion if holding it (no attack pose timer; immediate hand revert)
-          if (cls === 'thief' && curItem && curItem.id === 'poison_vial') {
-            // Aim and spawn potion projectile
-            const p = playerRef.current
-            const dir = { x: lastDirRef.current.x, y: lastDirRef.current.y }
-            if (Math.abs(dir.x) < 0.001 && Math.abs(dir.y) < 0.001) { dir.x = 1; dir.y = 0 }
-            const len = Math.hypot(dir.x, dir.y); if (len > 0) { dir.x /= len; dir.y /= len }
-            const startX = p.x + p.w / 2 + dir.x * 12
-            const startY = p.y + p.h / 2 + dir.y * 12
-            const gif = imagesRef.current.thiefPotionGif
-            projectilesRef.current.push({
-              id: effectIdRef.current++,
-              x: startX - 21,
-              y: startY - 21,
-              w: 42,
-              h: 42,
-              vx: dir.x * FIREBALL_SPEED,
-              vy: dir.y * FIREBALL_SPEED,
-              startX,
-              startY,
-              maxDist: FIREBALL_TRAVEL_DISTANCE,
-              domSrc: PATHS.animatedThiefPotionGif,
-              impactKey: 'poisonPotionGif',
-              lingerMs: 2000,
-              owner: 'player'
-            })
-            // Consume one poison vial and immediately revert sprite to new inventory state
-            setInventory((inv) => {
-              const res = consumeOneItem(inv, 'poison_vial')
-              requestAnimationFrame(() => applySpriteForSnapshot(res.next))
-              return res.next
-            })
-            return
-          }
-          // Prevent actions during vanish animation phase
-          if (cls === 'thief' && performance.now() < thiefVanishUntilRef.current) return
-          // Mage Life Leech cast (Space while spellbook in hand & Life Leech selected & off cooldown)
-          if (cls === 'mage' && curItem && curItem.id === 'spellbook' && mageSelectedSpellRef.current === 'leech') {
-            const nowCast = performance.now()
-            if (nowCast < lifeLeechCooldownUntilRef.current) return
-            // Launch leech projectile (uses same speed/dist as fireball)
-            const p = playerRef.current
-            const dir = { x: lastDirRef.current.x, y: lastDirRef.current.y }
-            if (Math.abs(dir.x) < 0.001 && Math.abs(dir.y) < 0.001) { dir.x = 1; dir.y = 0 }
-            const len = Math.hypot(dir.x, dir.y); if (len > 0) { dir.x /= len; dir.y /= len }
-            const startX = p.x + p.w / 2 + dir.x * 12
-            const startY = p.y + p.h / 2 + dir.y * 12
-            projectilesRef.current.push({
-              id: effectIdRef.current++,
-              x: startX - 21,
-              y: startY - 21,
-              w: 42,
-              h: 42,
-              vx: dir.x * FIREBALL_SPEED,
-              vy: dir.y * FIREBALL_SPEED,
-              startX,
-              startY,
-              maxDist: FIREBALL_TRAVEL_DISTANCE,
-              domSrc: PATHS.lifeLeechSpellGif,
-              impactKey: 'lifeLeech',
-              owner: 'player',
-              special: 'lifeLeech'
-            })
-            // Set cooldown (10s)
-            lifeLeechCooldownUntilRef.current = nowCast + 10000
-            showNotice('Cast Life Leech')
-            return
-          }
-          if (canAttack) {
-            // If mage, ensure enough mana BEFORE triggering attack pose
-            if (cls === 'mage' && neededItem === 'apprentice_staff') {
-              if ((playerRef.current.mana || 0) < 15) {
-                showNotice('Not enough mana.')
-                return
-              }
-            }
-            // Show attack pose and mark active; main loop will revert when time elapses
-            const attackMs = ATTACK_DURATION_BY_CLASS[cls] ?? ATTACK_DURATION_MS_DEFAULT
-            attackUntilRef.current = now + attackMs
-            attackActiveRef.current = true
-            // Cache current sprite for instant revert later
-            prevSpriteImgRef.current = imagesRef.current.player
-            setPlayerImageAsync(attackSprite)
-            // Mage ranged projectile (fireball)
-            if (cls === 'mage' && neededItem === 'apprentice_staff') {
-              // Spend mana now that attack is confirmed (reduced cost)
-              playerRef.current.mana = Math.max(0, (playerRef.current.mana || 0) - 15)
-              onSpellCast()
-              const p = playerRef.current
-              const dir = { x: lastDirRef.current.x, y: lastDirRef.current.y }
-              // Default facing right if no movement yet
-              if (Math.abs(dir.x) < 0.001 && Math.abs(dir.y) < 0.001) { dir.x = 1; dir.y = 0 }
-              // Normalize
-              const len = Math.hypot(dir.x, dir.y)
-              if (len > 0) { dir.x /= len; dir.y /= len }
-              const startX = p.x + p.w / 2 + dir.x * 12
-              const startY = p.y + p.h / 2 + dir.y * 12
-              // Spawn regardless of image preloading; DOM <img> will load via src
-              projectilesRef.current.push({
-                id: effectIdRef.current++,
-                x: startX - 16,
-                y: startY - 16,
-                w: 32,
-                h: 32,
-                vx: dir.x * FIREBALL_SPEED,
-                vy: dir.y * FIREBALL_SPEED,
-                startX,
-                startY,
-                maxDist: FIREBALL_TRAVEL_DISTANCE,
-                impactKey: 'fireSmallGif',
-                domSrc: PATHS.animatedFireBallGif,
-                lingerMs: FIRE_LINGER_MS,
-                owner: 'player'
-              })
-            } else {
-              // Melee attack (knight/thief/dwarf): deal damage in a short frontal area
-              onMeleeSwing()
-              const dmg = MELEE_DAMAGE_BY_CLASS[cls] ?? 0
-              if (dmg > 0 && enemiesRef.current.length) {
-                const p = playerRef.current
-                const dir = { x: lastDirRef.current.x, y: lastDirRef.current.y }
-                if (Math.abs(dir.x) < 0.001 && Math.abs(dir.y) < 0.001) { dir.x = 1; dir.y = 0 }
-                // Determine orientation and build a frontal AABB
-                let atk
-                if (Math.abs(dir.x) >= Math.abs(dir.y)) {
-                  // Horizontal swing
-                  const w = Math.max(14, Math.round(p.w * 0.85))
-                  const h = Math.max(12, Math.round(p.h * 0.55))
-                  const x = dir.x > 0 ? (p.x + p.w) : (p.x - w)
-                  const y = p.y + (p.h - h) / 2
-                  atk = { x, y, w, h }
-                } else {
-                  // Vertical swing
-                  const w = Math.max(12, Math.round(p.w * 0.55))
-                  const h = Math.max(14, Math.round(p.h * 0.85))
-                  const x = p.x + (p.w - w) / 2
-                  const y = dir.y > 0 ? (p.y + p.h) : (p.y - h)
-                  atk = { x, y, w, h }
-                }
-                // Apply damage to any enemies intersecting the attack box
-                let landedHit = false
-                for (const e2 of enemiesRef.current) {
-                  if (e2.hp <= 0) continue
-                  if (intersects(atk, { x: e2.x, y: e2.y, w: e2.w, h: e2.h })) {
-                    e2.hp = Math.max(0, e2.hp - dmg)
-                    e2.flashUntil = performance.now() + 120
-                    pushFloatText(e2.x + e2.w/2, e2.y - 6, `-${dmg}`, '#ff6161')
-                    landedHit = true
-                  }
-                }
-                if (landedHit) onMeleeHit()
-              }
-            }
-          }
         }
   // Swap selected hotbar item with offhand using F (like Minecraft)
         if ((key === 'f' || key === 'F') && allowFSwapRef.current) {
@@ -1957,42 +1311,9 @@ export default function Game() {
             return next
           })
         }
-  // Thief invisibility ability trigger (press J) -> vanish then smoke (invincibility) with cooldown
-        if ((key === 'j' || key === 'J') && selectedClassRef.current === 'thief') {
-          const now2 = performance.now()
-          // Can't start if already in vanish or smoke or overlays/gameover or on cooldown
-          if (now2 < thiefVanishUntilRef.current || now2 < thiefSmokeUntilRef.current) return
-          if (now2 < thiefVanishCooldownUntilRef.current) return
-          if (titleOpenRef.current || optionsOpenRef.current || gameOverRef.current) return
-          // Begin vanish: play disappear gif (no actions allowed during this short animation)
-          const vanishDurationMs = 1000 // adjust if actual gif length differs
-          const smokeDurationMs = 15000
-          const cooldownMs = 10000
-          thiefVanishUntilRef.current = now2 + vanishDurationMs
-          thiefVanishCooldownUntilRef.current = now2 + cooldownMs
-          if (imagesRef.current.thiefDisappearGif) {
-            imagesRef.current.player = imagesRef.current.thiefDisappearGif
-          }
-          // After vanish ends, start smoke form (15s invincible, can act)
-          setTimeout(() => {
-            if (gameOverRef.current || selectedClassRef.current !== 'thief') return
-            thiefSmokeUntilRef.current = performance.now() + smokeDurationMs
-            if (imagesRef.current.thiefSmokeGif) {
-              imagesRef.current.player = imagesRef.current.thiefSmokeGif
-            }
-          }, vanishDurationMs)
-          // After smoke ends, restore class/equipment sprite
-          setTimeout(() => {
-            if (gameOverRef.current || selectedClassRef.current !== 'thief') return
-            const now3 = performance.now()
-            if (now3 >= thiefSmokeUntilRef.current) {
-              applyCurrentSprite()
-            }
-          }, vanishDurationMs + smokeDurationMs + 50)
-        }
       }
       // Close chat with Escape
-      if (e.key === 'Escape' && chatOpen) {
+      if (e.key === 'Escape' && chatOpenRef.current) {
         // Don't close if the user is actively typing in the input
         if (!typing) {
           setChatOpen(false)
@@ -2037,1223 +1358,84 @@ export default function Game() {
     }
   }, [])
 
-  // Resize canvas to fit window
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const resize = () => {
-      const dpr = window.devicePixelRatio || 1
-      canvas.width = Math.floor(canvas.clientWidth * dpr)
-      canvas.height = Math.floor(canvas.clientHeight * dpr)
-      const ctx = canvas.getContext('2d')
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-    }
-    resize()
-    const obs = new ResizeObserver(resize)
-    obs.observe(canvas)
-    return () => obs.disconnect()
-  }, [])
-
-  // Main loop
-  useEffect(() => {
-    if (!ready) return
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')
-    let last = performance.now()
-    let interactLatch = false
-    // Helper for slightly smaller player hitbox
-    const playerHitBox = (inset = PLAYER_HITBOX_INSET) => ({
-      x: playerRef.current.x + inset,
-      y: playerRef.current.y + inset,
-      w: playerRef.current.w - inset*2,
-      h: playerRef.current.h - inset*2,
-    })
-
-    // mark initial spawn to be resolved after background layout is known
-    if (!playerRef.current._spawn) {
-      const s = scenes[sceneRef.current]
-      playerRef.current._spawn = { scene: sceneRef.current, nx: s.spawn.nx, ny: s.spawn.ny }
-    }
-
-    const step = (now) => {
-      const dt = Math.min(0.033, (now - last) / 1000)
-      last = now
-
-      // Revert attack pose when its duration has elapsed
-      if (attackActiveRef.current && performance.now() >= attackUntilRef.current) {
-        attackActiveRef.current = false
-        // Immediately snap back to the cached pre-attack sprite (avoids async load lag)
-        if (prevSpriteImgRef.current) {
-          imagesRef.current.player = prevSpriteImgRef.current
-          prevSpriteImgRef.current = null
-        }
-        // Then re-derive in case equipment changed
-        if (selectedClassRef.current === 'thief' && performance.now() < thiefSmokeUntilRef.current && imagesRef.current.thiefSmokeGif) {
-          // During smoke, keep smoke sprite after attack ends
-          imagesRef.current.player = imagesRef.current.thiefSmokeGif
-        } else {
-          applyCurrentSprite()
-        }
-      }
-
-      // Layout background based on scene fit mode and compute image frame
-      const cw = canvas.clientWidth, ch = canvas.clientHeight
-      const sdef = scenes[sceneRef.current]
-      const isWilderness = sceneRef.current === 'wilderness'
-      // Background image with readiness checks and robust fallbacks
-      const firstReady = (...imgs) => imgs.find((im) => im && im.width > 0 && im.height > 0) || null
-      let bgImg = isWilderness ? null : firstReady(
-        imagesRef.current[sdef.bgKey],
-        imagesRef.current.villageBg,
-        imagesRef.current.pathBg,
-        imagesRef.current.marketBg,
-        imagesRef.current.dungeonBg,
-        imagesRef.current.dungeonInteriorBg,
-        imagesRef.current.treasureBg,
-      )
-      let dx = 0, dy = 0, dw = cw, dh = ch
-      if (isWilderness) {
-        const frame = wildernessFrame(cw, ch)
-        dx = frame.dx; dy = frame.dy; dw = frame.dw; dh = frame.dh
-        if (!wildernessLayoutRef.current) {
-          const nodeId = wildernessNodeIdRef.current || WILDERNESS_ENTRANCE_ID
-          wildernessNodeIdRef.current = nodeId
-          wildernessLayoutRef.current = loadWildernessScreen(nodeId)
-        }
-      } else if (bgImg && bgImg.width > 0 && bgImg.height > 0) {
-        const scaleContain = Math.min(cw / bgImg.width, ch / bgImg.height)
-        const scaleCover = Math.max(cw / bgImg.width, ch / bgImg.height)
-        const scale = sdef.fitMode === 'contain' ? scaleContain : scaleCover
-        if (Number.isFinite(scale) && scale > 0) {
-          dw = bgImg.width * scale
-          dh = bgImg.height * scale
-          dx = (cw - dw) / 2
-          dy = (ch - dh) / 2
-        } else {
-          bgImg = null
-        }
-      }
-      // expose frame for mouse mapping
-      frameRef.current = { dx, dy, dw, dh }
-
-      // Helper to map normalized image-space rect to screen pixels
-      const mapRect = (r) => ({ x: dx + r.x * dw, y: dy + r.y * dh, w: r.w * dw, h: r.h * dh })
-
-      // Spawn enemies in dungeon interior once per entry
-      if (sceneRef.current === 'dungeonInterior' && !enemiesSpawnedRef.current && dw > 0 && dh > 0 && (nextWaveAtRef.current === 0 || performance.now() >= nextWaveAtRef.current)) {
-        const wave = dungeonWaveRef.current
-        const makeEnemy = (type, nx, ny) => {
-          const imgs = imagesRef.current
-          const img = imgs[type] || null
-          // Size relative to scene; slightly smaller than player
-          const targetH = Math.max(20, Math.round(0.11 * dh))
-          const ar = (img && img.height) ? (img.width / img.height) : 1
-          const w = Math.max(14, Math.round(targetH * ar))
-          const h = targetH
-          const x = dx + nx * dw - w / 2
-          const y = dy + ny * dh - h / 2
-          let hpMax = 15
-          if (type === 'brute') hpMax = 25
-          else if (type === 'archer') hpMax = 10
-          // Scale by wave for gentle ramp
-          const hpScale = 1 + 0.12 * Math.max(0, wave - 1)
-          hpMax = Math.round(hpMax * hpScale)
-          let speed = type === 'brute' ? 55 : (type === 'archer' ? 80 : 70)
-          speed = speed * (1 + 0.05 * Math.max(0, wave - 1))
-          return { id: `${type}_${Math.random().toString(36).slice(2,7)}`, type, hp: hpMax, hpMax, x, y, w, h, speed, dir: { x: 0, y: 0 }, changeAt: 0, img, fireAt: 0, flashUntil: 0 }
-        }
-        const base = [makeEnemy('goblin', 0.47, 0.28), makeEnemy('goblin', 0.53, 0.31), makeEnemy('brute', 0.50, 0.22), makeEnemy('archer', 0.56, 0.26)]
-        if (wave > 1) {
-          // Scale counts modestly each wave (difficulty ramp)
-            for (let i=1;i<wave;i++) base.push(makeEnemy('goblin', 0.45 + Math.random()*0.12, 0.20 + Math.random()*0.14))
-            if (wave % 2 === 0) base.push(makeEnemy('archer', 0.44 + Math.random()*0.18, 0.20 + Math.random()*0.14))
-            if (wave % 3 === 0) base.push(makeEnemy('brute', 0.44 + Math.random()*0.12, 0.18 + Math.random()*0.10))
-        }
-        enemiesRef.current = base
-        enemiesSpawnedRef.current = true
-        nextWaveAtRef.current = 0
-      }
-
-      // Update player size relative to scene image height, preserving sprite aspect ratio
-      if (sdef.playerScale && dh > 0) {
-        const targetH = Math.max(24, Math.round(sdef.playerScale * dh))
-        const pImgForAR = imagesRef.current.player
-        const ar = (pImgForAR && pImgForAR.height) ? (pImgForAR.width / pImgForAR.height) : 1
-        playerRef.current.h = targetH
-        playerRef.current.w = Math.max(16, Math.round(targetH * ar))
-      }
-
-      // Handle delayed spawn after transitions
-      if (playerRef.current._spawn) {
-        const sp = playerRef.current._spawn
-        if (sp.scene === sceneRef.current) {
-          playerRef.current.x = dx + sp.nx * dw - playerRef.current.w / 2
-          playerRef.current.y = dy + sp.ny * dh - playerRef.current.h / 2
-          // Clamp to visible image frame to ensure the knight is on-screen
-          playerRef.current.x = Math.min(Math.max(playerRef.current.x, dx), dx + dw - playerRef.current.w)
-          playerRef.current.y = Math.min(Math.max(playerRef.current.y, dy), dy + dh - playerRef.current.h)
-          delete playerRef.current._spawn
-        }
-      }
-
-      // Update (pause movement when any overlay is open)
-  // Effective movement speed (speed potion boost if active)
-  let speed = playerRef.current.speed
-  if (performance.now() < speedBoostUntilRef.current) speed *= 1.5
-      let vx = 0, vy = 0
-  if (!chatOpenRef.current && !classSelectOpenRef.current && !inventoryOpenRef.current && !titleOpenRef.current && !optionsOpenRef.current && !shopOpenRef.current && !gameOverRef.current && !(selectedClassRef.current==='thief' && performance.now() < thiefVanishUntilRef.current)) {
-        if (keysRef.current['w'] || keysRef.current['arrowup']) vy -= 1
-        if (keysRef.current['s'] || keysRef.current['arrowdown']) vy += 1
-        if (keysRef.current['a'] || keysRef.current['arrowleft']) vx -= 1
-        if (keysRef.current['d'] || keysRef.current['arrowright']) vx += 1
-        if (vx !== 0 || vy !== 0) {
-          const len = Math.hypot(vx, vy)
-          vx /= len; vy /= len
-          // Update last direction for aiming
-          lastDirRef.current = { x: vx, y: vy }
-        }
-      }
-
-      // Move with simple AABB collisions
-      const next = { ...playerRef.current }
-      next.x += vx * speed * dt
-      // X axis collisions (map colliders to image frame)
-      const wildLayout = isWilderness ? wildernessLayoutRef.current : null
-      const colliderSrc = isWilderness && wildLayout
-        ? collidersWithExitGaps(wildLayout)
-        : (sdef.colliders || [])
-      const collidersPx = colliderSrc.map(mapRect)
-      for (const c of collidersPx) {
-        if (intersects({ x: next.x, y: playerRef.current.y, w: next.w, h: next.h }, c)) {
-          // Resolve by moving back along x
-          if (vx > 0) next.x = c.x - next.w
-          else if (vx < 0) next.x = c.x + c.w
-        }
-      }
-      // Y axis
-      next.y += vy * speed * dt
-      for (const c of collidersPx) {
-        if (intersects({ x: next.x, y: next.y, w: next.w, h: next.h }, c)) {
-          if (vy > 0) next.y = c.y - next.h
-          else if (vy < 0) next.y = c.y + c.h
-        }
-      }
-      // Footstep SFX while moving (throttled inside MainGameScene)
-      onPlayerMove({ moving: vx !== 0 || vy !== 0 })
-      playerRef.current.x = next.x
-      playerRef.current.y = next.y
-
-      // Wilderness edge crossings: walk off N/S/E/W into neighbor (or hub from entrance north)
-      if (isWilderness && wildLayout && performance.now() >= wildernessEdgeLatchUntilRef.current
-          && !chatOpenRef.current && !classSelectOpenRef.current && !inventoryOpenRef.current
-          && !titleOpenRef.current && !optionsOpenRef.current && !shopOpenRef.current && !gameOverRef.current) {
-        // Leading-edge test: the sprite rect is clamped inside the frame, so a
-        // center-based test can never reach the border for a tall sprite.
-        const pRect = {
-          x: (playerRef.current.x - dx) / dw,
-          y: (playerRef.current.y - dy) / dh,
-          w: playerRef.current.w / dw,
-          h: playerRef.current.h / dh,
-        }
-        const edge = detectCrossedEdge(pRect, wildLayout)
-        if (edge) {
-          const result = resolveEdgeTransition(wildernessNodeIdRef.current, edge)
-          if (result?.type === 'hub') {
-            onDoorOpen()
-            wildernessLayoutRef.current = null
-            sceneRef.current = HUB_RETURN_SPAWN.scene
-            setScene(HUB_RETURN_SPAWN.scene)
-            playerRef.current._spawn = {
-              scene: HUB_RETURN_SPAWN.scene,
-              nx: HUB_RETURN_SPAWN.nx,
-              ny: HUB_RETURN_SPAWN.ny,
-            }
-            wildernessEdgeLatchUntilRef.current = performance.now() + 600
-          } else if (result?.type === 'neighbor') {
-            const nextLayout = loadWildernessScreen(result.nodeId)
-            wildernessNodeIdRef.current = result.nodeId
-            wildernessLayoutRef.current = nextLayout
-            const sp = spawnAtEdge(result.appearAt, nextLayout)
-            playerRef.current._spawn = { scene: 'wilderness', nx: sp.nx, ny: sp.ny }
-            wildernessEdgeLatchUntilRef.current = performance.now() + 600
-          }
-        }
-      }
-
-      // Enemy AI: mild unpredictability, light bias toward player; obey same colliders
-  if (enemiesRef.current.length && !gameOverRef.current) {
-        const nowMs = performance.now()
-        const pCenter = { x: playerRef.current.x + playerRef.current.w/2, y: playerRef.current.y + playerRef.current.h/2 }
-        for (const e of enemiesRef.current) {
-          if (e.hp <= 0) continue
-          if (nowMs >= e.changeAt) {
-            // Bias towards player a little
-            const toP = { x: pCenter.x - (e.x + e.w/2), y: pCenter.y - (e.y + e.h/2) }
-            const len = Math.hypot(toP.x, toP.y) || 1
-            toP.x /= len; toP.y /= len
-            // Random jitter
-            const jitter = { x: (Math.random()*2-1)*0.8, y: (Math.random()*2-1)*0.8 }
-            const mixBase = 0.45
-            const mix = Math.min(0.75, mixBase + 0.05 * Math.max(0, dungeonWaveRef.current - 1)) // ramp steering a bit
-            let dxv = toP.x * mix + jitter.x * (1-mix)
-            let dyv = toP.y * mix + jitter.y * (1-mix)
-            const nlen = Math.hypot(dxv, dyv) || 1
-            e.dir.x = dxv / nlen
-            e.dir.y = dyv / nlen
-            e.changeAt = nowMs + 500 + Math.random()*900
-          }
-          // Archer ranged attack
-          if (e.type === 'archer' && nowMs >= e.fireAt) {
-            const toP = { x: pCenter.x - (e.x + e.w/2), y: pCenter.y - (e.y + e.h/2) }
-            const len = Math.hypot(toP.x, toP.y) || 1
-            const dirX = toP.x / len
-            const dirY = toP.y / len
-            const startX = e.x + e.w/2 + dirX * 8
-            const startY = e.y + e.h/2 + dirY * 8
-            projectilesRef.current.push({
-              id: effectIdRef.current++,
-              x: startX - 6, y: startY - 6, w: 12, h: 12,
-              vx: dirX * 300, vy: dirY * 300,
-              startX, startY, maxDist: 400,
-              impactKey: 'enemyArrow', // special key
-              owner: 'enemy'
-            })
-            e.fireAt = nowMs + 1800 + Math.random()*1200
-          }
-          // Integrate with collision like player
-          const exNext = { ...e }
-          exNext.x += e.dir.x * e.speed * dt
-          // X collision
-          for (const c of collidersPx) {
-            if (intersects({ x: exNext.x, y: e.y, w: e.w, h: e.h }, c)) {
-              if (e.dir.x > 0) exNext.x = c.x - e.w
-              else if (e.dir.x < 0) exNext.x = c.x + c.w
-              // bounce a bit on collision
-              e.dir.x *= -0.4
-            }
-          }
-          exNext.y += e.dir.y * e.speed * dt
-          for (const c of collidersPx) {
-            if (intersects({ x: exNext.x, y: exNext.y, w: e.w, h: e.h }, c)) {
-              if (e.dir.y > 0) exNext.y = c.y - e.h
-              else if (e.dir.y < 0) exNext.y = c.y + c.h
-              e.dir.y *= -0.4
-            }
-          }
-          e.x = exNext.x
-          e.y = exNext.y
-          // Contact damage (touch) to player
-          const playerBox = playerHitBox()
-          if (!gameOverRef.current && intersects({ x: e.x, y: e.y, w: e.w, h: e.h }, playerBox)) {
-            if (performance.now() >= playerIFrameUntilRef.current) {
-              const baseDmg = e.type === 'brute' ? 12 : (e.type === 'archer' ? 6 : 8)
-              const waveScale = 1 + 0.05 * Math.max(0, dungeonWaveRef.current - 1)
-              const dmg = Math.round(baseDmg * waveScale)
-              const invincible = (selectedClassRef.current === 'thief' && performance.now() < thiefSmokeUntilRef.current)
-              if (!invincible) {
-                playerRef.current.hp = Math.max(0, playerRef.current.hp - dmg)
-                onPlayerHurt()
-              }
-              playerIFrameUntilRef.current = performance.now() + 900
-              playerFlashUntilRef.current = performance.now() + 200
-              pushFloatText(playerRef.current.x + playerRef.current.w/2, playerRef.current.y - 10, `-${dmg}`, '#ff9f43')
-              if (playerRef.current.hp <= 0) triggerGameOver(e.type)
-            }
-          }
-        }
-        // Cull dead
-        // Handle enemy death side-effects (loot, float text) before culling
-        for (const e of enemiesRef.current) {
-          if (e.hp <= 0 && !e._deathProcessed) {
-            e._deathProcessed = true
-            // Loot probabilities
-            const gems = { ruby: 0, sapphire: 0, emerald: 0 }
-            if (e.type === 'goblin') {
-              if (Math.random() < 0.35) gems.ruby += 1
-              if (Math.random() < 0.15) gems.emerald += 1
-            } else if (e.type === 'brute') {
-              gems.ruby += Math.random() < 0.60 ? 1 : 0
-              gems.sapphire += Math.random() < 0.50 ? 1 : 0
-            } else if (e.type === 'archer') {
-              if (Math.random() < 0.30) gems.sapphire += 1
-            }
-            const items = []
-            if (e.type === 'brute' && Math.random() < 0.25) items.push({ id: 'healing_potion', count: 1 })
-            if (e.type === 'archer' && Math.random() < 0.25) items.push({ id: 'mana_potion', count: 1 })
-            if (e.type === 'goblin' && Math.random() < 0.15) items.push({ id: 'speed_potion', count: 1 })
-            const hadLoot = Object.values(gems).some(v=>v>0) || items.length>0
-            if (hadLoot) {
-              grantLoot(gems, items)
-              const gemParts = []
-              if (gems.ruby) gemParts.push(`${gems.ruby} Ruby` + (gems.ruby>1?'ies':''))
-              if (gems.sapphire) gemParts.push(`${gems.sapphire} Sapphire` + (gems.sapphire>1?'s':''))
-              if (gems.emerald) gemParts.push(`${gems.emerald} Emerald` + (gems.emerald>1?'s':''))
-              const itemNames = items.map(it=>getItemDef(it.id).name)
-              const segs = []
-              if (gemParts.length) segs.push(gemParts.join(', '))
-              if (itemNames.length) segs.push(itemNames.join(', '))
-              if (segs.length) showNotice(`Loot: ${segs.join(' + ')}`)
-            }
-            pushFloatText(e.x + e.w/2, e.y + e.h/2, '✕', '#ff4444', 500)
-          }
-        }
-        enemiesRef.current = enemiesRef.current.filter(en => en.hp > 0)
-        // Wave clear check
-        if (sceneRef.current === 'dungeonInterior' && enemiesRef.current.length === 0 && enemiesSpawnedRef.current) {
-          if (nextWaveAtRef.current === 0) nextWaveAtRef.current = performance.now() + 2500
-        }
-      }
-
-      // Mana regen for mage: 5 mana/sec
-      if (selectedClassRef.current === 'mage' && (playerRef.current.manaMax || 0) > 0) {
-        const regen = 5 * dt
-        playerRef.current.mana = Math.min(playerRef.current.manaMax, (playerRef.current.mana || 0) + regen)
-      }
-
-      // Update projectiles (fireballs, poison)
-  if (projectilesRef.current.length && !gameOverRef.current) {
-        const arr = projectilesRef.current
-        const nowMs = performance.now()
-        for (let i = arr.length - 1; i >= 0; i--) {
-          const pr = arr[i]
-          pr.x += pr.vx * dt
-          pr.y += pr.vy * dt
-          const dist = Math.hypot(pr.x + pr.w/2 - pr.startX, pr.y + pr.h/2 - pr.startY)
-          // Hit enemies first
-          let hitEnemy = false
-          if (enemiesRef.current.length && pr.owner !== 'enemy') {
-            const hitBox = { x: pr.x, y: pr.y, w: pr.w, h: pr.h }
-            for (const e of enemiesRef.current) {
-              // quick distance gate to reduce checks
-              const pcx = pr.x + pr.w/2, pcy = pr.y + pr.h/2
-              const ecx = e.x + e.w/2, ecy = e.y + e.h/2
-              const dx2 = pcx - ecx, dy2 = pcy - ecy
-              if ((dx2*dx2 + dy2*dy2) > 300*300) continue
-              if (intersects(hitBox, { x: e.x, y: e.y, w: e.w, h: e.h })) {
-                // Damage model
-                if (pr.special === 'lifeLeech') {
-                  // Life Leech: deal 40% of current HP and heal player same amount
-                  const enemyCur = e.hp
-                  const dmg = Math.max(1, Math.floor(enemyCur * 0.4))
-                  e.hp = Math.max(0, enemyCur - dmg)
-                  e.flashUntil = nowMs + 180
-                  pushFloatText(e.x + e.w/2, e.y - 6, `-${dmg}`, '#bb3cff')
-                  // Heal mage
-                  const hpMax = playerRef.current.hpMax || 0
-                  const before = playerRef.current.hp || 0
-                  const after = Math.min(hpMax, before + dmg)
-                  playerRef.current.hp = after
-                  const healed = after - before
-                  if (healed > 0) pushFloatText(playerRef.current.x + playerRef.current.w/2, playerRef.current.y - 12, `+${healed}`, '#7cfc7c')
-                  hitEnemy = true
-                  break
-                } else {
-                  const dmg = pr.impactKey === 'poisonPotionGif' ? 8 : 10 // reduced mage fireball base dmg by 5
-                  e.hp = Math.max(0, e.hp - dmg)
-                  e.flashUntil = nowMs + 180
-                  pushFloatText(e.x + e.w/2, e.y - 6, `-${dmg}`, '#ff6161')
-                  hitEnemy = true
-                  break
-                }
-              }
-            }
-          }
-          // Enemy projectile hits player
-          if (pr.owner === 'enemy') {
-            const pBox = playerHitBox()
-            if (intersects({ x: pr.x, y: pr.y, w: pr.w, h: pr.h }, pBox)) {
-              if (!gameOverRef.current && performance.now() >= playerIFrameUntilRef.current) {
-                const dmg = 7
-                const invincible = (selectedClassRef.current === 'thief' && performance.now() < thiefSmokeUntilRef.current)
-                if (!invincible) {
-                  playerRef.current.hp = Math.max(0, playerRef.current.hp - dmg)
-                  onPlayerHurt()
-                }
-                playerIFrameUntilRef.current = performance.now() + 900
-                playerFlashUntilRef.current = performance.now() + 250
-                pushFloatText(playerRef.current.x + playerRef.current.w/2, playerRef.current.y - 10, `-${dmg}`, '#ff9f43')
-                if (playerRef.current.hp <= 0) triggerGameOver('archer')
-              }
-              arr.splice(i, 1)
-              continue
-            }
-          }
-          // Collision with scene colliders (stop early)
-          let hit = false
-          for (const c of collidersPx) {
-            if (intersects({ x: pr.x, y: pr.y, w: pr.w, h: pr.h }, c)) { hit = true; break }
-          }
-          if (hitEnemy || dist >= pr.maxDist || hit) {
-            if (pr.owner === 'enemy') {
-              // Arrows vanish silently
-              arr.splice(i, 1)
-            } else {
-              if (pr.special === 'lifeLeech') {
-                // Life Leech disappears on impact (no lingering effect)
-                arr.splice(i, 1)
-              } else {
-                // Spawn lingering effect and remove projectile
-                const isPoison = pr.impactKey === 'poisonPotionGif'
-                const src = isPoison ? PATHS.poisonPotionGif : PATHS.animatedFireSmallGif
-                const centerX = pr.x + pr.w / 2
-                const centerY = pr.y + pr.h / 2
-                const scale = isPoison ? 1.0 : 1.75 // enlarge small fire by 25%
-                const newW = Math.round(pr.w * scale)
-                const newH = Math.round(pr.h * scale)
-                const nx = centerX - newW / 2
-                const ny = centerY - newH / 2
-                firesRef.current.push({
-                  id: effectIdRef.current++,
-                  x: nx, y: ny, w: newW, h: newH,
-                  until: nowMs + (pr.lingerMs || FIRE_LINGER_MS),
-                  domSrc: src,
-                })
-                onSpellImpact()
-                arr.splice(i, 1)
-              }
-            }
-          }
-        }
-      }
-
-      // Lingering small fires: apply DoT to enemies and expire when time elapses
-      if (firesRef.current.length) {
-        const nowMs = performance.now()
-        // Deal 2 DPS to enemies overlapping mage small fire while on screen
-        if (enemiesRef.current.length) {
-          for (const f of firesRef.current) {
-            const fBox = { x: f.x, y: f.y, w: f.w, h: f.h }
-            const isMageFire = f.domSrc === PATHS.animatedFireSmallGif
-            const isPoisonPuddle = f.domSrc === PATHS.poisonPotionGif
-            if (!isMageFire && !isPoisonPuddle) continue
-            const dps = isMageFire ? 2 : 5
-            for (const e of enemiesRef.current) {
-              if (e.hp <= 0) continue
-              // quick distance gate
-              const ecx = e.x + e.w/2, ecy = e.y + e.h/2
-              const fcx = f.x + f.w/2, fcy = f.y + f.h/2
-              const dx3 = fcx - ecx, dy3 = fcy - ecy
-              if ((dx3*dx3 + dy3*dy3) > 280*280) continue
-              if (intersects(fBox, { x: e.x, y: e.y, w: e.w, h: e.h })) {
-                e.hp = Math.max(0, e.hp - dps * dt)
-              }
-            }
-          }
-        }
-        // Expire fires
-        firesRef.current = firesRef.current.filter(f => nowMs < f.until)
-      }
-      // Floating text update
-      if (floatTextsRef.current.length) {
-        const nowMs2 = performance.now()
-        for (const ft of floatTextsRef.current) {
-          const lifeFrac = 1 - Math.max(0, Math.min(1, (ft.until - nowMs2) / 700))
-          ft.y -= 20 * dt
-          ft.alpha = 1 - lifeFrac
-        }
-        floatTextsRef.current = floatTextsRef.current.filter(f => performance.now() < f.until)
-      }
-
-      // Wave spawning after delay
-      if (sceneRef.current === 'dungeonInterior' && nextWaveAtRef.current && performance.now() >= nextWaveAtRef.current) {
-        dungeonWaveRef.current += 1
-        enemiesSpawnedRef.current = false
-        nextWaveAtRef.current = 0
-      }
-
-  // Clamp movement to the image frame so we never drift outside the visible area
-  playerRef.current.x = Math.min(Math.max(playerRef.current.x, dx), dx + dw - playerRef.current.w)
-  playerRef.current.y = Math.min(Math.max(playerRef.current.y, dy), dy + dh - playerRef.current.h)
-
-  // Consumable handling (hold K to consume selected potion) or open Mage spellbook wheel when holding Spellbook
-  const kDown = !!(keysRef.current['k'])
-  // Interact key (E)
-  const eDown = !!(keysRef.current['e'])
-      const selected = inventoryRef.current?.hotbar?.[activeHotbarRef.current]
-      const isSpellbookActive = !!(selectedClassRef.current === 'mage' && selected && selected.id === 'spellbook')
-      const canConsumeNow = !!(selected && CONSUMABLE_IDS.has(selected.id)) && !chatOpenRef.current && !shopOpenRef.current && !titleOpenRef.current && !optionsOpenRef.current && !inventoryOpenRef.current
-      const nowMs = performance.now()
-      // Spell wheel (Mage spellbook): open while holding K on spellbook; close on release or context change
-      if (isSpellbookActive && !chatOpenRef.current && !shopOpenRef.current && !titleOpenRef.current && !optionsOpenRef.current && !inventoryOpenRef.current && !gameOverRef.current) {
-        if (kDown && !spellWheelOpenRef.current) {
-          setSpellWheelOpen(true)
-          // cancel any in-progress consumption
-          consumeActiveRef.current = false
-        } else if (!kDown && spellWheelOpenRef.current) {
-          setSpellWheelOpen(false)
-        }
-      } else if (!kDown && spellWheelOpenRef.current) {
-        setSpellWheelOpen(false)
-      }
-      if (!kDown && consumeNeedsReleaseRef.current) {
-        consumeNeedsReleaseRef.current = false
-      }
-      if (!consumeActiveRef.current) {
-        if (kDown && !consumeNeedsReleaseRef.current && canConsumeNow && !isSpellbookActive) {
-          consumeActiveRef.current = true
-          consumeStartRef.current = nowMs
-          consumeItemRef.current = { id: selected.id, slot: activeHotbarRef.current }
-        }
-      } else {
-        const slot = consumeItemRef.current?.slot
-        const id = consumeItemRef.current?.id
-        const stillValid = !isSpellbookActive && canConsumeNow && slot === activeHotbarRef.current && (inventoryRef.current?.hotbar?.[slot]?.id === id)
-        if (!kDown || !stillValid) {
-          // Cancel if released or item/slot changed
-          consumeActiveRef.current = false
-          if (!kDown) consumeNeedsReleaseRef.current = false
-        } else {
-          const progress = (nowMs - consumeStartRef.current) / CONSUME_DURATION_MS
-          if (progress >= 1) {
-            // Complete: consume one from that hotbar slot
-            const slotIdx = slot
-            const itemId = id
-            setInventory((inv) => {
-              const cur = inv.hotbar[slotIdx]
-              if (!cur || cur.id !== itemId) return inv
-              const cnt = (cur.count || 1) - 1
-              const next = { armor: { ...inv.armor }, storage: inv.storage.slice(), hotbar: inv.hotbar.slice() }
-              next.hotbar[slotIdx] = cnt > 0 ? { id: itemId, count: cnt } : null
-              return next
-            })
-            // Apply effects
-            if (id === 'speed_potion') {
-              speedBoostUntilRef.current = nowMs + 10000 // 10s boost
-            } else if (id === 'mana_potion') {
-              // Restore 75 mana (clamped to manaMax)
-              const mm = playerRef.current.manaMax || 0
-              if (mm > 0) {
-                const cur = playerRef.current.mana || 0
-                playerRef.current.mana = Math.min(mm, cur + 75)
-              }
-            } else if (id === 'healing_potion') {
-              // Restore 70 health (clamped to hpMax)
-              const hm = playerRef.current.hpMax || 0
-              if (hm > 0) {
-                const cur = playerRef.current.hp || 0
-                playerRef.current.hp = Math.min(hm, cur + 70)
-              }
-            }
-            // Reset consumption; require release before next start
-            consumeActiveRef.current = false
-            consumeNeedsReleaseRef.current = true
-          }
-        }
-      }
-
-    // Interact (E) — disabled only while actively consuming
-    // NOTE: consumption moved to hold K; ensure we don't block E unless consuming
-  if (!chatOpenRef.current && !shopOpenRef.current && eDown && !interactLatch && !consumeActiveRef.current && !gameOverRef.current && !(selectedClassRef.current==='thief' && performance.now() < thiefVanishUntilRef.current)) {
-        interactLatch = true
-        // Village enter door
-        if (sceneRef.current === 'village' && sdef.door) {
-          const doorPx = mapRect(sdef.door)
-          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, doorPx)) {
-            sdef.onEnter?.()
-          }
-        }
-        // Village south travel to path scene
-        if (sceneRef.current === 'village' && sdef.toPath) {
-          const zonePx = mapRect(sdef.toPath)
-          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
-            // Save current village position in normalized coords so we can return here later
-            const pxCenterX = playerRef.current.x + playerRef.current.w / 2
-            const pxCenterY = playerRef.current.y + playerRef.current.h / 2
-            const nx = Math.max(0, Math.min(1, (pxCenterX - dx) / dw))
-            const ny = Math.max(0, Math.min(1, (pxCenterY - dy) / dh))
-            lastVillagePosRef.current = { nx, ny }
-            sdef.onTravelSouth?.()
-          }
-        }
-        // Village enter market
-        if (sceneRef.current === 'village' && sdef.toMarket) {
-          const zonePx = mapRect(sdef.toMarket)
-          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
-            sdef.onEnterMarket?.()
-          }
-        }
-        // Tavern exit
-        if (sceneRef.current === 'tavern' && sdef.exit) {
-          const exitPx = mapRect(sdef.exit)
-          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, exitPx)) {
-            sdef.onExit?.()
-          }
-        }
-        // Path enter dungeon
-        if (sceneRef.current === 'path' && sdef.toDungeon) {
-          const dz = mapRect(sdef.toDungeon)
-          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, dz)) {
-            sdef.onEnterDungeon?.()
-          }
-        }
-        // Path return to village
-        if (sceneRef.current === 'path' && sdef.toVillage) {
-          const zonePx = mapRect(sdef.toVillage)
-          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
-            sdef.onReturn?.()
-          }
-        }
-        // Market exit to village (bottom-middle)
-        if (sceneRef.current === 'market' && sdef.toVillage) {
-          const zonePx = mapRect(sdef.toVillage)
-          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
-            sdef.onExitToVillage?.()
-          }
-        }
-        // Dungeon exit back to path (near spawn)
-        if (sceneRef.current === 'dungeon' && sdef.toPath) {
-          const zonePx = mapRect(sdef.toPath)
-          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
-            sdef.onExitToPath?.()
-          }
-        }
-        // Dungeon enter interior at top-center
-        if (sceneRef.current === 'dungeon' && sdef.toInterior) {
-          const zonePx = mapRect(sdef.toInterior)
-          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
-            sdef.onEnterInterior?.()
-          }
-        }
-        // Dungeon trailhead into the wilderness at bottom-right
-        if (sceneRef.current === 'dungeon' && sdef.toWilderness) {
-          const zonePx = mapRect(sdef.toWilderness)
-          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
-            sdef.onEnterWilderness?.()
-          }
-        }
-        // Dungeon secret entrance to tavern (now hidden treasure room) at top-left
-        if (sceneRef.current === 'dungeon' && sdef.toTavern) {
-          const zonePx = mapRect(sdef.toTavern)
-          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
-            // Save the exact dungeon position (normalized) to return to after leaving the treasure room
-            const pxCenterX = playerRef.current.x + playerRef.current.w / 2
-            const pxCenterY = playerRef.current.y + playerRef.current.h / 2
-            const nx = Math.max(0, Math.min(1, (pxCenterX - dx) / dw))
-            const ny = Math.max(0, Math.min(1, (pxCenterY - dy) / dh))
-            treasureReturnPosRef.current = { nx, ny }
-            sdef.onEnterTavern?.()
-          }
-        }
-        // Dungeon interior exit back to entrance (bottom-center)
-        if (sceneRef.current === 'dungeonInterior' && sdef.toEntrance) {
-          const zonePx = mapRect(sdef.toEntrance)
-          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
-            sdef.onExitToEntrance?.()
-          }
-        }
-        // Treasure room exit back to dungeon entrance
-        if (sceneRef.current === 'treasureRoom' && sdef.toEntrance) {
-          const zonePx = mapRect(sdef.toEntrance)
-          if (intersects({ x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }, zonePx)) {
-            sdef.onExitToEntrance?.()
-          }
-        }
-        // Treasure room chests (open with E)
-        if (sceneRef.current === 'treasureRoom' && Array.isArray(sdef.treasureChests)) {
-          for (let i = 0; i < sdef.treasureChests.length; i++) {
-            if (isChestOpened(i)) continue
-            const chest = sdef.treasureChests[i]
-            const cpx = mapRect(chest.rect)
-            const playerBox = { x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }
-            if (intersects(playerBox, cpx)) {
-              // Handle locked chest: require one lockpick and only open if consumed
-              if (chest.locked) {
-                const invSnapshot = inventoryRef.current
-                const res = consumeOneItem(invSnapshot, 'lockpicks')
-                if (!res.consumed) {
-                  showNotice('Locked. Requires lockpicks.')
-                  break
-                }
-                // Apply inventory update synchronously and also sync the ref to avoid any timing issues
-                setInventory(res.next)
-                inventoryRef.current = res.next
-              }
-
-              const loot = rollGemLoot()
-              const gemParts = []
-
-              if (chest.locked) {
-                // Locked chests grant extra gems and rare potions
-                loot.ruby += 8
-                loot.sapphire += 8
-                loot.emerald += 8
-              }
-
-              if (loot.ruby) gemParts.push(`${loot.ruby} Rub${loot.ruby>1?'ies':'y'}`)
-              if (loot.sapphire) gemParts.push(`${loot.sapphire} Sapphire${loot.sapphire>1?'s':''}`)
-              if (loot.emerald) gemParts.push(`${loot.emerald} Emerald${loot.emerald>1?'s':''}`)
-
-              const potionRewards = chest.locked ? [
-                { id: 'healing_potion', count: 1 },
-                { id: 'poison_vial', count: 1 },
-                { id: 'speed_potion', count: 1 },
-              ] : []
-
-              const overflow = grantLoot(loot, potionRewards)
-              const overflowNames = overflow.map(({ id, count }) => `${count}x ${getItemDef(id).name}`)
-
-              if (chest.locked) {
-                const potionNames = potionRewards.map((p) => getItemDef(p.id).name)
-                const segments = []
-                if (gemParts.length) segments.push(gemParts.join(', '))
-                segments.push(`potions (${potionNames.join(', ')})`)
-                let message = `You picked the lock! Loot: ${segments.join(' + ')}`
-                if (overflowNames.length) message += `. No space for ${overflowNames.join(', ')}`
-                showNotice(message)
-              } else {
-                let message = gemParts.length ? `You found ${gemParts.join(', ')}!` : 'The chest was empty...'
-                if (overflowNames.length) message += ` No space for ${overflowNames.join(', ')}`
-                showNotice(message)
-              }
-
-              markChestOpened(i)
-              break
-            }
-          }
-        }
-        // Tavern bartender interact -> open chat if near
-        if (sceneRef.current === 'tavern' && scenes.tavern.bartender) {
-          const b = scenes.tavern.bartender
-          const bx = dx + b.nx * dw - b.w / 2
-          const by = dy + b.ny * dh - b.h / 2
-          const interactZone = { x: bx - 12, y: by - 12, w: b.w + 24, h: b.h + 24 }
-          const playerBox = { x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }
-          if (intersects(playerBox, interactZone)) {
-            // Bridge canvas interact → React dialogue + streamed TTS via EventBus
-            emitNpcInteract({
-              npc: 'bartender',
-              greeting: "Tharos: Hrm. Traveler. Dragon business or town history—what'll it be? If you're short on supplies, swing by the Market after this—head to the upper-left gate in the village and press E to browse wares.",
-            })
-          }
-        }
-        // Market vendor interact -> open shop overlay
-        if (sceneRef.current === 'market' && sdef.vendor) {
-          const vz = mapRect(sdef.vendor)
-          const playerBox = { x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }
-          if (intersects(playerBox, vz)) {
-            setShopOpen(true)
-            markVendorActivity()
-            playVendor('Greeting')
-          }
-        }
-      } else if (!eDown) {
-        interactLatch = false
-      }
-
-      // Render
-      ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight)
-
-      // Draw background (cover) — wilderness uses procedural drawWilderness
-      if (isWilderness && wildernessLayoutRef.current) {
-        ctx.imageSmoothingEnabled = false
-        drawWilderness(
-          ctx,
-          wildernessLayoutRef.current,
-          imagesRef.current.terrainById || {},
-          { dx, dy, dw, dh }
-        )
-      } else if (bgImg && bgImg.width > 0 && bgImg.height > 0 && Number.isFinite(dx) && Number.isFinite(dy) && Number.isFinite(dw) && Number.isFinite(dh)) {
-        ctx.imageSmoothingEnabled = false
-        ctx.drawImage(bgImg, dx, dy, dw, dh)
-      } else {
-        // Hard fallback: solid black if no backgrounds are available
-        ctx.fillStyle = '#000000'
-        ctx.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight)
-      }
-
-      // Note: no separate bartender sprite is drawn; the bartender is part of the background image.
-
-      // Note: animated effects (projectiles/fires) are rendered as DOM <img> overlays for proper GIF animation.
-
-      // Draw player (skip during thief vanish animation; during smoke, show canvas only while attacking)
-      const pImg = imagesRef.current.player
-      const nowDraw = performance.now()
-      const thiefVanishing = (selectedClassRef.current === 'thief' && nowDraw < thiefVanishUntilRef.current)
-      const thiefInSmoke = (selectedClassRef.current === 'thief' && nowDraw < thiefSmokeUntilRef.current)
-      const showCanvasPlayer = !thiefVanishing && (!thiefInSmoke || attackActiveRef.current)
-      if (showCanvasPlayer) {
-        if (pImg) {
-          if (nowDraw < playerFlashUntilRef.current) {
-            ctx.globalAlpha = 0.5
-            ctx.drawImage(pImg, playerRef.current.x, playerRef.current.y, playerRef.current.w, playerRef.current.h)
-            ctx.globalAlpha = 1
-          } else {
-            ctx.drawImage(pImg, playerRef.current.x, playerRef.current.y, playerRef.current.w, playerRef.current.h)
-          }
-          // subtle outline for visibility
-          ctx.strokeStyle = 'rgba(255,255,255,0.4)'
-          ctx.lineWidth = 1
-          ctx.strokeRect(playerRef.current.x, playerRef.current.y, playerRef.current.w, playerRef.current.h)
-        } else {
-          ctx.fillStyle = '#ffcc00'
-          ctx.fillRect(playerRef.current.x, playerRef.current.y, playerRef.current.w, playerRef.current.h)
-        }
-      }
-
-      // Draw enemies and their HP labels
-      if (enemiesRef.current.length) {
-        ctx.font = '12px sans-serif'
-        for (const e of enemiesRef.current) {
-          const img = e.img
-          if (img) {
-            if (performance.now() < (e.flashUntil || 0)) {
-              ctx.globalAlpha = 0.6
-              ctx.drawImage(img, e.x, e.y, e.w, e.h)
-              ctx.globalAlpha = 1
-            } else {
-              ctx.drawImage(img, e.x, e.y, e.w, e.h)
-            }
-          } else {
-            ctx.fillStyle = '#66bb66'
-            ctx.fillRect(e.x, e.y, e.w, e.h)
-          }
-          // Health bar above
-          const barW = Math.max(20, e.w)
-          const barH = 4
-          const hx = e.x + (e.w - barW) / 2
-          const hy = e.y - 8
-          ctx.fillStyle = 'rgba(0,0,0,0.6)'
-          ctx.fillRect(hx, hy, barW, barH)
-          const pct = Math.max(0, Math.min(1, e.hp / e.hpMax))
-          ctx.fillStyle = 'rgba(220,38,38,0.9)'
-          ctx.fillRect(hx, hy, barW * pct, barH)
-          // Numeric HP above (as requested)
-          const label = `${Math.ceil(e.hp)}`
-          const tw = ctx.measureText(label).width
-          ctx.fillStyle = 'rgba(0,0,0,0.6)'
-          ctx.fillRect(hx + barW/2 - tw/2 - 3, hy - 14, tw + 6, 12)
-          ctx.fillStyle = '#ffd7a1'
-          ctx.fillText(label, hx + barW/2 - tw/2, hy - 4)
-        }
-      }
-      // Draw enemy projectiles (arrows) using goblinArrow.png if available
-      if (projectilesRef.current.length) {
-        const arrowImg = imagesRef.current.goblinArrow
-        for (const pr of projectilesRef.current) {
-          if (pr.owner !== 'enemy') continue
-          const cx = pr.x + pr.w/2, cy = pr.y + pr.h/2
-          const ang = Math.atan2(pr.vy, pr.vx)
-          ctx.save()
-          ctx.translate(cx, cy)
-          ctx.rotate(ang)
-          if (arrowImg) {
-            // Maintain arrow aspect ratio; scale length to projectile speed direction for consistency
-            const baseW = pr.w
-            const ar = arrowImg.width && arrowImg.height ? arrowImg.width / arrowImg.height : 3
-            const drawW = baseW
-            const drawH = Math.max(4, Math.round(drawW / ar))
-            ctx.drawImage(arrowImg, -drawW/2, -drawH/2, drawW, drawH)
-          } else {
-            // Fallback rectangle if image missing
-            ctx.fillStyle = '#222'
-            ctx.fillRect(-8, -1.5, 16, 3)
-            ctx.fillStyle = '#555'
-            ctx.fillRect(0, -1.5, 8, 3)
-          }
-          ctx.restore()
-        }
-      }
-      // Floating combat text draw
-      if (floatTextsRef.current.length) {
-        ctx.font = '13px sans-serif'
-        ctx.textAlign = 'center'
-        for (const ft of floatTextsRef.current) {
-          ctx.globalAlpha = Math.max(0, Math.min(1, ft.alpha))
-          ctx.fillStyle = ft.color
-          ctx.fillText(ft.text, ft.x, ft.y)
-        }
-        ctx.globalAlpha = 1
-        ctx.textAlign = 'left'
-      }
-
-      // Draw consumption progress (small circular bar above player)
-      if (consumeActiveRef.current) {
-        const cx = playerRef.current.x + playerRef.current.w / 2
-        const cy = playerRef.current.y - 16
-        const r = 10
-        const t = (performance.now() - consumeStartRef.current) / CONSUME_DURATION_MS
-        const frac = Math.max(0, Math.min(1, t))
-        ctx.save()
-        ctx.lineWidth = 3
-        // background circle
-        ctx.strokeStyle = 'rgba(0,0,0,0.6)'
-        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke()
-        // progress arc
-        ctx.strokeStyle = 'rgba(251,191,36,0.9)' // amber-400
-        ctx.beginPath(); ctx.arc(cx, cy, r, -Math.PI/2, -Math.PI/2 + frac * Math.PI * 2); ctx.stroke()
-        ctx.restore()
-      }
-
-      // UI hints (only after class is selected and start screen closed)
-      if (!titleOpenRef.current && !classSelectOpenRef.current) {
-        ctx.fillStyle = 'rgba(0,0,0,0.5)'
-        ctx.fillRect(8, 8, 380, 56)
-        ctx.fillStyle = '#fff'
-        ctx.font = '14px sans-serif'
-        ctx.fillText('WASD: Move    E: Interact    V: Inventory', 16, 28)
-        let hudLine = ''
-        if (sceneRef.current === 'village') {
-          hudLine = 'Find the tavern door or travel south; press E when prompted'
-        } else if (sceneRef.current === 'tavern') {
-          hudLine = 'Explore the tavern. Press E near bottom to exit'
-        } else if (sceneRef.current === 'path') {
-          hudLine = 'Walk the path. Press E near top to return or near bottom to enter dungeon'
-        } else if (sceneRef.current === 'wilderness') {
-          hudLine = 'Wilderness. Walk through a marked gap to travel onward'
-        } else if (sceneRef.current === 'dungeon') {
-          hudLine = 'Dungeon entrance. E: bottom-left=Path, bottom-right=Wilderness'
-        } else if (sceneRef.current === 'dungeonInterior') {
-          hudLine = 'Dungeon interior. Press E near bottom to exit to entrance'
-        } else if (sceneRef.current === 'treasureRoom') {
-          hudLine = 'Hidden treasure room. Press E near top to exit'
-        }
-        ctx.fillText(hudLine, 16, 50)
-      }
-
-      // Door/exit/travel prompts for current scene.
-      // Each prompt has: rect (trigger zone), label (full "Press E ..." banner text),
-      // short (persistent beacon caption) and kind ('exit' door/travel | 'talk' | 'loot').
-      const prompts = []
-      if (sceneRef.current === 'village') {
-        if (sdef.door) prompts.push({ rect: sdef.door, label: 'Press E to enter the Tavern', short: 'Tavern', kind: 'exit' })
-        if (sdef.toPath) prompts.push({ rect: sdef.toPath, label: 'Press E to travel the Path', short: 'Path (South)', kind: 'exit' })
-        if (sdef.toMarket) prompts.push({ rect: sdef.toMarket, label: 'Press E to enter the Market', short: 'Market', kind: 'exit' })
-      } else if (sceneRef.current === 'tavern') {
-        if (sdef.exit) prompts.push({ rect: sdef.exit, label: 'Press E to exit to the Village', short: 'Village', kind: 'exit' })
-      } else if (sceneRef.current === 'market') {
-        if (sdef.toVillage) prompts.push({ rect: sdef.toVillage, label: 'Press E to exit to the Village', short: 'Village', kind: 'exit' })
-        if (sdef.vendor) prompts.push({ rect: sdef.vendor, label: 'Press E to talk to the Vendor', short: 'Vendor', kind: 'talk' })
-      } else if (sceneRef.current === 'path') {
-        if (sdef.toVillage) prompts.push({ rect: sdef.toVillage, label: 'Press E to return to the Village', short: 'Village (North)', kind: 'exit' })
-        if (sdef.toDungeon) prompts.push({ rect: sdef.toDungeon, label: 'Press E to enter the Dungeon', short: 'Dungeon (South)', kind: 'exit' })
-      } else if (sceneRef.current === 'wilderness' && wildernessLayoutRef.current) {
-        for (const p of wildernessExitPrompts(wildernessLayoutRef.current, wildernessNodeIdRef.current)) {
-          prompts.push(p)
-        }
-      } else if (sceneRef.current === 'dungeon') {
-        if (sdef.toPath) prompts.push({ rect: sdef.toPath, label: 'Press E to return to the Path', short: 'Path', kind: 'exit' })
-        if (sdef.toInterior) prompts.push({ rect: sdef.toInterior, label: 'Press E to descend into the Dungeon', short: 'Descend', kind: 'exit' })
-        if (sdef.toTavern) prompts.push({ rect: sdef.toTavern, label: 'Press E to enter the hidden room', short: 'Secret', kind: 'exit' })
-        if (sdef.toWilderness) prompts.push({ rect: sdef.toWilderness, label: 'Press E to follow the trail into the Wilderness', short: 'Wilderness', kind: 'exit' })
-      } else if (sceneRef.current === 'dungeonInterior') {
-        if (sdef.toEntrance) prompts.push({ rect: sdef.toEntrance, label: 'Press E to exit the Dungeon', short: 'Exit', kind: 'exit' })
-      } else if (sceneRef.current === 'treasureRoom') {
-        if (sdef.toEntrance) prompts.push({ rect: sdef.toEntrance, label: 'Press E to exit', short: 'Exit', kind: 'exit' })
-        if (Array.isArray(sdef.treasureChests)) {
-          sdef.treasureChests.forEach((ch, i) => {
-            if (isChestOpened(i)) return
-            prompts.push({ rect: ch.rect, label: ch.locked ? 'Press E to pick the lock' : 'Press E to open the chest', short: ch.locked ? 'Locked' : 'Chest', kind: 'loot' })
-          })
-        }
-      }
-
-      // Persistent beacons: always show WHERE the player can go / interact, so
-      // exits are never invisible. Highlight and surface a banner when standing on one.
-      const nowPulse = performance.now()
-      const pulse = 0.5 + 0.5 * Math.sin(nowPulse / 350)
-      const pBox = { x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }
-      let activeLabel = null
-      ctx.textAlign = 'left'
-      for (const p of prompts) {
-        const pr = mapRect(p.rect)
-        const on = intersects(pBox, pr)
-        if (on) activeLabel = p.label
-        const cx = pr.x + pr.w / 2
-        // Colors by kind
-        const base = p.kind === 'talk' ? [96, 165, 250] : p.kind === 'loot' ? [251, 191, 36] : [16, 185, 129]
-        const [r, g, b] = base
-        // Glow ring over the zone
-        ctx.save()
-        ctx.strokeStyle = `rgba(${r},${g},${b},${on ? 0.95 : 0.35 + 0.35 * pulse})`
-        ctx.lineWidth = on ? 3 : 2
-        ctx.setLineDash([8, 6])
-        ctx.lineDashOffset = -(nowPulse / 40) % 14
-        ctx.strokeRect(pr.x, pr.y, pr.w, pr.h)
-        ctx.setLineDash([])
-        ctx.restore()
-        // Floating caption pill above the zone
-        ctx.font = 'bold 13px sans-serif'
-        const tw = ctx.measureText(p.short).width
-        const padX = 10
-        const pillW = tw + padX * 2
-        const pillH = 22
-        const pillX = cx - pillW / 2
-        const pillY = Math.max(4, pr.y - pillH - 8)
-        ctx.fillStyle = on ? `rgba(${r},${g},${b},0.95)` : 'rgba(15,23,42,0.82)'
-        const rr = 6
-        ctx.beginPath()
-        ctx.moveTo(pillX + rr, pillY)
-        ctx.arcTo(pillX + pillW, pillY, pillX + pillW, pillY + pillH, rr)
-        ctx.arcTo(pillX + pillW, pillY + pillH, pillX, pillY + pillH, rr)
-        ctx.arcTo(pillX, pillY + pillH, pillX, pillY, rr)
-        ctx.arcTo(pillX, pillY, pillX + pillW, pillY, rr)
-        ctx.closePath()
-        ctx.fill()
-        ctx.strokeStyle = `rgba(${r},${g},${b},0.9)`
-        ctx.lineWidth = 1.5
-        ctx.stroke()
-        ctx.fillStyle = on ? '#0b1220' : '#e8f5ee'
-        ctx.textAlign = 'center'
-        ctx.textBaseline = 'middle'
-        ctx.fillText(p.short, cx, pillY + pillH / 2 + 0.5)
-        ctx.textAlign = 'left'
-        ctx.textBaseline = 'alphabetic'
-      }
-
-      // Prominent centered banner when standing on any interact/exit zone
-      if (activeLabel) {
-        ctx.save()
-        ctx.font = 'bold 20px sans-serif'
-        const tw = ctx.measureText(activeLabel).width
-        const bw = tw + 44
-        const bh = 40
-        const bx = cw / 2 - bw / 2
-        const by = Math.round(ch * 0.14)
-        ctx.fillStyle = 'rgba(15,23,42,0.9)'
-        const rr = 10
-        ctx.beginPath()
-        ctx.moveTo(bx + rr, by)
-        ctx.arcTo(bx + bw, by, bx + bw, by + bh, rr)
-        ctx.arcTo(bx + bw, by + bh, bx, by + bh, rr)
-        ctx.arcTo(bx, by + bh, bx, by, rr)
-        ctx.arcTo(bx, by, bx + bw, by, rr)
-        ctx.closePath()
-        ctx.fill()
-        ctx.strokeStyle = 'rgba(251,191,36,0.95)'
-        ctx.lineWidth = 2
-        ctx.stroke()
-        ctx.fillStyle = '#ffe9a8'
-        ctx.textAlign = 'center'
-        ctx.textBaseline = 'middle'
-        ctx.fillText(activeLabel, cw / 2, by + bh / 2 + 1)
-        ctx.restore()
-        ctx.textAlign = 'left'
-        ctx.textBaseline = 'alphabetic'
-      }
-
-      // Bartender interact hint (tavern): show when close enough to talk
-      if (!chatOpen && sceneRef.current === 'tavern' && scenes.tavern.bartender) {
-        const b = scenes.tavern.bartender
-        const bx = dx + b.nx * dw - b.w / 2
-        const by = dy + b.ny * dh - b.h / 2
-        const interactZone = { x: bx - 12, y: by - 12, w: b.w + 24, h: b.h + 24 }
-        const playerBox = { x: playerRef.current.x, y: playerRef.current.y, w: playerRef.current.w, h: playerRef.current.h }
-        if (intersects(playerBox, interactZone)) {
-          ctx.fillStyle = 'rgba(0,0,0,0.6)'
-          const label = 'Press E to talk'
-          const tw = ctx.measureText(label).width + 16
-          ctx.fillRect(interactZone.x, interactZone.y - 24, Math.max(140, tw), 20)
-          ctx.fillStyle = '#ffeb99'
-          ctx.font = '12px sans-serif'
-          ctx.fillText(label, interactZone.x + 8, interactZone.y - 10)
-        }
-      }
-
-      // Debug overlay: mouse crosshair and selection rectangle
-      if (debugOn) {
-        const { nx, ny } = mouseRef.current
-        // Only draw if mouse is within image frame
-        if (nx >= 0 && nx <= 1 && ny >= 0 && ny <= 1) {
-          const mx = frameRef.current.dx + nx * frameRef.current.dw
-          const my = frameRef.current.dy + ny * frameRef.current.dh
-          // crosshair
-          ctx.strokeStyle = 'rgba(0,255,0,0.8)'
-          ctx.beginPath()
-          ctx.moveTo(mx - 10, my); ctx.lineTo(mx + 10, my)
-          ctx.moveTo(mx, my - 10); ctx.lineTo(mx, my + 10)
-          ctx.stroke()
-          // coords label
-          const label = `nx=${nx.toFixed(3)} ny=${ny.toFixed(3)}  [F2] picker`
-          ctx.font = '12px monospace'
-          const tw2 = ctx.measureText(label).width + 12
-          ctx.fillStyle = 'rgba(0,0,0,0.6)'
-          ctx.fillRect(mx + 10, my - 16, Math.max(180, tw2), 16)
-          ctx.fillStyle = '#9eff9e'
-          ctx.fillText(label, mx + 16, my - 4)
-        }
-
-        // drag-rectangle preview (two-click define)
-        const a = pickStartRef.current
-        if (a) {
-          const x = Math.max(0, Math.min(1, Math.min(a.nx, nx)))
-          const y = Math.max(0, Math.min(1, Math.min(a.ny, ny)))
-          const w = Math.max(0, Math.min(1, Math.abs(a.nx - nx)))
-          const h = Math.max(0, Math.min(1, Math.abs(a.ny - ny)))
-          const rx = frameRef.current.dx + x * frameRef.current.dw
-          const ry = frameRef.current.dy + y * frameRef.current.dh
-          const rw = w * frameRef.current.dw
-          const rh = h * frameRef.current.dh
-          ctx.setLineDash([6, 4])
-          ctx.strokeStyle = 'rgba(0,255,0,0.9)'
-          ctx.strokeRect(rx, ry, rw, rh)
-          ctx.setLineDash([])
-          const info = `nrect(${x.toFixed(3)}, ${y.toFixed(3)}, ${w.toFixed(3)}, ${h.toFixed(3)})`
-          ctx.fillStyle = 'rgba(0,0,0,0.6)'
-          const tw3 = ctx.measureText(info).width + 12
-          ctx.fillRect(rx, ry - 16, Math.max(180, tw3), 16)
-          ctx.fillStyle = '#9eff9e'
-          ctx.fillText(info, rx + 6, ry - 4)
-        }
-      }
-
-      rafRef.current = requestAnimationFrame(step)
-    }
-
-    rafRef.current = requestAnimationFrame(step)
-    return () => cancelAnimationFrame(rafRef.current)
-  }, [ready])
-
   // Sync scene label for React overlay
   useEffect(() => { sceneRef.current = scene }, [scene])
 
-  // Clear lingering projectile/fire effects when changing scenes
   useEffect(() => {
-    projectilesRef.current = []
-    firesRef.current = []
-    // Clear enemies when switching scenes; spawn on entering dungeonInterior
-    if (scene !== 'dungeonInterior') {
-      enemiesRef.current = []
-      enemiesSpawnedRef.current = false
-      dungeonWaveRef.current = 1
-      nextWaveAtRef.current = 0
-    } else {
-      // entering dungeon interior
-      dungeonWaveRef.current = 1
-      nextWaveAtRef.current = 0
-    }
-  }, [scene])
+    session.blocked = titleOpen || optionsOpen || classSelectOpen || chatOpen || inventoryOpen || shopOpen || gameOver
+  }, [titleOpen, optionsOpen, classSelectOpen, chatOpen, inventoryOpen, shopOpen, gameOver])
 
-  // Debug mouse handlers
-  const handleMouseMove = (e) => {
-    if (!debugOn) return
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const rect = canvas.getBoundingClientRect()
-    const mx = e.clientX - rect.left
-    const my = e.clientY - rect.top
-    const { dx, dy, dw, dh } = frameRef.current
-    const nx = (mx - dx) / dw
-    const ny = (my - dy) / dh
-    mouseRef.current = { nx, ny }
-  }
+  useEffect(() => {
+    if (selectedClass !== 'thief' && selectedClass !== 'mage') return undefined
+    const id = setInterval(() => setAbilityNow(performance.now()), 250)
+    return () => clearInterval(id)
+  }, [selectedClass])
 
-  const handleClick = async () => {
-    if (!debugOn) return
-    const p = mouseRef.current
-    if (!pickStartRef.current) {
-      pickStartRef.current = { ...p }
-    } else {
-      const a = pickStartRef.current
-      const x = Math.min(a.nx, p.nx)
-      const y = Math.min(a.ny, p.ny)
-      const w = Math.abs(a.nx - p.nx)
-      const h = Math.abs(a.ny - p.ny)
-      const snippet = `nrect(${x.toFixed(3)}, ${y.toFixed(3)}, ${w.toFixed(3)}, ${h.toFixed(3)})`
-      try { await navigator.clipboard.writeText(snippet) } catch {}
-      console.log('[Picker] rect copied to clipboard:', snippet)
-      pickStartRef.current = null
+  useEffect(() => {
+    const onReady = () => setReady(true)
+    const onScene = ({ scene: next } = {}) => {
+      if (next) setScene(next)
     }
-  }
+    const onVitals = (v) => {
+      if (!v) return
+      setVitals({ hp: v.hp, hpMax: v.hpMax, mana: v.mana, manaMax: v.manaMax })
+    }
+    const onPrompt = ({ label } = {}) => setActivePrompt(label || '')
+    const onNotice = ({ text } = {}) => { if (text) showNotice(text) }
+    const onLoot = ({ gems, items } = {}) => {
+      const overflow = grantLoot(gems || {}, items || [])
+      const gemParts = []
+      const g = gems || {}
+      if (g.ruby) gemParts.push(`${g.ruby} Ruby${g.ruby > 1 ? 'ies' : ''}`)
+      if (g.sapphire) gemParts.push(`${g.sapphire} Sapphire${g.sapphire > 1 ? 's' : ''}`)
+      if (g.emerald) gemParts.push(`${g.emerald} Emerald${g.emerald > 1 ? 's' : ''}`)
+      const itemNames = (items || []).map((it) => getItemDef(it.id).name)
+      const segs = []
+      if (gemParts.length) segs.push(gemParts.join(', '))
+      if (itemNames.length) segs.push(itemNames.join(', '))
+      if (segs.length) showNotice(`Loot: ${segs.join(' + ')}`)
+      if (overflow?.length) showNotice('Some loot did not fit.')
+    }
+    const onConsumed = ({ id, slot, mode } = {}) => {
+      if (!id) return
+      setInventory((inv) => {
+        if (mode === 'search') return consumeOneItem(inv, id).next
+        const cur = inv.hotbar[slot]
+        if (!cur || cur.id !== id) return inv
+        const cnt = (cur.count || 1) - 1
+        const next = { armor: { ...inv.armor }, storage: inv.storage.slice(), hotbar: inv.hotbar.slice() }
+        next.hotbar[slot] = cnt > 0 ? { id, count: cnt } : null
+        return next
+      })
+    }
+    const onDied = ({ killer } = {}) => {
+      killerRef.current = killer || 'Unknown'
+      gameOverRef.current = true
+      setGameOver(true)
+    }
+    const onWheel = ({ open } = {}) => setSpellWheelOpen(!!open)
+    const onVendor = () => {
+      setShopOpen(true)
+      markVendorActivity()
+      playVendor('Greeting')
+    }
+    if (session.ready) setReady(true)
+    const offs = [
+      eventBus.on(GameEvents.ASSETS_READY, onReady),
+      eventBus.on(GameEvents.SCENE_CHANGE, onScene),
+      eventBus.on(GameEvents.VITALS, onVitals),
+      eventBus.on(GameEvents.PROMPT, onPrompt),
+      eventBus.on(GameEvents.NOTICE, onNotice),
+      eventBus.on(GameEvents.LOOT, onLoot),
+      eventBus.on(GameEvents.ITEM_CONSUMED, onConsumed),
+      eventBus.on(GameEvents.DIED, onDied),
+      eventBus.on(GameEvents.SPELL_WHEEL, onWheel),
+      eventBus.on(GameEvents.VENDOR, onVendor),
+    ]
+    return () => { for (const off of offs) off() }
+  // showNotice / grantLoot / playVendor are stable enough for this bridge; they only call setState.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Spell wheel click handler: choose a spell based on click angle relative to the wheel center
   const handleSpellWheelClick = (e) => {
@@ -3356,38 +1538,23 @@ export default function Game() {
     }
   }, [chatOpen, chatTurns])
 
+  session.hooks.openChest = openChest
+
   return (
     <div className="min-h-screen w-full bg-black">
-      <div className="relative w-full h-screen">
-        <canvas
-          ref={canvasRef}
-          className="w-full h-full block"
-          onMouseMove={handleMouseMove}
-          onClick={handleClick}
-        />
-        {/* Animated effects layer (GIFs rendered as DOM images so they animate) */}
-  <div className="pointer-events-none absolute inset-0 z-10">
-          {/* Projectiles */}
-          {effectsTick >= 0 && projectilesRef.current.map((pr) => (
-            <img
-              key={pr.id}
-              src={pr.domSrc}
-              alt="effect"
-              className="absolute select-none"
-              style={{ left: pr.x, top: pr.y, width: pr.w, height: pr.h, imageRendering: 'pixelated' }}
-            />
-          ))}
-          {/* Lingering fires/poison */}
-          {effectsTick >= 0 && firesRef.current.map((f) => (
-            <img
-              key={f.id}
-              src={f.domSrc}
-              alt="effect"
-              className="absolute select-none"
-              style={{ left: f.x, top: f.y, width: f.w, height: f.h, imageRendering: 'pixelated' }}
-            />
-          ))}
-        </div>
+      <div className="relative h-screen w-full overflow-hidden">
+        <PhaserGame />
+        {!titleOpen && !classSelectOpen && (
+          <div className="pointer-events-none absolute left-2 top-2 z-10 max-w-[calc(100%-5.5rem)] rounded bg-black/50 px-2 py-1.5 text-xs text-white sm:left-3 sm:top-3 sm:max-w-md sm:px-3 sm:py-2 sm:text-sm">
+            <div>WASD: Move &nbsp; E: Interact &nbsp; V: Inventory &nbsp; F2: Collision</div>
+            <div className="text-stone-200">{SCENE_HINTS[scene] || ''}</div>
+          </div>
+        )}
+        {activePrompt && !titleOpen && !chatOpen && !shopOpen && (
+          <div className="pointer-events-none absolute left-1/2 top-[14%] z-20 -translate-x-1/2 rounded-lg border-2 border-amber-300/95 bg-slate-950/90 px-4 py-2 text-lg font-bold text-amber-100">
+            {activePrompt}
+          </div>
+        )}
         {/* Mage Spell Wheel (hold K while Spellbook selected) */}
         {spellWheelOpen && selectedClass === 'mage' && (
           <div className="absolute inset-0 z-40 flex items-center justify-center">
@@ -3432,12 +1599,12 @@ export default function Game() {
         )}
         {/* Thief ability status (cooldown/active) */}
         <div className="absolute top-12 left-2 z-30 pointer-events-none select-none">
-          {effectsTick >= 0 && (() => {
-            if (selectedClassRef.current !== 'thief') return null
-            const now = performance.now()
-            const vanishRem = Math.max(0, thiefVanishUntilRef.current - now)
-            const smokeRem = Math.max(0, thiefSmokeUntilRef.current - now)
-            const cdRem = Math.max(0, thiefVanishCooldownUntilRef.current - now)
+          {abilityNow >= 0 && (() => {
+            if (selectedClass !== 'thief') return null
+            const now = abilityNow || performance.now()
+            const vanishRem = Math.max(0, session.thiefVanishUntil - now)
+            const smokeRem = Math.max(0, session.thiefSmokeUntil - now)
+            const cdRem = Math.max(0, session.thiefVanishCooldownUntil - now)
             // Status and progress
             let label = 'Invisibility: Ready'
             let pct = 0
@@ -3467,12 +1634,11 @@ export default function Game() {
         </div>
         {/* Mage Life Leech cooldown display */}
         <div className="absolute top-28 left-2 z-30 pointer-events-none select-none">
-          {effectsTick >= 0 && (() => {
-            if (selectedClassRef.current !== 'mage') return null
-            // Only show if Life Leech spell currently selected
-            if (mageSelectedSpellRef.current !== 'leech') return null
-            const now = performance.now()
-            const cdRem = Math.max(0, lifeLeechCooldownUntilRef.current - now)
+          {abilityNow >= 0 && (() => {
+            if (selectedClass !== 'mage') return null
+            if ((session.spellId || mageSelectedSpellRef.current) !== 'leech') return null
+            const now = abilityNow || performance.now()
+            const cdRem = Math.max(0, session.lifeLeechCooldownUntil - now)
             let label = 'Life Leech: Ready'
             let pct = 0
             let color = '#86efac'
@@ -3491,30 +1657,6 @@ export default function Game() {
                   <div className="mt-1 text-[10px] text-stone-400">Cast: Space (Spellbook)</div>
                 </div>
               </div>
-            )
-          })()}
-        </div>
-        {/* Thief invisibility overlays (above effects) */}
-        <div className="pointer-events-none absolute inset-0 z-20">
-          {(() => {
-            const now = performance.now()
-            const isThief = selectedClassRef.current === 'thief'
-            if (!isThief) return null
-            const vanishing = now < thiefVanishUntilRef.current
-            const inSmoke = now < thiefSmokeUntilRef.current
-            // During smoke, hide overlay while attack pose is showing
-            const hideDuringAttack = attackActiveRef.current
-            let src = null
-            if (vanishing && imagesRef.current.thiefDisappearGif) src = PATHS.thiefDisappearGif
-            else if (inSmoke && !hideDuringAttack && imagesRef.current.thiefSmokeGif) src = PATHS.thiefSmokeGif
-            if (!src) return null
-            return (
-              <img
-                src={src}
-                alt="thief-stealth"
-                className="absolute select-none"
-                style={{ left: playerRef.current.x, top: playerRef.current.y, width: playerRef.current.w, height: playerRef.current.h, imageRendering: 'pixelated' }}
-              />
             )
           })()}
         </div>
@@ -3963,47 +2105,47 @@ export default function Game() {
                 <div
                   className="h-full"
                   style={{
-                    width: `${Math.max(0, Math.min(100, (playerRef.current.hp / playerRef.current.hpMax) * 100 || 0))}%`,
+                    width: `${Math.max(0, Math.min(100, (vitals.hp / vitals.hpMax) * 100 || 0))}%`,
                     backgroundColor: 'rgba(185, 28, 28, 0.9)' // darker red (~red-700) with slight opacity
                   }}
                 />
                 {/* subtle shine */}
                 <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(255,255,255,0.15), rgba(0,0,0,0.05))' }} />
                 {/* tick marks at 25/50/75 HP */}
-                {(playerRef.current.hpMax || 100) >= 25 && (
+                {(vitals.hpMax || 100) >= 25 && (
                   <div
                     className="absolute bg-stone-200/70"
                     style={{
                       width: 2,
                       height: 10,
                       top: 1,
-                      left: `${Math.max(0, Math.min(1, 25 / (playerRef.current.hpMax || 100))) * 100}%`,
+                      left: `${Math.max(0, Math.min(1, 25 / (vitals.hpMax || 100))) * 100}%`,
                       transform: 'translateX(-1px)',
                       zIndex: 2,
                     }}
                   />
                 )}
-                {(playerRef.current.hpMax || 100) >= 50 && (
+                {(vitals.hpMax || 100) >= 50 && (
                   <div
                     className="absolute bg-stone-200/70"
                     style={{
                       width: 2,
                       height: 10,
                       top: 1,
-                      left: `${Math.max(0, Math.min(1, 50 / (playerRef.current.hpMax || 100))) * 100}%`,
+                      left: `${Math.max(0, Math.min(1, 50 / (vitals.hpMax || 100))) * 100}%`,
                       transform: 'translateX(-1px)',
                       zIndex: 2,
                     }}
                   />
                 )}
-                {(playerRef.current.hpMax || 100) >= 75 && (
+                {(vitals.hpMax || 100) >= 75 && (
                   <div
                     className="absolute bg-stone-200/70"
                     style={{
                       width: 2,
                       height: 10,
                       top: 1,
-                      left: `${Math.max(0, Math.min(1, 75 / (playerRef.current.hpMax || 100))) * 100}%`,
+                      left: `${Math.max(0, Math.min(1, 75 / (vitals.hpMax || 100))) * 100}%`,
                       transform: 'translateX(-1px)',
                       zIndex: 2,
                     }}
@@ -4014,12 +2156,12 @@ export default function Game() {
               {selectedClass === 'mage' && (
                 <div
                   className="relative w-7 h-7 rounded-full bg-stone-900/60 border border-amber-900/40"
-                  title={`Mana: ${Math.floor(playerRef.current.mana || 0)}/${playerRef.current.manaMax || 0}`}
+                  title={`Mana: ${Math.floor(vitals.mana || 0)}/${vitals.manaMax || 0}`}
                 >
                   <div
                     className="absolute inset-0 rounded-full"
                     style={{
-                      background: `conic-gradient(#1e3a8a ${(Math.max(0, Math.min(1, (playerRef.current.mana || 0) / (playerRef.current.manaMax || 1)))) * 360}deg, transparent 0deg)`,
+                      background: `conic-gradient(#1e3a8a ${(Math.max(0, Math.min(1, (vitals.mana || 0) / (vitals.manaMax || 1)))) * 360}deg, transparent 0deg)`,
                       filter: 'drop-shadow(0 0 2px rgba(30,58,138,0.7))',
                     }}
                   />
@@ -4146,41 +2288,28 @@ export default function Game() {
               </div>
               <button
                 onClick={() => {
-                  // Reset state to main menu
                   setGameOver(false)
                   gameOverRef.current = false
-                  playerRef.current.hp = playerRef.current.hpMax
-                  // Clear enemies/effects
-                  enemiesRef.current = []
-                  enemiesSpawnedRef.current = false
-                  projectilesRef.current = []
-                  firesRef.current = []
-                  floatTextsRef.current = []
-                  dungeonWaveRef.current = 1
-                  nextWaveAtRef.current = 0
-                  // Return to title
+                  session.classId = null
+                  session.spriteUrl = ''
+                  session.equippedId = null
+                  session.api?.resetRun()
+                  setVitals({ hp: 100, hpMax: 100, mana: 0, manaMax: 0 })
                   setTitleOpen(true)
                   titleOpenRef.current = true
-                  // Do NOT open class select yet; only after pressing Start on the title
                   setClassSelectOpen(false)
                   classSelectOpenRef.current = false
-                  // Clear selected class so a fresh selection is required after Start
                   setSelectedClass(null)
                   selectedClassRef.current = null
-                  // Reset inventory to initial empty until class re-chosen
-                  setInventory({
-                    armor: { head: null, chest: null, legs: null, boots: null, offhand: null },
-                    storage: Array(27).fill(null),
-                    hotbar: Array(9).fill(null),
-                  })
-                  inventoryRef.current = {
+                  const emptyInv = {
                     armor: { head: null, chest: null, legs: null, boots: null, offhand: null },
                     storage: Array(27).fill(null),
                     hotbar: Array(9).fill(null),
                   }
+                  setInventory(emptyInv)
+                  inventoryRef.current = emptyInv
                   setScene('village')
                   sceneRef.current = 'village'
-                  playerRef.current._spawn = { scene: 'village', nx: 0.5, ny: 0.90 }
                 }}
                 className="mt-2 px-6 py-3 rounded-lg bg-red-600 hover:bg-red-500 text-stone-900 font-semibold shadow-lg shadow-red-900/30"
               >Return to Main Menu</button>
