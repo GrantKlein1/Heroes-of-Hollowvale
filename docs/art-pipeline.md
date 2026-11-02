@@ -4,17 +4,17 @@ Base tile size is **16×16**. One league is one screen of **20×12** tiles (320�
 
 ## Tileset
 
-Overworld art is the **Ninja Adventure** asset pack by Pixel-Boy and AAA, 16×16 top-down, released under [CC0 1.0 Universal](https://pixel-boy.itch.io/ninja-adventure-asset-pack). Attribution is not required. The sheet, one character frame, and the license text live in `client/public/maps/ninja-adventure/` (`LICENSE.txt` is the CC0 legal text from the pack). The GameDev Market "Pro" redistribution is a different license and is not used.
+Overworld art is **Zelda-like tilesets and sprites** by ArMM1998, 16×16 top-down, released under [CC0](https://opengameart.org/content/zelda-like-tilesets-and-sprites). Attribution is not required. The pack, the measured `atlas.json`, and a CC0 note live in `client/public/maps/zelda-like/`. Derived tiles (dirt road, cobble, cottage, well, enemies, camp props) are authored in `bake.py` and saved under `zelda-like/authored/` as PNG and `.aseprite`.
 
-`npm run tileset` runs `client/tools/generateTileset.mjs`. It copies `ninja-adventure/tileset.png` to `hollowvale.png`, fills transparent roof and fence pixels with grass, and writes:
+`npm run tileset` runs `client/tools/generateTileset.mjs`, which runs `zelda-like/bake.py` and writes:
 
-- `client/public/maps/hollowvale.png` — the 28×40 pack sheet (448×640).
-- `client/public/maps/hollowvale.tsj` — Tiled tileset. Water and walls are full-tile collision. Tree stems, rocks, logs, and fences use a partial footprint. Canopy cells, fords, and bridges have none. The stem box is the trunk, not the dirt oval under the canopy.
+- `client/public/maps/hollowvale.png` — a 16×3 terrain sheet. One grass, two sparse details, dirt and cobble autotiles recolored from the pack's sand set, and the pack's water autotiles.
+- `client/public/maps/hollowvale.tsj` — Tiled tileset. Water and walls are full-tile collision. Fords and bridges are not. Tree stems are prop footprints, not tiles.
 - `client/public/maps/brackenford.json` and `hearthmile.json` — Tiled maps baked from `client/src/game/world/stamps.js`. Regenerate after editing the grids (the world test checks this).
-- `tavern-interior.png`, `market-interior.png`, and `bandit.png` (one frame of the pack's hooded character).
-- `preview.png` — the Brackenford-to-Hearthmile corridor.
+- `tavern-interior.png` and `market-interior.png` — rooms composited from `Inner.png`.
+- `atlas-contact.png` — every terrain id and sprite, labeled.
 
-Cell choice lives in `client/src/game/world/packMap.js`. Roads use the pack's sand-path edge tiles (north/east/south/west and corners). Deep water is the pond center; the orange bank tiles sit on the land beside it. Round trees are 32×32 sprites (canopy over the dirt base) drawn above the player. Cottages are slices of the sheet's houses.
+The generator stores a terrain kind. `autotile.js` picks a tile from the 9-piece set plus the four inner corners, using the neighbour mask. Houses, trees, fences, the bridge, and props are whole sprites, y-sorted. The hero is the pack's 16×32 walk cycle at scale 1.
 
 ## Sprite sheets
 

@@ -1,0 +1,11 @@
+Zelda-like tilesets and sprites
+Author: ArMM1998
+License: Creative Commons Zero 1.0 Universal (CC0)
+https://opengameart.org/content/zelda-like-tilesets-and-sprites
+
+The files in gfx/ are the original pack. atlas.json records source rectangles
+measured from those sheets (objects trimmed to opaque bounds).
+
+Files in authored/ are derivatives made for Heroes of Hollowvale (dirt and
+cobble recolors, a timber cottage, a stone well, camp props, and 16px
+enemies). They are also released under CC0.

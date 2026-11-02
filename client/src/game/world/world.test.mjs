@@ -16,11 +16,11 @@ import {
   tileCenter,
 } from './metrics.js'
 import { PNG } from 'pngjs'
-import { T, collisionForTile } from './tileCatalog.js'
-import { auditRects } from './packMap.js'
-import { PROP_KINDS, propSprite } from './props.js'
+import { T, TERRAIN, collisionForTile, mappedTerrainIds, SHEET_COLS } from './tileCatalog.js'
+import { SPRITES } from './spriteManifest.js'
+import { tileForMask, usedAutotileKey } from './autotile.js'
+import { PROP_KINDS, DECORATION_KINDS, containsPoint } from './props.js'
 import { SOUTH_GATE, STONE } from './content.js'
-import { DECORATION_KINDS, containsPoint } from './props.js'
 import { isRoad } from './roads.js'
 
 const MAP_DIR = new URL('../../../public/maps/', import.meta.url)
@@ -145,15 +145,11 @@ test('road pace is one league in eight seconds and forest is slower', () => {
 })
 
 test('tree trunks collide on a partial footprint and canopy tiles do not', () => {
-  for (const id of [T.trunk0, T.trunk1, T.trunk2, T.trunk3]) {
-    const hit = collisionForTile(id)
-    assert.ok(hit)
-    assert.ok(hit.w < 16 && hit.h < 16)
-    assert.ok(hit.y > 0)
-  }
-  for (const id of [T.canopy0, T.canopy1, T.canopy2, T.canopy3]) {
-    assert.equal(collisionForTile(id), null)
-  }
+  const hit = PROP_KINDS.tree.collision
+  assert.ok(hit)
+  assert.ok(hit.w < 16 && hit.h < 16)
+  assert.ok(hit.y > 0)
+  assert.equal(collisionForTile(T.grass), null)
   assert.deepEqual(collisionForTile(T.water), { x: 0, y: 0, w: 16, h: 16 })
   assert.equal(collisionForTile(T.ford), null)
   assert.equal(collisionForTile(T.bridgeH), null)
@@ -197,29 +193,67 @@ function rectProblem(png, rect) {
   return null
 }
 
-test('mapped atlas frames are not empty or solid black', () => {
-  const png = PNG.sync.read(readFileSync(new URL('../../../public/maps/ninja-adventure/tileset.png', import.meta.url)))
-  const rects = auditRects()
-  for (const [kind, def] of Object.entries(PROP_KINDS)) {
-    if (def.tall) continue
-    const count = def.sprites ? def.sprites.length : def.frames.length
-    for (let i = 0; i < count; i++) {
-      const spec = propSprite(kind, i)
-      rects.push({
-        name: `${kind}-${i}`,
-        x: spec.col * 16,
-        y: spec.row * 16,
-        w: (spec.tw || 1) * 16,
-        h: (spec.th || 1) * 16,
-      })
+function frameProblem(png, rect) {
+  const problem = rectProblem(png, rect)
+  if (problem) return problem
+  let opaque = 0
+  const colors = new Set()
+  for (let y = 0; y < rect.h; y++) {
+    for (let x = 0; x < rect.w; x++) {
+      const sx = rect.x + x
+      const sy = rect.y + y
+      const i = (sy * png.width + sx) * 4
+      if (png.data[i + 3] < 24) continue
+      opaque++
+      colors.add(`${png.data[i]},${png.data[i + 1]},${png.data[i + 2]}`)
     }
   }
+  if (opaque === 0) return 'transparent'
+  if (colors.size < 2) return 'solid-color'
+  return null
+}
+
+test('every mapped terrain tile and sprite has a real frame', () => {
+  const sheet = PNG.sync.read(readFileSync(new URL('../../../public/maps/hollowvale.png', import.meta.url)))
   const bad = []
-  for (const rect of rects) {
-    const problem = rectProblem(png, rect)
-    if (problem) bad.push(`${rect.name} ${problem} @${rect.x},${rect.y}`)
+  for (const id of mappedTerrainIds()) {
+    const rect = { x: (id % SHEET_COLS) * 16, y: Math.floor(id / SHEET_COLS) * 16, w: 16, h: 16 }
+    const problem = frameProblem(sheet, rect)
+    if (problem) bad.push(`terrain ${id} ${problem}`)
+  }
+  for (const [name, spec] of Object.entries(SPRITES)) {
+    const png = PNG.sync.read(readFileSync(new URL(`../../../public/maps/zelda-like/sprites/${name}.png`, import.meta.url)))
+    const problem = frameProblem(png, { x: 0, y: 0, w: png.width, h: png.height })
+    if (problem) bad.push(`${name} ${problem}`)
   }
   assert.deepEqual(bad, [])
+})
+
+test('every terrain neighbour combo the generator uses has a mapped tile', () => {
+  const world = createWorld(WORLD_SEED)
+  const allowed = new Set(mappedTerrainIds())
+  const seen = new Set()
+  for (let wy = LEAGUE_MIN_Y * 11; wy <= LEAGUE_MAX_Y * 11 + LEAGUE_H - 1; wy++) {
+    for (let wx = LEAGUE_MIN_X * 19; wx <= LEAGUE_MAX_X * 19 + LEAGUE_W - 1; wx++) {
+      const id = world.tileAt(wx, wy)
+      assert.ok(allowed.has(id), `unmapped tile ${id} at ${wx},${wy} (${world.kindAt(wx, wy)})`)
+      const key = usedAutotileKey(wx, wy, world.kindAt)
+      if (key) seen.add(key)
+    }
+  }
+  assert.ok(seen.size > 8, `expected several autotile combos, saw ${seen.size}`)
+  for (const base of [TERRAIN.dirt, TERRAIN.cobble, TERRAIN.water]) {
+    for (let mask = 0; mask < 16; mask++) {
+      const id = tileForMask(base, mask, null)
+      assert.ok(allowed.has(id), `mask ${mask} base ${base}`)
+    }
+    for (const missing of ['nw', 'ne', 'sw', 'se']) {
+      const diag = { nw: true, ne: true, sw: true, se: true, [missing]: false }
+      const id = tileForMask(base, 15, diag)
+      assert.ok(allowed.has(id))
+      assert.notEqual(id, tileForMask(base, 15, { nw: true, ne: true, sw: true, se: true }))
+    }
+  }
 })
 
 test('stamped Tiled maps match the generated leagues', () => {

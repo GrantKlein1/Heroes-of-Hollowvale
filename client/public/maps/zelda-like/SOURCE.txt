@@ -1,0 +1,11 @@
+Zelda-like tilesets and sprites
+Author: ArMM1998
+License: Creative Commons Zero (CC0)
+https://opengameart.org/content/zelda-like-tilesets-and-sprites
+
+gfx/ is the pack. atlas.json lists source rectangles measured from those sheets
+(objects trimmed to their opaque bounds). authored/ holds tiles derived from
+those rectangles: a dirt recolor of the sand path, a one-row river composited
+from the water edges, a timber cottage recolor of the barn, and small sprites
+drawn in the same palette where the pack has no equivalent (well, bandits,
+goblins, tent, campfire).

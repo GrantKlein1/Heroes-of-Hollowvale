@@ -13,7 +13,7 @@ export const RESPAWN_MS = 45000
 export const SPAWNS = {
   start: { wx: 10, wy: 5 },
   flagon: { wx: 10, wy: 5 },
-  market: { wx: 6, wy: 4 },
+  market: { wx: 3, wy: 6 },
   stub: { wx: -3, wy: 47 },
 }
 
@@ -40,7 +40,7 @@ export const FIXED_PROPS = [
   { kind: 'campfire', variant: 0, wx: 14, wy: 26 },
   { kind: 'hay', variant: 0, wx: 16, wy: 19 },
   { kind: 'hay', variant: 1, wx: 16, wy: 34 },
-  { kind: 'crate', variant: 0, wx: 3, wy: 6 },
+  { kind: 'crate', variant: 0, wx: 2, wy: 7 },
   { kind: 'barrel', variant: 0, wx: 4, wy: 6 },
   { kind: 'well', variant: 0, wx: 16, wy: 6 },
   { kind: 'lamp', variant: 0, wx: 7, wy: 6 },
@@ -108,8 +108,8 @@ export const INTERACTABLES = [
   },
   {
     id: 'market-door',
-    wx: 5,
-    wy: 4,
+    wx: 3,
+    wy: 6,
     w: 1,
     h: 1,
     kind: 'exit',

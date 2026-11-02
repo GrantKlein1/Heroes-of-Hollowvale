@@ -28,6 +28,7 @@ import { session } from '../session.js'
 import { ScreenCamera } from '../screenCamera.js'
 import { DomFxLayer } from '../fxLayer.js'
 import { OverworldController, OVERWORLD_DEPTH_BIAS, isSpawnName } from '../world/OverworldController.js'
+import { SPRITES } from '../world/spriteManifest.js'
 import {
   PAINTED_WORLD_W,
   PAINTED_WORLD_H,
@@ -200,7 +201,13 @@ export default class HollowvaleScene extends Phaser.Scene {
       if (asset.src) this.load.image(asset.id, asset.src)
     }
     this.load.image('hollowvale', '/maps/hollowvale.png')
-    this.load.image('bandit', '/maps/bandit.png')
+    for (const [name, spec] of Object.entries(SPRITES)) {
+      this.load.image(`zv-${name}`, spec.src)
+    }
+    this.load.spritesheet('zelda-hero', '/maps/zelda-like/hero.png', { frameWidth: 16, frameHeight: 32 })
+    for (const kind of ['bandit', 'goblin', 'archer', 'brute']) {
+      this.load.spritesheet(`enemy-${kind}`, `/maps/zelda-like/enemies/${kind}.png`, { frameWidth: 16, frameHeight: 16 })
+    }
     this.load.tilemapTiledJSON('brackenford', '/maps/brackenford.json')
     this.load.tilemapTiledJSON('hearthmile', '/maps/hearthmile.json')
   }
@@ -387,8 +394,32 @@ export default class HollowvaleScene extends Phaser.Scene {
     this._applySprite(session.spriteUrl || CLASS_SPRITES[id])
   }
 
+  _heroDir() {
+    if (Math.abs(this.facingX) > Math.abs(this.facingY)) return this.facingX < 0 ? 1 : 3
+    return this.facingY < 0 ? 2 : 0
+  }
+
+  _stepHero(now, moving) {
+    if (!this.textures.exists('zelda-hero')) return
+    if (this._attacking) {
+      this.player.setFrame(16 + this._heroDir())
+      return
+    }
+    const frame = moving ? Math.floor(now / 140) % 4 : 0
+    this.player.setFrame(this._heroDir() * 4 + frame)
+  }
+
   _applySprite(url) {
     this._spriteUrl = url || ''
+    if (this._heroMode && this.textures.exists('zelda-hero')) {
+      const frame = this._attacking ? 16 + this._heroDir() : 0
+      this.player.setTexture('zelda-hero', frame)
+      this.player.setOrigin(0.5, 0.5)
+      this.player.setScale(1, 1)
+      this.player.body.setSize(10, 8, true)
+      this.player.body.reset(this.player.x, this.player.y)
+      return
+    }
     if (!url || !this.textures.exists(url)) return
     this.player.setTexture(url)
     const src = this.player.texture.getSourceImage()
@@ -444,6 +475,7 @@ export default class HollowvaleScene extends Phaser.Scene {
     if (this.sceneId === 'overworld' && this.overworld?.active) speed = this.overworld.speed()
     else if (now < session.speedBoostUntil) speed *= 1.5
     this.player.setVelocity(vx * speed, vy * speed)
+    if (this._heroMode) this._stepHero(now, vx !== 0 || vy !== 0)
     onPlayerMove({ moving: vx !== 0 || vy !== 0, now })
 
     if (this.sceneId === 'overworld' && this.overworld?.active && !blocked) {
@@ -826,17 +858,14 @@ export default class HollowvaleScene extends Phaser.Scene {
 
   _spawnEnemyAt(type, x, y, name, id) {
     const human = name && /bandit|bruiser/i.test(name)
-    const key = human ? 'bandit' : ENEMY_SPRITES[type]
-    const texKey = key && this.textures.exists(key) ? key : '__px'
-    const visibleH = name && /bruiser/i.test(name) ? 26 : 18
-    const src = this.textures.get(texKey).getSourceImage()
-    const fitted = src ? displayForVisible(src, visibleH) : { w: visibleH, h: visibleH }
+    const kind = human ? 'bandit' : type === 'archer' ? 'archer' : type === 'brute' ? 'brute' : 'goblin'
+    const key = `enemy-${kind}`
+    const texKey = this.textures.exists(key) ? key : '__px'
     const spr = this.enemies.create(x, y, texKey)
-    spr.setOrigin(0.5, 0.5)
-    spr.setDisplaySize(fitted.w, fitted.h)
-    const sx = spr.scaleX || 1
-    const sy = spr.scaleY || 1
-    spr.body.setSize(10 / sx, 10 / sy, true)
+    spr.setOrigin(0.5, 0.75)
+    if (texKey.startsWith('enemy-')) spr.setScale(1, 1)
+    else spr.setDisplaySize(16, 16)
+    spr.body.setSize(10, 8, true)
     spr.body.setAllowGravity(false)
     spr.setCollideWorldBounds(true)
     spr.setPushable(false)
@@ -924,6 +953,11 @@ export default class HollowvaleScene extends Phaser.Scene {
         e.fireAt = now + 1800 + Math.random() * 1200
       }
       e.setVelocity(e.dirX * e.speed, e.dirY * e.speed)
+      if (e.texture?.key?.startsWith('enemy-') && e.texture.frameTotal > 1) {
+        const dir = Math.abs(e.dirX) > Math.abs(e.dirY) ? (e.dirX < 0 ? 1 : 3) : (e.dirY < 0 ? 2 : 0)
+        const step = Math.floor(now / 180) % 2
+        e.setFrame(dir * 2 + step)
+      }
       if (intersects(this._enemyBox(e), hurtBox)) {
         if (now >= (this._iframeUntil || 0)) {
           const base = e.enemyType === 'brute' ? 12 : e.enemyType === 'archer' ? 6 : 8
@@ -1242,6 +1276,7 @@ export default class HollowvaleScene extends Phaser.Scene {
     if (id === 'overworld') this.overworld.show(spawn, slideMs)
     else {
       this.overworld?.hide()
+      this._heroMode = id === 'tavern' || id === 'market'
       if (id === 'wilderness') this._showWilderness(spawn, slideMs)
       else this._showPainted(id, spawn, slideMs)
     }

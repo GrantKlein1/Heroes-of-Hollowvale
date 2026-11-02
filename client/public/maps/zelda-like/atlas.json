@@ -1,0 +1,398 @@
+{
+ "grass": {
+  "sheet": "Overworld.png",
+  "rect": [
+   0,
+   144,
+   16,
+   16
+  ]
+ },
+ "grass_detail1": {
+  "sheet": "Overworld.png",
+  "rect": [
+   16,
+   144,
+   16,
+   16
+  ]
+ },
+ "grass_detail2": {
+  "sheet": "Overworld.png",
+  "rect": [
+   0,
+   160,
+   16,
+   16
+  ]
+ },
+ "sand_nw": {
+  "sheet": "Overworld.png",
+  "rect": [
+   0,
+   48,
+   16,
+   16
+  ]
+ },
+ "sand_n": {
+  "sheet": "Overworld.png",
+  "rect": [
+   16,
+   48,
+   16,
+   16
+  ]
+ },
+ "sand_ne": {
+  "sheet": "Overworld.png",
+  "rect": [
+   32,
+   48,
+   16,
+   16
+  ]
+ },
+ "sand_w": {
+  "sheet": "Overworld.png",
+  "rect": [
+   0,
+   64,
+   16,
+   16
+  ]
+ },
+ "sand_c": {
+  "sheet": "Overworld.png",
+  "rect": [
+   16,
+   64,
+   16,
+   16
+  ]
+ },
+ "sand_e": {
+  "sheet": "Overworld.png",
+  "rect": [
+   32,
+   64,
+   16,
+   16
+  ]
+ },
+ "sand_sw": {
+  "sheet": "Overworld.png",
+  "rect": [
+   0,
+   80,
+   16,
+   16
+  ]
+ },
+ "sand_s": {
+  "sheet": "Overworld.png",
+  "rect": [
+   16,
+   80,
+   16,
+   16
+  ]
+ },
+ "sand_se": {
+  "sheet": "Overworld.png",
+  "rect": [
+   32,
+   80,
+   16,
+   16
+  ]
+ },
+ "sand_inner_nw": {
+  "sheet": "Overworld.png",
+  "rect": [
+   0,
+   96,
+   16,
+   16
+  ]
+ },
+ "sand_inner_ne": {
+  "sheet": "Overworld.png",
+  "rect": [
+   16,
+   96,
+   16,
+   16
+  ]
+ },
+ "sand_inner_sw": {
+  "sheet": "Overworld.png",
+  "rect": [
+   0,
+   112,
+   16,
+   16
+  ]
+ },
+ "sand_inner_se": {
+  "sheet": "Overworld.png",
+  "rect": [
+   16,
+   112,
+   16,
+   16
+  ]
+ },
+ "water_nw": {
+  "sheet": "Overworld.png",
+  "rect": [
+   32,
+   96,
+   16,
+   16
+  ]
+ },
+ "water_n": {
+  "sheet": "Overworld.png",
+  "rect": [
+   48,
+   96,
+   16,
+   16
+  ]
+ },
+ "water_ne": {
+  "sheet": "Overworld.png",
+  "rect": [
+   64,
+   96,
+   16,
+   16
+  ]
+ },
+ "water_w": {
+  "sheet": "Overworld.png",
+  "rect": [
+   32,
+   112,
+   16,
+   16
+  ]
+ },
+ "water_c": {
+  "sheet": "Overworld.png",
+  "rect": [
+   48,
+   112,
+   16,
+   16
+  ]
+ },
+ "water_e": {
+  "sheet": "Overworld.png",
+  "rect": [
+   64,
+   112,
+   16,
+   16
+  ]
+ },
+ "water_sw": {
+  "sheet": "Overworld.png",
+  "rect": [
+   32,
+   128,
+   16,
+   16
+  ]
+ },
+ "water_s": {
+  "sheet": "Overworld.png",
+  "rect": [
+   48,
+   128,
+   16,
+   16
+  ]
+ },
+ "water_se": {
+  "sheet": "Overworld.png",
+  "rect": [
+   64,
+   128,
+   16,
+   16
+  ]
+ },
+ "water_inner_nw": {
+  "sheet": "Overworld.png",
+  "rect": [
+   32,
+   144,
+   16,
+   16
+  ]
+ },
+ "water_inner_ne": {
+  "sheet": "Overworld.png",
+  "rect": [
+   48,
+   144,
+   16,
+   16
+  ]
+ },
+ "water_inner_sw": {
+  "sheet": "Overworld.png",
+  "rect": [
+   32,
+   160,
+   16,
+   16
+  ]
+ },
+ "water_inner_se": {
+  "sheet": "Overworld.png",
+  "rect": [
+   48,
+   160,
+   16,
+   16
+  ]
+ },
+ "water_deep": {
+  "sheet": "Overworld.png",
+  "rect": [
+   48,
+   48,
+   16,
+   16
+  ]
+ },
+ "house": {
+  "sheet": "Overworld.png",
+  "rect": [
+   99,
+   0,
+   74,
+   80
+  ]
+ },
+ "tree": {
+  "sheet": "Overworld.png",
+  "rect": [
+   80,
+   256,
+   32,
+   32
+  ]
+ },
+ "fence_h": {
+  "sheet": "Overworld.png",
+  "rect": [
+   64,
+   274,
+   16,
+   14
+  ]
+ },
+ "fence_square": {
+  "sheet": "Overworld.png",
+  "rect": [
+   37,
+   274,
+   25,
+   30
+  ]
+ },
+ "fence_post_v": {
+  "sheet": "Overworld.png",
+  "rect": [
+   6,
+   274,
+   7,
+   30
+  ]
+ },
+ "bridge_v": {
+  "sheet": "Overworld.png",
+  "rect": [
+   91,
+   103,
+   26,
+   33
+  ]
+ },
+ "bridge_h": {
+  "sheet": "Overworld.png",
+  "rect": [
+   136,
+   105,
+   24,
+   23
+  ]
+ },
+ "crate": {
+  "sheet": "Overworld.png",
+  "rect": [
+   480,
+   3,
+   16,
+   28
+  ]
+ },
+ "barrel": {
+  "sheet": "Overworld.png",
+  "rect": [
+   528,
+   5,
+   16,
+   23
+  ]
+ },
+ "rock": {
+  "sheet": "Overworld.png",
+  "rect": [
+   100,
+   85,
+   11,
+   9
+  ]
+ },
+ "bush": {
+  "sheet": "Overworld.png",
+  "rect": [
+   33,
+   225,
+   15,
+   15
+  ]
+ },
+ "flowers": {
+  "sheet": "Overworld.png",
+  "rect": [
+   20,
+   130,
+   6,
+   7
+  ]
+ },
+ "flowers_scatter": {
+  "sheet": "Overworld.png",
+  "rect": [
+   1,
+   130,
+   13,
+   14
+  ]
+ },
+ "hero_down": {
+  "sheet": "character.png",
+  "rect": [
+   1,
+   6,
+   15,
+   22
+  ]
+ }
+}

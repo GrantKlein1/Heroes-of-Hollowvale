@@ -109,8 +109,15 @@ function placeProps(kindAt, seed) {
     const owner = ownerLeague(wx, wy)
     if (!owner) return false
     const def = PROP_KINDS[kind]
+    if (!def) return false
     if (def.blocks && (isRoad(wx, wy) || kindAt(wx, wy) === 'gate' || kindAt(wx, wy) === 'ford' || kindAt(wx, wy) === 'bridge')) return false
-    if (def.blocks) {
+    // Only cells whose center sits in the footprint leave the walk graph.
+    // A bush or trunk that misses the center stays walkable and must not be sealed in.
+    const footprint = def.collision
+    const center = tileCenter(wx, wy)
+    const coversCenter = !!(footprint && center.x >= wx * TILE + footprint.x && center.x < wx * TILE + footprint.x + footprint.w
+      && center.y >= wy * TILE + footprint.y && center.y < wy * TILE + footprint.y + footprint.h)
+    if (def.blocks && coversCenter) {
       blocked.add(tileKey(wx, wy))
       if (!leagueConnected(owner.lx, owner.ly, kindAt, blocked)) {
         blocked.delete(tileKey(wx, wy))
@@ -150,12 +157,23 @@ function placeProps(kindAt, seed) {
       let variant = mix(seed, wx, wy, 12) % 4
       const depth = 9.5 - wx
       if (kind === 'forest') {
-        const treeChance = depth >= 6 ? 0.28 : depth >= 4 ? 0.14 : 0.05
-        if (roll < treeChance) propKind = 'tree'
-        else if (roll < treeChance + 0.08) propKind = 'bush'
-        else if (roll < treeChance + 0.12) propKind = 'mushroom'
-        else if (roll < treeChance + 0.15) propKind = 'rock'
-        else if (roll < treeChance + 0.18) propKind = 'log'
+        let open = false
+        for (let d = 0; d < DIRS.length; d++) {
+          const n = kindAt(wx + DIRS[d][0], wy + DIRS[d][1])
+          if (n === 'grass' || n === 'plains' || n === 'road' || n === 'cobble') open = true
+        }
+        if (open) {
+          // Soft edge: bushes and a few small trees, not a hard green block.
+          if (roll < 0.28) propKind = 'bush'
+          else if (roll < 0.4) propKind = 'tree'
+          else if (roll < 0.48) propKind = 'flower'
+        } else if (depth >= 4) {
+          if (roll < 0.55) propKind = 'tree'
+          else if (roll < 0.72) propKind = 'bush'
+          else if (roll < 0.78) propKind = 'mushroom'
+          else if (roll < 0.82) propKind = 'rock'
+        } else if (roll < 0.16) propKind = 'tree'
+        else if (roll < 0.26) propKind = 'bush'
       } else if (kind === 'plains') {
         if (roll < 0.1) propKind = 'flower'
         else if (roll < 0.13) propKind = 'rock'

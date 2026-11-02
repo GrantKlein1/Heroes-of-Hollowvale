@@ -1,128 +1,22 @@
 /**
- * Prop footprints. Trees collide on the stem only; the canopy is drawn
- * above the cell and has no collider. Footprints are the opaque body of
- * the Ninja Adventure sprite, not the sprite's full rectangle.
+ * Prop footprints. Sprites are whole images from the Zelda-like pack
+ * (or authored in that palette). Collision is the measured body in the
+ * anchor tile: a tree blocks on the stem, a canopy does not.
  */
 
-import { T } from './tileCatalog.js'
 import { TILE } from './metrics.js'
+import { SPRITES } from './spriteManifest.js'
 
-export const PROP_KINDS = {
-  tree: {
+export const PROP_KINDS = {}
+for (const [kind, spec] of Object.entries(SPRITES)) {
+  if (!spec.prop) continue
+  PROP_KINDS[kind] = {
     frames: [0],
-    tall: true,
-    blocks: true,
-    collision: { x: 5, y: 6, w: 6, h: 8 },
-  },
-  bush: {
-    frames: [T.bush, T.bushB],
-    sprites: [
-      { col: 0, row: 6, tw: 1, th: 1 },
-      { col: 0, row: 8, tw: 1, th: 1 },
-    ],
-    blocks: true,
-    collision: { x: 3, y: 6, w: 10, h: 8 },
-  },
-  rock: {
-    frames: [T.rock, T.rockB],
-    sprites: [
-      { col: 1, row: 7, tw: 1, th: 1 },
-      { col: 0, row: 7, tw: 1, th: 1 },
-    ],
-    blocks: true,
-    collision: { x: 3, y: 6, w: 10, h: 8 },
-  },
-  log: {
-    frames: [T.log],
-    sprites: [{ col: 7, row: 8, tw: 1, th: 1 }],
-    blocks: true,
-    collision: { x: 2, y: 8, w: 12, h: 6 },
-  },
-  fence: {
-    frames: [T.fencePost, T.fenceE],
-    sprites: [
-      { col: 6, row: 27, tw: 1, th: 1 },
-      { col: 7, row: 27, tw: 1, th: 1 },
-    ],
-    blocks: true,
-    collision: { x: 4, y: 3, w: 8, h: 12 },
-  },
-  milestone: {
-    frames: [T.milestone],
-    blocks: true,
-    collision: { x: 4, y: 2, w: 8, h: 14 },
-  },
-  flower: {
-    frames: [T.flower, T.flowerB],
-    blocks: false,
-    collision: null,
-  },
-  mushroom: {
-    frames: [T.mushroom, T.mushroomB],
-    blocks: false,
-    collision: null,
-  },
-  satchel: { frames: [T.satchel], blocks: false, collision: null },
-  herb: { frames: [T.herb], blocks: false, collision: null },
-  cache: { frames: [T.cache], blocks: false, collision: null },
-  offering: { frames: [T.offering], blocks: false, collision: null },
-  cart: {
-    frames: [T.logC],
-    sprites: [{ col: 5, row: 8, tw: 2, th: 1 }],
-    blocks: true,
-    collision: { x: 1, y: 8, w: 14, h: 6 },
-  },
-  campfire: {
-    frames: [T.fungiB],
-    sprites: [{ col: 0, row: 9, tw: 1, th: 1 }],
-    blocks: false,
-    collision: null,
-  },
-  hay: {
-    frames: [T.fenceCorner],
-    sprites: [{ col: 4, row: 8, tw: 1, th: 1 }],
-    blocks: true,
-    collision: { x: 2, y: 8, w: 12, h: 6 },
-  },
-  crate: {
-    frames: [T.doorB],
-    sprites: [{ col: 2, row: 6, tw: 1, th: 1 }],
-    blocks: true,
-    collision: { x: 2, y: 4, w: 12, h: 10 },
-  },
-  barrel: {
-    frames: [T.logB],
-    sprites: [{ col: 1, row: 6, tw: 1, th: 1 }],
-    blocks: true,
-    collision: { x: 3, y: 5, w: 10, h: 9 },
-  },
-  well: {
-    frames: [T.milestoneB],
-    sprites: [{ col: 4, row: 7, tw: 1, th: 1 }],
-    blocks: true,
-    collision: { x: 2, y: 4, w: 12, h: 10 },
-  },
-  lamp: {
-    frames: [4 + 6 * 28, 5 + 6 * 28],
-    sprites: [
-      { col: 4, row: 6, tw: 1, th: 1 },
-      { col: 5, row: 6, tw: 1, th: 1 },
-    ],
-    blocks: false,
-    collision: null,
-  },
-  sign: {
-    frames: [T.sign],
-    sprites: [{ col: 8, row: 6, tw: 1, th: 1 }],
-    blocks: false,
-    collision: null,
-  },
-  board: {
-    frames: [T.board],
-    sprites: [{ col: 9, row: 7, tw: 1, th: 1 }],
-    blocks: false,
-    collision: null,
-  },
+    blocks: !!spec.blocks,
+    tall: !!spec.tall,
+    collision: spec.collision,
+    sprite: kind,
+  }
 }
 
 export const DECORATION_KINDS = new Set([
@@ -130,13 +24,6 @@ export const DECORATION_KINDS = new Set([
   'cart', 'campfire', 'hay', 'crate', 'barrel', 'lamp', 'sign', 'board',
   'satchel', 'herb', 'cache', 'offering',
 ])
-
-export function propSprite(kind, variant) {
-  const def = PROP_KINDS[kind]
-  if (def.sprites) return def.sprites[variant % def.sprites.length]
-  const frame = def.frames[variant % def.frames.length]
-  return { col: frame % 28, row: Math.floor(frame / 28), tw: 1, th: 1 }
-}
 
 export function propRect(prop) {
   const def = PROP_KINDS[prop.kind]

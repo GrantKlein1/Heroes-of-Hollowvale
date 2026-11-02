@@ -1,64 +1,84 @@
 /**
- * Picks a Ninja Adventure cell for a world tile.
- * Roads use the pack's sand-path edge tiles (cardinal mask).
- * Deep water is the pond center; the bank tiles sit on the land beside it.
- * Cottages are slices of the sheet's houses, aligned to the stamp.
+ * Fixed 9-piece + 4 inner-corner lookup.
+ * The generator stores a terrain kind. This picks the atlas tile from
+ * the cardinal neighbours (and the four diagonals when all four cardinals match).
+ * Piece names match the sand/water sets in atlas.json:
+ *   n = grass along the north edge of the tile (terrain continues south).
  */
 
-import { mix } from './metrics.js'
-import { T } from './tileCatalog.js'
-import {
-  buildingCell,
-  cobbleTile,
-  grassTile,
-  roadTile,
-  shoreTile,
-  wallTile,
-} from './packMap.js'
+import { mix, unit } from './metrics.js'
+import { PIECES, TERRAIN, pieceIndex } from './tileCatalog.js'
 
-const ROAD_LIKE = new Set(['road', 'gate'])
+const ROAD = new Set(['road', 'gate'])
+const WATER = new Set(['water', 'ford', 'bridge'])
+const COBBLE = new Set(['cobble'])
 
-function roadMask(wx, wy, kindAt) {
+/**
+ * Cardinal mask: N=1, E=2, S=4, W=8.
+ * Opposite-only corridors (N+S, E+W) use the center; the pack has no
+ * "grass on both sides" tile, and the road is four tiles wide so those
+ * masks are not how the Ember Road is drawn.
+ */
+const PIECE_FOR_MASK = [
+  'c', 's', 'w', 'sw',
+  'n', 'c', 'nw', 'w',
+  'e', 'se', 'c', 's',
+  'ne', 'e', 'n', 'c',
+]
+
+const DIAGONALS = [[-1, -1, 'nw'], [1, -1, 'ne'], [-1, 1, 'sw'], [1, 1, 'se']]
+
+export function cardinalMask(wx, wy, kindAt, group) {
   let mask = 0
-  if (ROAD_LIKE.has(kindAt(wx, wy - 1))) mask |= 1
-  if (ROAD_LIKE.has(kindAt(wx + 1, wy))) mask |= 2
-  if (ROAD_LIKE.has(kindAt(wx, wy + 1))) mask |= 4
-  if (ROAD_LIKE.has(kindAt(wx - 1, wy))) mask |= 8
+  if (group.has(kindAt(wx, wy - 1))) mask |= 1
+  if (group.has(kindAt(wx + 1, wy))) mask |= 2
+  if (group.has(kindAt(wx, wy + 1))) mask |= 4
+  if (group.has(kindAt(wx - 1, wy))) mask |= 8
   return mask
 }
 
-function cobbleMask(wx, wy, kindAt) {
-  const stone = (x, y) => kindAt(x, y) === 'cobble'
-  let mask = 0
-  if (stone(wx, wy - 1)) mask |= 1
-  if (stone(wx + 1, wy)) mask |= 2
-  if (stone(wx, wy + 1)) mask |= 4
-  if (stone(wx - 1, wy)) mask |= 8
-  return mask
+function groupFor(kind) {
+  if (ROAD.has(kind)) return ROAD
+  if (WATER.has(kind)) return WATER
+  if (COBBLE.has(kind)) return COBBLE
+  return null
 }
 
-function waterMask(wx, wy, kindAt) {
-  const deep = (x, y) => kindAt(x, y) === 'water'
-  let mask = 0
-  if (deep(wx, wy - 1)) mask |= 1
-  if (deep(wx + 1, wy)) mask |= 2
-  if (deep(wx, wy + 1)) mask |= 4
-  if (deep(wx - 1, wy)) mask |= 8
-  return mask
+/**
+ * @param {number} base first index of a 13-tile set
+ * @param {number} mask cardinal mask 0..15
+ * @param {{nw?:boolean,ne?:boolean,sw?:boolean,se?:boolean}} [diag]
+ */
+export function tileForMask(base, mask, diag) {
+  if (mask === 15 && diag) {
+    const missing = DIAGONALS.filter(([, , name]) => diag[name] === false)
+    if (missing.length === 1) return pieceIndex(base, `i${missing[0][2]}`)
+  }
+  const piece = PIECE_FOR_MASK[mask]
+  if (!piece || !PIECES.includes(piece)) return pieceIndex(base, 'c')
+  return pieceIndex(base, piece)
 }
 
-function dedicated(kind, wx, wy, seed) {
-  const h = mix(seed, wx, wy, 3)
-  if (kind === 'gate') return h % 2 === 0 ? T.gateL : T.gateR
-  if (kind === 'ford') return h % 2 === 0 ? T.ford : T.fordB
-  if (kind === 'bridge') return wx % 2 === 0 ? T.bridgeH : T.bridgeHb
-  if (kind === 'wall') return wallTile(wx, wy)
-  if (kind === 'thicket') return h % 2 === 0 ? T.thicket : T.thicketB
-  if (kind === 'roof' || kind === 'bwall') return buildingCell(wx, wy)
-  return T.grass
+function autotile(base, wx, wy, kindAt, group) {
+  const mask = cardinalMask(wx, wy, kindAt, group)
+  if (mask !== 15) return tileForMask(base, mask, null)
+  const diag = { nw: true, ne: true, sw: true, se: true }
+  for (let i = 0; i < DIAGONALS.length; i++) {
+    const [dx, dy, name] = DIAGONALS[i]
+    diag[name] = group.has(kindAt(wx + dx, wy + dy))
+  }
+  return tileForMask(base, mask, diag)
 }
 
-const STRUCTURAL = new Set(['wall', 'thicket', 'roof', 'bwall', 'gate', 'ford', 'bridge'])
+function deepWater(wx, wy, kindAt) {
+  for (let dy = -1; dy <= 1; dy++) {
+    for (let dx = -1; dx <= 1; dx++) {
+      if (dx === 0 && dy === 0) continue
+      if (!WATER.has(kindAt(wx + dx, wy + dy))) return false
+    }
+  }
+  return true
+}
 
 /**
  * @param {number} wx
@@ -68,16 +88,35 @@ const STRUCTURAL = new Set(['wall', 'thicket', 'roof', 'bwall', 'gate', 'ford', 
  */
 export function tileIndex(wx, wy, kindAt, seed) {
   const kind = kindAt(wx, wy)
-  if (STRUCTURAL.has(kind)) return dedicated(kind, wx, wy, seed)
-  if (kind === 'road') return roadTile(roadMask(wx, wy, kindAt), mix(seed, wx, wy, 7))
-  if (kind === 'water') return T.water
-  if (kind === 'cobble') return cobbleTile(cobbleMask(wx, wy, kindAt), mix(seed, wx, wy, 7))
-  const bank = waterMask(wx, wy, kindAt)
-  if (bank !== 0) {
-    const shore = shoreTile(bank)
-    if (shore != null) return shore
+  if (kind === 'wall') return TERRAIN.wall
+  if (kind === 'thicket') return TERRAIN.thicket
+  if (kind === 'ford' || kind === 'bridge') return TERRAIN.ford
+  if (kind === 'roof' || kind === 'bwall') return TERRAIN.grass
+  if (ROAD.has(kind)) return autotile(TERRAIN.dirt, wx, wy, kindAt, ROAD)
+  if (COBBLE.has(kind)) return autotile(TERRAIN.cobble, wx, wy, kindAt, COBBLE)
+  if (kind === 'water') {
+    const id = autotile(TERRAIN.water, wx, wy, kindAt, WATER)
+    if (id === pieceIndex(TERRAIN.water, 'c') && deepWater(wx, wy, kindAt)) return TERRAIN.waterDeep
+    return id
   }
-  // Forest, plains, and meadow share one grass. The wood edge is the
-  // trees and bushes placed on it, not a darker ground block.
-  return grassTile(mix(seed, wx, wy, 7))
+  // One base grass. Details are sparse and seeded, never a block of variants.
+  if (unit(seed, wx, wy, 7) < 0.08) {
+    return (mix(seed, wx, wy, 8) & 1) === 0 ? TERRAIN.grassDetail1 : TERRAIN.grassDetail2
+  }
+  return TERRAIN.grass
+}
+
+/** Mask string for every autotiled cell, so tests can list the combos in use. */
+export function usedAutotileKey(wx, wy, kindAt) {
+  const kind = kindAt(wx, wy)
+  const group = groupFor(kind === 'gate' ? 'road' : kind)
+  if (!group) return null
+  const mask = cardinalMask(wx, wy, kindAt, group)
+  if (mask !== 15) return `${kind}:${mask}`
+  let extra = ''
+  for (let i = 0; i < DIAGONALS.length; i++) {
+    const [dx, dy, name] = DIAGONALS[i]
+    if (!group.has(kindAt(wx + dx, wy + dy))) extra += name
+  }
+  return `${kind}:15:${extra}`
 }
