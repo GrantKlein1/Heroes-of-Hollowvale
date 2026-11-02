@@ -149,7 +149,28 @@ function placeProps(kindAt, seed) {
       let propKind = null
       let variant = mix(seed, wx, wy, 12) % 4
       const depth = 9.5 - wx
-      if (kind === 'forest') {
+      const eaves = wx < -4
+      const clearing = eaves && mix(seed, Math.floor(wx / 8), Math.floor(wy / 6), 40) % 7 === 0
+      if (eaves && kind === 'forest') {
+        if (clearing) {
+          if (roll < 0.05) propKind = 'flower'
+          else if (roll < 0.08) propKind = 'rock'
+        } else {
+          const treeChance = 0.16
+          if (roll < treeChance) propKind = 'tree'
+          else if (roll < treeChance + 0.05) propKind = 'bush'
+          else if (roll < treeChance + 0.09) propKind = 'log'
+          else if (roll < treeChance + 0.12) propKind = 'rock'
+          else if (roll < treeChance + 0.14) propKind = 'fence'
+        }
+      } else if (eaves && (kind === 'plains' || kind === 'grass')) {
+        if (clearing) {
+          if (roll < 0.04) propKind = 'flower'
+        } else if (roll < 0.07) propKind = 'flower'
+        else if (roll < 0.09) propKind = 'rock'
+        else if (roll < 0.11) propKind = 'fence'
+        else if (roll < 0.13) propKind = 'log'
+      } else if (kind === 'forest') {
         const treeChance = depth >= 6 ? 0.28 : depth >= 4 ? 0.14 : 0.05
         if (roll < treeChance) propKind = 'tree'
         else if (roll < treeChance + 0.08) propKind = 'bush'

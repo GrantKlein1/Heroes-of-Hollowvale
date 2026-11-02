@@ -105,6 +105,12 @@ export const PROP_KINDS = {
     blocks: false,
     collision: null,
   },
+  tent: {
+    frames: [0],
+    sprites: [{ col: 8, row: 22, tw: 3, th: 2 }],
+    blocks: true,
+    collision: { x: 2, y: 8, w: 12, h: 7 },
+  },
   sign: {
     frames: [T.sign],
     sprites: [{ col: 8, row: 6, tw: 1, th: 1 }],
@@ -121,7 +127,7 @@ export const PROP_KINDS = {
 
 export const DECORATION_KINDS = new Set([
   'tree', 'bush', 'rock', 'log', 'fence', 'flower', 'mushroom',
-  'cart', 'campfire', 'hay', 'crate', 'barrel', 'lamp', 'sign', 'board',
+  'cart', 'campfire', 'hay', 'crate', 'barrel', 'lamp', 'sign', 'board', 'tent',
   'satchel', 'herb', 'cache', 'offering',
 ])
 

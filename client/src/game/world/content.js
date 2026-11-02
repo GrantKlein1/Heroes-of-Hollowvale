@@ -60,6 +60,9 @@ export const FIXED_PROPS = [
   { kind: 'sign', variant: 0, wx: 8, wy: 9 },
   { kind: 'board', variant: 0, wx: 7, wy: 5 },
   { kind: 'campfire', variant: 0, wx: RUINWATCH.wx, wy: RUINWATCH.wy + 1 },
+  { kind: 'tent', variant: 0, wx: RUINWATCH.wx, wy: RUINWATCH.wy + 2 },
+  { kind: 'crate', variant: 0, wx: RUINWATCH.wx + 2, wy: RUINWATCH.wy + 2 },
+  { kind: 'barrel', variant: 0, wx: RUINWATCH.wx - 2, wy: RUINWATCH.wy + 2 },
   { kind: 'rock', variant: 0, wx: RUINWATCH.wx - 2, wy: RUINWATCH.wy - 1 },
   { kind: 'rock', variant: 1, wx: RUINWATCH.wx + 2, wy: RUINWATCH.wy - 1 },
   { kind: 'rock', variant: 2, wx: RUINWATCH.wx - 2, wy: RUINWATCH.wy + 1 },
@@ -67,6 +70,10 @@ export const FIXED_PROPS = [
   { kind: 'cart', variant: 1, wx: EAVES_MARKS[0].wx + 3, wy: EAVES_MARKS[0].wy + 3 },
   { kind: 'hay', variant: 0, wx: EAVES_MARKS[1].wx + 3, wy: EAVES_MARKS[1].wy + 3 },
   { kind: 'log', variant: 1, wx: EAVES_MARKS[2].wx + 3, wy: EAVES_MARKS[2].wy + 3 },
+  { kind: 'fence', variant: 0, wx: EAVES_MARKS[0].wx + 4, wy: EAVES_MARKS[0].wy + 4 },
+  { kind: 'fence', variant: 1, wx: EAVES_MARKS[0].wx + 5, wy: EAVES_MARKS[0].wy + 4 },
+  { kind: 'log', variant: 0, wx: EAVES_MARKS[1].wx + 4, wy: EAVES_MARKS[1].wy + 5 },
+  { kind: 'log', variant: 2, wx: EAVES_MARKS[2].wx - 4, wy: EAVES_MARKS[2].wy + 4 },
 ]
 
 export const FIXED_LOOT = [
