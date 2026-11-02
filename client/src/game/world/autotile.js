@@ -87,15 +87,23 @@ function baseTile(family, seed, wx, wy) {
   return T.grass
 }
 
-function dedicated(kind, wx, wy, seed) {
+function dedicated(kind, wx, wy, seed, kindAt) {
   const h = mix(seed, wx, wy, 3) % 4
   if (kind === 'gate') return wx % 2 === 0 ? T.gateR : T.gateL
   if (kind === 'ford') return h % 2 === 0 ? T.ford : T.fordB
   if (kind === 'bridge') return wx % 2 === 0 ? T.bridgeH : T.bridgeHb
   if (kind === 'wall') return [T.wall, T.wallB, T.wallC, T.wallD][h]
   if (kind === 'thicket') return h % 2 === 0 ? T.thicket : T.thicketB
-  if (kind === 'roof') return [T.roof, T.roofB, T.roofC, T.roof][h]
-  if (kind === 'bwall') return [T.bwall, T.bwallB, T.bwallC, T.bwall][h]
+  if (kind === 'roof') {
+    const above = kindAt ? kindAt(wx, wy - 1) : 'grass'
+    if (above !== 'roof' && wx % 3 === 2) return T.roofB
+    return h % 2 === 0 ? T.roof : T.roofC
+  }
+  if (kind === 'bwall') {
+    const below = kindAt ? kindAt(wx, wy + 1) : 'grass'
+    if ((below === 'cobble' || below === 'grass' || below === 'gate') && wx % 2 === 0) return T.bwallB
+    return h % 2 === 0 ? T.bwall : T.bwallC
+  }
   return T.grass
 }
 
@@ -109,7 +117,7 @@ const STRUCTURAL = new Set(['wall', 'thicket', 'roof', 'bwall', 'gate', 'ford', 
  */
 export function tileIndex(wx, wy, kindAt, seed) {
   const kind = kindAt(wx, wy)
-  if (STRUCTURAL.has(kind)) return dedicated(kind, wx, wy, seed)
+  if (STRUCTURAL.has(kind)) return dedicated(kind, wx, wy, seed, kindAt)
   const corners = [
     cornerFamily(wx, wy, kindAt),
     cornerFamily(wx + 1, wy, kindAt),

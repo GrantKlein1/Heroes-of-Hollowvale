@@ -14,6 +14,7 @@ import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { PNG } from 'pngjs'
+import { paintBandit, paintTile } from './paintDetail.mjs'
 import { STAMP_LEAGUES } from '../src/game/world/stamps.js'
 import { getWorld, clearWorldCache } from '../src/game/world/league.js'
 import { SHEET_COLS, SHEET_ROWS, TILE_COUNT, T, DUAL_ROWS, collisionForTile } from '../src/game/world/tileCatalog.js'
@@ -339,6 +340,10 @@ function dualPainter(pair, bits) {
 }
 
 function painterFor(index) {
+  return (x, y) => paintTile(index, x, y)
+}
+
+function painterForUnused(index) {
   const dualEntries = Object.entries(DUAL_ROWS)
   for (let i = 0; i < dualEntries.length; i++) {
     const [pair, row] = dualEntries[i]
@@ -686,4 +691,64 @@ for (const stamp of STAMP_LEAGUES) {
   writeFileSync(join(root, `${stamp.key}.json`), JSON.stringify(stampMap(world, stamp)))
 }
 writeFileSync(join(root, 'preview.png'), PNG.sync.write(renderPreview(sheet, world)))
-console.log('wrote tileset, stamps, and preview to', root)
+writeFileSync(join(root, 'tavern-interior.png'), PNG.sync.write(renderRoom(sheet, 'tavern')))
+writeFileSync(join(root, 'market-interior.png'), PNG.sync.write(renderRoom(sheet, 'market')))
+writeFileSync(join(root, 'bandit.png'), PNG.sync.write(renderBandit()))
+console.log('wrote tileset, stamps, interiors, and preview to', root)
+
+function renderBandit() {
+  const png = new PNG({ width: 16, height: 24 })
+  for (let y = 0; y < 24; y++) {
+    for (let x = 0; x < 16; x++) {
+      const c = paintBandit(x, y)
+      const i = (y * 16 + x) * 4
+      png.data[i] = c[0]
+      png.data[i + 1] = c[1]
+      png.data[i + 2] = c[2]
+      png.data[i + 3] = c[3]
+    }
+  }
+  return png
+}
+
+function renderRoom(sheet, kind) {
+  const cols = 20
+  const rows = 14
+  const png = new PNG({ width: cols * 16, height: rows * 16 })
+  const floor = kind === 'tavern' ? T.cobble : T.plains
+  const put = (tx, ty, index) => blit(png, sheet, index, tx * 16, ty * 16, 1)
+  for (let ty = 0; ty < rows; ty++) {
+    for (let tx = 0; tx < cols; tx++) put(tx, ty, floor)
+  }
+  for (let tx = 0; tx < cols; tx++) {
+    put(tx, 0, T.roof)
+    put(tx, 1, T.bwall)
+    put(tx, rows - 1, tx === 9 || tx === 10 ? floor : T.wall)
+  }
+  for (let ty = 2; ty < rows - 1; ty++) {
+    put(0, ty, T.wall)
+    put(cols - 1, ty, T.wall)
+  }
+  if (kind === 'tavern') {
+    for (let tx = 3; tx <= 16; tx++) put(tx, 5, T.bwall)
+    put(2, 8, T.roofB)
+    put(2, 9, T.bwall)
+    put(16, 8, T.logB)
+    put(4, 9, T.doorB)
+    put(15, 10, T.reed)
+    put(9, 3, T.sign)
+  } else {
+    for (let tx = 2; tx <= 17; tx++) {
+      put(tx, 6, T.bwall)
+      put(tx, 7, T.cobbleB)
+    }
+    for (let tx = 2; tx <= 6; tx++) put(tx, 2, T.roof)
+    for (let tx = 12; tx <= 16; tx++) put(tx, 2, T.roof)
+    put(3, 9, T.doorB)
+    put(4, 9, T.logB)
+    put(14, 9, T.fenceCorner)
+    put(15, 10, T.reed)
+    put(8, 3, T.sign)
+  }
+  return png
+}

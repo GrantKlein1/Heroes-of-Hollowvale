@@ -10,8 +10,8 @@ export const AUDIO_BASE = '/audio'
 // Common background/title images
 export const PATHS = {
   villageBg: encodeURI(`${IMAGES_BASE}/start village screen.png`),
-  tavernBg: `${IMAGES_BASE}/tavern.png`,
-  marketBg: `${IMAGES_BASE}/market.png`,
+  tavernBg: '/maps/tavern-interior.png',
+  marketBg: '/maps/market-interior.png',
   walkingPath: `${IMAGES_BASE}/walkingPath.png`,
   dungeonEntrance: encodeURI(`${IMAGES_BASE}/dungeon entrance.png`),
   dungeonInterior: `${IMAGES_BASE}/dungeon.png`,

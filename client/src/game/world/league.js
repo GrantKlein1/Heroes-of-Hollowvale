@@ -37,6 +37,7 @@ import {
 import { PROP_KINDS, containsPoint, propRect } from './props.js'
 import { isPassableKind } from './tileCatalog.js'
 import { computeKind } from './terrain.js'
+import { isRoad } from './roads.js'
 
 const DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1]]
 
@@ -108,6 +109,7 @@ function placeProps(kindAt, seed) {
     const owner = ownerLeague(wx, wy)
     if (!owner) return false
     const def = PROP_KINDS[kind]
+    if (def.blocks && (isRoad(wx, wy) || kindAt(wx, wy) === 'gate' || kindAt(wx, wy) === 'ford' || kindAt(wx, wy) === 'bridge')) return false
     if (def.blocks) {
       blocked.add(tileKey(wx, wy))
       if (!leagueConnected(owner.lx, owner.ly, kindAt, blocked)) {
@@ -146,12 +148,14 @@ function placeProps(kindAt, seed) {
       const roll = unit(seed, wx, wy, 11)
       let propKind = null
       let variant = mix(seed, wx, wy, 12) % 4
+      const depth = 9.5 - wx
       if (kind === 'forest') {
-        if (roll < 0.16) propKind = 'tree'
-        else if (roll < 0.24) propKind = 'bush'
-        else if (roll < 0.28) propKind = 'mushroom'
-        else if (roll < 0.31) propKind = 'rock'
-        else if (roll < 0.34) propKind = 'log'
+        const treeChance = depth >= 6 ? 0.28 : depth >= 4 ? 0.14 : 0.05
+        if (roll < treeChance) propKind = 'tree'
+        else if (roll < treeChance + 0.08) propKind = 'bush'
+        else if (roll < treeChance + 0.12) propKind = 'mushroom'
+        else if (roll < treeChance + 0.15) propKind = 'rock'
+        else if (roll < treeChance + 0.18) propKind = 'log'
       } else if (kind === 'plains') {
         if (roll < 0.1) propKind = 'flower'
         else if (roll < 0.13) propKind = 'rock'

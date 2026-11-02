@@ -17,7 +17,8 @@ import {
 } from './metrics.js'
 import { T, collisionForTile } from './tileCatalog.js'
 import { SOUTH_GATE, STONE } from './content.js'
-import { containsPoint } from './props.js'
+import { DECORATION_KINDS, containsPoint } from './props.js'
+import { isRoad } from './roads.js'
 
 const MAP_DIR = new URL('../../../public/maps/', import.meta.url)
 
@@ -122,6 +123,17 @@ test('the Ember Road is continuous from the south gate to Hearthmile Stone', () 
   assert.ok(stoneProp, 'milestone prop')
   assert.equal(stoneProp.wx, STONE.wx)
   assert.equal(stoneProp.wy, STONE.wy)
+})
+
+test('decoration props do not block the road or an entrance', () => {
+  const world = createWorld(WORLD_SEED)
+  for (const prop of world.props) {
+    if (!DECORATION_KINDS.has(prop.kind) || !prop.blocks) continue
+    assert.equal(isRoad(prop.wx, prop.wy), false, `${prop.kind} on road ${prop.wx},${prop.wy}`)
+    assert.notEqual(world.kindAt(prop.wx, prop.wy), 'gate')
+    const edge = ((prop.wx % 19) + 19) % 19 === 0 || ((prop.wy % 11) + 11) % 11 === 0
+    assert.equal(edge, false, `${prop.kind} blocks entrance ${prop.wx},${prop.wy}`)
+  }
 })
 
 test('road pace is one league in eight seconds and forest is slower', () => {

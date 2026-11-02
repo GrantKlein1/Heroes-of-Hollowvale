@@ -191,7 +191,7 @@ export class OverworldController {
       }
       const origin = leagueOrigin(stamp.lx, stamp.ly)
       const map = scene.make.tilemap({ key: stamp.key })
-      const tiles = map.addTilesetImage('hollowvale', 'hollowvale', TILE, TILE, 0, 0)
+      const tiles = map.addTilesetImage('hollowvale', 'hollowvale-live', TILE, TILE, 0, 0)
       const layer = map.createLayer('ground', tiles, origin.x, origin.y)
       layer.setDepth(0)
       this.maps.push(map)
@@ -201,7 +201,7 @@ export class OverworldController {
     const cols = MAX_WX - MIN_WX + 1
     const rows = MAX_WY - MIN_WY + 1
     const blank = scene.make.tilemap({ tileWidth: TILE, tileHeight: TILE, width: cols, height: rows })
-    const tiles = blank.addTilesetImage('hollowvale', 'hollowvale', TILE, TILE, 0, 0, 0)
+    const tiles = blank.addTilesetImage('hollowvale', 'hollowvale-live', TILE, TILE, 0, 0, 0)
     const layer = blank.createBlankLayer('ground', tiles, MIN_WX * TILE, MIN_WY * TILE, cols, rows)
     layer.setDepth(0)
     for (let wy = MIN_WY; wy <= MAX_WY; wy++) {
@@ -222,8 +222,39 @@ export class OverworldController {
     this.built = true
   }
 
+  teleport(wx, wy) {
+    if (!this.active) return
+    this._place(wx, wy)
+    const home = this._leagueContaining(wx, wy)
+    this._enter(home.lx, home.ly, 0)
+  }
+
+  tick(now) {
+    if (!this._live || !this.active) return
+    if (now < (this._nextWater || 0)) return
+    this._nextWater = now + 380
+    this._waterFrame = ((this._waterFrame || 0) + 1) % 8
+    const img = this._waterBase
+    if (!img) return
+    const shifted = this._liveCtx.createImageData(16, 16)
+    for (let y = 0; y < 16; y++) {
+      for (let x = 0; x < 16; x++) {
+        const sx = (x + this._waterFrame) % 16
+        const si = (y * 16 + sx) * 4
+        const di = (y * 16 + x) * 4
+        shifted.data[di] = img.data[si]
+        shifted.data[di + 1] = img.data[si + 1]
+        shifted.data[di + 2] = img.data[si + 2]
+        shifted.data[di + 3] = img.data[si + 3]
+      }
+    }
+    this._liveCtx.putImageData(shifted, 3 * TILE, 0)
+    this._live.refresh()
+  }
+
   _sliceSheet() {
-    const tex = this.scene.textures.get('hollowvale')
+    this._ensureLiveSheet()
+    const tex = this.scene.textures.get('hollowvale-live')
     if (!tex || tex.customData?.sliced) return
     for (let i = 0; i < 256; i++) {
       const col = i % 16
@@ -231,6 +262,24 @@ export class OverworldController {
       tex.add(String(i), 0, col * TILE, row * TILE, TILE, TILE)
     }
     tex.customData.sliced = true
+  }
+
+  _ensureLiveSheet() {
+    if (this.scene.textures.exists('hollowvale-live')) {
+      this._live = this.scene.textures.get('hollowvale-live')
+      this._liveCtx = this._live.getContext()
+      if (!this._waterBase && this._liveCtx) this._waterBase = this._liveCtx.getImageData(3 * TILE, 0, 16, 16)
+      return
+    }
+    const src = this.scene.textures.get('hollowvale').getSourceImage()
+    const canvas = this.scene.textures.createCanvas('hollowvale-live', src.width, src.height)
+    const ctx = canvas.getContext()
+    ctx.imageSmoothingEnabled = false
+    ctx.drawImage(src, 0, 0)
+    canvas.refresh()
+    this._live = canvas
+    this._liveCtx = ctx
+    this._waterBase = ctx.getImageData(3 * TILE, 0, 16, 16)
   }
 
   _treeKey(variant) {
@@ -259,10 +308,13 @@ export class OverworldController {
       sprite = this.scene.add.image(x, y, this._treeKey(prop.variant))
     } else {
       const frame = prop.frame ?? T.flower
-      sprite = this.scene.add.image(x, y, 'hollowvale', String(frame))
+      sprite = this.scene.add.image(x, y, 'hollowvale-live', String(frame))
     }
     sprite.setOrigin(0.5, 1)
     sprite.setDepth(y + DEPTH_BIAS)
+    const shadow = this.scene.add.ellipse(x, y - 1, prop.tall ? 14 : 10, 4, 0x000000, 0.32)
+    shadow.setDepth(y + DEPTH_BIAS - 1)
+    this.sprites.push(shadow)
     sprite.propKind = prop.kind
     sprite.wx = prop.wx
     sprite.wy = prop.wy

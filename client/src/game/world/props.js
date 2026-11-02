@@ -52,7 +52,22 @@ export const PROP_KINDS = {
   herb: { frames: [T.herb], blocks: false, collision: null },
   cache: { frames: [T.cache], blocks: false, collision: null },
   offering: { frames: [T.offering], blocks: false, collision: null },
+  cart: { frames: [T.logC], blocks: true, collision: { x: 2, y: 8, w: 12, h: 6 } },
+  campfire: { frames: [T.fungiB], blocks: false, collision: null },
+  hay: { frames: [T.fenceCorner], blocks: true, collision: { x: 3, y: 8, w: 10, h: 6 } },
+  crate: { frames: [T.doorB], blocks: true, collision: { x: 3, y: 6, w: 10, h: 8 } },
+  barrel: { frames: [T.logB], blocks: true, collision: { x: 4, y: 6, w: 8, h: 8 } },
+  well: { frames: [T.milestoneB], blocks: true, collision: { x: 3, y: 4, w: 10, h: 10 } },
+  lamp: { frames: [T.reed], blocks: false, collision: null },
+  sign: { frames: [T.sign], blocks: false, collision: null },
+  board: { frames: [T.board], blocks: false, collision: null },
 }
+
+export const DECORATION_KINDS = new Set([
+  'tree', 'bush', 'rock', 'log', 'fence', 'flower', 'mushroom',
+  'cart', 'campfire', 'hay', 'crate', 'barrel', 'lamp', 'sign', 'board',
+  'satchel', 'herb', 'cache', 'offering',
+])
 
 export function propRect(prop) {
   const def = PROP_KINDS[prop.kind]

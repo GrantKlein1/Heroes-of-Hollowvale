@@ -157,6 +157,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       if (asset.src) this.load.image(asset.id, asset.src)
     }
     this.load.image('hollowvale', '/maps/hollowvale.png')
+    this.load.image('bandit', '/maps/bandit.png')
     this.load.tilemapTiledJSON('brackenford', '/maps/brackenford.json')
     this.load.tilemapTiledJSON('hearthmile', '/maps/hearthmile.json')
   }
@@ -246,6 +247,7 @@ export default class HollowvaleScene extends Phaser.Scene {
         })),
         goto: (id, nx, ny) => this.enterScene(id, { nx, ny }),
         league: () => (this.overworld ? { x: this.overworld.lx, y: this.overworld.ly } : null),
+        teleport: (wx, wy) => this.overworld?.teleport(wx, wy),
         tile: () => {
           const b = this.player?.body
           if (!b) return null
@@ -293,6 +295,7 @@ export default class HollowvaleScene extends Phaser.Scene {
     const dt = Math.min(0.033, delta / 1000)
     const now = performance.now()
     this._syncSession(now)
+    this.overworld?.tick(now)
     this._drive(now, dt)
     if (this._skipRest) {
       this._skipRest = false
@@ -771,9 +774,10 @@ export default class HollowvaleScene extends Phaser.Scene {
   }
 
   _spawnEnemyAt(type, x, y, name, id) {
-    const key = ENEMY_SPRITES[type]
+    const human = name && /bandit|bruiser/i.test(name)
+    const key = human ? 'bandit' : ENEMY_SPRITES[type]
     const texKey = key && this.textures.exists(key) ? key : '__px'
-    const targetH = 20
+    const targetH = name && /bruiser/i.test(name) ? 26 : 20
     const src = this.textures.get(texKey).getSourceImage()
     const ar = src && src.height ? src.width / src.height : 1
     const w = Math.max(12, Math.round(targetH * ar))
@@ -1466,7 +1470,17 @@ export default class HollowvaleScene extends Phaser.Scene {
     if (now < (this._flashUntil || 0)) this.player.setAlpha(0.5)
     else this.player.setAlpha(1)
     if (this.sceneId === 'wilderness') this.player.setDepth(this.player.body.bottom)
-    else if (this.sceneId === 'overworld') this.player.setDepth(this.player.body.bottom + OVERWORLD_DEPTH_BIAS)
+    else if (this.sceneId === 'overworld') {
+      this.player.setDepth(this.player.body.bottom + OVERWORLD_DEPTH_BIAS)
+      if (!this._footShadow) {
+        this._footShadow = this.add.ellipse(0, 0, 12, 4, 0x000000, 0.35).setDepth(1)
+      }
+      this._footShadow.setVisible(this.player.visible)
+      this._footShadow.setPosition(this.player.x, this.player.body.bottom - 1)
+      this._footShadow.setDepth(this.player.body.bottom + OVERWORLD_DEPTH_BIAS - 1)
+    } else if (this._footShadow) {
+      this._footShadow.setVisible(false)
+    }
     this._drawEnemyHp()
 
     this._syncStealth(now, vanishing, smoke)
