@@ -18,10 +18,9 @@ import {
 import { PNG } from 'pngjs'
 import { T, collisionForTile } from './tileCatalog.js'
 import { auditRects } from './packMap.js'
-import { PROP_KINDS, propSprite } from './props.js'
+import { DECORATION_KINDS, PROP_KINDS, containsPoint, propSprite } from './props.js'
 import { SOUTH_GATE, STONE } from './content.js'
 import { STAMP_LEAGUES } from './stamps.js'
-import { DECORATION_KINDS, containsPoint } from './props.js'
 import { RUINWATCH, isRoad } from './roads.js'
 
 const MAP_DIR = new URL('../../../public/maps/', import.meta.url)
