@@ -19,10 +19,12 @@ html, body, #root { height: 100%; }
 /* Fallback background if tavern.jpg is missing */
 body { background: radial-gradient(ellipse at center, #3b2f2f 0%, #1c1917 70%); }
 
-/* Phaser canvas fills its React host container */
+/* Phaser canvas fills the viewport. Nearest-neighbor so integer zoom stays crisp. */
 .phaser-game-host,
 .phaser-game-host canvas {
   width: 100% !important;
   height: 100% !important;
   display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
 }

@@ -64,6 +64,15 @@ export const GameEvents = {
   CHAT_CLOSE: 'chat:close',
   SFX_PLAY: 'sfx:play',
   SCENE_CHANGE: 'scene:change',
+  VITALS: 'player:vitals',
+  PROMPT: 'player:prompt',
+  NOTICE: 'game:notice',
+  LOOT: 'game:loot',
+  ITEM_CONSUMED: 'item:consumed',
+  DIED: 'player:died',
+  SPELL_WHEEL: 'mage:spell-wheel',
+  VENDOR: 'npc:vendor',
+  ASSETS_READY: 'game:assets-ready',
 }
 
 export default eventBus
