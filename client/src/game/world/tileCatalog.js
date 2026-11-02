@@ -12,14 +12,14 @@ export const SHEET_ROWS = PACK_ROWS
 export const TILE_COUNT = SHEET_COLS * SHEET_ROWS
 
 export const T = {
-  grass: cell(14, 15),
-  plains: cell(12, 15),
-  forest: cell(16, 16),
+  grass: cell(14, 16),
+  plains: cell(14, 16),
+  forest: cell(14, 16),
   water: cell(20, 8),
   road: cell(9, 32),
-  cobble: cell(26, 4),
+  cobble: cell(16, 32),
   ford: cell(19, 11),
-  fordB: cell(20, 11),
+  fordB: cell(18, 11),
   wall: cell(20, 1),
   wallB: cell(21, 1),
   wallC: cell(20, 0),

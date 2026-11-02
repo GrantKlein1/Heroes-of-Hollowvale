@@ -15,12 +15,32 @@ export function cell(col, row) {
 export const WATER_COL = 20
 export const WATER_ROW = 8
 
-const GRASS = [cell(14, 16), cell(22, 11), cell(19, 17), cell(14, 15)]
-const PLAINS = [cell(14, 16), cell(22, 11), cell(19, 17), cell(14, 16)]
-const FOREST = [cell(23, 11), cell(24, 17), cell(23, 11), cell(24, 17)]
-const COBBLE = [cell(16, 32), cell(17, 33), cell(26, 4)]
+/** One grass. Detail tiles are the same field with a flower or tuft, used rarely. */
+export const GRASS_BASE = cell(14, 16)
+const GRASS_DETAIL = [cell(14, 15), cell(19, 17)]
 
-const ROAD_FILL = [cell(9, 32), cell(10, 33), cell(9, 32), cell(9, 32)]
+const COBBLE_FILL = [cell(16, 32), cell(17, 33)]
+/** Stone-path edges, same layout as the sand road shifted seven columns. */
+const COBBLE_EDGE = {
+  15: null,
+  7: cell(15, 32),
+  13: cell(18, 32),
+  14: cell(16, 31),
+  11: cell(16, 33),
+  6: cell(15, 31),
+  12: cell(18, 31),
+  3: cell(15, 33),
+  9: cell(18, 33),
+  5: null,
+  10: null,
+  1: cell(16, 33),
+  4: cell(16, 31),
+  2: cell(15, 32),
+  8: cell(18, 32),
+  0: null,
+}
+
+const ROAD_FILL = [cell(9, 32), cell(10, 33)]
 
 /** Cardinal mask: N=1, E=2, S=4, W=8. Bit set means that neighbor is road. */
 const ROAD_EDGE = {
@@ -64,11 +84,19 @@ const SHORE = {
   15: cell(20, 8),
 }
 
+/**
+ * Full tree sprites, pixel rects on the sheet. Each one is a complete
+ * tree (or a joined grove), not a quadrant of a larger drawing.
+ */
 export const TREES = [
-  { col: 0, row: 10, tw: 2, th: 2 },
-  { col: 3, row: 10, tw: 2, th: 2 },
-  { col: 6, row: 10, tw: 2, th: 2 },
-  { col: 9, row: 10, tw: 2, th: 2 },
+  { name: 'pine', x: 96, y: 144, w: 32, h: 48 },
+]
+
+/** Complete houses. wx/wy is the bottom-left tile the sprite sits on. */
+export const BUILDINGS = [
+  { name: 'flagon', x: 0, y: 0, w: 64, h: 48, wx: 8, wy: 3 },
+  { name: 'market', x: 64, y: 0, w: 64, h: 48, wx: 2, wy: 5 },
+  { name: 'east', x: 128, y: 0, w: 64, h: 48, wx: 13, wy: 4 },
 ]
 
 /** Cells whose transparent pixels are filled with grass so roofs and posts don't punch holes. */
@@ -85,19 +113,15 @@ export function variant(list, hash) {
 }
 
 export function grassTile(hash) {
-  return variant(GRASS, hash)
+  if (hash % 11 === 0) return GRASS_DETAIL[0]
+  if (hash % 13 === 0) return GRASS_DETAIL[1]
+  return GRASS_BASE
 }
 
-export function plainsTile(hash) {
-  return variant(PLAINS, hash)
-}
-
-export function forestTile(hash) {
-  return variant(FOREST, hash)
-}
-
-export function cobbleTile(hash) {
-  return variant(COBBLE, hash)
+export function cobbleTile(mask, hash) {
+  const edge = COBBLE_EDGE[mask]
+  if (edge == null) return variant(COBBLE_FILL, hash)
+  return edge
 }
 
 export function roadTile(mask, hash) {
@@ -114,19 +138,9 @@ export function shoreTile(mask) {
  * Cottage slices. Flagon is the full 4-wide house; the market and east
  * cottage are 3 columns of the neighboring houses.
  */
-export function buildingCell(wx, wy) {
-  if (wx >= 8 && wx <= 11 && (wy === 2 || wy === 3)) {
-    const row = wy === 2 ? 1 : 2
-    return cell(wx - 8, row)
-  }
-  if (wx >= 2 && wx <= 4 && wy >= 3 && wy <= 5) {
-    return cell(4 + (wx - 2), wy - 3)
-  }
-  if (wx >= 13 && wx <= 15 && (wy === 3 || wy === 4)) {
-    const row = wy === 3 ? 1 : 2
-    return cell(8 + (wx - 13), row)
-  }
-  return cell(0, 2)
+/** Roof and wall cells stay walk-blocked. The picture is the full house sprite. */
+export function buildingCell() {
+  return GRASS_BASE
 }
 
 export function wallTile(wx, wy) {
@@ -135,4 +149,40 @@ export function wallTile(wx, wy) {
   if (horizontal && vertical) return cell(19, 0)
   if (horizontal) return wx % 2 === 0 ? cell(20, 1) : cell(21, 1)
   return wy % 2 === 0 ? cell(20, 0) : cell(21, 0)
+}
+
+function pushIndex(out, name, index) {
+  if (index == null) return
+  out.push({
+    name,
+    x: (index % PACK_COLS) * 16,
+    y: Math.floor(index / PACK_COLS) * 16,
+    w: 16,
+    h: 16,
+  })
+}
+
+/** Every sheet rect the overworld actually draws. The atlas test rejects empty and solid-black cells. */
+export function auditRects() {
+  const out = []
+  pushIndex(out, 'grass', GRASS_BASE)
+  for (const index of GRASS_DETAIL) pushIndex(out, 'grass-detail', index)
+  for (const index of ROAD_FILL) pushIndex(out, 'road-fill', index)
+  for (const [mask, index] of Object.entries(ROAD_EDGE)) pushIndex(out, `road-${mask}`, index)
+  for (const index of COBBLE_FILL) pushIndex(out, 'cobble-fill', index)
+  for (const [mask, index] of Object.entries(COBBLE_EDGE)) pushIndex(out, `cobble-${mask}`, index)
+  for (const [mask, index] of Object.entries(SHORE)) pushIndex(out, `shore-${mask}`, index)
+  pushIndex(out, 'water', cell(WATER_COL, WATER_ROW))
+  pushIndex(out, 'ford', cell(19, 11))
+  pushIndex(out, 'ford-b', cell(18, 11))
+  pushIndex(out, 'bridge', cell(24, 8))
+  pushIndex(out, 'bridge-b', cell(25, 8))
+  pushIndex(out, 'wall-n', cell(20, 1))
+  pushIndex(out, 'wall-n2', cell(21, 1))
+  pushIndex(out, 'wall-post', cell(20, 0))
+  pushIndex(out, 'wall-corner', cell(19, 0))
+  pushIndex(out, 'thicket', cell(23, 11))
+  for (const tree of TREES) out.push({ name: `tree-${tree.name}`, x: tree.x, y: tree.y, w: tree.w, h: tree.h })
+  for (const house of BUILDINGS) out.push({ name: `house-${house.name}`, x: house.x, y: house.y, w: house.w, h: house.h })
+  return out
 }

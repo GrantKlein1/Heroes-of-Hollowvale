@@ -6,16 +6,17 @@
  *   npm run tileset
  */
 
+import { spawnSync } from 'node:child_process'
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { PNG } from 'pngjs'
 import { STAMP_LEAGUES } from '../src/game/world/stamps.js'
 import { SHEET_COLS, TILE_COUNT, collisionForTile } from '../src/game/world/tileCatalog.js'
-import { TREES, UNDERPAINT, cell } from '../src/game/world/packMap.js'
+import { TREES, UNDERPAINT, auditRects, cell } from '../src/game/world/packMap.js'
 import { clearWorldCache, getWorld } from '../src/game/world/league.js'
 import { LEAGUE_H, LEAGUE_W, STRIDE_X, STRIDE_Y, TILE, WORLD_SEED } from '../src/game/world/metrics.js'
-import { propSprite } from '../src/game/world/props.js'
+import { PROP_KINDS, propSprite } from '../src/game/world/props.js'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../public/maps')
 const packDir = join(root, 'ninja-adventure')
@@ -285,7 +286,7 @@ function renderPreview(sheet, world) {
       if (ty < -2 || ty >= LEAGUE_H || tx < -1 || tx >= LEAGUE_W) continue
       if (prop.tall) {
         const tree = TREES[prop.variant % TREES.length]
-        blitScaled(png, sheet, tree.col, tree.row, tree.tw, tree.th, tx, ty, top, scale, true)
+        blitPixels(png, sheet, tree.x, tree.y, tree.w, tree.h, tx, ty, top, scale)
       } else {
         const spec = propSprite(prop.kind, prop.variant)
         blitScaled(png, sheet, spec.col, spec.row, spec.tw, spec.th, tx, ty, top, scale, false)
@@ -293,6 +294,33 @@ function renderPreview(sheet, world) {
     }
   }
   return png
+}
+
+function blitPixels(dst, sheet, sx0, sy0, sw, sh, tx, ty, top, scale) {
+  const originX = (tx * TILE + TILE / 2) * scale
+  const originY = (top + (ty + 1) * TILE) * scale
+  const left = originX - (sw * scale) / 2
+  const up = originY - sh * scale
+  for (let y = 0; y < sh; y++) {
+    for (let x = 0; x < sw; x++) {
+      const si = ((sy0 + y) * sheet.width + (sx0 + x)) * 4
+      if (sx0 + x >= sheet.width || sy0 + y >= sheet.height) continue
+      const a = sheet.data[si + 3] / 255
+      if (a < 0.2) continue
+      for (let oy = 0; oy < scale; oy++) {
+        for (let ox = 0; ox < scale; ox++) {
+          const dx = (left + x * scale + ox) | 0
+          const dy = (up + y * scale + oy) | 0
+          if (dx < 0 || dy < 0 || dx >= dst.width || dy >= dst.height) continue
+          const di = (dy * dst.width + dx) * 4
+          dst.data[di] = dst.data[di] * (1 - a) + sheet.data[si] * a
+          dst.data[di + 1] = dst.data[di + 1] * (1 - a) + sheet.data[si + 1] * a
+          dst.data[di + 2] = dst.data[di + 2] * (1 - a) + sheet.data[si + 2] * a
+          dst.data[di + 3] = 255
+        }
+      }
+    }
+  }
 }
 
 function blitScaled(dst, sheet, col, row, tw, th, tx, ty, top, scale, tall) {
@@ -344,4 +372,25 @@ writeFileSync(join(root, 'bandit.png'), PNG.sync.write(renderBandit()))
 writeFileSync(join(root, 'preview.png'), PNG.sync.write(renderPreview(sheet, world)))
 rmSync(join(root, 'aseprite'), { recursive: true, force: true })
 mkdirSync(join(root, 'aseprite'), { recursive: true })
-console.log('baked Ninja Adventure sheet, stamps, interiors, bandit')
+const frames = auditRects()
+for (const [kind, def] of Object.entries(PROP_KINDS)) {
+  if (def.tall) continue
+  const count = def.sprites ? def.sprites.length : def.frames.length
+  for (let i = 0; i < count; i++) {
+    const spec = propSprite(kind, i)
+    frames.push({
+      name: `${kind}-${i}`,
+      x: spec.col * 16,
+      y: spec.row * 16,
+      w: (spec.tw || 1) * 16,
+      h: (spec.th || 1) * 16,
+    })
+  }
+}
+writeFileSync('/tmp/atlas-frames.json', JSON.stringify(frames))
+const sheetPy = spawnSync('python3', [join(dirname(fileURLToPath(import.meta.url)), 'contactSheet.py'), '/tmp/atlas-frames.json', join(root, 'atlas-contact.png'), join(packDir, 'tileset.png')], { encoding: 'utf8' })
+if (sheetPy.status !== 0) {
+  console.error(sheetPy.stderr || sheetPy.stdout)
+  process.exit(sheetPy.status || 1)
+}
+console.log('baked Ninja Adventure sheet, stamps, interiors, bandit, contact sheet')

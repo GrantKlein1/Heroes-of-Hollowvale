@@ -39,6 +39,49 @@ import {
   scaleFromReference,
 } from '../worldMetrics.js'
 
+const opaqueBoxCache = new WeakMap()
+
+/** Opaque bounds of a character painting, so display size matches the 16px tiles. */
+function opaqueBox(image) {
+  if (!image || !image.width) return null
+  const cached = opaqueBoxCache.get(image)
+  if (cached) return cached
+  const canvas = document.createElement('canvas')
+  canvas.width = image.width
+  canvas.height = image.height
+  const ctx = canvas.getContext('2d', { willReadFrequently: true })
+  ctx.drawImage(image, 0, 0)
+  const data = ctx.getImageData(0, 0, image.width, image.height).data
+  let minX = image.width
+  let minY = image.height
+  let maxX = -1
+  let maxY = -1
+  for (let y = 0; y < image.height; y++) {
+    for (let x = 0; x < image.width; x++) {
+      if (data[(y * image.width + x) * 4 + 3] < 24) continue
+      if (x < minX) minX = x
+      if (y < minY) minY = y
+      if (x > maxX) maxX = x
+      if (y > maxY) maxY = y
+    }
+  }
+  const box = maxX < 0
+    ? { w: image.width, h: image.height, iw: image.width, ih: image.height }
+    : { w: maxX - minX + 1, h: maxY - minY + 1, iw: image.width, ih: image.height }
+  opaqueBoxCache.set(image, box)
+  return box
+}
+
+function displayForVisible(image, visibleH) {
+  const box = opaqueBox(image)
+  if (!box) return { w: visibleH, h: visibleH }
+  const scale = visibleH / box.h
+  return {
+    w: Math.max(8, Math.round(box.iw * scale)),
+    h: Math.max(8, Math.round(box.ih * scale)),
+  }
+}
+
 const CLASS_SPEED = { knight: 160, dwarf: 160, mage: 180, thief: 200 }
 const ATTACK_MS = { mage: 650, thief: 300, knight: 450, dwarf: 600 }
 const MELEE_DMG = { thief: 8, knight: 12, dwarf: 15 }
@@ -348,13 +391,21 @@ export default class HollowvaleScene extends Phaser.Scene {
   _applySprite(url) {
     this._spriteUrl = url || ''
     if (!url || !this.textures.exists(url)) return
-    const targetH = this._playerPixelH
-      ? this._playerPixelH
-      : Math.max(24, Math.round((this._playerScale || 0.13) * this.worldH))
     this.player.setTexture(url)
     const src = this.player.texture.getSourceImage()
-    const ar = src && src.height ? src.width / src.height : 1
-    const targetW = Math.max(12, Math.round(targetH * ar))
+    let targetW
+    let targetH
+    if (this._pixelHIsVisible && this._playerPixelH && src) {
+      const fitted = displayForVisible(src, this._playerPixelH)
+      targetW = fitted.w
+      targetH = fitted.h
+    } else {
+      targetH = this._playerPixelH
+        ? this._playerPixelH
+        : Math.max(24, Math.round((this._playerScale || 0.13) * this.worldH))
+      const ar = src && src.height ? src.width / src.height : 1
+      targetW = Math.max(12, Math.round(targetH * ar))
+    }
     this.player.setDisplaySize(targetW, targetH)
     if (this._playerPixelH) {
       const sx = this.player.scaleX || 1
@@ -778,13 +829,12 @@ export default class HollowvaleScene extends Phaser.Scene {
     const human = name && /bandit|bruiser/i.test(name)
     const key = human ? 'bandit' : ENEMY_SPRITES[type]
     const texKey = key && this.textures.exists(key) ? key : '__px'
-    const targetH = name && /bruiser/i.test(name) ? 26 : 20
+    const visibleH = name && /bruiser/i.test(name) ? 26 : 18
     const src = this.textures.get(texKey).getSourceImage()
-    const ar = src && src.height ? src.width / src.height : 1
-    const w = Math.max(12, Math.round(targetH * ar))
+    const fitted = src ? displayForVisible(src, visibleH) : { w: visibleH, h: visibleH }
     const spr = this.enemies.create(x, y, texKey)
     spr.setOrigin(0.5, 0.5)
-    spr.setDisplaySize(w, targetH)
+    spr.setDisplaySize(fitted.w, fitted.h)
     const sx = spr.scaleX || 1
     const sy = spr.scaleY || 1
     spr.body.setSize(10 / sx, 10 / sy, true)
