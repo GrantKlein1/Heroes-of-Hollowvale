@@ -1,49 +1,83 @@
 /**
  * Layout provider for wilderness screens.
  *
- * Screens are regenerated on every visit by design — the player should never
- * walk back into the exact same clearing. Callers hold the returned layout for
- * as long as they stay on that screen; nothing is memoized here.
+ * Layouts are a pure function of the world seed and the node id. Revisiting
+ * a screen rebuilds the same grid. The cache only avoids repeat work; evicting
+ * it cannot reshuffle the forest.
  */
 
 import { generateScreen } from './generate.js'
 import { getNode, getNeighbors, WILDERNESS_ENTRANCE_ID } from './worldGraph.js'
+import { WORLD_SEED } from '../world/metrics.js'
 
-let visitCounter = 0
+const cache = new Map()
+
+function layoutFor(nodeId) {
+  const node = getNode(nodeId)
+  if (!node) throw new Error(`screenCache.getLayout: unknown node ${nodeId}`)
+  const neighbors = getNeighbors(nodeId)
+  const exits = {
+    north: !!neighbors.north || nodeId === WILDERNESS_ENTRANCE_ID,
+    south: !!neighbors.south,
+    east: !!neighbors.east,
+    west: !!neighbors.west,
+  }
+  return generateScreen({
+    nodeId,
+    seed: `${WORLD_SEED}:${nodeId}`,
+    biome: node.biome,
+    exits,
+  })
+}
 
 /**
  * @param {string} nodeId
  * @returns {import('./generate.js').TerrainLayout}
  */
 export function getLayout(nodeId) {
-  const node = getNode(nodeId)
-  if (!node) throw new Error(`screenCache.getLayout: unknown node ${nodeId}`)
-
-  const neighbors = getNeighbors(nodeId)
-  const exits = {
-    // Entrance north is the hub return, so it is open without a graph neighbor.
-    north: !!neighbors.north || nodeId === WILDERNESS_ENTRANCE_ID,
-    south: !!neighbors.south,
-    east: !!neighbors.east,
-    west: !!neighbors.west,
-  }
-
-  visitCounter += 1
-  return generateScreen({
-    nodeId,
-    seed: `${visitCounter}:${Math.floor(Math.random() * 0xffffffff)}`,
-    biome: node.biome,
-    exits,
-  })
+  const hit = cache.get(nodeId)
+  if (hit) return hit
+  const layout = layoutFor(nodeId)
+  cache.set(nodeId, layout)
+  return layout
 }
 
-/** No-op: layouts are generated on demand, so there is nothing to warm. */
-export function preloadNeighbors() {}
+/** Warm the deterministic layouts of the adjacent nodes. */
+export function preloadNeighbors(nodeId) {
+  const neighbors = getNeighbors(nodeId)
+  const ids = [neighbors.north, neighbors.south, neighbors.east, neighbors.west]
+  for (let i = 0; i < ids.length; i++) {
+    if (ids[i]) getLayout(ids[i])
+  }
+}
 
-/** No-op: nothing is retained between visits. */
-export function evictBeyond() {}
+/**
+ * Drop cached layouts farther than `distance` hops from nodeId.
+ * The next visit regenerates the same seed, so the screen does not reshuffle.
+ */
+export function evictBeyond(nodeId, distance = 2) {
+  const dist = new Map([[nodeId, 0]])
+  const q = [nodeId]
+  let qi = 0
+  while (qi < q.length) {
+    const id = q[qi++]
+    const d = dist.get(id)
+    if (d >= distance) continue
+    const neighbors = getNeighbors(id)
+    const next = [neighbors.north, neighbors.south, neighbors.east, neighbors.west]
+    for (let i = 0; i < next.length; i++) {
+      const n = next[i]
+      if (!n || dist.has(n)) continue
+      dist.set(n, d + 1)
+      q.push(n)
+    }
+  }
+  for (const id of cache.keys()) {
+    if (!dist.has(id)) cache.delete(id)
+  }
+}
 
-/** Test helper — resets the visit counter used for seeding. */
+/** Test helper. */
 export function clearCache() {
-  visitCounter = 0
+  cache.clear()
 }

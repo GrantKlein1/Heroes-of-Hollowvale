@@ -1,8 +1,18 @@
 # Art pipeline (Aseprite → Phaser)
 
-Grant exports from Aseprite. The game loads those files at runtime; this repo does not generate art.
+Base tile size is **16×16**. One league is one screen of **20×12** tiles (320×192 pixels). Neighboring screens overlap by one tile, so a shared edge is the same world cells. Painted 1024×1536 backdrops remain for interiors (the Embered Flagon, the market, the Cavern stand-in).
 
-Base tile size is **16×16**. The next world map is one league per screen, **20×12 tiles** (320×192 pixels), authored as Tiled JSON. Painted 1024×1536 backdrops are temporary and are not tiles.
+## Starter tileset
+
+`npm run tileset` runs `client/tools/generateTileset.mjs` (pngjs only). It writes:
+
+- `client/public/maps/hollowvale.png` — 16×16 sheet, 16 columns. Light is from the top-left. Ground tiles are opaque and seamless; trees, rocks, plants, and markers use alpha.
+- `client/public/maps/hollowvale.tsj` — Tiled tileset. Water, walls, roofs, and building walls are full-tile collision. Tree trunks, rocks, logs, bushes, fences, and the milestone use a partial footprint. Canopy tiles, fords, and bridges have none.
+- `client/public/maps/brackenford.json` and `hearthmile.json` — Tiled maps baked from the hand-authored kind grids in `client/src/game/world/stamps.js`. Phaser loads them with `tilemapTiledJSON`. Regenerate after editing the grids so the JSON stays in lockstep (the world test checks this).
+- `client/public/maps/preview.png` — the sheet plus the Brackenford-to-Hearthmile corridor.
+- `client/public/maps/aseprite/` — plain PNG slices (`01-ground.png`, `02-props.png`, `03-transitions.png`, and the full sheet) for editing in Aseprite. Open a slice, edit on the 16×16 grid, export over `hollowvale.png`, and keep the tile order. Do not add margin or spacing.
+
+Rows 5–15 are dual-grid transitions, one pair per row, column = 4-bit corner mask (NW=1, NE=2, SW=4, SE=8). A mask of 0 or 15 is the seamless base tile. Trees are two tiles: canopy on row 3, trunk directly below on row 4, columns 0–3. The game stitches those into a 16×32 sprite so the canopy sorts above the player.
 
 ## Sprite sheets
 
@@ -40,18 +50,18 @@ Keep `pixelArt: true` on the game config so the canvas uses nearest-neighbor fil
 Load them in `preload`:
 
 ```js
-this.load.image('terrain', '/maps/terrain.png')
-this.load.tilemapTiledJSON('league-0-0', '/maps/league-0-0.json')
+this.load.image('hollowvale', '/maps/hollowvale.png')
+this.load.tilemapTiledJSON('brackenford', '/maps/brackenford.json')
 ```
 
 In `create`:
 
 ```js
-const map = this.make.tilemap({ key: 'league-0-0' })
-const tiles = map.addTilesetImage('terrain', 'terrain')
+const map = this.make.tilemap({ key: 'brackenford' })
+const tiles = map.addTilesetImage('hollowvale', 'hollowvale')
 map.createLayer('ground', tiles, 0, 0)
 ```
 
-The tileset name in `addTilesetImage` must match the name stored in the Tiled JSON. Collision for the league map can be an object layer of rectangles, or tile `collides` properties — the scene already builds Arcade static bodies from rectangles.
+The tileset name in `addTilesetImage` must match the name stored in the Tiled JSON (`hollowvale`). Per-tile collision shapes live on `hollowvale.tsj` and inside each stamp. The overworld builds Arcade bodies from those footprints (trunk, not canopy) plus solid kinds (water, wall).
 
-Screens stay 20×12. Walking off an edge should call `ScreenCamera.setScreenBounds` with the next league rectangle and `slideMs` around 250. That helper is in `client/src/game/screenCamera.js`; today's painted scenes pass the whole backdrop and snap (`slideMs` 0).
+Screens stay 20×12. Walking off an edge calls `ScreenCamera.setScreenBounds` with the next league rectangle and `slideMs` 250. Painted interiors still snap (`slideMs` 0).

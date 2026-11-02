@@ -27,6 +27,7 @@ import { PAINTED_SCENES } from '../sceneCatalog.js'
 import { session } from '../session.js'
 import { ScreenCamera } from '../screenCamera.js'
 import { DomFxLayer } from '../fxLayer.js'
+import { OverworldController, OVERWORLD_DEPTH_BIAS, isSpawnName } from '../world/OverworldController.js'
 import {
   PAINTED_WORLD_W,
   PAINTED_WORLD_H,
@@ -52,7 +53,7 @@ const FIREBALL_SPEED = 420
 const FIREBALL_DIST = 220
 const FIRE_LINGER_MS = 2000
 const BARTENDER_GREETING =
-  "Tharos: Hrm. Traveler. Dragon business or town history—what'll it be? If you're short on supplies, swing by the Market after this—head to the upper-left gate in the village and press E to browse wares."
+  "Tharos: Hrm. Traveler. Dragon business or town history—what'll it be? The market is on the west side of the square, toward the trees. The south gate puts you on the Ember Road."
 
 const KIND_COLOR = {
   talk: 0x60a5fa,
@@ -76,7 +77,7 @@ function enemyLabel(type) {
   if (type === 'goblin') return 'Goblin'
   if (type === 'brute') return 'Goblin Brute'
   if (type === 'archer') return 'Goblin Archer'
-  return 'Unknown'
+  return type || 'Unknown'
 }
 
 function placeholderColor(id) {
@@ -155,6 +156,9 @@ export default class HollowvaleScene extends Phaser.Scene {
     for (const asset of TERRAIN_ASSETS) {
       if (asset.src) this.load.image(asset.id, asset.src)
     }
+    this.load.image('hollowvale', '/maps/hollowvale.png')
+    this.load.tilemapTiledJSON('brackenford', '/maps/brackenford.json')
+    this.load.tilemapTiledJSON('hearthmile', '/maps/hearthmile.json')
   }
 
   create() {
@@ -241,10 +245,17 @@ export default class HollowvaleScene extends Phaser.Scene {
           x: p.x, y: p.y, w: p.w, h: p.h, action: p.action, label: p.label, to: p.to || null,
         })),
         goto: (id, nx, ny) => this.enterScene(id, { nx, ny }),
+        league: () => (this.overworld ? { x: this.overworld.lx, y: this.overworld.ly } : null),
+        tile: () => {
+          const b = this.player?.body
+          if (!b) return null
+          return { wx: Math.floor(b.center.x / 16), wy: Math.floor(b.center.y / 16), x: b.center.x, y: b.center.y }
+        },
       }
     }
 
-    this.enterScene('village', PAINTED_SCENES.village.spawn)
+    this.overworld = new OverworldController(this)
+    this.enterScene('overworld', 'start')
     session.ready = true
     this.time.delayedCall(0, () => {
       eventBus.emit(GameEvents.ASSETS_READY)
@@ -333,13 +344,22 @@ export default class HollowvaleScene extends Phaser.Scene {
   _applySprite(url) {
     this._spriteUrl = url || ''
     if (!url || !this.textures.exists(url)) return
-    const targetH = Math.max(24, Math.round((this._playerScale || 0.13) * this.worldH))
+    const targetH = this._playerPixelH
+      ? this._playerPixelH
+      : Math.max(24, Math.round((this._playerScale || 0.13) * this.worldH))
     this.player.setTexture(url)
     const src = this.player.texture.getSourceImage()
     const ar = src && src.height ? src.width / src.height : 1
-    const targetW = Math.max(16, Math.round(targetH * ar))
+    const targetW = Math.max(12, Math.round(targetH * ar))
     this.player.setDisplaySize(targetW, targetH)
-    this.player.body.setSize(this.player.width, this.player.height, true)
+    if (this._playerPixelH) {
+      const sx = this.player.scaleX || 1
+      const sy = this.player.scaleY || 1
+      this.player.body.setSize(10 / sx, 8 / sy, true)
+      this.player.body.reset(this.player.x, this.player.y)
+    } else {
+      this.player.body.setSize(this.player.width, this.player.height, true)
+    }
   }
 
   _stealthVisual() {
@@ -367,9 +387,15 @@ export default class HollowvaleScene extends Phaser.Scene {
       }
     }
     let speed = (session.baseSpeed || 160) * this.unit
-    if (now < session.speedBoostUntil) speed *= 1.5
+    if (this.sceneId === 'overworld' && this.overworld?.active) speed = this.overworld.speed()
+    else if (now < session.speedBoostUntil) speed *= 1.5
     this.player.setVelocity(vx * speed, vy * speed)
     onPlayerMove({ moving: vx !== 0 || vy !== 0, now })
+
+    if (this.sceneId === 'overworld' && this.overworld?.active && !blocked) {
+      this.overworld.checkEdge()
+      if (this._skipRest) return
+    }
 
     if (this.sceneId === 'wilderness' && !blocked && now >= this.wildLatchUntil) {
       this._checkWildEdge()
@@ -448,6 +474,14 @@ export default class HollowvaleScene extends Phaser.Scene {
       eventBus.emit(GameEvents.VENDOR)
       return
     }
+    if (zone.action === 'loot') {
+      this.overworld?.takeLoot(zone)
+      return
+    }
+    if (zone.action === 'read') {
+      if (zone.text) eventBus.emit(GameEvents.NOTICE, { text: zone.text, ms: 6500 })
+      return
+    }
     if (zone.action === 'chest') {
       if (this.openedChests.has(zone.chestIndex)) return
       const opened = session.hooks.openChest?.(zone.chestIndex, zone.locked) === true
@@ -468,6 +502,7 @@ export default class HollowvaleScene extends Phaser.Scene {
   }
 
   _resolveSpawn(spawn) {
+    if (isSpawnName(spawn)) return spawn
     if (spawn && typeof spawn === 'object') return spawn
     if (spawn === 'village') {
       const s = this.saved.village || { nx: 0.5, ny: 0.9 }
@@ -735,6 +770,39 @@ export default class HollowvaleScene extends Phaser.Scene {
     spr.setDepth(ny * this.worldH)
   }
 
+  _spawnEnemyAt(type, x, y, name, id) {
+    const key = ENEMY_SPRITES[type]
+    const texKey = key && this.textures.exists(key) ? key : '__px'
+    const targetH = 20
+    const src = this.textures.get(texKey).getSourceImage()
+    const ar = src && src.height ? src.width / src.height : 1
+    const w = Math.max(12, Math.round(targetH * ar))
+    const spr = this.enemies.create(x, y, texKey)
+    spr.setOrigin(0.5, 0.5)
+    spr.setDisplaySize(w, targetH)
+    const sx = spr.scaleX || 1
+    const sy = spr.scaleY || 1
+    spr.body.setSize(10 / sx, 10 / sy, true)
+    spr.body.setAllowGravity(false)
+    spr.setCollideWorldBounds(true)
+    spr.setPushable(false)
+    const hpMax = type === 'brute' ? 25 : type === 'archer' ? 10 : 15
+    const pace = type === 'brute' ? 12 : type === 'archer' ? 14 : 16
+    spr.enemyType = type
+    spr.displayName = name || enemyLabel(type)
+    spr.encounterId = id || ''
+    spr.hp = hpMax
+    spr.hpMax = hpMax
+    spr.speed = pace
+    spr.dirX = 0
+    spr.dirY = 0
+    spr.changeAt = 0
+    spr.fireAt = 0
+    spr.flashUntil = 0
+    spr._deathProcessed = false
+    spr.setDepth(y + OVERWORLD_DEPTH_BIAS)
+  }
+
   _enemyBox(e) {
     const b = e.body
     this._ebox = this._ebox || { x: 0, y: 0, w: 0, h: 0 }
@@ -776,7 +844,8 @@ export default class HollowvaleScene extends Phaser.Scene {
         e.dirY = dy / nlen
         e.changeAt = now + 500 + Math.random() * 900
       }
-      if (e.enemyType === 'archer' && now >= e.fireAt) {
+      const archerFar = this.sceneId === 'overworld' && Math.hypot(px - e.x, py - e.y) > 48
+      if (e.enemyType === 'archer' && now >= e.fireAt && !archerFar) {
         let ax = px - e.x
         let ay = py - e.y
         const al = Math.hypot(ax, ay) || 1
@@ -812,17 +881,18 @@ export default class HollowvaleScene extends Phaser.Scene {
           this._iframeUntil = now + 900
           this._flashUntil = now + 200
           this._float(this.player.x, this.player.y - this.player.displayHeight / 2, `-${dmg}`, '#ff9f43')
-          if (this.hp <= 0) this._die(e.enemyType)
+          if (this.hp <= 0) this._die(e.displayName || e.enemyType)
         }
       }
       if (now < e.flashUntil) e.setAlpha(0.6)
       else e.setAlpha(1)
-      e.setDepth(e.body.bottom)
+      e.setDepth(e.body.bottom + (this.sceneId === 'overworld' ? OVERWORLD_DEPTH_BIAS : 0))
     }
     for (let i = kids.length - 1; i >= 0; i--) {
       const e = kids[i]
       if (e.hp > 0 || e._deathProcessed) continue
       e._deathProcessed = true
+      this.overworld?.noteDeath(e)
       this._dropLoot(e)
       this._float(e.x, e.y, '✕', '#ff4444')
       if (e.hpText) e.hpText.destroy()
@@ -949,7 +1019,7 @@ export default class HollowvaleScene extends Phaser.Scene {
           this._iframeUntil = now + 900
           this._flashUntil = now + 250
           this._float(this.player.x, this.player.y - 10, '-7', '#ff9f43')
-          if (this.hp <= 0) this._die('archer')
+          if (this.hp <= 0) this._die('Goblin Archer')
         }
         this._killProjectile(i, false)
         continue
@@ -1095,7 +1165,8 @@ export default class HollowvaleScene extends Phaser.Scene {
     this.mana = 0
     this.manaMax = 0
     this._publishVitals(true)
-    this.enterScene('village', { nx: 0.5, ny: 0.9 })
+    this.overworld?.reset()
+    this.enterScene('overworld', 'start')
     this.player.setVisible(false)
     this._appliedClass = null
   }
@@ -1114,8 +1185,12 @@ export default class HollowvaleScene extends Phaser.Scene {
       this.enemiesSpawned = false
       this.nextWaveAt = 0
     }
-    if (id === 'wilderness') this._showWilderness(spawn, slideMs)
-    else this._showPainted(id, spawn, slideMs)
+    if (id === 'overworld') this.overworld.show(spawn, slideMs)
+    else {
+      this.overworld?.hide()
+      if (id === 'wilderness') this._showWilderness(spawn, slideMs)
+      else this._showPainted(id, spawn, slideMs)
+    }
     this._skipRest = true
     this._activeLabel = null
     eventBus.emit(GameEvents.PROMPT, { label: '' })
@@ -1124,6 +1199,7 @@ export default class HollowvaleScene extends Phaser.Scene {
 
   _showPainted(id, spawn, slideMs) {
     const def = PAINTED_SCENES[id] || PAINTED_SCENES.village
+    this._playerPixelH = 0
     this._clearVisuals()
     const key = def.bg && this.textures.exists(def.bg) ? def.bg : null
     let worldW = PAINTED_WORLD_W
@@ -1356,6 +1432,32 @@ export default class HollowvaleScene extends Phaser.Scene {
     return prompt
   }
 
+  _pushPixelPrompt(rect, label, short, kind, action) {
+    const prompt = {
+      x: rect.x,
+      y: rect.y,
+      w: rect.w,
+      h: rect.h,
+      label,
+      short,
+      kind: kind || 'exit',
+      action,
+    }
+    this.prompts.push(prompt)
+    const color = KIND_COLOR[prompt.kind] || KIND_COLOR.exit
+    const text = this.add.text(prompt.x + prompt.w / 2, prompt.y - 2, short, {
+      fontFamily: 'sans-serif',
+      fontSize: '8px',
+      fontStyle: 'bold',
+      color: '#e8f5ee',
+      backgroundColor: '#0f172acc',
+      padding: { x: 2, y: 1 },
+    }).setOrigin(0.5, 1).setDepth(21000)
+    text.setColor(color === KIND_COLOR.talk ? '#dbeafe' : '#e8f5ee')
+    this.beaconLabels.push(text)
+    return prompt
+  }
+
   _present(now) {
     const vanishing = session.classId === 'thief' && now < session.thiefVanishUntil
     const smoke = session.classId === 'thief' && now < session.thiefSmokeUntil
@@ -1364,6 +1466,7 @@ export default class HollowvaleScene extends Phaser.Scene {
     if (now < (this._flashUntil || 0)) this.player.setAlpha(0.5)
     else this.player.setAlpha(1)
     if (this.sceneId === 'wilderness') this.player.setDepth(this.player.body.bottom)
+    else if (this.sceneId === 'overworld') this.player.setDepth(this.player.body.bottom + OVERWORLD_DEPTH_BIAS)
     this._drawEnemyHp()
 
     this._syncStealth(now, vanishing, smoke)
@@ -1416,6 +1519,8 @@ export default class HollowvaleScene extends Phaser.Scene {
       const text = this.beaconLabels[i]
       if (text) {
         text.setPosition(p.x + p.w / 2, p.y - 4)
+        const show = this.sceneId !== 'overworld' || on
+        text.setVisible(show)
         text.setAlpha(on ? 1 : 0.85)
       }
     }

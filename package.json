@@ -8,9 +8,12 @@
   ],
   "scripts": {
     "dev": "concurrently \"npm run dev --workspace server\" \"npm run dev --workspace client\"",
-    "start": "npm run start --workspace server"
+    "start": "npm run start --workspace server",
+    "test": "node --test client/src/game/world/world.test.mjs client/src/game/terrain/screenCache.test.mjs",
+    "tileset": "node client/tools/generateTileset.mjs"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "pngjs": "^7.0.0"
   }
 }

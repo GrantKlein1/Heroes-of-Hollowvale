@@ -335,6 +335,13 @@ export default function Game() {
     return base
   }
 
+  useEffect(() => {
+    const play = new URLSearchParams(window.location.search).get('play')
+    if (!play || !CLASSES[play]) return
+    setTitleOpen(false)
+    chooseClass(play)
+  }, [])
+
   async function chooseClass(id) {
     const def = CLASSES[id]
     if (!def) return
@@ -1122,7 +1129,7 @@ export default function Game() {
     const inTavern = scene === 'tavern'
     const inFight = scene === 'dungeonInterior'
     const showTitle = titleOpen
-    const inVillageOrPath = scene === 'village' || scene === 'path' || scene === 'wilderness'
+    const inVillageOrPath = scene === 'village' || scene === 'path' || scene === 'wilderness' || scene === 'overworld'
 
     // Main music active on title, village, path (not inside tavern or fight scene)
     if (showTitle || inVillageOrPath) {
@@ -1381,7 +1388,7 @@ export default function Game() {
       setVitals({ hp: v.hp, hpMax: v.hpMax, mana: v.mana, manaMax: v.manaMax })
     }
     const onPrompt = ({ label } = {}) => setActivePrompt(label || '')
-    const onNotice = ({ text } = {}) => { if (text) showNotice(text) }
+    const onNotice = ({ text, ms } = {}) => { if (text) showNotice(text, ms || 1800) }
     const onLoot = ({ gems, items } = {}) => {
       const overflow = grantLoot(gems || {}, items || [])
       const gemParts = []

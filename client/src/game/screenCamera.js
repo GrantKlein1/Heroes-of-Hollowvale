@@ -38,6 +38,7 @@ export class ScreenCamera {
   }
 
   follow(target) {
+    this.followTarget = target
     const cam = this.scene.cameras.main
     cam.startFollow(target, true, 1, 1)
     cam.setLerp(1, 1)
@@ -83,6 +84,7 @@ export class ScreenCamera {
       onComplete: () => {
         this.bounds = bounds
         this.refreshZoom()
+        if (this.followTarget) this.follow(this.followTarget)
       },
     })
   }

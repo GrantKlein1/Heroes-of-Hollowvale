@@ -73,12 +73,12 @@ export const PAINTED_SCENES = {
       {
         id: 'exit',
         rect: { x: 0.4, y: 0.84, w: 0.2, h: 0.14 },
-        label: 'Press E to exit to the Village',
-        short: 'Village',
+        label: 'Press E to exit to the square',
+        short: 'Square',
         kind: 'exit',
         action: 'travel',
-        to: 'village',
-        spawn: { nx: 0.5, ny: 0.72 },
+        to: 'overworld',
+        spawn: 'flagon',
       },
     ],
     bartender: { nx: 0.5, ny: 0.45, w: 64, h: 64, pad: 12 },
@@ -106,12 +106,12 @@ export const PAINTED_SCENES = {
       {
         id: 'village',
         rect: { x: 0.4, y: 0.04, w: 0.2, h: 0.14 },
-        label: 'Press E to return to the Village',
-        short: 'Village (North)',
+        label: 'Press E to return to the Ember Road',
+        short: 'Ember Road',
         kind: 'exit',
         action: 'travel',
-        to: 'village',
-        spawn: 'village',
+        to: 'overworld',
+        spawn: 'stub',
       },
       {
         id: 'dungeon',
@@ -199,12 +199,12 @@ export const PAINTED_SCENES = {
       {
         id: 'village',
         rect: { x: 0.4, y: 0.84, w: 0.2, h: 0.14 },
-        label: 'Press E to exit to the Village',
-        short: 'Village',
+        label: 'Press E to exit to the square',
+        short: 'Square',
         kind: 'exit',
         action: 'travel',
-        to: 'village',
-        spawn: { nx: 0.11, ny: 0.4 },
+        to: 'overworld',
+        spawn: 'market',
       },
     ],
   },
@@ -276,6 +276,7 @@ export const PAINTED_SCENES = {
 }
 
 export const SCENE_HINTS = {
+  overworld: 'Brackenford. The south gate opens onto the Ember Road. Press E at doors and signs.',
   village: 'Find the tavern door or travel south; press E when prompted',
   tavern: 'Explore the tavern. Press E near the bottom to exit',
   path: 'Walk the path. Press E near the top to return or near the bottom to enter the dungeon',
