@@ -7,8 +7,8 @@
 import { eventBus, GameEvents } from '../../lib/eventBus.js'
 import { session } from '../session.js'
 import { SHEET_COLS, TILE_COUNT, speedFactor } from './tileCatalog.js'
-import { BUILDINGS, TREES, WATER_COL, WATER_ROW } from './packMap.js'
-import { propSprite } from './props.js'
+import { BUILDINGS } from './buildings.js'
+import { SPRITES } from './spriteManifest.js'
 import {
   LEAGUE_H,
   LEAGUE_W,
@@ -69,8 +69,9 @@ export class OverworldController {
     this._teardown()
     this._build()
     const spot = this._resolveSpawn(spawn)
-    this.scene._playerPixelH = 24
-    this.scene._pixelHIsVisible = true
+    this.scene._heroMode = true
+    this.scene._playerPixelH = 0
+    this.scene._pixelHIsVisible = false
     this.scene.unit = 0.5
     this.scene.worldW = SCREEN_W
     this.scene.worldH = SCREEN_H
@@ -83,6 +84,7 @@ export class OverworldController {
   hide() {
     this.active = false
     this._teardown()
+    this.scene._heroMode = false
     this.scene._playerPixelH = 0
     this.scene._pixelHIsVisible = false
   }
@@ -222,6 +224,7 @@ export class OverworldController {
       for (let i = 0; i < view.props.length; i++) this._addProp(view.props[i], view)
     })
     for (let i = 0; i < BUILDINGS.length; i++) this._addBuilding(BUILDINGS[i])
+    this._addBridges()
 
     this._buildSolids()
     this.built = true
@@ -234,27 +237,8 @@ export class OverworldController {
     this._enter(home.lx, home.ly, 0)
   }
 
-  tick(now) {
-    if (!this._live || !this.active) return
-    if (now < (this._nextWater || 0)) return
-    this._nextWater = now + 380
-    this._waterFrame = ((this._waterFrame || 0) + 1) % 8
-    const img = this._waterBase
-    if (!img) return
-    const shifted = this._liveCtx.createImageData(16, 16)
-    for (let y = 0; y < 16; y++) {
-      for (let x = 0; x < 16; x++) {
-        const sx = (x + this._waterFrame) % 16
-        const si = (y * 16 + sx) * 4
-        const di = (y * 16 + x) * 4
-        shifted.data[di] = img.data[si]
-        shifted.data[di + 1] = img.data[si + 1]
-        shifted.data[di + 2] = img.data[si + 2]
-        shifted.data[di + 3] = img.data[si + 3]
-      }
-    }
-    this._liveCtx.putImageData(shifted, WATER_COL * TILE, WATER_ROW * TILE)
-    this._live.refresh()
+  tick() {
+    // Water is a static autotile from the pack. Nothing to animate.
   }
 
   _sliceSheet() {
@@ -272,10 +256,6 @@ export class OverworldController {
   _ensureLiveSheet() {
     if (this.scene.textures.exists('hollowvale-live')) {
       this._live = this.scene.textures.get('hollowvale-live')
-      this._liveCtx = this._live.getContext()
-      if (!this._waterBase && this._liveCtx) {
-        this._waterBase = this._liveCtx.getImageData(WATER_COL * TILE, WATER_ROW * TILE, 16, 16)
-      }
       return
     }
     const src = this.scene.textures.get('hollowvale').getSourceImage()
@@ -285,32 +265,6 @@ export class OverworldController {
     ctx.drawImage(src, 0, 0)
     canvas.refresh()
     this._live = canvas
-    this._liveCtx = ctx
-    this._waterBase = ctx.getImageData(WATER_COL * TILE, WATER_ROW * TILE, 16, 16)
-  }
-
-  _cutKey(name, x, y, w, h) {
-    const key = `hv-cut-${name}-${x}-${y}-${w}-${h}`
-    if (this.scene.textures.exists(key)) return key
-    const src = this.scene.textures.get('hollowvale').getSourceImage()
-    const canvas = this.scene.textures.createCanvas(key, w, h)
-    const ctx = canvas.getContext()
-    ctx.imageSmoothingEnabled = false
-    ctx.clearRect(0, 0, w, h)
-    ctx.drawImage(src, x, y, w, h, 0, 0, w, h)
-    canvas.refresh()
-    return key
-  }
-
-  _treeKey(variant) {
-    const spec = TREES[variant % TREES.length]
-    return this._cutKey(spec.name, spec.x, spec.y, spec.w, spec.h)
-  }
-
-  _propKey(spec) {
-    const w = (spec.tw || 1) * TILE
-    const h = (spec.th || 1) * TILE
-    return this._cutKey('prop', spec.col * TILE, spec.row * TILE, w, h)
   }
 
   _addProp(prop, view) {
@@ -318,23 +272,18 @@ export class OverworldController {
       const loot = view.loot.find((item) => item.wx === prop.wx && item.wy === prop.wy)
       if (loot && this.taken.has(loot.id)) return
     }
-    const tree = prop.tall ? TREES[prop.variant % TREES.length] : null
-    const spec = prop.tall ? null : propSprite(prop.kind, prop.variant)
-    const spanW = tree ? tree.w : (spec.tw || 1) * TILE
-    const spanH = tree ? tree.h : (spec.th || 1) * TILE
+    const spec = SPRITES[prop.kind]
+    if (!spec) return
     const x = prop.wx * TILE + TILE / 2
     const y = prop.wy * TILE + TILE
-    const sprite = this.scene.add.image(
-      x,
-      y,
-      prop.tall ? this._treeKey(prop.variant) : this._propKey(spec),
-    )
+    const sprite = this.scene.add.image(x, y, `zv-${prop.kind}`)
     sprite.setOrigin(0.5, 1)
-    sprite.setDisplaySize(spanW, spanH)
     sprite.setDepth(y + DEPTH_BIAS)
-    const shadow = this.scene.add.ellipse(x, y - 1, Math.min(spanW - 4, 28), 4, 0x000000, 0.32)
-    shadow.setDepth(y + DEPTH_BIAS - 1)
-    this.sprites.push(shadow)
+    if (spec.blocks) {
+      const shadow = this.scene.add.ellipse(x, y - 1, Math.min(spec.w, 18), 4, 0x000000, 0.28)
+      shadow.setDepth(y + DEPTH_BIAS - 1)
+      this.sprites.push(shadow)
+    }
     sprite.propKind = prop.kind
     sprite.wx = prop.wx
     sprite.wy = prop.wy
@@ -342,13 +291,46 @@ export class OverworldController {
   }
 
   _addBuilding(spec) {
-    const x = spec.wx * TILE
+    const art = SPRITES[spec.sprite]
+    if (!art) return
+    const x = (spec.wx + spec.tiles / 2) * TILE
     const y = (spec.wy + 1) * TILE
-    const sprite = this.scene.add.image(x, y, this._cutKey(spec.name, spec.x, spec.y, spec.w, spec.h))
-    sprite.setOrigin(0, 1)
-    sprite.setDisplaySize(spec.w, spec.h)
+    const sprite = this.scene.add.image(x, y, `zv-${spec.sprite}`)
+    sprite.setOrigin(0.5, 1)
     sprite.setDepth(y + DEPTH_BIAS)
     this.sprites.push(sprite)
+  }
+
+  _addBridges() {
+    const seen = new Set()
+    const minX = MIN_WX
+    const maxX = MAX_WX
+    const minY = MIN_WY
+    const maxY = MAX_WY
+    for (let wy = minY; wy <= maxY; wy++) {
+      for (let wx = minX; wx <= maxX; wx++) {
+        const kind = this.world.kindAt(wx, wy)
+        if (kind !== 'ford' && kind !== 'bridge') continue
+        const key = `${wx},${wy}`
+        if (seen.has(key)) continue
+        let x0 = wx
+        while (x0 > minX && this.world.kindAt(x0 - 1, wy) === kind) x0 -= 1
+        let x1 = wx
+        while (x1 < maxX && this.world.kindAt(x1 + 1, wy) === kind) x1 += 1
+        for (let x = x0; x <= x1; x++) seen.add(`${x},${wy}`)
+        const span = x1 - x0 + 1
+        const name = span >= 4 ? 'bridge4' : span === 3 ? 'bridge3' : span === 2 ? 'bridge2' : 'bridge1'
+        const art = SPRITES[name]
+        const cx = ((x0 + x1 + 1) / 2) * TILE
+        const y = (wy + 1) * TILE + 8
+        const sprite = this.scene.add.image(cx, y, `zv-${name}`)
+        sprite.setOrigin(0.5, 1)
+        sprite.setDepth(1)
+        sprite.bridge = true
+        this.sprites.push(sprite)
+        void art
+      }
+    }
   }
 
   _buildSolids() {

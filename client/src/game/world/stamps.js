@@ -12,6 +12,8 @@ function brackenford(wx, wy) {
   if (wy === 10 && (wx === 9 || wx === 10)) return 'gate'
   if (isRoad(wx, wy)) return null
   if (wy === 7) return null
+  // Dirt track from the square's south edge, across the ford, to the gate.
+  if (wx >= 8 && wx <= 11 && wy >= 6 && wy <= 9) return 'road'
   if (wy === 1 && wx >= 2 && wx <= 17) return 'wall'
   if (wy === 10 && wx >= 2 && wx <= 17) {
     if (wx === 9 || wx === 10) return 'gate'
@@ -47,7 +49,16 @@ function ruinwatch(wx, wy) {
   return null
 }
 
+function barn(wx, wy) {
+  // Farm barn south of the gate, west of the cart road. Doorless footprint;
+  // the south side stays grass so the track is not boxed in.
+  if (wx >= 2 && wx <= 5 && wy >= 18 && wy <= 19) return 'bwall'
+  return null
+}
+
 export function stampKind(wx, wy) {
+  const farm = barn(wx, wy)
+  if (farm) return farm
   if (wy >= 0 && wy <= 11 && wx >= 0 && wx <= 19) return brackenford(wx, wy)
   if (wy >= 44 && wy <= 55 && wx >= 0 && wx <= 19) return hearthmile(wx, wy)
   if (Math.abs(wx - RUINWATCH.wx) <= 3 && Math.abs(wy - RUINWATCH.wy) <= 3) return ruinwatch(wx, wy)

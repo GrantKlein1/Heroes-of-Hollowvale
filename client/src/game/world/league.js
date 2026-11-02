@@ -109,8 +109,15 @@ function placeProps(kindAt, seed) {
     const owner = ownerLeague(wx, wy)
     if (!owner) return false
     const def = PROP_KINDS[kind]
+    if (!def) return false
     if (def.blocks && (isRoad(wx, wy) || kindAt(wx, wy) === 'gate' || kindAt(wx, wy) === 'ford' || kindAt(wx, wy) === 'bridge')) return false
-    if (def.blocks) {
+    // Only cells whose center sits in the footprint leave the walk graph.
+    // A bush or trunk that misses the center stays walkable and must not be sealed in.
+    const footprint = def.collision
+    const center = tileCenter(wx, wy)
+    const coversCenter = !!(footprint && center.x >= wx * TILE + footprint.x && center.x < wx * TILE + footprint.x + footprint.w
+      && center.y >= wy * TILE + footprint.y && center.y < wy * TILE + footprint.y + footprint.h)
+    if (def.blocks && coversCenter) {
       blocked.add(tileKey(wx, wy))
       if (!leagueConnected(owner.lx, owner.ly, kindAt, blocked)) {
         blocked.delete(tileKey(wx, wy))
@@ -151,32 +158,36 @@ function placeProps(kindAt, seed) {
       const depth = 9.5 - wx
       const eaves = wx < -4
       const clearing = eaves && mix(seed, Math.floor(wx / 8), Math.floor(wy / 6), 40) % 7 === 0
-      if (eaves && kind === 'forest') {
+      if (eaves && (kind === 'forest' || kind === 'plains' || kind === 'grass')) {
+        // Clearings break up the sixteen leagues. The wood edge is bushes, not a darker ground tile.
         if (clearing) {
-          if (roll < 0.05) propKind = 'flower'
-          else if (roll < 0.08) propKind = 'rock'
-        } else {
-          const treeChance = 0.16
-          if (roll < treeChance) propKind = 'tree'
-          else if (roll < treeChance + 0.05) propKind = 'bush'
-          else if (roll < treeChance + 0.09) propKind = 'log'
-          else if (roll < treeChance + 0.12) propKind = 'rock'
-          else if (roll < treeChance + 0.14) propKind = 'fence'
-        }
-      } else if (eaves && (kind === 'plains' || kind === 'grass')) {
-        if (clearing) {
-          if (roll < 0.04) propKind = 'flower'
-        } else if (roll < 0.07) propKind = 'flower'
-        else if (roll < 0.09) propKind = 'rock'
-        else if (roll < 0.11) propKind = 'fence'
-        else if (roll < 0.13) propKind = 'log'
+          if (roll < 0.06) propKind = 'flower'
+          else if (roll < 0.1) propKind = 'rock'
+        } else if (kind === 'forest') {
+          if (roll < 0.2) propKind = 'bush'
+          else if (roll < 0.36) propKind = 'tree'
+          else if (roll < 0.42) propKind = 'log'
+          else if (roll < 0.46) propKind = 'rock'
+        } else if (roll < 0.08) propKind = 'flower'
+        else if (roll < 0.12) propKind = 'bush'
+        else if (roll < 0.15) propKind = 'rock'
       } else if (kind === 'forest') {
-        const treeChance = depth >= 6 ? 0.28 : depth >= 4 ? 0.14 : 0.05
-        if (roll < treeChance) propKind = 'tree'
-        else if (roll < treeChance + 0.08) propKind = 'bush'
-        else if (roll < treeChance + 0.12) propKind = 'mushroom'
-        else if (roll < treeChance + 0.15) propKind = 'rock'
-        else if (roll < treeChance + 0.18) propKind = 'log'
+        let open = false
+        for (let d = 0; d < DIRS.length; d++) {
+          const n = kindAt(wx + DIRS[d][0], wy + DIRS[d][1])
+          if (n === 'grass' || n === 'plains' || n === 'road' || n === 'cobble') open = true
+        }
+        if (open) {
+          if (roll < 0.28) propKind = 'bush'
+          else if (roll < 0.4) propKind = 'tree'
+          else if (roll < 0.48) propKind = 'flower'
+        } else if (depth >= 4) {
+          if (roll < 0.55) propKind = 'tree'
+          else if (roll < 0.72) propKind = 'bush'
+          else if (roll < 0.78) propKind = 'mushroom'
+          else if (roll < 0.82) propKind = 'rock'
+        } else if (roll < 0.16) propKind = 'tree'
+        else if (roll < 0.26) propKind = 'bush'
       } else if (kind === 'plains') {
         if (roll < 0.1) propKind = 'flower'
         else if (roll < 0.13) propKind = 'rock'

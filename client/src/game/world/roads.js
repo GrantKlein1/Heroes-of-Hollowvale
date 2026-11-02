@@ -6,9 +6,10 @@
  */
 
 const BEND = new Set([
-  '9,48', '8,48', '7,48', '6,48', '5,48', '4,48', '3,48',
-  '10,48', '5,47', '4,47',
+  '11,48', '10,48', '9,48', '8,48', '7,48', '6,48', '5,48', '4,48', '3,48',
+  '7,47', '6,47', '5,47', '4,47',
   '3,47', '2,47', '1,47', '0,47',
+  '5,46', '4,46', '3,46', '2,46', '1,46', '0,46',
   '2,48', '1,48', '0,48',
   '-1,47', '-1,46', '-2,46', '-3,46', '-4,46',
   '-2,47', '-3,47', '-4,47',
@@ -76,8 +77,9 @@ export const EAVES_MARKS = EAVES.center
   .map(beside)
 
 export function isRoad(wx, wy) {
-  // Three-tile cart road south of the gate. The gate itself stays two tiles.
-  if ((wx === 8 || wx === 9 || wx === 10) && wy >= 11 && wy <= 47) return true
+  // Four tiles wide so the dirt edge fringe reads as about three tiles of track.
+  // The gate itself stays two tiles. West of the bend, the eaves road continues.
+  if (wx >= 8 && wx <= 11 && wy >= 11 && wy <= 47) return true
   if (BEND.has(`${wx},${wy}`)) return true
   return EAVES.cells.has(`${wx},${wy}`)
 }
