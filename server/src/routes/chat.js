@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { getNPC, NPC_IDS } from '../npcData.js';
 import * as memory from '../memory.js';
 import { chatCompletion } from '../groqClient.js';
+import { buildMessages, resolveNpcChatMaxTokens } from '../buildMessages.js';
 import { retrieveLoreForQuery } from '../rag/store.js';
 import { getGroqApiKey } from '../config/secrets.js';
 
@@ -105,14 +106,15 @@ router.post('/chat', async (req, res, next) => {
         }
       : null
 
-    // Compose messages: system + (server history + extra context) + latest user
-    const baseMessages = [
-      { role: 'system', content: systemPrompt },
-      ...(loreSystem ? [loreSystem] : []),
-      ...history,
-      ...extraContext,
-      { role: 'user', content: message }
-    ].slice(-12); // system + lore + up to 10 more
+    // Pin persona + lore. Trim only the dialogue window (history, then
+    // client context that is not already in that history) to the last 8.
+    const promptMessages = buildMessages({
+      systemPrompt,
+      loreSystem,
+      history,
+      extraContext,
+      userMessage: message,
+    });
 
     const hasKey = !!getGroqApiKey();
 
@@ -125,9 +127,10 @@ router.post('/chat', async (req, res, next) => {
     } else {
       const result = await chatCompletion({
         systemPrompt,
-        messages: baseMessages,
+        messages: promptMessages,
         // Always use instant model for responsiveness and lower latency
         model: 'llama-3.1-8b-instant',
+        maxTokens: resolveNpcChatMaxTokens(process.env.GROQ_MAX_TOKENS),
       });
       replyText = result.text;
     }

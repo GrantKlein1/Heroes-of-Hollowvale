@@ -1,6 +1,13 @@
 import axios from 'axios';
 import { GROQ_API_URL } from './config/paths.js';
 import { getGroqApiKey } from './config/secrets.js';
+import { resolveNpcChatMaxTokens } from './buildMessages.js';
+
+function clampMaxTokens(value, fallback) {
+  const n = Number(value);
+  if (!Number.isFinite(n) || n <= 0) return fallback;
+  return Math.floor(n);
+}
 
 /**
  * Calls Groq chat completions API using an OpenAI-compatible endpoint.
@@ -8,9 +15,11 @@ import { getGroqApiKey } from './config/secrets.js';
  * @param {string} opts.systemPrompt
  * @param {Array<{role:string, content:string}>} opts.messages - Must include system and user messages
  * @param {string} [opts.model]
+ * @param {number} [opts.maxTokens] Completion budget. Defaults to GROQ_MAX_TOKENS
+ *   or 200. Pass a larger value when a caller needs a longer completion.
  * @returns {Promise<{text:string, raw?:any}>}
  */
-async function chatCompletion({ systemPrompt, messages, model }) {
+async function chatCompletion({ systemPrompt, messages, model, maxTokens }) {
   const apiKey = getGroqApiKey();
   if (!apiKey) {
     throw new Error('Groq API key is not set (expected GROQ_API_KEY or groqCloudKey).');
@@ -38,8 +47,10 @@ async function chatCompletion({ systemPrompt, messages, model }) {
           model: m,
           messages: msgs,
           temperature: 0.8,
-          // Allow longer responses to avoid truncation
-          max_tokens: 1024,
+          max_tokens: clampMaxTokens(
+            maxTokens,
+            resolveNpcChatMaxTokens(process.env.GROQ_MAX_TOKENS),
+          ),
           stream: false,
         },
         {
