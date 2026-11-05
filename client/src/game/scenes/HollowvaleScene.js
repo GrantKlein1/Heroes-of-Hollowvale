@@ -40,20 +40,23 @@ import {
   WILDERNESS_WORLD_H,
   scaleFromReference,
 } from '../worldMetrics.js'
+import {
+  CLASS_SPEED,
+  ATTACK_MS,
+  MELEE_DMG,
+  WEAPON,
+  CONSUMABLE,
+  FIREBALL_SPEED,
+  FIREBALL_DIST,
+  FIRE_LINGER_MS,
+  ARCHER_PROJECTILE,
+  BASE_WAVE_SPAWNS,
+  getEnemyHp,
+  getEnemySpeed,
+  getEnemyDamage,
+} from '../combat/balance.js'
+import { isBlendRenderer, isDebug } from '../config/flags.js'
 
-const CLASS_SPEED = { knight: 160, dwarf: 160, mage: 180, thief: 200 }
-const ATTACK_MS = { mage: 650, thief: 300, knight: 450, dwarf: 600 }
-const MELEE_DMG = { thief: 8, knight: 12, dwarf: 15 }
-const WEAPON = {
-  knight: 'iron_sword',
-  mage: 'apprentice_staff',
-  thief: 'twin_daggers',
-  dwarf: 'battle_axe',
-}
-const CONSUMABLE = new Set(['healing_potion', 'mana_potion', 'speed_potion'])
-const FIREBALL_SPEED = 420
-const FIREBALL_DIST = 220
-const FIRE_LINGER_MS = 2000
 const BARTENDER_GREETING =
   "Tharos: Hrm. Traveler. Dragon business or town history—what'll it be? If you're short on supplies, swing by the Market after this—head to the upper-left gate in the village and press E to browse wares."
 
@@ -168,9 +171,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       if (asset.src) this.load.image(asset.id, asset.src)
     }
 
-    const search = typeof window !== 'undefined' ? window.location?.search : ''
-    const params = new URLSearchParams(search)
-    if (params.get('renderer') === 'blend') {
+    if (isBlendRenderer()) {
       this.assetRegistry = new AssetRegistry(this)
       this.assetRegistry.loadGroup('boot')
     }
@@ -180,8 +181,7 @@ export default class HollowvaleScene extends Phaser.Scene {
     if (this.assetRegistry) {
       this.assetRegistry.createAnims('boot')
     }
-    const params = new URLSearchParams(window.location.search)
-    this.debugOn = params.get('debug') === '1'
+    this.debugOn = isDebug()
 
     if (!this.textures.exists('__px')) {
       const g = this.make.graphics({ x: 0, y: 0, add: false })
@@ -687,10 +687,7 @@ export default class HollowvaleScene extends Phaser.Scene {
   _spawnWave() {
     const wave = this.wave
     const spawns = [
-      ['goblin', 0.47, 0.28],
-      ['goblin', 0.53, 0.31],
-      ['brute', 0.5, 0.22],
-      ['archer', 0.56, 0.26],
+      ...BASE_WAVE_SPAWNS,
     ]
     for (let i = 1; i < wave; i++) {
       spawns.push(['goblin', 0.45 + random() * 0.12, 0.2 + random() * 0.14])
@@ -719,10 +716,8 @@ export default class HollowvaleScene extends Phaser.Scene {
     spr.body.setAllowGravity(false)
     spr.setCollideWorldBounds(true)
     spr.setPushable(false)
-    let hpMax = type === 'brute' ? 25 : type === 'archer' ? 10 : 15
-    hpMax = Math.round(hpMax * (1 + 0.12 * Math.max(0, wave - 1)))
-    let speed = type === 'brute' ? 55 : type === 'archer' ? 80 : 70
-    speed = speed * (1 + 0.05 * Math.max(0, wave - 1)) * this.unit
+    const hpMax = getEnemyHp(type, wave)
+    const speed = getEnemySpeed(type, wave, this.unit)
     spr.enemyType = type
     spr.hp = hpMax
     spr.hpMax = hpMax
@@ -804,9 +799,9 @@ export default class HollowvaleScene extends Phaser.Scene {
         const saved = this._readPlayerBox()
         void saved
         this._launchFrom(e.x, e.y, ax, ay, {
-          speed: 300,
-          dist: 400,
-          size: 12,
+          speed: ARCHER_PROJECTILE.speed,
+          dist: ARCHER_PROJECTILE.dist,
+          size: ARCHER_PROJECTILE.size,
           arrow: true,
           owner: 'enemy',
           impact: 'arrow',
@@ -818,8 +813,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       e.setVelocity(e.dirX * e.speed, e.dirY * e.speed)
       if (intersects(this._enemyBox(e), hurtBox)) {
         if (now >= (this._iframeUntil || 0)) {
-          const base = e.enemyType === 'brute' ? 12 : e.enemyType === 'archer' ? 6 : 8
-          const dmg = Math.round(base * (1 + 0.05 * Math.max(0, this.wave - 1)))
+          const dmg = getEnemyDamage(e.enemyType, this.wave)
           if (!invincible) {
             this.hp = Math.max(0, this.hp - dmg)
             onPlayerHurt()
@@ -958,12 +952,12 @@ export default class HollowvaleScene extends Phaser.Scene {
         if (now >= (this._iframeUntil || 0)) {
           const invincible = session.classId === 'thief' && now < session.thiefSmokeUntil
           if (!invincible) {
-            this.hp = Math.max(0, this.hp - 7)
+            this.hp = Math.max(0, this.hp - ARCHER_PROJECTILE.damage)
             onPlayerHurt()
           }
           this._iframeUntil = now + 900
           this._flashUntil = now + 250
-          this._float(this.player.x, this.player.y - 10, '-7', '#ff9f43')
+          this._float(this.player.x, this.player.y - 10, `-${ARCHER_PROJECTILE.damage}`, '#ff9f43')
           if (this.hp <= 0) this._die('archer')
         }
         this._killProjectile(i, false)
