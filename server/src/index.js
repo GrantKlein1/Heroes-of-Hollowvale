@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 
 import { API_ROUTE_PREFIX } from './config/paths.js';
 import { getElevenLabsApiKey, getGroqApiKey } from './config/secrets.js';
+import { warmupReranker } from './rag/rerank.js';
 import chatRouter from './routes/chat.js';
 import ttsRouter from './routes/tts.js';
 import errorHandler from './middleware/errorHandler.js';
@@ -51,4 +52,9 @@ app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`Neural Tavern server listening on http://localhost:${PORT}${API_ROUTE_PREFIX}`);
   console.log(`[keys] groq=${!!getGroqApiKey()} elevenLabs=${!!getElevenLabsApiKey()}`);
+  warmupReranker().then((ok) => {
+    if (ok) console.log('[RAG Rerank] Cross-encoder warmup complete');
+  }).catch((err) => {
+    console.warn('[RAG Rerank] Warmup warning:', err?.message || err);
+  });
 });
