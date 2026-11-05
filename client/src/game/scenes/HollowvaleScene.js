@@ -27,6 +27,7 @@ import { PAINTED_SCENES } from '../sceneCatalog.js'
 import { session } from '../session.js'
 import { ScreenCamera } from '../screenCamera.js'
 import { DomFxLayer } from '../fxLayer.js'
+import { random } from '../rng.js'
 import {
   PAINTED_WORLD_W,
   PAINTED_WORLD_H,
@@ -692,10 +693,10 @@ export default class HollowvaleScene extends Phaser.Scene {
       ['archer', 0.56, 0.26],
     ]
     for (let i = 1; i < wave; i++) {
-      spawns.push(['goblin', 0.45 + Math.random() * 0.12, 0.2 + Math.random() * 0.14])
+      spawns.push(['goblin', 0.45 + random() * 0.12, 0.2 + random() * 0.14])
     }
-    if (wave > 1 && wave % 2 === 0) spawns.push(['archer', 0.44 + Math.random() * 0.18, 0.2 + Math.random() * 0.14])
-    if (wave > 1 && wave % 3 === 0) spawns.push(['brute', 0.44 + Math.random() * 0.12, 0.18 + Math.random() * 0.1])
+    if (wave > 1 && wave % 2 === 0) spawns.push(['archer', 0.44 + random() * 0.18, 0.2 + random() * 0.14])
+    if (wave > 1 && wave % 3 === 0) spawns.push(['brute', 0.44 + random() * 0.12, 0.18 + random() * 0.1])
     for (let i = 0; i < spawns.length; i++) {
       this._spawnEnemy(spawns[i][0], spawns[i][1], spawns[i][2], wave)
     }
@@ -766,15 +767,15 @@ export default class HollowvaleScene extends Phaser.Scene {
         const len = Math.hypot(tx, ty) || 1
         tx /= len
         ty /= len
-        const jx = (Math.random() * 2 - 1) * 0.8
-        const jy = (Math.random() * 2 - 1) * 0.8
+        const jx = (random() * 2 - 1) * 0.8
+        const jy = (random() * 2 - 1) * 0.8
         const mix = Math.min(0.75, 0.45 + 0.05 * Math.max(0, this.wave - 1))
         let dx = tx * mix + jx * (1 - mix)
         let dy = ty * mix + jy * (1 - mix)
         const nlen = Math.hypot(dx, dy) || 1
         e.dirX = dx / nlen
         e.dirY = dy / nlen
-        e.changeAt = now + 500 + Math.random() * 900
+        e.changeAt = now + 500 + random() * 900
       }
       if (e.enemyType === 'archer' && now >= e.fireAt) {
         let ax = px - e.x
@@ -798,7 +799,7 @@ export default class HollowvaleScene extends Phaser.Scene {
         })
         this.facingX = prevX
         this.facingY = prevY
-        e.fireAt = now + 1800 + Math.random() * 1200
+        e.fireAt = now + 1800 + random() * 1200
       }
       e.setVelocity(e.dirX * e.speed, e.dirY * e.speed)
       if (intersects(this._enemyBox(e), hurtBox)) {
@@ -875,16 +876,16 @@ export default class HollowvaleScene extends Phaser.Scene {
     const items = []
     const type = e.enemyType
     if (type === 'goblin') {
-      if (Math.random() < 0.35) gems.ruby += 1
-      if (Math.random() < 0.15) gems.emerald += 1
-      if (Math.random() < 0.15) items.push({ id: 'speed_potion', count: 1 })
+      if (random() < 0.35) gems.ruby += 1
+      if (random() < 0.15) gems.emerald += 1
+      if (random() < 0.15) items.push({ id: 'speed_potion', count: 1 })
     } else if (type === 'brute') {
-      gems.ruby += Math.random() < 0.6 ? 1 : 0
-      gems.sapphire += Math.random() < 0.5 ? 1 : 0
-      if (Math.random() < 0.25) items.push({ id: 'healing_potion', count: 1 })
+      gems.ruby += random() < 0.6 ? 1 : 0
+      gems.sapphire += random() < 0.5 ? 1 : 0
+      if (random() < 0.25) items.push({ id: 'healing_potion', count: 1 })
     } else if (type === 'archer') {
-      if (Math.random() < 0.3) gems.sapphire += 1
-      if (Math.random() < 0.25) items.push({ id: 'mana_potion', count: 1 })
+      if (random() < 0.3) gems.sapphire += 1
+      if (random() < 0.25) items.push({ id: 'mana_potion', count: 1 })
     }
     const had = gems.ruby || gems.sapphire || gems.emerald || items.length
     if (had) eventBus.emit(GameEvents.LOOT, { gems, items })

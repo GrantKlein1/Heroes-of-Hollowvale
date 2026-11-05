@@ -9,6 +9,7 @@
 import { sfxEngine, SFX } from './sfxEngine'
 import { eventBus, GameEvents } from '../lib/eventBus'
 import { PATHS } from '../config/paths'
+import { random } from './rng.js'
 
 /** Default preload manifest for combat / interaction SFX */
 export const SFX_MANIFEST = {
@@ -45,7 +46,7 @@ export function onPlayerMove({ moving, now = performance.now() } = {}) {
   if (now - lastFootstepAt < FOOTSTEP_INTERVAL_MS) return
   lastFootstepAt = now
   // Slight rate jitter so steps don't sound mechanical
-  const rate = 0.92 + Math.random() * 0.16
+  const rate = 0.92 + random() * 0.16
   sfxEngine.play(SFX.FOOTSTEP, { volume: 0.45, playbackRate: rate })
 }
 

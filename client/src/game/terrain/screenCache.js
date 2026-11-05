@@ -8,6 +8,7 @@
 
 import { generateScreen } from './generate.js'
 import { getNode, getNeighbors, WILDERNESS_ENTRANCE_ID } from './worldGraph.js'
+import { random } from '../rng.js'
 
 let visitCounter = 0
 
@@ -31,7 +32,7 @@ export function getLayout(nodeId) {
   visitCounter += 1
   return generateScreen({
     nodeId,
-    seed: `${visitCounter}:${Math.floor(Math.random() * 0xffffffff)}`,
+    seed: `${visitCounter}:${Math.floor(random() * 0xffffffff)}`,
     biome: node.biome,
     exits,
   })
