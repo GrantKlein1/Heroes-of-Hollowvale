@@ -245,3 +245,4 @@ To allow seamless terrain transitions in Tiled (`.tmj` / `.tsj`) and Phaser, ter
 - **Overhead Canopies & Roofs (`tall: true`):**
   - Props like cottages, tavern structures, and large pine trees separate the collidable base trunk/wall from the overhead canopy/roof.
   - The upper canopy is marked `tall: true` with no collision, allowing player and NPC sprites to walk behind and beneath it with standard Phaser depth sorting (`depth = y`).
+
