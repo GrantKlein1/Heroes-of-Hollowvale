@@ -1,0 +1,62 @@
+{
+ "frameSize": [
+  96,
+  96
+ ],
+ "feetPivotPx": [
+  48.0,
+  89
+ ],
+ "hitFrames": [
+  3
+ ],
+ "hitbox": {
+  "3": {
+   "down": {
+    "x": -50,
+    "y": -36,
+    "w": 48,
+    "h": 44
+   },
+   "left": {
+    "x": -80,
+    "y": -54,
+    "w": 57,
+    "h": 44
+   },
+   "right": {
+    "x": 23,
+    "y": -44,
+    "w": 57,
+    "h": 44
+   },
+   "up": {
+    "x": 1,
+    "y": -73,
+    "w": 48,
+    "h": 45
+   }
+  }
+ },
+ "weaponTipOffsetFromFeet": {
+  "3": {
+   "down": {
+    "x": -26.1,
+    "y": -18.2
+   },
+   "left": {
+    "x": -39.6,
+    "y": -32.5
+   },
+   "right": {
+    "x": 39.8,
+    "y": -22.3
+   },
+   "up": {
+    "x": 25.0,
+    "y": -36.7
+   }
+  }
+ },
+ "note": "px relative to the feet pivot, +y down. hitbox {x,y,w,h}: x,y = top-left. Tip = projected weapon-mesh vertex farthest from the hand on the hit frame (attack-sheet camera)."
+}

@@ -1,0 +1,554 @@
+[
+ {
+  "key": "bird_sparrow_idle_right",
+  "n": 6,
+  "ms": [
+   300,
+   90,
+   160,
+   120,
+   90,
+   110
+  ],
+  "repeat": -1,
+  "size": 16,
+  "frameRate": 6.9
+ },
+ {
+  "key": "bird_sparrow_idle_left",
+  "n": 6,
+  "ms": [
+   300,
+   90,
+   160,
+   120,
+   90,
+   110
+  ],
+  "repeat": -1,
+  "size": 16,
+  "frameRate": 6.9
+ },
+ {
+  "key": "bird_sparrow_fly_right",
+  "n": 6,
+  "ms": 70,
+  "repeat": -1,
+  "size": 16,
+  "frameRate": 14.3
+ },
+ {
+  "key": "bird_sparrow_fly_left",
+  "n": 6,
+  "ms": 70,
+  "repeat": -1,
+  "size": 16,
+  "frameRate": 14.3
+ },
+ {
+  "key": "bird_sparrow_fly_down",
+  "n": 6,
+  "ms": 70,
+  "repeat": -1,
+  "size": 16,
+  "frameRate": 14.3
+ },
+ {
+  "key": "bird_sparrow_fly_up",
+  "n": 6,
+  "ms": 70,
+  "repeat": -1,
+  "size": 16,
+  "frameRate": 14.3
+ },
+ {
+  "key": "bird_sparrow_takeoff_right",
+  "n": 5,
+  "ms": 80,
+  "repeat": 0,
+  "size": 16,
+  "frameRate": 12.5
+ },
+ {
+  "key": "bird_sparrow_takeoff_left",
+  "n": 5,
+  "ms": 80,
+  "repeat": 0,
+  "size": 16,
+  "frameRate": 12.5
+ },
+ {
+  "key": "bird_sparrow_takeoff_down",
+  "n": 5,
+  "ms": 80,
+  "repeat": 0,
+  "size": 16,
+  "frameRate": 12.5
+ },
+ {
+  "key": "bird_sparrow_takeoff_up",
+  "n": 5,
+  "ms": 80,
+  "repeat": 0,
+  "size": 16,
+  "frameRate": 12.5
+ },
+ {
+  "key": "bird_sparrow_land_right",
+  "n": 5,
+  "ms": 90,
+  "repeat": 0,
+  "size": 16,
+  "frameRate": 11.1
+ },
+ {
+  "key": "bird_sparrow_land_left",
+  "n": 5,
+  "ms": 90,
+  "repeat": 0,
+  "size": 16,
+  "frameRate": 11.1
+ },
+ {
+  "key": "bird_finch_idle_right",
+  "n": 6,
+  "ms": [
+   300,
+   90,
+   160,
+   120,
+   90,
+   110
+  ],
+  "repeat": -1,
+  "size": 16,
+  "frameRate": 6.9
+ },
+ {
+  "key": "bird_finch_idle_left",
+  "n": 6,
+  "ms": [
+   300,
+   90,
+   160,
+   120,
+   90,
+   110
+  ],
+  "repeat": -1,
+  "size": 16,
+  "frameRate": 6.9
+ },
+ {
+  "key": "bird_finch_fly_right",
+  "n": 6,
+  "ms": 70,
+  "repeat": -1,
+  "size": 16,
+  "frameRate": 14.3
+ },
+ {
+  "key": "bird_finch_fly_left",
+  "n": 6,
+  "ms": 70,
+  "repeat": -1,
+  "size": 16,
+  "frameRate": 14.3
+ },
+ {
+  "key": "bird_finch_fly_down",
+  "n": 6,
+  "ms": 70,
+  "repeat": -1,
+  "size": 16,
+  "frameRate": 14.3
+ },
+ {
+  "key": "bird_finch_fly_up",
+  "n": 6,
+  "ms": 70,
+  "repeat": -1,
+  "size": 16,
+  "frameRate": 14.3
+ },
+ {
+  "key": "bird_finch_takeoff_right",
+  "n": 5,
+  "ms": 80,
+  "repeat": 0,
+  "size": 16,
+  "frameRate": 12.5
+ },
+ {
+  "key": "bird_finch_takeoff_left",
+  "n": 5,
+  "ms": 80,
+  "repeat": 0,
+  "size": 16,
+  "frameRate": 12.5
+ },
+ {
+  "key": "bird_finch_takeoff_down",
+  "n": 5,
+  "ms": 80,
+  "repeat": 0,
+  "size": 16,
+  "frameRate": 12.5
+ },
+ {
+  "key": "bird_finch_takeoff_up",
+  "n": 5,
+  "ms": 80,
+  "repeat": 0,
+  "size": 16,
+  "frameRate": 12.5
+ },
+ {
+  "key": "bird_finch_land_right",
+  "n": 5,
+  "ms": 90,
+  "repeat": 0,
+  "size": 16,
+  "frameRate": 11.1
+ },
+ {
+  "key": "bird_finch_land_left",
+  "n": 5,
+  "ms": 90,
+  "repeat": 0,
+  "size": 16,
+  "frameRate": 11.1
+ },
+ {
+  "key": "squirrel_red_idle_right",
+  "n": 6,
+  "ms": [
+   400,
+   90,
+   90,
+   160,
+   120,
+   160
+  ],
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 5.9
+ },
+ {
+  "key": "squirrel_red_idle_left",
+  "n": 6,
+  "ms": [
+   400,
+   90,
+   90,
+   160,
+   120,
+   160
+  ],
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 5.9
+ },
+ {
+  "key": "squirrel_red_run_right",
+  "n": 6,
+  "ms": 70,
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 14.3
+ },
+ {
+  "key": "squirrel_red_run_left",
+  "n": 6,
+  "ms": 70,
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 14.3
+ },
+ {
+  "key": "squirrel_red_run_down",
+  "n": 6,
+  "ms": 70,
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 14.3
+ },
+ {
+  "key": "squirrel_red_run_up",
+  "n": 6,
+  "ms": 70,
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 14.3
+ },
+ {
+  "key": "squirrel_red_alert_right",
+  "n": 4,
+  "ms": [
+   80,
+   80,
+   80,
+   600
+  ],
+  "repeat": 0,
+  "size": 32,
+  "frameRate": 4.8
+ },
+ {
+  "key": "squirrel_red_alert_left",
+  "n": 4,
+  "ms": [
+   80,
+   80,
+   80,
+   600
+  ],
+  "repeat": 0,
+  "size": 32,
+  "frameRate": 4.8
+ },
+ {
+  "key": "squirrel_grey_idle_right",
+  "n": 6,
+  "ms": [
+   400,
+   90,
+   90,
+   160,
+   120,
+   160
+  ],
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 5.9
+ },
+ {
+  "key": "squirrel_grey_idle_left",
+  "n": 6,
+  "ms": [
+   400,
+   90,
+   90,
+   160,
+   120,
+   160
+  ],
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 5.9
+ },
+ {
+  "key": "squirrel_grey_run_right",
+  "n": 6,
+  "ms": 70,
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 14.3
+ },
+ {
+  "key": "squirrel_grey_run_left",
+  "n": 6,
+  "ms": 70,
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 14.3
+ },
+ {
+  "key": "squirrel_grey_run_down",
+  "n": 6,
+  "ms": 70,
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 14.3
+ },
+ {
+  "key": "squirrel_grey_run_up",
+  "n": 6,
+  "ms": 70,
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 14.3
+ },
+ {
+  "key": "squirrel_grey_alert_right",
+  "n": 4,
+  "ms": [
+   80,
+   80,
+   80,
+   600
+  ],
+  "repeat": 0,
+  "size": 32,
+  "frameRate": 4.8
+ },
+ {
+  "key": "squirrel_grey_alert_left",
+  "n": 4,
+  "ms": [
+   80,
+   80,
+   80,
+   600
+  ],
+  "repeat": 0,
+  "size": 32,
+  "frameRate": 4.8
+ },
+ {
+  "key": "rat_grey_idle_right",
+  "n": 6,
+  "ms": [
+   200,
+   110,
+   130,
+   110,
+   160,
+   140
+  ],
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 7.1
+ },
+ {
+  "key": "rat_grey_idle_left",
+  "n": 6,
+  "ms": [
+   200,
+   110,
+   130,
+   110,
+   160,
+   140
+  ],
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 7.1
+ },
+ {
+  "key": "rat_grey_scurry_right",
+  "n": 6,
+  "ms": 55,
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 18.2
+ },
+ {
+  "key": "rat_grey_scurry_left",
+  "n": 6,
+  "ms": 55,
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 18.2
+ },
+ {
+  "key": "rat_grey_scurry_down",
+  "n": 6,
+  "ms": 55,
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 18.2
+ },
+ {
+  "key": "rat_grey_scurry_up",
+  "n": 6,
+  "ms": 55,
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 18.2
+ },
+ {
+  "key": "rat_grey_turn_right",
+  "n": 4,
+  "ms": 50,
+  "repeat": 0,
+  "size": 32,
+  "frameRate": 20.0
+ },
+ {
+  "key": "rat_grey_turn_left",
+  "n": 4,
+  "ms": 50,
+  "repeat": 0,
+  "size": 32,
+  "frameRate": 20.0
+ },
+ {
+  "key": "rat_brown_idle_right",
+  "n": 6,
+  "ms": [
+   200,
+   110,
+   130,
+   110,
+   160,
+   140
+  ],
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 7.1
+ },
+ {
+  "key": "rat_brown_idle_left",
+  "n": 6,
+  "ms": [
+   200,
+   110,
+   130,
+   110,
+   160,
+   140
+  ],
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 7.1
+ },
+ {
+  "key": "rat_brown_scurry_right",
+  "n": 6,
+  "ms": 55,
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 18.2
+ },
+ {
+  "key": "rat_brown_scurry_left",
+  "n": 6,
+  "ms": 55,
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 18.2
+ },
+ {
+  "key": "rat_brown_scurry_down",
+  "n": 6,
+  "ms": 55,
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 18.2
+ },
+ {
+  "key": "rat_brown_scurry_up",
+  "n": 6,
+  "ms": 55,
+  "repeat": -1,
+  "size": 32,
+  "frameRate": 18.2
+ },
+ {
+  "key": "rat_brown_turn_right",
+  "n": 4,
+  "ms": 50,
+  "repeat": 0,
+  "size": 32,
+  "frameRate": 20.0
+ },
+ {
+  "key": "rat_brown_turn_left",
+  "n": 4,
+  "ms": 50,
+  "repeat": 0,
+  "size": 32,
+  "frameRate": 20.0
+ }
+]

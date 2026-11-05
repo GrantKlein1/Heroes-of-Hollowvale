@@ -1,0 +1,891 @@
+{
+ "atlas": "dragon_fx_v2",
+ "frameName": "dfx_<fx>_<i>",
+ "pxPerUnit": 36.92,
+ "dragonOrigin": [
+  320,
+  400
+ ],
+ "conventions": "Offsets are px relative to the dragon sprite origin (feet centre), y down. Angles are degrees, y-down (0=+x right, 90=down). Directional FX are drawn pointing +x: setOrigin(pivot), setRotation(angle). For left-facing use the per-frame mouthAngleDeg as-is and setFlipY(true) when cos(angle)<0 so tongues stay on top. Ground-aligned FX are never rotated; flip X for left.",
+ "effects": {
+  "breath_loop": {
+   "frames": 8,
+   "size": [
+    400,
+    232
+   ],
+   "pivot": [
+    0.035,
+    0.5
+   ],
+   "pivotPx": [
+    14,
+    116
+   ],
+   "fps": 14,
+   "loop": true,
+   "note": "loop 8f; rotate to mouthAngleDeg about pivot (mouth)",
+   "anchor": "mouth",
+   "rotate": "mouthAngleDeg",
+   "loopFrames": [
+    0,
+    7
+   ],
+   "hitShape": "cone along stream, length 330 px, half-width 9+0.21*dist (max ~78)",
+   "streamLengthPx": 330
+  },
+  "breath_start": {
+   "frames": 4,
+   "size": [
+    400,
+    232
+   ],
+   "pivot": [
+    0.035,
+    0.5
+   ],
+   "pivotPx": [
+    14,
+    116
+   ],
+   "fps": 14,
+   "loop": false,
+   "note": "stream extends from mouth; chain into breath_loop",
+   "anchor": "mouth",
+   "rotate": "mouthAngleDeg",
+   "hitRadius": 0,
+   "hitShape": "cone along stream, length 70/150/230/300 px, half-width 9+0.21*dist"
+  },
+  "breath_end": {
+   "frames": 5,
+   "size": [
+    400,
+    232
+   ],
+   "pivot": [
+    0.035,
+    0.5
+   ],
+   "pivotPx": [
+    14,
+    116
+   ],
+   "fps": 14,
+   "loop": false,
+   "note": "stream detaches from mouth and burns out",
+   "anchor": "mouth",
+   "rotate": "mouthAngleDeg",
+   "hitRadius": 0
+  },
+  "breath_loop_molten": {
+   "frames": 8,
+   "size": [
+    400,
+    232
+   ],
+   "pivot": [
+    0.035,
+    0.5
+   ],
+   "pivotPx": [
+    14,
+    116
+   ],
+   "fps": 14,
+   "loop": true,
+   "note": "loop 8f; rotate to mouthAngleDeg about pivot (mouth)",
+   "anchor": "mouth",
+   "rotate": "mouthAngleDeg",
+   "loopFrames": [
+    0,
+    7
+   ],
+   "streamLengthPx": 330,
+   "note2": "lava globs baked in"
+  },
+  "breath_start_molten": {
+   "frames": 4,
+   "size": [
+    400,
+    232
+   ],
+   "pivot": [
+    0.035,
+    0.5
+   ],
+   "pivotPx": [
+    14,
+    116
+   ],
+   "fps": 14,
+   "loop": false,
+   "note": "stream extends from mouth; chain into breath_loop",
+   "anchor": "mouth",
+   "rotate": "mouthAngleDeg"
+  },
+  "breath_end_molten": {
+   "frames": 5,
+   "size": [
+    400,
+    232
+   ],
+   "pivot": [
+    0.035,
+    0.5
+   ],
+   "pivotPx": [
+    14,
+    116
+   ],
+   "fps": 14,
+   "loop": false,
+   "note": "stream detaches from mouth and burns out",
+   "anchor": "mouth",
+   "rotate": "mouthAngleDeg"
+  },
+  "mouth_ignite": {
+   "frames": 6,
+   "size": [
+    128,
+    128
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "pivotPx": [
+    64,
+    64
+   ],
+   "fps": 16,
+   "loop": false,
+   "note": "spawn at mouth on breath spawn frame",
+   "anchor": "mouth",
+   "rotate": false
+  },
+  "mouth_ignite_molten": {
+   "frames": 6,
+   "size": [
+    128,
+    128
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "pivotPx": [
+    64,
+    64
+   ],
+   "fps": 16,
+   "loop": false,
+   "note": "",
+   "anchor": "mouth",
+   "rotate": false
+  },
+  "ground_fire": {
+   "frames": 8,
+   "size": [
+    264,
+    168
+   ],
+   "pivot": [
+    0.5,
+    0.8333
+   ],
+   "pivotPx": [
+    132,
+    140
+   ],
+   "fps": 14,
+   "loop": true,
+   "note": "where the stream meets the ground; loop while breath is on",
+   "anchor": "streamGroundHit",
+   "rotate": false,
+   "hitRadius": 56,
+   "howTo": "anchor at the breath ground-hit point; see breathGroundClip (dGround=(groundDy-mouth.y)/sin(angle))"
+  },
+  "ground_fire_molten": {
+   "frames": 8,
+   "size": [
+    264,
+    168
+   ],
+   "pivot": [
+    0.5,
+    0.8333
+   ],
+   "pivotPx": [
+    132,
+    140
+   ],
+   "fps": 14,
+   "loop": true,
+   "note": "",
+   "anchor": "streamGroundHit",
+   "rotate": false,
+   "hitRadius": 60,
+   "howTo": "anchor at the breath ground-hit point; see breathGroundClip (dGround=(groundDy-mouth.y)/sin(angle))"
+  },
+  "burn_patch": {
+   "frames": 8,
+   "size": [
+    176,
+    80
+   ],
+   "pivot": [
+    0.5,
+    0.75
+   ],
+   "pivotPx": [
+    88,
+    60
+   ],
+   "fps": 10,
+   "loop": true,
+   "note": "lingering ground fire after breath; fade/destroy after ~2 s",
+   "anchor": "streamGroundHit",
+   "rotate": false,
+   "hitRadius": 30,
+   "lifetimeMs": 2000,
+   "note2": "drop one every ~150 ms along the ground hit path",
+   "howTo": "anchor at the breath ground-hit point; see breathGroundClip (dGround=(groundDy-mouth.y)/sin(angle))"
+  },
+  "burn_patch_molten": {
+   "frames": 8,
+   "size": [
+    176,
+    80
+   ],
+   "pivot": [
+    0.5,
+    0.75
+   ],
+   "pivotPx": [
+    88,
+    60
+   ],
+   "fps": 10,
+   "loop": true,
+   "note": "",
+   "anchor": "streamGroundHit",
+   "rotate": false,
+   "hitRadius": 34,
+   "lifetimeMs": 3000,
+   "howTo": "anchor at the breath ground-hit point; see breathGroundClip (dGround=(groundDy-mouth.y)/sin(angle))"
+  },
+  "smoke_wisp": {
+   "frames": 8,
+   "size": [
+    80,
+    128
+   ],
+   "pivot": [
+    0.5,
+    0.9062
+   ],
+   "pivotPx": [
+    40,
+    116
+   ],
+   "fps": 10,
+   "loop": false,
+   "note": "scatter along the stream end / after breath_end",
+   "anchor": "streamGroundHit or stream tip",
+   "rotate": false
+  },
+  "nostril_smoke": {
+   "frames": 8,
+   "size": [
+    64,
+    64
+   ],
+   "pivot": [
+    0.1875,
+    0.8125
+   ],
+   "pivotPx": [
+    12,
+    52
+   ],
+   "fps": 10,
+   "loop": false,
+   "note": "idle: spawn at mouth every ~2 s; flip X for left",
+   "anchor": "mouth",
+   "rotate": false,
+   "flipXForLeft": true
+  },
+  "spark_burst": {
+   "frames": 8,
+   "size": [
+    192,
+    192
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "pivotPx": [
+    96,
+    96
+   ],
+   "fps": 16,
+   "loop": false,
+   "note": "generic spark shower: breath ignite, impacts, crashes",
+   "anchor": "any",
+   "rotate": false
+  },
+  "spark_burst_molten": {
+   "frames": 8,
+   "size": [
+    192,
+    192
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "pivotPx": [
+    96,
+    96
+   ],
+   "fps": 16,
+   "loop": false,
+   "note": "",
+   "anchor": "any",
+   "rotate": false
+  },
+  "hit_burst": {
+   "frames": 6,
+   "size": [
+    112,
+    112
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "pivotPx": [
+    56,
+    56
+   ],
+   "fps": 18,
+   "loop": false,
+   "note": "on a landed hit: spawn at the hero",
+   "anchor": "hero hit point",
+   "rotate": false
+  },
+  "ember_loop": {
+   "frames": 8,
+   "size": [
+    112,
+    144
+   ],
+   "pivot": [
+    0.5,
+    0.9444
+   ],
+   "pivotPx": [
+    56,
+    136
+   ],
+   "fps": 10,
+   "loop": true,
+   "note": "floating embers; tile several around the body",
+   "anchor": "any",
+   "rotate": false
+  },
+  "fireball": {
+   "frames": 8,
+   "size": [
+    136,
+    64
+   ],
+   "pivot": [
+    0.7647,
+    0.5
+   ],
+   "pivotPx": [
+    104,
+    32
+   ],
+   "fps": 14,
+   "loop": true,
+   "note": "pivot = ball centre; rotate to travel angle; hitRadius 14",
+   "anchor": "mouth at spawn",
+   "rotate": "travel angle",
+   "speedPxPerSec": 260,
+   "hitRadius": 14
+  },
+  "meteor": {
+   "frames": 8,
+   "size": [
+    224,
+    224
+   ],
+   "pivot": [
+    0.7857,
+    0.7857
+   ],
+   "pivotPx": [
+    176,
+    176
+   ],
+   "fps": 14,
+   "loop": true,
+   "note": "falls at 45deg down-right (flip X for down-left); hitRadius 16; spawn impact on landing",
+   "anchor": "spawn 300px up-left of target (45deg), flipX for down-left",
+   "rotate": false,
+   "speedPxPerSec": 340,
+   "hitRadius": 16
+  },
+  "impact": {
+   "frames": 8,
+   "size": [
+    160,
+    128
+   ],
+   "pivot": [
+    0.5,
+    0.7812
+   ],
+   "pivotPx": [
+    80,
+    100
+   ],
+   "fps": 14,
+   "loop": false,
+   "note": "fire explosion + rock debris + sparks; hitRadius 0,20,28,32,0,0,0,0",
+   "anchor": "ground point",
+   "rotate": false,
+   "hitRadiusPerFrame": [
+    0,
+    20,
+    28,
+    32,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "shockwave": {
+   "frames": 8,
+   "size": [
+    592,
+    184
+   ],
+   "pivot": [
+    0.5,
+    0.5435
+   ],
+   "pivotPx": [
+    296,
+    100
+   ],
+   "fps": 14,
+   "loop": false,
+   "note": "ground fire ring: rx=36+28*f px, ry=0.26*rx; damage on ring band",
+   "anchor": "shockwaveSpawn / origin",
+   "rotate": false,
+   "ringRxPerFrame": [
+    36,
+    64,
+    92,
+    120,
+    148,
+    176,
+    204,
+    232
+   ],
+   "ringRyFactor": 0.26,
+   "hitFrames": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ]
+  },
+  "fire_nova": {
+   "frames": 12,
+   "size": [
+    608,
+    480
+   ],
+   "pivot": [
+    0.5,
+    0.5333
+   ],
+   "pivotPx": [
+    304,
+    256
+   ],
+   "fps": 12,
+   "loop": false,
+   "note": "t12: spawn f3 at dragon origin+(0,-130); invuln burst",
+   "anchor": "origin",
+   "offset": [
+    0,
+    -130
+   ],
+   "rotate": false
+  },
+  "fire_nova_molten": {
+   "frames": 12,
+   "size": [
+    608,
+    480
+   ],
+   "pivot": [
+    0.5,
+    0.5333
+   ],
+   "pivotPx": [
+    304,
+    256
+   ],
+   "fps": 12,
+   "loop": false,
+   "note": "t23: spawn f3 (crash) at origin+(0,-110)",
+   "anchor": "origin",
+   "offset": [
+    0,
+    -110
+   ],
+   "rotate": false
+  },
+  "death_fx": {
+   "frames": 16,
+   "size": [
+    576,
+    480
+   ],
+   "pivot": [
+    0.5,
+    0.6
+   ],
+   "pivotPx": [
+    288,
+    288
+   ],
+   "fps": 10,
+   "loop": false,
+   "note": "spawn on death f0 at origin+(0,-120); outlives the 12-frame body anim by 4 frames",
+   "anchor": "origin",
+   "offset": [
+    0,
+    -120
+   ],
+   "rotate": false
+  },
+  "aura_p3": {
+   "frames": 8,
+   "size": [
+    448,
+    408
+   ],
+   "pivot": [
+    0.5,
+    0.902
+   ],
+   "pivotPx": [
+    224,
+    368
+   ],
+   "fps": 10,
+   "loop": true,
+   "note": "phase 3 ambient: attach at dragon origin, loop; draw behind+in front (or front at alpha 1)",
+   "anchor": "origin",
+   "offset": [
+    0,
+    0
+   ],
+   "rotate": false,
+   "loopFrames": [
+    0,
+    7
+   ]
+  }
+ },
+ "attacks": {
+  "firebreath": {
+   "phase": 1,
+   "body": "firebreath (new, from attacks.json)",
+   "spawn": [
+    [
+     "mouth_ignite",
+     "spawnFrame"
+    ],
+    [
+     "spark_burst",
+     "spawnFrame"
+    ],
+    [
+     "breath_start",
+     "spawnFrame+1"
+    ],
+    [
+     "breath_loop",
+     "loopFrames, rotate per frame"
+    ],
+    [
+     "ground_fire",
+     "while stream on"
+    ],
+    [
+     "burn_patch",
+     "every 2nd frame while on"
+    ],
+    [
+     "breath_end",
+     "first frame after loop"
+    ],
+    [
+     "smoke_wisp",
+     "with breath_end at ground hit"
+    ]
+   ]
+  },
+  "breath": {
+   "phase": 2,
+   "spawn": [
+    [
+     "mouth_ignite",
+     2
+    ],
+    [
+     "spark_burst",
+     2
+    ],
+    [
+     "breath_start",
+     3
+    ],
+    [
+     "breath_loop",
+     "3-6 (repeat)"
+    ],
+    [
+     "ground_fire",
+     "3-6"
+    ],
+    [
+     "burn_patch",
+     "3-6 every 2nd"
+    ],
+    [
+     "breath_end",
+     7
+    ],
+    [
+     "smoke_wisp",
+     7
+    ]
+   ]
+  },
+  "volley": {
+   "phase": 2,
+   "spawn": [
+    [
+     "mouth_ignite",
+     "1,4,7"
+    ],
+    [
+     "fireball",
+     "1,4,7 at mouth along mouthAngleDeg"
+    ],
+    [
+     "impact",
+     "on landing"
+    ],
+    [
+     "spark_burst",
+     "on landing"
+    ]
+   ]
+  },
+  "dive": {
+   "phase": 3,
+   "spawn": [
+    [
+     "shockwave",
+     5
+    ],
+    [
+     "impact",
+     5
+    ],
+    [
+     "spark_burst_molten",
+     5
+    ],
+    [
+     "hit_burst",
+     "on hero hit"
+    ]
+   ]
+  },
+  "meteor": {
+   "phase": 3,
+   "spawn": [
+    [
+     "mouth_ignite_molten",
+     3
+    ],
+    [
+     "meteor",
+     "4,6,8"
+    ],
+    [
+     "impact",
+     "landing"
+    ],
+    [
+     "spark_burst",
+     "landing"
+    ],
+    [
+     "burn_patch_molten",
+     "landing"
+    ]
+   ]
+  },
+  "molten": {
+   "phase": 3,
+   "spawn": [
+    [
+     "mouth_ignite_molten",
+     2
+    ],
+    [
+     "breath_start_molten",
+     "2-4"
+    ],
+    [
+     "breath_loop_molten",
+     "5-9 rotate per frame"
+    ],
+    [
+     "ground_fire_molten",
+     "2-9"
+    ],
+    [
+     "burn_patch_molten",
+     "every 2nd frame, persists"
+    ],
+    [
+     "breath_end_molten",
+     10
+    ]
+   ]
+  },
+  "t12": {
+   "spawn": [
+    [
+     "fire_nova",
+     3
+    ],
+    [
+     "spark_burst",
+     3
+    ]
+   ]
+  },
+  "t23": {
+   "spawn": [
+    [
+     "fire_nova_molten",
+     3
+    ],
+    [
+     "shockwave",
+     3
+    ],
+    [
+     "impact",
+     3
+    ],
+    [
+     "aura_p3",
+     "from 4"
+    ]
+   ]
+  },
+  "death": {
+   "spawn": [
+    [
+     "death_fx",
+     0
+    ]
+   ]
+  },
+  "idle": {
+   "spawn": [
+    [
+     "nostril_smoke",
+     "every ~2 s"
+    ]
+   ]
+  },
+  "idle_p3/walk_p3/all phase 3": {
+   "spawn": [
+    [
+     "aura_p3",
+     "always, loop"
+    ]
+   ]
+  }
+ },
+ "breathGroundClip": {
+  "appliesTo": [
+   "breath_start",
+   "breath_loop",
+   "breath_end",
+   "and _molten variants"
+  ],
+  "groundDyPx": {
+   "right": 0,
+   "left": 0,
+   "down": 36,
+   "up": null
+  },
+  "rule": "Per frame, with mouth=(mx,my) px rel. dragon origin (y down, from attacks.json mouthData: x-320, y-400) and a=angleDeg: s=sin(a). If groundDy[facing] is null (up) or s<0.2 there is no ground hit: draw full stream. Else dGround=(groundDy-my)/s. If dGround<streamLen(frame) the stream is clipped: visibleLen=dGround, hit point=(mx+cos(a)*dGround, groundDy) in dragon space.",
+  "streamLenPx": {
+   "breath_start": [
+    70,
+    150,
+    230,
+    300
+   ],
+   "breath_loop": 330,
+   "breath_end": 330
+  },
+  "runtimeClip": "Preferred: a rectangle GeometryMask covering everything above worldGroundY = dragon.y + groundDy*scale (pixels below the ground line hidden; this is exactly what the previews bake). Cheaper alternative: setCrop(0,0,pivotPx.x+dGround+6,h) on the unrotated stream frame (crop is in texture space before rotation, so it cuts across the stream at dGround; the lower cone edge can poke <=~half-width*cos(a) px past the ground, hidden by the splash).",
+  "splashAtHit": "While clipped: ground_fire(_molten) at the hit point every frame (flipX when facing left), burn_patch(_molten) dropped every ~150 ms at hit point +-10 px x, +4 px y (drawn under the body), smoke_wisp x2 at the last hit point when breath_end starts. Hit area: ground_fire hitRadius around the hit point; the cone hit test should also be limited to dist<=dGround."
+ },
+ "directions": {
+  "facings": [
+   "right",
+   "left",
+   "down",
+   "up"
+  ],
+  "up": {
+   "drawOrder": "behindBody",
+   "note": "Aiming up (away from camera) the breath leaves the back/top of the head: draw breath_*, mouth_ignite, spark_burst and fireballs at a depth BELOW the dragon body sprite (e.g. depth=dragon.depth-1). No ground hit (groundDy null). Use mouthData up angles as given (around -90)."
+  },
+  "down": {
+   "drawOrder": "aboveBody",
+   "groundDyPx": 36,
+   "note": "front view: ground line is the front edge of the shadow, 36 px below origin"
+  },
+  "left": {
+   "drawOrder": "aboveBody",
+   "note": "ground-aligned FX flipX; directional FX rotate by angleDeg and flipY when cos<0"
+  },
+  "right": {
+   "drawOrder": "aboveBody"
+  }
+ }
+}

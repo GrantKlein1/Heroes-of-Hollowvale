@@ -1,0 +1,1035 @@
+{
+ "frames": {
+  "thief_death_down_0": {
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_down_1": {
+   "frame": {
+    "x": 96,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_down_2": {
+   "frame": {
+    "x": 192,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_down_3": {
+   "frame": {
+    "x": 288,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_down_4": {
+   "frame": {
+    "x": 384,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_down_5": {
+   "frame": {
+    "x": 480,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_down_6": {
+   "frame": {
+    "x": 576,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_down_7": {
+   "frame": {
+    "x": 672,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_down_8": {
+   "frame": {
+    "x": 768,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_down_9": {
+   "frame": {
+    "x": 864,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_left_0": {
+   "frame": {
+    "x": 0,
+    "y": 104,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_left_1": {
+   "frame": {
+    "x": 96,
+    "y": 104,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_left_2": {
+   "frame": {
+    "x": 192,
+    "y": 104,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_left_3": {
+   "frame": {
+    "x": 288,
+    "y": 104,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_left_4": {
+   "frame": {
+    "x": 384,
+    "y": 104,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_left_5": {
+   "frame": {
+    "x": 480,
+    "y": 104,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_left_6": {
+   "frame": {
+    "x": 576,
+    "y": 104,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_left_7": {
+   "frame": {
+    "x": 672,
+    "y": 104,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_left_8": {
+   "frame": {
+    "x": 768,
+    "y": 104,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_left_9": {
+   "frame": {
+    "x": 864,
+    "y": 104,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_right_0": {
+   "frame": {
+    "x": 0,
+    "y": 208,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_right_1": {
+   "frame": {
+    "x": 96,
+    "y": 208,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_right_2": {
+   "frame": {
+    "x": 192,
+    "y": 208,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_right_3": {
+   "frame": {
+    "x": 288,
+    "y": 208,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_right_4": {
+   "frame": {
+    "x": 384,
+    "y": 208,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_right_5": {
+   "frame": {
+    "x": 480,
+    "y": 208,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_right_6": {
+   "frame": {
+    "x": 576,
+    "y": 208,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_right_7": {
+   "frame": {
+    "x": 672,
+    "y": 208,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_right_8": {
+   "frame": {
+    "x": 768,
+    "y": 208,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_right_9": {
+   "frame": {
+    "x": 864,
+    "y": 208,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_up_0": {
+   "frame": {
+    "x": 0,
+    "y": 312,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_up_1": {
+   "frame": {
+    "x": 96,
+    "y": 312,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_up_2": {
+   "frame": {
+    "x": 192,
+    "y": 312,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_up_3": {
+   "frame": {
+    "x": 288,
+    "y": 312,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_up_4": {
+   "frame": {
+    "x": 384,
+    "y": 312,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_up_5": {
+   "frame": {
+    "x": 480,
+    "y": 312,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_up_6": {
+   "frame": {
+    "x": 576,
+    "y": 312,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_up_7": {
+   "frame": {
+    "x": 672,
+    "y": 312,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_up_8": {
+   "frame": {
+    "x": 768,
+    "y": 312,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  },
+  "thief_death_up_9": {
+   "frame": {
+    "x": 864,
+    "y": 312,
+    "w": 96,
+    "h": 104
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 104
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 104
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.8558
+   }
+  }
+ },
+ "meta": {
+  "app": "blender death_render.py + pack_death.py",
+  "version": "1.0",
+  "image": "thief_death.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 960,
+   "h": 416
+  },
+  "scale": "1",
+  "origin": {
+   "x": 0.5,
+   "y": 0.8558
+  },
+  "cell": {
+   "w": 96,
+   "h": 104
+  },
+  "pivotRowPx": 89,
+  "baseCell": {
+   "w": 64,
+   "h": 96
+  },
+  "note": "Death cell is wider than the base sheet; origin keeps feet aligned with the base sheet pivot (same camera, integer-pixel offset only).",
+  "pxPerUnit": 36.92,
+  "anims": {
+   "death": {
+    "frames": 10,
+    "directions": [
+     "down",
+     "left",
+     "right",
+     "up"
+    ],
+    "frameNames": "thief_death_<dir>_<i>",
+    "loop": false,
+    "holdLast": true,
+    "fps": 10,
+    "cell": [
+     96,
+     104
+    ],
+    "origin": [
+     0.5,
+     0.8558
+    ]
+   }
+  },
+  "footprint": {
+   "x": -9,
+   "y": -3,
+   "w": 18,
+   "h": 5,
+   "shape": "ellipse",
+   "note": "collision footprint centred on feet"
+  },
+  "hurtbox": {
+   "x": -11,
+   "y": -32,
+   "w": 22,
+   "h": 32,
+   "note": "body hurtbox, bottom on feet"
+  },
+  "feetPivotNote": "footprint/hurtbox/hitbox px relative to the feet pivot (origin), +y down; x,y = top-left",
+  "notes": {
+   "refs": "`thiefAttack.png`, `thiefDaggers.png`",
+   "details": "black hood framing a peach face with dark eyes, hooded mantle and long back cloak (on its own bone, it trails in walk, hurt and lunges), dark tunic and leggings, brown belt with gold buckle, leather pouch with gold clasp on his left hip, chest strap, bracers, brown boots, and the two blue-steel daggers with red-brown hilts from thiefDaggers.png (one per hand)",
+   "attack": "7-frame dagger flurry from thiefAttack.png's lunge: 0 crouch and wind up the right dagger, 1 lunge and right stab, 2 pull back while winding up the left, 3 deeper lunge and left stab, 4 hold, 5 recover, 6 settle",
+   "weak": "- In the down/up views both stabs point at or away from the camera, so they read mostly as a lean plus a short arm, and the dagger nearly disappears. Left and right are the strong views.\n- The daggers are 1-2 px wide at game size; the blue highlight survives, but the hilt detail does not.\n- The dark cloak and hood are close in value (#323438 vs #22232a), so the hood edge against the cloak is soft in the up view.\n- There is no stab trail or impact FX. If hits do not read in game, a 2-frame streak could be added like the knight's arc.\n- Side-view walk feet land on rows 87-90 (up to 2 px of jitter around the ground line)."
+  }
+ }
+}

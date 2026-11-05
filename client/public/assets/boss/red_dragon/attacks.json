@@ -1,0 +1,1389 @@
+{
+ "anims": {
+  "idle": {
+   "frameRate": 8,
+   "repeat": -1,
+   "phase": 1
+  },
+  "walk": {
+   "frameRate": 10,
+   "repeat": -1,
+   "phase": 1,
+   "stompFrames": [
+    2,
+    6
+   ],
+   "cameraShake": [
+    2,
+    6
+   ]
+  },
+  "hurt": {
+   "frameRate": 12,
+   "repeat": 0,
+   "flash": {
+    "0": "white",
+    "1": "red"
+   }
+  },
+  "roar": {
+   "frameRate": 10,
+   "repeat": 0,
+   "cameraShakeFrom": 3,
+   "cameraShakeTo": 7
+  },
+  "claw": {
+   "frameRate": 12,
+   "repeat": 0,
+   "phase": 1,
+   "hitFrames": [
+    2,
+    4
+   ],
+   "damage": "melee",
+   "note": "R claw hits f2, L claw hits f4"
+  },
+  "tail": {
+   "frameRate": 12,
+   "repeat": 0,
+   "phase": 1,
+   "hitFrames": [
+    3,
+    4
+   ],
+   "note": "360 deg spin; tail blade sweeps behind and in front"
+  },
+  "t12": {
+   "frameRate": 10,
+   "repeat": 0,
+   "note": "phase 1->2: leap into hover; invulnerable; ends in hover"
+  },
+  "hover": {
+   "frameRate": 12,
+   "repeat": -1,
+   "phase": 2,
+   "note": "airborne base, body 1.4u (52px) above ground; shadow stays at origin"
+  },
+  "breath": {
+   "frameRate": 10,
+   "repeat": 0,
+   "phase": 2,
+   "spawnFrames": [
+    2
+   ],
+   "hitFrames": [
+    3,
+    4,
+    5,
+    6
+   ],
+   "loopFrames": [
+    3,
+    6
+   ],
+   "fx": "breath_start@2, breath_loop@3-6 (repeat as needed), breath_end@7",
+   "note": "repeat frames 3-6 for longer breath"
+  },
+  "volley": {
+   "frameRate": 10,
+   "repeat": 0,
+   "phase": 2,
+   "spawnFrames": [
+    1,
+    4,
+    7
+   ],
+   "fx": "fireball",
+   "note": "3 fireballs, spawn at perFrame mouth, aim along mouthAngleDeg (+ toward player)"
+  },
+  "gust": {
+   "frameRate": 12,
+   "repeat": 0,
+   "phase": 2,
+   "hitFrames": [
+    3,
+    4
+   ],
+   "effect": "pushback",
+   "pushback": {
+    "vx": 420,
+    "durationMs": 350
+   }
+  },
+  "hurt_air": {
+   "frameRate": 12,
+   "repeat": 0,
+   "flash": {
+    "0": "white",
+    "1": "red"
+   }
+  },
+  "t23": {
+   "frameRate": 10,
+   "repeat": 0,
+   "note": "phase 2->3: hit (white), fall, crash f3 (shake + embers), palette swaps to p3 at f4, roar f6-8",
+   "cameraShake": [
+    3,
+    6
+   ]
+  },
+  "idle_p3": {
+   "frameRate": 10,
+   "repeat": -1,
+   "phase": 3
+  },
+  "walk_p3": {
+   "frameRate": 11,
+   "repeat": -1,
+   "phase": 3,
+   "stompFrames": [
+    2,
+    6
+   ]
+  },
+  "hurt_p3": {
+   "frameRate": 12,
+   "repeat": 0,
+   "flash": {
+    "0": "white",
+    "1": "red"
+   }
+  },
+  "dive": {
+   "frameRate": 12,
+   "repeat": 0,
+   "phase": 3,
+   "hitFrames": [
+    5,
+    6
+   ],
+   "spawnFrames": [
+    5
+   ],
+   "fx": "shockwave at perFrame shockwaveSpawn, expands both ways; impact+embers",
+   "cameraShake": [
+    5
+   ]
+  },
+  "meteor": {
+   "frameRate": 10,
+   "repeat": 0,
+   "phase": 3,
+   "spawnFrames": [
+    4,
+    6,
+    8
+   ],
+   "fx": "meteor spawned off-screen top above target, impact on landing (game decides targets)"
+  },
+  "molten": {
+   "frameRate": 10,
+   "repeat": 0,
+   "phase": 3,
+   "spawnFrames": [
+    2
+   ],
+   "hitFrames": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ],
+   "fx": "breath_loop tinted/scaled, rotate to mouthAngleDeg each frame (sweep forward->ground)"
+  },
+  "death": {
+   "frameRate": 8,
+   "repeat": 0,
+   "note": "hold last frame",
+   "cameraShake": [
+    7
+   ]
+  },
+  "firebreath": {
+   "frameRate": 12,
+   "repeat": 0,
+   "phase": 1,
+   "windupFrames": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "spawnFrames": [
+    4
+   ],
+   "hitFrames": [
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ],
+   "loopFrames": [
+    5,
+    8
+   ],
+   "recoveryFrames": [
+    10,
+    11,
+    12,
+    13
+   ],
+   "fx": "fire_start@4, fire_loop@5-8 (repeat as needed), fire_end@9; mouth/angle per frame in attacks.json mouthData",
+   "note": "dedicated phase-1 fire breath: inhale/rear-back 0-3, lunge 4, loopable hold 5-8 (repeat 5-8 for longer fire), surge 9, recovery 10-13. Mouth glow baked into frames 1-10."
+  }
+ },
+ "state_machine": "see README",
+ "mouthData": {
+  "_doc": "per-frame mouth point (x,y) in 640x512 frame pixels from the frame top-left; origin (320,400). angleDeg = breath direction, screen space, 0=+x (right), +90=down (y grows down). Directions: left,right,down,up (up = walking away, mouth hidden behind head; point still given). Up/down angles are fixed at -90/+90 (the projected head axis is degenerate in those views).",
+  "firebreath": {
+   "left": [
+    {
+     "f": 0,
+     "x": 163.8,
+     "y": 191.7,
+     "angleDeg": -169.9
+    },
+    {
+     "f": 1,
+     "x": 194.5,
+     "y": 164.5,
+     "angleDeg": -149.5
+    },
+    {
+     "f": 2,
+     "x": 232.4,
+     "y": 145.3,
+     "angleDeg": -129.0
+    },
+    {
+     "f": 3,
+     "x": 250.2,
+     "y": 140.9,
+     "angleDeg": -121.0
+    },
+    {
+     "f": 4,
+     "x": 121.4,
+     "y": 257.1,
+     "angleDeg": 142.3
+    },
+    {
+     "f": 5,
+     "x": 125.0,
+     "y": 262.0,
+     "angleDeg": 134.7
+    },
+    {
+     "f": 6,
+     "x": 122.4,
+     "y": 255.7,
+     "angleDeg": 142.3
+    },
+    {
+     "f": 7,
+     "x": 124.8,
+     "y": 260.2,
+     "angleDeg": 136.2
+    },
+    {
+     "f": 8,
+     "x": 122.0,
+     "y": 253.6,
+     "angleDeg": 144.3
+    },
+    {
+     "f": 9,
+     "x": 126.8,
+     "y": 264.2,
+     "angleDeg": 131.2
+    },
+    {
+     "f": 10,
+     "x": 141.0,
+     "y": 262.5,
+     "angleDeg": 128.2
+    },
+    {
+     "f": 11,
+     "x": 140.2,
+     "y": 237.0,
+     "angleDeg": 156.1
+    },
+    {
+     "f": 12,
+     "x": 142.4,
+     "y": 221.2,
+     "angleDeg": 171.9
+    },
+    {
+     "f": 13,
+     "x": 141.4,
+     "y": 220.8,
+     "angleDeg": 172.7
+    }
+   ],
+   "right": [
+    {
+     "f": 0,
+     "x": 476.2,
+     "y": 191.8,
+     "angleDeg": -10.1
+    },
+    {
+     "f": 1,
+     "x": 445.5,
+     "y": 164.6,
+     "angleDeg": -30.5
+    },
+    {
+     "f": 2,
+     "x": 407.6,
+     "y": 145.4,
+     "angleDeg": -51.0
+    },
+    {
+     "f": 3,
+     "x": 389.8,
+     "y": 141.0,
+     "angleDeg": -59.0
+    },
+    {
+     "f": 4,
+     "x": 518.6,
+     "y": 257.2,
+     "angleDeg": 37.7
+    },
+    {
+     "f": 5,
+     "x": 515.0,
+     "y": 262.1,
+     "angleDeg": 45.3
+    },
+    {
+     "f": 6,
+     "x": 517.6,
+     "y": 255.8,
+     "angleDeg": 37.7
+    },
+    {
+     "f": 7,
+     "x": 515.2,
+     "y": 260.3,
+     "angleDeg": 43.8
+    },
+    {
+     "f": 8,
+     "x": 518.0,
+     "y": 253.7,
+     "angleDeg": 35.7
+    },
+    {
+     "f": 9,
+     "x": 513.2,
+     "y": 264.3,
+     "angleDeg": 48.8
+    },
+    {
+     "f": 10,
+     "x": 499.0,
+     "y": 262.6,
+     "angleDeg": 51.8
+    },
+    {
+     "f": 11,
+     "x": 499.8,
+     "y": 237.1,
+     "angleDeg": 23.9
+    },
+    {
+     "f": 12,
+     "x": 497.6,
+     "y": 221.3,
+     "angleDeg": 8.1
+    },
+    {
+     "f": 13,
+     "x": 498.6,
+     "y": 220.9,
+     "angleDeg": 7.3
+    }
+   ],
+   "down": [
+    {
+     "f": 0,
+     "x": 320.0,
+     "y": 210.1,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 1,
+     "x": 320.0,
+     "y": 176.6,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 2,
+     "x": 320.0,
+     "y": 149.5,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 3,
+     "x": 320.0,
+     "y": 141.4,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 4,
+     "x": 320.0,
+     "y": 284.4,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 5,
+     "x": 320.0,
+     "y": 288.6,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 6,
+     "x": 320.0,
+     "y": 282.8,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 7,
+     "x": 320.0,
+     "y": 286.8,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 8,
+     "x": 320.0,
+     "y": 280.8,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 9,
+     "x": 320.0,
+     "y": 290.3,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 10,
+     "x": 320.0,
+     "y": 285.7,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 11,
+     "x": 320.0,
+     "y": 260.4,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 12,
+     "x": 320.0,
+     "y": 244.1,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 13,
+     "x": 320.0,
+     "y": 244.0,
+     "angleDeg": 90.0
+    }
+   ],
+   "up": [
+    {
+     "f": 0,
+     "x": 320.0,
+     "y": 167.9,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 1,
+     "x": 320.0,
+     "y": 147.1,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 2,
+     "x": 320.0,
+     "y": 135.8,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 3,
+     "x": 320.0,
+     "y": 135.1,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 4,
+     "x": 320.0,
+     "y": 224.5,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 5,
+     "x": 320.0,
+     "y": 230.2,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 6,
+     "x": 320.0,
+     "y": 223.3,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 7,
+     "x": 320.0,
+     "y": 228.3,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 8,
+     "x": 320.0,
+     "y": 221.1,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 9,
+     "x": 320.0,
+     "y": 232.7,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 10,
+     "x": 320.0,
+     "y": 234.0,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 11,
+     "x": 320.0,
+     "y": 208.3,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 12,
+     "x": 320.0,
+     "y": 192.9,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 13,
+     "x": 320.0,
+     "y": 192.4,
+     "angleDeg": -90.0
+    }
+   ]
+  },
+  "breath": {
+   "left": [
+    {
+     "f": 0,
+     "x": 215.9,
+     "y": 83.6,
+     "angleDeg": -132.0
+    },
+    {
+     "f": 1,
+     "x": 211.7,
+     "y": 89.2,
+     "angleDeg": -134.6
+    },
+    {
+     "f": 2,
+     "x": 172.0,
+     "y": 200.5,
+     "angleDeg": 111.0
+    },
+    {
+     "f": 3,
+     "x": 174.8,
+     "y": 202.4,
+     "angleDeg": 104.9
+    },
+    {
+     "f": 4,
+     "x": 167.5,
+     "y": 192.9,
+     "angleDeg": 119.7
+    },
+    {
+     "f": 5,
+     "x": 174.8,
+     "y": 200.8,
+     "angleDeg": 104.9
+    },
+    {
+     "f": 6,
+     "x": 167.5,
+     "y": 194.9,
+     "angleDeg": 119.7
+    },
+    {
+     "f": 7,
+     "x": 159.4,
+     "y": 183.4,
+     "angleDeg": 138.8
+    },
+    {
+     "f": 8,
+     "x": 152.2,
+     "y": 149.9,
+     "angleDeg": 176.9
+    },
+    {
+     "f": 9,
+     "x": 152.0,
+     "y": 146.3,
+     "angleDeg": -179.4
+    }
+   ],
+   "right": [
+    {
+     "f": 0,
+     "x": 424.1,
+     "y": 83.7,
+     "angleDeg": -48.0
+    },
+    {
+     "f": 1,
+     "x": 428.3,
+     "y": 89.3,
+     "angleDeg": -45.4
+    },
+    {
+     "f": 2,
+     "x": 468.0,
+     "y": 200.6,
+     "angleDeg": 69.0
+    },
+    {
+     "f": 3,
+     "x": 465.2,
+     "y": 202.5,
+     "angleDeg": 75.1
+    },
+    {
+     "f": 4,
+     "x": 472.5,
+     "y": 193.0,
+     "angleDeg": 60.3
+    },
+    {
+     "f": 5,
+     "x": 465.2,
+     "y": 200.9,
+     "angleDeg": 75.1
+    },
+    {
+     "f": 6,
+     "x": 472.5,
+     "y": 195.0,
+     "angleDeg": 60.3
+    },
+    {
+     "f": 7,
+     "x": 480.6,
+     "y": 183.5,
+     "angleDeg": 41.2
+    },
+    {
+     "f": 8,
+     "x": 487.8,
+     "y": 150.0,
+     "angleDeg": 3.1
+    },
+    {
+     "f": 9,
+     "x": 488.0,
+     "y": 146.4,
+     "angleDeg": -0.6
+    }
+   ],
+   "down": [
+    {
+     "f": 0,
+     "x": 320.0,
+     "y": 91.2,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 1,
+     "x": 320.0,
+     "y": 97.7,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 2,
+     "x": 320.0,
+     "y": 217.2,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 3,
+     "x": 320.0,
+     "y": 218.6,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 4,
+     "x": 320.0,
+     "y": 210.7,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 5,
+     "x": 320.0,
+     "y": 217.0,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 6,
+     "x": 320.0,
+     "y": 212.6,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 7,
+     "x": 320.0,
+     "y": 202.8,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 8,
+     "x": 320.0,
+     "y": 170.8,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 9,
+     "x": 320.0,
+     "y": 167.2,
+     "angleDeg": 90.0
+    }
+   ],
+   "up": [
+    {
+     "f": 0,
+     "x": 320.0,
+     "y": 70.6,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 1,
+     "x": 320.0,
+     "y": 75.4,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 2,
+     "x": 320.0,
+     "y": 178.4,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 3,
+     "x": 320.0,
+     "y": 180.9,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 4,
+     "x": 320.0,
+     "y": 169.9,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 5,
+     "x": 320.0,
+     "y": 179.3,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 6,
+     "x": 320.0,
+     "y": 171.9,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 7,
+     "x": 320.0,
+     "y": 158.7,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 8,
+     "x": 320.0,
+     "y": 123.7,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 9,
+     "x": 320.0,
+     "y": 120.0,
+     "angleDeg": -90.0
+    }
+   ]
+  },
+  "molten": {
+   "left": [
+    {
+     "f": 0,
+     "x": 207.7,
+     "y": 149.1,
+     "angleDeg": -135.0
+    },
+    {
+     "f": 1,
+     "x": 207.0,
+     "y": 150.6,
+     "angleDeg": -132.6
+    },
+    {
+     "f": 2,
+     "x": 157.5,
+     "y": 212.1,
+     "angleDeg": 170.8
+    },
+    {
+     "f": 3,
+     "x": 155.8,
+     "y": 225.5,
+     "angleDeg": 157.5
+    },
+    {
+     "f": 4,
+     "x": 158.1,
+     "y": 238.0,
+     "angleDeg": 143.2
+    },
+    {
+     "f": 5,
+     "x": 159.6,
+     "y": 251.0,
+     "angleDeg": 129.8
+    },
+    {
+     "f": 6,
+     "x": 165.9,
+     "y": 261.6,
+     "angleDeg": 114.0
+    },
+    {
+     "f": 7,
+     "x": 172.5,
+     "y": 270.2,
+     "angleDeg": 100.4
+    },
+    {
+     "f": 8,
+     "x": 179.5,
+     "y": 274.8,
+     "angleDeg": 87.6
+    },
+    {
+     "f": 9,
+     "x": 181.7,
+     "y": 276.6,
+     "angleDeg": 84.0
+    },
+    {
+     "f": 10,
+     "x": 144.3,
+     "y": 256.3,
+     "angleDeg": 139.2
+    },
+    {
+     "f": 11,
+     "x": 141.1,
+     "y": 259.6,
+     "angleDeg": 139.8
+    }
+   ],
+   "right": [
+    {
+     "f": 0,
+     "x": 432.3,
+     "y": 149.2,
+     "angleDeg": -45.0
+    },
+    {
+     "f": 1,
+     "x": 433.0,
+     "y": 150.7,
+     "angleDeg": -47.4
+    },
+    {
+     "f": 2,
+     "x": 482.5,
+     "y": 212.2,
+     "angleDeg": 9.2
+    },
+    {
+     "f": 3,
+     "x": 484.2,
+     "y": 225.6,
+     "angleDeg": 22.5
+    },
+    {
+     "f": 4,
+     "x": 481.9,
+     "y": 238.1,
+     "angleDeg": 36.8
+    },
+    {
+     "f": 5,
+     "x": 480.4,
+     "y": 251.1,
+     "angleDeg": 50.2
+    },
+    {
+     "f": 6,
+     "x": 474.1,
+     "y": 261.7,
+     "angleDeg": 66.0
+    },
+    {
+     "f": 7,
+     "x": 467.5,
+     "y": 270.3,
+     "angleDeg": 79.6
+    },
+    {
+     "f": 8,
+     "x": 460.5,
+     "y": 274.9,
+     "angleDeg": 92.4
+    },
+    {
+     "f": 9,
+     "x": 458.3,
+     "y": 276.7,
+     "angleDeg": 96.0
+    },
+    {
+     "f": 10,
+     "x": 495.7,
+     "y": 256.4,
+     "angleDeg": 40.8
+    },
+    {
+     "f": 11,
+     "x": 498.9,
+     "y": 259.7,
+     "angleDeg": 40.2
+    }
+   ],
+   "down": [
+    {
+     "f": 0,
+     "x": 320.0,
+     "y": 158.4,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 1,
+     "x": 320.0,
+     "y": 160.1,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 2,
+     "x": 320.0,
+     "y": 231.9,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 3,
+     "x": 320.0,
+     "y": 245.7,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 4,
+     "x": 320.0,
+     "y": 257.6,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 5,
+     "x": 320.0,
+     "y": 270.3,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 6,
+     "x": 320.0,
+     "y": 279.6,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 7,
+     "x": 320.0,
+     "y": 286.8,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 8,
+     "x": 320.0,
+     "y": 290.0,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 9,
+     "x": 320.0,
+     "y": 291.3,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 10,
+     "x": 320.0,
+     "y": 278.8,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 11,
+     "x": 320.0,
+     "y": 282.8,
+     "angleDeg": 90.0
+    }
+   ],
+   "up": [
+    {
+     "f": 0,
+     "x": 320.0,
+     "y": 134.4,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 1,
+     "x": 320.0,
+     "y": 135.8,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 2,
+     "x": 320.0,
+     "y": 187.0,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 3,
+     "x": 320.0,
+     "y": 200.1,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 4,
+     "x": 320.0,
+     "y": 213.0,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 5,
+     "x": 320.0,
+     "y": 226.4,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 6,
+     "x": 320.0,
+     "y": 238.2,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 7,
+     "x": 320.0,
+     "y": 248.2,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 8,
+     "x": 320.0,
+     "y": 254.2,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 9,
+     "x": 320.0,
+     "y": 256.5,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 10,
+     "x": 320.0,
+     "y": 228.4,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 11,
+     "x": 320.0,
+     "y": 231.1,
+     "angleDeg": -90.0
+    }
+   ]
+  },
+  "roar": {
+   "left": [
+    {
+     "f": 0,
+     "x": 144.3,
+     "y": 216.4,
+     "angleDeg": 175.6
+    },
+    {
+     "f": 1,
+     "x": 141.3,
+     "y": 269.7,
+     "angleDeg": 131.3
+    },
+    {
+     "f": 2,
+     "x": 183.2,
+     "y": 167.2,
+     "angleDeg": -158.8
+    },
+    {
+     "f": 3,
+     "x": 229.4,
+     "y": 146.5,
+     "angleDeg": -133.9
+    },
+    {
+     "f": 4,
+     "x": 229.4,
+     "y": 146.8,
+     "angleDeg": -134.4
+    },
+    {
+     "f": 5,
+     "x": 230.4,
+     "y": 144.2,
+     "angleDeg": -130.9
+    },
+    {
+     "f": 6,
+     "x": 229.7,
+     "y": 148.1,
+     "angleDeg": -135.1
+    },
+    {
+     "f": 7,
+     "x": 229.6,
+     "y": 145.7,
+     "angleDeg": -133.4
+    },
+    {
+     "f": 8,
+     "x": 149.4,
+     "y": 210.9,
+     "angleDeg": 176.0
+    },
+    {
+     "f": 9,
+     "x": 141.4,
+     "y": 220.8,
+     "angleDeg": 172.7
+    }
+   ],
+   "right": [
+    {
+     "f": 0,
+     "x": 495.7,
+     "y": 216.5,
+     "angleDeg": 4.4
+    },
+    {
+     "f": 1,
+     "x": 498.7,
+     "y": 269.8,
+     "angleDeg": 48.7
+    },
+    {
+     "f": 2,
+     "x": 456.8,
+     "y": 167.3,
+     "angleDeg": -21.2
+    },
+    {
+     "f": 3,
+     "x": 410.6,
+     "y": 146.6,
+     "angleDeg": -46.1
+    },
+    {
+     "f": 4,
+     "x": 410.6,
+     "y": 146.5,
+     "angleDeg": -46.2
+    },
+    {
+     "f": 5,
+     "x": 409.6,
+     "y": 144.8,
+     "angleDeg": -48.5
+    },
+    {
+     "f": 6,
+     "x": 410.3,
+     "y": 145.6,
+     "angleDeg": -47.0
+    },
+    {
+     "f": 7,
+     "x": 410.4,
+     "y": 147.7,
+     "angleDeg": -45.2
+    },
+    {
+     "f": 8,
+     "x": 490.6,
+     "y": 211.0,
+     "angleDeg": 4.0
+    },
+    {
+     "f": 9,
+     "x": 498.6,
+     "y": 220.9,
+     "angleDeg": 7.3
+    }
+   ],
+   "down": [
+    {
+     "f": 0,
+     "x": 320.0,
+     "y": 239.0,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 1,
+     "x": 320.0,
+     "y": 292.9,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 2,
+     "x": 320.0,
+     "y": 181.6,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 3,
+     "x": 320.0,
+     "y": 151.3,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 4,
+     "x": 321.1,
+     "y": 151.4,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 5,
+     "x": 318.8,
+     "y": 149.1,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 6,
+     "x": 326.2,
+     "y": 151.6,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 7,
+     "x": 315.6,
+     "y": 151.4,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 8,
+     "x": 320.0,
+     "y": 232.4,
+     "angleDeg": 90.0
+    },
+    {
+     "f": 9,
+     "x": 320.0,
+     "y": 244.0,
+     "angleDeg": 90.0
+    }
+   ],
+   "up": [
+    {
+     "f": 0,
+     "x": 320.0,
+     "y": 188.6,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 1,
+     "x": 320.0,
+     "y": 241.2,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 2,
+     "x": 320.0,
+     "y": 147.4,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 3,
+     "x": 320.0,
+     "y": 136.4,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 4,
+     "x": 318.9,
+     "y": 136.5,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 5,
+     "x": 321.2,
+     "y": 134.6,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 6,
+     "x": 313.8,
+     "y": 136.7,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 7,
+     "x": 324.4,
+     "y": 136.5,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 8,
+     "x": 320.0,
+     "y": 184.1,
+     "angleDeg": -90.0
+    },
+    {
+     "f": 9,
+     "x": 320.0,
+     "y": 192.4,
+     "angleDeg": -90.0
+    }
+   ]
+  }
+ }
+}

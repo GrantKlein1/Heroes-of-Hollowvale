@@ -1,0 +1,800 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-11-05T19:59:38.909Z",
+  "groups": {
+    "boot": [
+      "fx_common",
+      "critters",
+      "knight"
+    ],
+    "village": [
+      "knight",
+      "thief",
+      "dwarf",
+      "mage",
+      "critters",
+      "fx_common"
+    ],
+    "wilderness": [
+      "knight",
+      "thief",
+      "dwarf",
+      "mage",
+      "goblin",
+      "goblin_archer",
+      "goblin_brute",
+      "critters",
+      "fx_common"
+    ],
+    "boss": [
+      "knight",
+      "thief",
+      "dwarf",
+      "mage",
+      "fx_common",
+      "dragon_fx_v2"
+    ],
+    "boss_p1": [
+      "red_dragon_p1_a",
+      "red_dragon_p1_b"
+    ],
+    "boss_p2": [
+      "red_dragon_p2_a",
+      "red_dragon_p2_b",
+      "red_dragon_p2_land"
+    ],
+    "boss_p3": [
+      "red_dragon_p3_a",
+      "red_dragon_p3_b"
+    ]
+  },
+  "assets": {
+    "knight": {
+      "id": "knight",
+      "kind": "characters",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9271
+      },
+      "sheets": {
+        "knight": {
+          "key": "knight",
+          "image": "assets/characters/knight/knight.png",
+          "json": "assets/characters/knight/knight.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "knight_attack": {
+          "key": "knight_attack",
+          "image": "assets/characters/knight/knight_attack.png",
+          "json": "assets/characters/knight/knight_attack.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "knight_attack2": {
+          "key": "knight_attack2",
+          "image": "assets/characters/knight/knight_attack2.png",
+          "json": "assets/characters/knight/knight_attack2.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "knight_block": {
+          "key": "knight_block",
+          "image": "assets/characters/knight/knight_block.png",
+          "json": "assets/characters/knight/knight_block.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "knight_charged": {
+          "key": "knight_charged",
+          "image": "assets/characters/knight/knight_charged.png",
+          "json": "assets/characters/knight/knight_charged.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "knight_death": {
+          "key": "knight_death",
+          "image": "assets/characters/knight/knight_death.png",
+          "json": "assets/characters/knight/knight_death.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.8558
+          }
+        },
+        "knight_dodge": {
+          "key": "knight_dodge",
+          "image": "assets/characters/knight/knight_dodge.png",
+          "json": "assets/characters/knight/knight_dodge.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "knight_run": {
+          "key": "knight_run",
+          "image": "assets/characters/knight/knight_run.png",
+          "json": "assets/characters/knight/knight_run.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        }
+      },
+      "sidecars": [
+        "hitbox.json"
+      ]
+    },
+    "thief": {
+      "id": "thief",
+      "kind": "characters",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9271
+      },
+      "sheets": {
+        "thief_fx": {
+          "key": "thief_fx",
+          "image": "assets/characters/thief/fx/thief_fx.png",
+          "json": "assets/characters/thief/fx/thief_fx.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.5
+          }
+        },
+        "thief": {
+          "key": "thief",
+          "image": "assets/characters/thief/thief.png",
+          "json": "assets/characters/thief/thief.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "thief_attack": {
+          "key": "thief_attack",
+          "image": "assets/characters/thief/thief_attack.png",
+          "json": "assets/characters/thief/thief_attack.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "thief_attack2": {
+          "key": "thief_attack2",
+          "image": "assets/characters/thief/thief_attack2.png",
+          "json": "assets/characters/thief/thief_attack2.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "thief_charged": {
+          "key": "thief_charged",
+          "image": "assets/characters/thief/thief_charged.png",
+          "json": "assets/characters/thief/thief_charged.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "thief_death": {
+          "key": "thief_death",
+          "image": "assets/characters/thief/thief_death.png",
+          "json": "assets/characters/thief/thief_death.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.8558
+          }
+        },
+        "thief_dodge": {
+          "key": "thief_dodge",
+          "image": "assets/characters/thief/thief_dodge.png",
+          "json": "assets/characters/thief/thief_dodge.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "thief_run": {
+          "key": "thief_run",
+          "image": "assets/characters/thief/thief_run.png",
+          "json": "assets/characters/thief/thief_run.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "thief_stealth": {
+          "key": "thief_stealth",
+          "image": "assets/characters/thief/thief_stealth.png",
+          "json": "assets/characters/thief/thief_stealth.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9327
+          }
+        }
+      },
+      "sidecars": [
+        "hitbox.json"
+      ]
+    },
+    "dwarf": {
+      "id": "dwarf",
+      "kind": "characters",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9125
+      },
+      "sheets": {
+        "dwarf": {
+          "key": "dwarf",
+          "image": "assets/characters/dwarf/dwarf.png",
+          "json": "assets/characters/dwarf/dwarf.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9125
+          }
+        },
+        "dwarf_attack": {
+          "key": "dwarf_attack",
+          "image": "assets/characters/dwarf/dwarf_attack.png",
+          "json": "assets/characters/dwarf/dwarf_attack.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "dwarf_attack2": {
+          "key": "dwarf_attack2",
+          "image": "assets/characters/dwarf/dwarf_attack2.png",
+          "json": "assets/characters/dwarf/dwarf_attack2.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9125
+          }
+        },
+        "dwarf_charged": {
+          "key": "dwarf_charged",
+          "image": "assets/characters/dwarf/dwarf_charged.png",
+          "json": "assets/characters/dwarf/dwarf_charged.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9125
+          }
+        },
+        "dwarf_death": {
+          "key": "dwarf_death",
+          "image": "assets/characters/dwarf/dwarf_death.png",
+          "json": "assets/characters/dwarf/dwarf_death.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9125
+          }
+        },
+        "dwarf_dodge": {
+          "key": "dwarf_dodge",
+          "image": "assets/characters/dwarf/dwarf_dodge.png",
+          "json": "assets/characters/dwarf/dwarf_dodge.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9125
+          }
+        },
+        "dwarf_run": {
+          "key": "dwarf_run",
+          "image": "assets/characters/dwarf/dwarf_run.png",
+          "json": "assets/characters/dwarf/dwarf_run.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9125
+          }
+        }
+      },
+      "sidecars": [
+        "hitbox.json"
+      ]
+    },
+    "mage": {
+      "id": "mage",
+      "kind": "characters",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.927
+      },
+      "sheets": {
+        "fireball": {
+          "key": "fireball",
+          "image": "assets/characters/mage/fireball.png",
+          "json": "assets/characters/mage/fireball.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.5
+          }
+        },
+        "mage_attack2": {
+          "key": "mage_attack2",
+          "image": "assets/characters/mage/mage_attack2.png",
+          "json": "assets/characters/mage/mage_attack2.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.8846
+          }
+        },
+        "mage_cast": {
+          "key": "mage_cast",
+          "image": "assets/characters/mage/mage_cast.png",
+          "json": "assets/characters/mage/mage_cast.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.927
+          }
+        },
+        "mage_charged": {
+          "key": "mage_charged",
+          "image": "assets/characters/mage/mage_charged.png",
+          "json": "assets/characters/mage/mage_charged.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.875
+          }
+        },
+        "mage_death": {
+          "key": "mage_death",
+          "image": "assets/characters/mage/mage_death.png",
+          "json": "assets/characters/mage/mage_death.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "mage_dodge": {
+          "key": "mage_dodge",
+          "image": "assets/characters/mage/mage_dodge.png",
+          "json": "assets/characters/mage/mage_dodge.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "mage_hurt": {
+          "key": "mage_hurt",
+          "image": "assets/characters/mage/mage_hurt.png",
+          "json": "assets/characters/mage/mage_hurt.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.927
+          }
+        },
+        "mage_run": {
+          "key": "mage_run",
+          "image": "assets/characters/mage/mage_run.png",
+          "json": "assets/characters/mage/mage_run.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "mage_walk": {
+          "key": "mage_walk",
+          "image": "assets/characters/mage/mage_walk.png",
+          "json": "assets/characters/mage/mage_walk.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.927
+          }
+        },
+        "mage_book": {
+          "key": "mage_book",
+          "image": "assets/characters/mage/mage_book.png",
+          "json": "assets/characters/mage/mage_book.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9274
+          }
+        },
+        "mage_spells": {
+          "key": "mage_spells",
+          "image": "assets/characters/mage/mage_spells.png",
+          "json": "assets/characters/mage/mage_spells.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9274
+          }
+        },
+        "spell_fx": {
+          "key": "spell_fx",
+          "image": "assets/characters/mage/spell_fx.png",
+          "json": "assets/characters/mage/spell_fx.json",
+          "anchor": {
+            "x": 0,
+            "y": 0.5
+          }
+        }
+      },
+      "sidecars": [
+        "cast_tips.json",
+        "anchors.json"
+      ]
+    },
+    "goblin": {
+      "id": "goblin",
+      "kind": "enemies",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9375
+      },
+      "sheets": {
+        "goblin": {
+          "key": "goblin",
+          "image": "assets/enemies/goblin/goblin.png",
+          "json": "assets/enemies/goblin/goblin.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9375
+          }
+        },
+        "goblin_death": {
+          "key": "goblin_death",
+          "image": "assets/enemies/goblin/goblin_death.png",
+          "json": "assets/enemies/goblin/goblin_death.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.8333
+          }
+        },
+        "goblin_spawn": {
+          "key": "goblin_spawn",
+          "image": "assets/enemies/goblin/goblin_spawn.png",
+          "json": "assets/enemies/goblin/goblin_spawn.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.8889
+          }
+        },
+        "goblin_telegraph": {
+          "key": "goblin_telegraph",
+          "image": "assets/enemies/goblin/goblin_telegraph.png",
+          "json": "assets/enemies/goblin/goblin_telegraph.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9375
+          }
+        }
+      },
+      "sidecars": [
+        "attack_hit.json"
+      ]
+    },
+    "goblin_archer": {
+      "id": "goblin_archer",
+      "kind": "enemies",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9375
+      },
+      "sheets": {
+        "goblin_archer": {
+          "key": "goblin_archer",
+          "image": "assets/enemies/goblin_archer/goblin_archer.png",
+          "json": "assets/enemies/goblin_archer/goblin_archer.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9375
+          }
+        },
+        "goblin_archer_death": {
+          "key": "goblin_archer_death",
+          "image": "assets/enemies/goblin_archer/goblin_archer_death.png",
+          "json": "assets/enemies/goblin_archer/goblin_archer_death.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.8333
+          }
+        },
+        "goblin_archer_spawn": {
+          "key": "goblin_archer_spawn",
+          "image": "assets/enemies/goblin_archer/goblin_archer_spawn.png",
+          "json": "assets/enemies/goblin_archer/goblin_archer_spawn.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.875
+          }
+        }
+      },
+      "sidecars": [
+        "attack_spawn.json"
+      ]
+    },
+    "goblin_brute": {
+      "id": "goblin_brute",
+      "kind": "enemies",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9271
+      },
+      "sheets": {
+        "goblin_brute": {
+          "key": "goblin_brute",
+          "image": "assets/enemies/goblin_brute/goblin_brute.png",
+          "json": "assets/enemies/goblin_brute/goblin_brute.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "goblin_brute_death": {
+          "key": "goblin_brute_death",
+          "image": "assets/enemies/goblin_brute/goblin_brute_death.png",
+          "json": "assets/enemies/goblin_brute/goblin_brute_death.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "goblin_brute_spawn": {
+          "key": "goblin_brute_spawn",
+          "image": "assets/enemies/goblin_brute/goblin_brute_spawn.png",
+          "json": "assets/enemies/goblin_brute/goblin_brute_spawn.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "goblin_brute_telegraph": {
+          "key": "goblin_brute_telegraph",
+          "image": "assets/enemies/goblin_brute/goblin_brute_telegraph.png",
+          "json": "assets/enemies/goblin_brute/goblin_brute_telegraph.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        }
+      },
+      "sidecars": [
+        "attack_hit.json"
+      ]
+    },
+    "critters": {
+      "id": "critters",
+      "kind": "ambient",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.875
+      },
+      "sheets": {
+        "critters": {
+          "key": "critters",
+          "image": "assets/ambient/critters/critters.png",
+          "json": "assets/ambient/critters/critters.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.875
+          }
+        }
+      },
+      "sidecars": [
+        "critters_anims.json"
+      ]
+    },
+    "fx_common": {
+      "id": "fx_common",
+      "kind": "fx",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "sheets": {
+        "fx_common": {
+          "key": "fx_common",
+          "image": "assets/fx/fx_common/fx_common.png",
+          "json": "assets/fx/fx_common/fx_common.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.5
+          }
+        }
+      },
+      "sidecars": []
+    },
+    "red_dragon": {
+      "id": "red_dragon",
+      "kind": "boss",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "sheets": {
+        "dragon_fx_v2": {
+          "key": "dragon_fx_v2",
+          "image": "assets/boss/red_dragon/fx_v2/dragon_fx_v2.png",
+          "json": "assets/boss/red_dragon/fx_v2/dragon_fx_v2.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.5
+          }
+        },
+        "red_dragon_p1_a": {
+          "key": "red_dragon_p1_a",
+          "image": "assets/boss/red_dragon/red_dragon_p1_a.png",
+          "json": "assets/boss/red_dragon/red_dragon_p1_a.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.7812
+          }
+        },
+        "red_dragon_p1_b": {
+          "key": "red_dragon_p1_b",
+          "image": "assets/boss/red_dragon/red_dragon_p1_b.png",
+          "json": "assets/boss/red_dragon/red_dragon_p1_b.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.7812
+          }
+        },
+        "red_dragon_p2_a": {
+          "key": "red_dragon_p2_a",
+          "image": "assets/boss/red_dragon/red_dragon_p2_a.png",
+          "json": "assets/boss/red_dragon/red_dragon_p2_a.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.7812
+          }
+        },
+        "red_dragon_p2_b": {
+          "key": "red_dragon_p2_b",
+          "image": "assets/boss/red_dragon/red_dragon_p2_b.png",
+          "json": "assets/boss/red_dragon/red_dragon_p2_b.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.7812
+          }
+        },
+        "red_dragon_p2_land": {
+          "key": "red_dragon_p2_land",
+          "image": "assets/boss/red_dragon/red_dragon_p2_land.png",
+          "json": "assets/boss/red_dragon/red_dragon_p2_land.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.7812
+          }
+        },
+        "red_dragon_p3_a": {
+          "key": "red_dragon_p3_a",
+          "image": "assets/boss/red_dragon/red_dragon_p3_a.png",
+          "json": "assets/boss/red_dragon/red_dragon_p3_a.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.7812
+          }
+        },
+        "red_dragon_p3_b": {
+          "key": "red_dragon_p3_b",
+          "image": "assets/boss/red_dragon/red_dragon_p3_b.png",
+          "json": "assets/boss/red_dragon/red_dragon_p3_b.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.7812
+          }
+        }
+      },
+      "sidecars": [
+        "attacks.json",
+        "fx_v2/fx_manifest.json",
+        "fx_v2/spawns.json"
+      ],
+      "phases": {
+        "p1": [
+          "red_dragon_p1_a",
+          "red_dragon_p1_b"
+        ],
+        "p2": [
+          "red_dragon_p2_a",
+          "red_dragon_p2_b",
+          "red_dragon_p2_land"
+        ],
+        "p3": [
+          "red_dragon_p3_a",
+          "red_dragon_p3_b"
+        ]
+      },
+      "attacks": "assets/boss/red_dragon/attacks.json"
+    },
+    "red_dragon_p1_a": {
+      "id": "red_dragon_p1_a",
+      "kind": "boss",
+      "phase": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.7812
+      },
+      "image": "assets/boss/red_dragon/red_dragon_p1_a.png",
+      "json": "assets/boss/red_dragon/red_dragon_p1_a.json"
+    },
+    "red_dragon_p1_b": {
+      "id": "red_dragon_p1_b",
+      "kind": "boss",
+      "phase": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.7812
+      },
+      "image": "assets/boss/red_dragon/red_dragon_p1_b.png",
+      "json": "assets/boss/red_dragon/red_dragon_p1_b.json"
+    },
+    "red_dragon_p2_a": {
+      "id": "red_dragon_p2_a",
+      "kind": "boss",
+      "phase": 2,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.7812
+      },
+      "image": "assets/boss/red_dragon/red_dragon_p2_a.png",
+      "json": "assets/boss/red_dragon/red_dragon_p2_a.json"
+    },
+    "red_dragon_p2_b": {
+      "id": "red_dragon_p2_b",
+      "kind": "boss",
+      "phase": 2,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.7812
+      },
+      "image": "assets/boss/red_dragon/red_dragon_p2_b.png",
+      "json": "assets/boss/red_dragon/red_dragon_p2_b.json"
+    },
+    "red_dragon_p2_land": {
+      "id": "red_dragon_p2_land",
+      "kind": "boss",
+      "phase": 2,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.7812
+      },
+      "image": "assets/boss/red_dragon/red_dragon_p2_land.png",
+      "json": "assets/boss/red_dragon/red_dragon_p2_land.json"
+    },
+    "red_dragon_p3_a": {
+      "id": "red_dragon_p3_a",
+      "kind": "boss",
+      "phase": 3,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.7812
+      },
+      "image": "assets/boss/red_dragon/red_dragon_p3_a.png",
+      "json": "assets/boss/red_dragon/red_dragon_p3_a.json"
+    },
+    "red_dragon_p3_b": {
+      "id": "red_dragon_p3_b",
+      "kind": "boss",
+      "phase": 3,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.7812
+      },
+      "image": "assets/boss/red_dragon/red_dragon_p3_b.png",
+      "json": "assets/boss/red_dragon/red_dragon_p3_b.json"
+    },
+    "dragon_fx_v2": {
+      "id": "dragon_fx_v2",
+      "kind": "boss",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "image": "assets/boss/red_dragon/fx_v2/dragon_fx_v2.png",
+      "json": "assets/boss/red_dragon/fx_v2/dragon_fx_v2.json"
+    }
+  }
+}
