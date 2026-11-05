@@ -1,10 +1,26 @@
 import { API_BASE } from '../config/paths'
 
-export async function sendChat({ npc, message, context, ragHints }) {
+export function getSessionId() {
+  try {
+    let id = localStorage.getItem('sessionId')
+    if (!id) {
+      id = (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function')
+        ? crypto.randomUUID()
+        : `session_${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`
+      localStorage.setItem('sessionId', id)
+    }
+    return id
+  } catch {
+    return 'session_fallback'
+  }
+}
+
+export async function sendChat({ npc, message, context, ragHints, sessionId }) {
+  const effectiveSessionId = sessionId || getSessionId()
   const res = await fetch(`${API_BASE}/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ npc, message, context, ragHints })
+    body: JSON.stringify({ npc, message, context, ragHints, sessionId: effectiveSessionId })
   })
   if (!res.ok) {
     const text = await res.text()

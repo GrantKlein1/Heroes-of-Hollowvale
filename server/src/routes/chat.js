@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { Router } from 'express';
 import { getNPC, NPC_IDS } from '../npcData.js';
 import * as memory from '../memory.js';
@@ -34,10 +35,10 @@ function classifyRequest(message, priorUserCount) {
 const router = Router();
 
 // POST /api/chat
-// Body: { npc: 'bartender'|'wizard'|'rogue', message: string, context?: Array<{role:'user'|'assistant', content:string}> }
+// Body: { npc: 'bartender'|'wizard'|'rogue', message: string, context?: Array<{role:'user'|'assistant', content:string}>, sessionId?: string }
 router.post('/chat', async (req, res, next) => {
   try {
-    const { npc, message, context, ragHints } = req.body || {};
+    const { npc, message, context, ragHints, sessionId: reqSessionId } = req.body || {};
     if (!npc || !message) {
       return res.status(400).json({ error: 'npc and message are required' });
     }
@@ -47,7 +48,16 @@ router.post('/chat', async (req, res, next) => {
       return res.status(400).json({ error: `Unknown npc. Valid options: ${NPC_IDS.join(', ')}` });
     }
 
-  const history = memory.getHistory(npc);
+    // Determine session ID: client provided or fallback to an anonymous per-request ID
+    const rawSessionId = (typeof reqSessionId === 'string' && reqSessionId.trim())
+      ? reqSessionId.trim()
+      : (typeof req.headers?.['x-session-id'] === 'string' && req.headers['x-session-id'].trim()
+        ? req.headers['x-session-id'].trim()
+        : null);
+
+    const sessionId = rawSessionId || (crypto.randomUUID ? `anon_${crypto.randomUUID()}` : `anon_${Date.now()}_${Math.random().toString(36).slice(2)}`);
+
+    const history = memory.getHistory(sessionId, npc);
 
     // Normalize optional context from client (take last 5 entries, valid roles only)
     let extraContext = Array.isArray(context) ? context.filter(m => m && (m.role === 'user' || m.role === 'assistant') && m.content).slice(-5) : [];
@@ -139,9 +149,9 @@ router.post('/chat', async (req, res, next) => {
   const finalReply = String(replyText || '').trim();
 
     // Update memory (store last 5 exchanges = 10 messages)
-    memory.addExchange(npc, message, finalReply);
+    memory.addExchange(sessionId, npc, message, finalReply);
 
-    return res.json({ reply: finalReply, npc, meta: { caps } });
+    return res.json({ reply: finalReply, npc, meta: { caps, sessionId } });
   } catch (err) {
     next(err);
   }
