@@ -28,6 +28,7 @@ import { session } from '../session.js'
 import { ScreenCamera } from '../screenCamera.js'
 import { DomFxLayer } from '../fxLayer.js'
 import { random } from '../rng.js'
+import { mountHvApi, teardownHvApi } from '../qa/hvApi.js'
 import {
   PAINTED_WORLD_W,
   PAINTED_WORLD_H,
@@ -136,9 +137,17 @@ export default class HollowvaleScene extends Phaser.Scene {
     this._consumeSlot = 0
     this._id = 1
     this._skipRest = false
+    this._missingAssets = []
   }
 
   preload() {
+    this.load.on('loaderror', (file) => {
+      const key = file?.key || file?.src || String(file)
+      if (!this._missingAssets.includes(key)) {
+        this._missingAssets.push(key)
+      }
+    })
+
     const urls = new Set()
     const add = (url) => {
       if (url) urls.add(url)
@@ -222,28 +231,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       resetRun: () => this._resetRun(),
     }
 
-    if (import.meta.env.DEV) {
-      window.__hv = {
-        scene: () => this.sceneId,
-        player: () => this._playerSnapshot(),
-        world: () => ({ w: this.worldW, h: this.worldH }),
-        zoom: () => this.cameras.main.zoom,
-        view: () => {
-          const v = this.cameras.main.worldView
-          return { x: v.x, y: v.y, width: v.width, height: v.height }
-        },
-        canvas: () => ({ w: this.scale.width, h: this.scale.height }),
-        debug: (on) => {
-          this.debugOn = !!on
-          this._redrawStaticDebug()
-        },
-        solids: () => this._solidRects.map((r) => ({ x: r.x, y: r.y, w: r.w, h: r.h })),
-        prompts: () => this.prompts.map((p) => ({
-          x: p.x, y: p.y, w: p.w, h: p.h, action: p.action, label: p.label, to: p.to || null,
-        })),
-        goto: (id, nx, ny) => this.enterScene(id, { nx, ny }),
-      }
-    }
+    mountHvApi(this)
 
     this.enterScene('village', PAINTED_SCENES.village.spawn)
     session.ready = true
@@ -259,7 +247,7 @@ export default class HollowvaleScene extends Phaser.Scene {
   _shutdown() {
     session.api = null
     session.ready = false
-    if (window.__hv) delete window.__hv
+    teardownHvApi()
     this.fx?.destroy()
     this.screenCamera?.destroy()
   }
@@ -734,6 +722,20 @@ export default class HollowvaleScene extends Phaser.Scene {
     spr.flashUntil = 0
     spr._deathProcessed = false
     spr.setDepth(ny * this.worldH)
+    return spr
+  }
+
+  spawn(type = 'goblin', x, y) {
+    let nx = 0.5
+    let ny = 0.5
+    if (x !== undefined && y !== undefined) {
+      nx = x > 1 ? x / this.worldW : x
+      ny = y > 1 ? y / this.worldH : y
+    } else if (this.player) {
+      nx = this.player.x / this.worldW
+      ny = this.player.y / this.worldH
+    }
+    return this._spawnEnemy(type, nx, ny, this.wave || 1)
   }
 
   _enemyBox(e) {
