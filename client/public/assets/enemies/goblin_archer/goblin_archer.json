@@ -1,0 +1,2497 @@
+{
+ "frames": {
+  "goblin_archer_walk_down_0": {
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_down_1": {
+   "frame": {
+    "x": 64,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_down_2": {
+   "frame": {
+    "x": 128,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_down_3": {
+   "frame": {
+    "x": 192,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_down_4": {
+   "frame": {
+    "x": 256,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_down_5": {
+   "frame": {
+    "x": 320,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_down_6": {
+   "frame": {
+    "x": 384,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_down_7": {
+   "frame": {
+    "x": 448,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_idle_down": {
+   "frame": {
+    "x": 512,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_hurt_down_0": {
+   "frame": {
+    "x": 576,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_hurt_down_1": {
+   "frame": {
+    "x": 640,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_hurt_down_2": {
+   "frame": {
+    "x": 704,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_hurt_down_3": {
+   "frame": {
+    "x": 768,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_hurt_down_4": {
+   "frame": {
+    "x": 832,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_down_0": {
+   "frame": {
+    "x": 896,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_down_1": {
+   "frame": {
+    "x": 960,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_down_2": {
+   "frame": {
+    "x": 1024,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_down_3": {
+   "frame": {
+    "x": 1088,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_down_4": {
+   "frame": {
+    "x": 1152,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_down_5": {
+   "frame": {
+    "x": 1216,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_down_6": {
+   "frame": {
+    "x": 1280,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_down_7": {
+   "frame": {
+    "x": 1344,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_left_0": {
+   "frame": {
+    "x": 0,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_left_1": {
+   "frame": {
+    "x": 64,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_left_2": {
+   "frame": {
+    "x": 128,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_left_3": {
+   "frame": {
+    "x": 192,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_left_4": {
+   "frame": {
+    "x": 256,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_left_5": {
+   "frame": {
+    "x": 320,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_left_6": {
+   "frame": {
+    "x": 384,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_left_7": {
+   "frame": {
+    "x": 448,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_idle_left": {
+   "frame": {
+    "x": 512,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_hurt_left_0": {
+   "frame": {
+    "x": 576,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_hurt_left_1": {
+   "frame": {
+    "x": 640,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_hurt_left_2": {
+   "frame": {
+    "x": 704,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_hurt_left_3": {
+   "frame": {
+    "x": 768,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_hurt_left_4": {
+   "frame": {
+    "x": 832,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_left_0": {
+   "frame": {
+    "x": 896,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_left_1": {
+   "frame": {
+    "x": 960,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_left_2": {
+   "frame": {
+    "x": 1024,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_left_3": {
+   "frame": {
+    "x": 1088,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_left_4": {
+   "frame": {
+    "x": 1152,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_left_5": {
+   "frame": {
+    "x": 1216,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_left_6": {
+   "frame": {
+    "x": 1280,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_left_7": {
+   "frame": {
+    "x": 1344,
+    "y": 64,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_right_0": {
+   "frame": {
+    "x": 0,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_right_1": {
+   "frame": {
+    "x": 64,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_right_2": {
+   "frame": {
+    "x": 128,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_right_3": {
+   "frame": {
+    "x": 192,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_right_4": {
+   "frame": {
+    "x": 256,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_right_5": {
+   "frame": {
+    "x": 320,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_right_6": {
+   "frame": {
+    "x": 384,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_right_7": {
+   "frame": {
+    "x": 448,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_idle_right": {
+   "frame": {
+    "x": 512,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_hurt_right_0": {
+   "frame": {
+    "x": 576,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_hurt_right_1": {
+   "frame": {
+    "x": 640,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_hurt_right_2": {
+   "frame": {
+    "x": 704,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_hurt_right_3": {
+   "frame": {
+    "x": 768,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_hurt_right_4": {
+   "frame": {
+    "x": 832,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_right_0": {
+   "frame": {
+    "x": 896,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_right_1": {
+   "frame": {
+    "x": 960,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_right_2": {
+   "frame": {
+    "x": 1024,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_right_3": {
+   "frame": {
+    "x": 1088,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_right_4": {
+   "frame": {
+    "x": 1152,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_right_5": {
+   "frame": {
+    "x": 1216,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_right_6": {
+   "frame": {
+    "x": 1280,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_right_7": {
+   "frame": {
+    "x": 1344,
+    "y": 128,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_up_0": {
+   "frame": {
+    "x": 0,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_up_1": {
+   "frame": {
+    "x": 64,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_up_2": {
+   "frame": {
+    "x": 128,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_up_3": {
+   "frame": {
+    "x": 192,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_up_4": {
+   "frame": {
+    "x": 256,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_up_5": {
+   "frame": {
+    "x": 320,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_up_6": {
+   "frame": {
+    "x": 384,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_walk_up_7": {
+   "frame": {
+    "x": 448,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_idle_up": {
+   "frame": {
+    "x": 512,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_hurt_up_0": {
+   "frame": {
+    "x": 576,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_hurt_up_1": {
+   "frame": {
+    "x": 640,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_hurt_up_2": {
+   "frame": {
+    "x": 704,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_hurt_up_3": {
+   "frame": {
+    "x": 768,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_hurt_up_4": {
+   "frame": {
+    "x": 832,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_up_0": {
+   "frame": {
+    "x": 896,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_up_1": {
+   "frame": {
+    "x": 960,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_up_2": {
+   "frame": {
+    "x": 1024,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_up_3": {
+   "frame": {
+    "x": 1088,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_up_4": {
+   "frame": {
+    "x": 1152,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_up_5": {
+   "frame": {
+    "x": 1216,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_up_6": {
+   "frame": {
+    "x": 1280,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_attack_up_7": {
+   "frame": {
+    "x": 1344,
+    "y": 192,
+    "w": 64,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 64
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9375
+   }
+  },
+  "goblin_archer_arrow_down": {
+   "frame": {
+    "x": 0,
+    "y": 256,
+    "w": 9,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 9,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 9,
+    "h": 24
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9792
+   }
+  },
+  "goblin_archer_arrow_left": {
+   "frame": {
+    "x": 10,
+    "y": 256,
+    "w": 24,
+    "h": 9
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 9
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 9
+   },
+   "pivot": {
+    "x": 0.0208,
+    "y": 0.5
+   }
+  },
+  "goblin_archer_arrow_right": {
+   "frame": {
+    "x": 35,
+    "y": 256,
+    "w": 24,
+    "h": 9
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 9
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 9
+   },
+   "pivot": {
+    "x": 0.9792,
+    "y": 0.5
+   }
+  },
+  "goblin_archer_arrow_up": {
+   "frame": {
+    "x": 60,
+    "y": 256,
+    "w": 9,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 9,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 9,
+    "h": 24
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.0208
+   }
+  },
+  "goblin_archer_arrow_impact_0": {
+   "frame": {
+    "x": 70,
+    "y": 256,
+    "w": 16,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 16,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 16,
+    "h": 16
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   }
+  },
+  "goblin_archer_arrow_impact_1": {
+   "frame": {
+    "x": 87,
+    "y": 256,
+    "w": 16,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 16,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 16,
+    "h": 16
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   }
+  },
+  "goblin_archer_arrow_impact_2": {
+   "frame": {
+    "x": 104,
+    "y": 256,
+    "w": 16,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 16,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 16,
+    "h": 16
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   }
+  },
+  "goblin_archer_arrow_impact_3": {
+   "frame": {
+    "x": 121,
+    "y": 256,
+    "w": 16,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 16,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 16,
+    "h": 16
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   }
+  },
+  "goblin_archer_arrow_impact_4": {
+   "frame": {
+    "x": 138,
+    "y": 256,
+    "w": 16,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 16,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 16,
+    "h": 16
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   }
+  }
+ },
+ "meta": {
+  "app": "blender build_goblin.py + pack_goblin.py",
+  "version": "1.0",
+  "image": "goblin_archer.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 1408,
+   "h": 280
+  },
+  "scale": "1",
+  "origin": {
+   "x": 0.5,
+   "y": 0.9375
+  },
+  "pxPerUnit": 36.9,
+  "anims": {
+   "idle": {
+    "frames": 1,
+    "directions": [
+     "down",
+     "left",
+     "right",
+     "up"
+    ],
+    "frameNames": "goblin_archer_idle_<dir>",
+    "loop": true,
+    "fps": 1
+   },
+   "walk": {
+    "frames": 8,
+    "directions": [
+     "down",
+     "left",
+     "right",
+     "up"
+    ],
+    "frameNames": "goblin_archer_walk_<dir>_<i>",
+    "fps": 10,
+    "fpsSource": "goblin_archer_walk_down.gif",
+    "loop": true
+   },
+   "hurt": {
+    "frames": 5,
+    "directions": [
+     "down",
+     "left",
+     "right",
+     "up"
+    ],
+    "frameNames": "goblin_archer_hurt_<dir>_<i>",
+    "fps": 12,
+    "fpsSource": "goblin_archer_hurt_down.gif",
+    "loop": false,
+    "holdLast": false
+   },
+   "attack": {
+    "frames": 8,
+    "directions": [
+     "down",
+     "left",
+     "right",
+     "up"
+    ],
+    "frameNames": "goblin_archer_attack_<dir>_<i>",
+    "fps": 9,
+    "frameDurationsMs": [
+     120,
+     100,
+     100,
+     120,
+     250,
+     70,
+     100,
+     120
+    ],
+    "fpsSource": "goblin_archer_attack_down.gif",
+    "loop": false,
+    "holdLast": false,
+    "fpsNote": "build_goblin.py sets scene fps 10; preview GIF is variable-timed, so use frameDurationsMs (or fps 10 if the engine needs a flat rate)",
+    "releaseFrame": 6,
+    "spawnFrame": 6,
+    "spawnOffsetFromFeet": {
+     "down": {
+      "x": -3.5,
+      "y": -26.0,
+      "z": 0.802
+     },
+     "right": {
+      "x": 27.5,
+      "y": -31.0,
+      "z": 0.802
+     },
+     "up": {
+      "x": 3.5,
+      "y": -37.4,
+      "z": 0.802
+     },
+     "left": {
+      "x": -27.5,
+      "y": -32.4,
+      "z": 0.802
+     }
+    },
+    "projectile": "goblin_archer_arrow"
+   },
+   "arrow": {
+    "frames": 1,
+    "directions": [
+     "down",
+     "left",
+     "right",
+     "up"
+    ],
+    "frameNames": "goblin_archer_arrow_<dir>",
+    "pivot": "tip (per-frame pivot)",
+    "tipPx": {
+     "right": [
+      23,
+      4
+     ],
+     "left": [
+      0,
+      4
+     ],
+     "up": [
+      4,
+      0
+     ],
+     "down": [
+      4,
+      23
+     ]
+    },
+    "note": "hand-pixeled 24x9 arrow (goblin_arrow_px.png) rotated losslessly per direction; spawn at attack.spawnOffsetFromFeet, travel along facing"
+   },
+   "arrow_impact": {
+    "frames": 5,
+    "fps": 16,
+    "loop": false,
+    "holdLast": false,
+    "frameNames": "goblin_archer_arrow_impact_<i>",
+    "origin": {
+     "x": 0.5,
+     "y": 0.5
+    },
+    "note": "play at the arrow tip on hit; non-directional"
+   }
+  },
+  "footprint": {
+   "x": -13,
+   "y": -4,
+   "w": 25,
+   "h": 8,
+   "shape": "ellipse",
+   "note": "collision footprint centred on feet"
+  },
+  "hurtbox": {
+   "x": -15,
+   "y": -24,
+   "w": 30,
+   "h": 24,
+   "note": "body hurtbox, bottom on feet"
+  },
+  "feetPivotNote": "footprint/hurtbox/hitbox px relative to the feet pivot (origin), +y down; x,y = top-left"
+ }
+}

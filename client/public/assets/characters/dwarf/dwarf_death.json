@@ -1,0 +1,1035 @@
+{
+ "frames": {
+  "dwarf_death_down_0": {
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_down_1": {
+   "frame": {
+    "x": 80,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_down_2": {
+   "frame": {
+    "x": 160,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_down_3": {
+   "frame": {
+    "x": 240,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_down_4": {
+   "frame": {
+    "x": 320,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_down_5": {
+   "frame": {
+    "x": 400,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_down_6": {
+   "frame": {
+    "x": 480,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_down_7": {
+   "frame": {
+    "x": 560,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_down_8": {
+   "frame": {
+    "x": 640,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_down_9": {
+   "frame": {
+    "x": 720,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_left_0": {
+   "frame": {
+    "x": 0,
+    "y": 80,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_left_1": {
+   "frame": {
+    "x": 80,
+    "y": 80,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_left_2": {
+   "frame": {
+    "x": 160,
+    "y": 80,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_left_3": {
+   "frame": {
+    "x": 240,
+    "y": 80,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_left_4": {
+   "frame": {
+    "x": 320,
+    "y": 80,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_left_5": {
+   "frame": {
+    "x": 400,
+    "y": 80,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_left_6": {
+   "frame": {
+    "x": 480,
+    "y": 80,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_left_7": {
+   "frame": {
+    "x": 560,
+    "y": 80,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_left_8": {
+   "frame": {
+    "x": 640,
+    "y": 80,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_left_9": {
+   "frame": {
+    "x": 720,
+    "y": 80,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_right_0": {
+   "frame": {
+    "x": 0,
+    "y": 160,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_right_1": {
+   "frame": {
+    "x": 80,
+    "y": 160,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_right_2": {
+   "frame": {
+    "x": 160,
+    "y": 160,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_right_3": {
+   "frame": {
+    "x": 240,
+    "y": 160,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_right_4": {
+   "frame": {
+    "x": 320,
+    "y": 160,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_right_5": {
+   "frame": {
+    "x": 400,
+    "y": 160,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_right_6": {
+   "frame": {
+    "x": 480,
+    "y": 160,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_right_7": {
+   "frame": {
+    "x": 560,
+    "y": 160,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_right_8": {
+   "frame": {
+    "x": 640,
+    "y": 160,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_right_9": {
+   "frame": {
+    "x": 720,
+    "y": 160,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_up_0": {
+   "frame": {
+    "x": 0,
+    "y": 240,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_up_1": {
+   "frame": {
+    "x": 80,
+    "y": 240,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_up_2": {
+   "frame": {
+    "x": 160,
+    "y": 240,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_up_3": {
+   "frame": {
+    "x": 240,
+    "y": 240,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_up_4": {
+   "frame": {
+    "x": 320,
+    "y": 240,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_up_5": {
+   "frame": {
+    "x": 400,
+    "y": 240,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_up_6": {
+   "frame": {
+    "x": 480,
+    "y": 240,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_up_7": {
+   "frame": {
+    "x": 560,
+    "y": 240,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_up_8": {
+   "frame": {
+    "x": 640,
+    "y": 240,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_death_up_9": {
+   "frame": {
+    "x": 720,
+    "y": 240,
+    "w": 80,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 80,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 80,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  }
+ },
+ "meta": {
+  "app": "blender death_render.py + pack_death.py",
+  "version": "1.0",
+  "image": "dwarf_death.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 800,
+   "h": 320
+  },
+  "scale": "1",
+  "origin": {
+   "x": 0.5,
+   "y": 0.9125
+  },
+  "cell": {
+   "w": 80,
+   "h": 80
+  },
+  "pivotRowPx": 73,
+  "baseCell": {
+   "w": 64,
+   "h": 80
+  },
+  "note": "Death cell is wider than the base sheet; origin keeps feet aligned with the base sheet pivot (same camera, integer-pixel offset only).",
+  "pxPerUnit": 36.92,
+  "anims": {
+   "death": {
+    "frames": 10,
+    "directions": [
+     "down",
+     "left",
+     "right",
+     "up"
+    ],
+    "frameNames": "dwarf_death_<dir>_<i>",
+    "loop": false,
+    "holdLast": true,
+    "fps": 10,
+    "cell": [
+     80,
+     80
+    ],
+    "origin": [
+     0.5,
+     0.9125
+    ]
+   }
+  },
+  "footprint": {
+   "x": -13,
+   "y": -4,
+   "w": 26,
+   "h": 8,
+   "shape": "ellipse",
+   "note": "collision footprint centred on feet"
+  },
+  "hurtbox": {
+   "x": -16,
+   "y": -29,
+   "w": 31,
+   "h": 29,
+   "note": "body hurtbox, bottom on feet"
+  },
+  "feetPivotNote": "footprint/hurtbox/hitbox px relative to the feet pivot (origin), +y down; x,y = top-left",
+  "notes": {
+   "refs": "`dwarf.png`, `dwarfAxe.png`",
+   "details": "grey horned helmet with nasal guard, brim and top spike, cream horns, big ginger beard with moustache, small peach face, brown armor tunic with skirt, dark belt with gold buckle (#f1b434 sampled from dwarf.png), grey mail pauldron on his left and a brown one on his right, leather bracers, dark trousers and boots, and the single-bit axe from dwarfAxe.png (steel head, brown haft) held upright in his right hand (screen-left in the down view)",
+   "attack": "7-frame two-handed overhead chop: 0 raise, 1 wind up with the axe behind his back (lifted onto the toes), 2 swing over, 3 chop into a forward crouch (HIT), 4 hold the impact, 5 recover, 6 settle",
+   "weak": "- The consistency check reports walk_left/right sway as 1.0px (rule: >=2px). In the side views his side-to-side sway goes toward and away from the camera, so it cannot appear on screen. Bob there is 5-8px and frames 0 and 4 differ by about 800px, so the walk still reads.\n- His left hand does not exactly grip the haft during the chop (both arms follow the same arc, so the hands are near the haft but not locked to it).\n- In the down/up views the chop points toward or away from the camera, so impact frames 3 and 4 show a short axe beside the body. The side views are the strong ones.\n- The blade is flat to the camera in the down view, so in the side views it is an edge-on silver sliver.\n- His face is only a few px between the helm and the beard (as in the reference). The eyes are 1-2px dark dots.\n- Attack frames are 96x96 but walk/idle/hurt are 64x80, so the attack sheet needs its own origin (0.9271 vs 0.9125). See the table."
+  }
+ }
+}

@@ -1,0 +1,674 @@
+{
+ "frames": {
+  "dwarf_dodge_down_0": {
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_down_1": {
+   "frame": {
+    "x": 64,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_down_2": {
+   "frame": {
+    "x": 128,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_down_3": {
+   "frame": {
+    "x": 192,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_down_4": {
+   "frame": {
+    "x": 256,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_down_5": {
+   "frame": {
+    "x": 320,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_left_0": {
+   "frame": {
+    "x": 0,
+    "y": 80,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_left_1": {
+   "frame": {
+    "x": 64,
+    "y": 80,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_left_2": {
+   "frame": {
+    "x": 128,
+    "y": 80,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_left_3": {
+   "frame": {
+    "x": 192,
+    "y": 80,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_left_4": {
+   "frame": {
+    "x": 256,
+    "y": 80,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_left_5": {
+   "frame": {
+    "x": 320,
+    "y": 80,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_right_0": {
+   "frame": {
+    "x": 0,
+    "y": 160,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_right_1": {
+   "frame": {
+    "x": 64,
+    "y": 160,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_right_2": {
+   "frame": {
+    "x": 128,
+    "y": 160,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_right_3": {
+   "frame": {
+    "x": 192,
+    "y": 160,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_right_4": {
+   "frame": {
+    "x": 256,
+    "y": 160,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_right_5": {
+   "frame": {
+    "x": 320,
+    "y": 160,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_up_0": {
+   "frame": {
+    "x": 0,
+    "y": 240,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_up_1": {
+   "frame": {
+    "x": 64,
+    "y": 240,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_up_2": {
+   "frame": {
+    "x": 128,
+    "y": 240,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_up_3": {
+   "frame": {
+    "x": 192,
+    "y": 240,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_up_4": {
+   "frame": {
+    "x": 256,
+    "y": 240,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_dodge_up_5": {
+   "frame": {
+    "x": 320,
+    "y": 240,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  }
+ },
+ "meta": {
+  "app": "blender clip_render.py + pack_clip.py (P1/P2)",
+  "version": "1.0",
+  "image": "dwarf_dodge.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 384,
+   "h": 320
+  },
+  "scale": "1",
+  "origin": {
+   "x": 0.5,
+   "y": 0.9125
+  },
+  "cell": {
+   "w": 64,
+   "h": 80
+  },
+  "pivotRowPx": 73,
+  "baseCell": {
+   "w": 64,
+   "h": 80
+  },
+  "pxPerUnit": 36.92,
+  "note": "All 4 facings rendered (no flipX). Same camera as the base sheet; the cell only grows by whole rows/cols so the feet pivot matches.",
+  "anims": {
+   "dodge": {
+    "fps": 16,
+    "loop": false,
+    "holdLast": false,
+    "kind": "forward roll",
+    "iFrames": [
+     1,
+     4
+    ],
+    "iFramesMs": [
+     62,
+     312
+    ],
+    "travelPx": 48,
+    "durationMs": 375,
+    "travelPerFrame": [
+     0.0,
+     7.2,
+     21.6,
+     36.0,
+     45.6,
+     48.0
+    ],
+    "travelNote": "Rendered in place. Move the actor along the facing direction by travelPx over the clip; travelPerFrame = cumulative px reached at the END of each frame (ease-out). Do not also offset the sprite.",
+    "cancelFrom": 5,
+    "frames": 6,
+    "directions": [
+     "down",
+     "left",
+     "right",
+     "up"
+    ],
+    "frameNames": "dwarf_dodge_<dir>_<i>",
+    "durations": [
+     62,
+     62,
+     62,
+     62,
+     62,
+     62
+    ],
+    "cell": [
+     64,
+     80
+    ],
+    "origin": [
+     0.5,
+     0.9125
+    ]
+   }
+  },
+  "footprint": {
+   "x": -13,
+   "y": -4,
+   "w": 26,
+   "h": 8,
+   "shape": "ellipse",
+   "note": "collision footprint centred on feet"
+  },
+  "hurtbox": {
+   "x": -16,
+   "y": -29,
+   "w": 31,
+   "h": 29,
+   "note": "body hurtbox, bottom on feet"
+  },
+  "feetPivotNote": "footprint/hurtbox/hitbox px relative to the feet pivot (origin), +y down; x,y = top-left"
+ }
+}

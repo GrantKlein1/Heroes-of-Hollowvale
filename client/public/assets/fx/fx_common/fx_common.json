@@ -1,0 +1,265 @@
+{
+ "frames": {
+  "fx_hit_spark_0": {
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   }
+  },
+  "fx_hit_spark_1": {
+   "frame": {
+    "x": 32,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   }
+  },
+  "fx_hit_spark_2": {
+   "frame": {
+    "x": 64,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   }
+  },
+  "fx_hit_spark_3": {
+   "frame": {
+    "x": 96,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   }
+  },
+  "fx_dust_puff_0": {
+   "frame": {
+    "x": 128,
+    "y": 0,
+    "w": 48,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "fx_dust_puff_1": {
+   "frame": {
+    "x": 176,
+    "y": 0,
+    "w": 48,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "fx_dust_puff_2": {
+   "frame": {
+    "x": 224,
+    "y": 0,
+    "w": 48,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "fx_dust_puff_3": {
+   "frame": {
+    "x": 272,
+    "y": 0,
+    "w": 48,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "fx_dust_puff_4": {
+   "frame": {
+    "x": 320,
+    "y": 0,
+    "w": 48,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  }
+ },
+ "meta": {
+  "app": "fx_common/build_fx.py + combat_tools/pixel.py",
+  "version": "1.0",
+  "image": "fx_common.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 368,
+   "h": 32
+  },
+  "scale": "1",
+  "pxPerUnit": 36.92,
+  "anims": {
+   "hit_spark": {
+    "frames": 4,
+    "fps": 20,
+    "loop": false,
+    "holdLast": false,
+    "frameNames": "fx_hit_spark_<i>",
+    "origin": {
+     "x": 0.5,
+     "y": 0.5
+    },
+    "cell": [
+     32,
+     32
+    ]
+   },
+   "dust_puff": {
+    "frames": 5,
+    "fps": 14,
+    "loop": false,
+    "holdLast": false,
+    "frameNames": "fx_dust_puff_<i>",
+    "origin": {
+     "x": 0.5,
+     "y": 1.0
+    },
+    "cell": [
+     48,
+     32
+    ]
+   }
+  },
+  "note": "hit_spark: centre on the hit point. dust_puff: bottom-centre on the feet (landing, knockback, death settle)."
+ }
+}

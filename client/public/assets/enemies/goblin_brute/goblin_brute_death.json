@@ -1,0 +1,837 @@
+{
+ "frames": {
+  "goblin_brute_death_down_0": {
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_down_1": {
+   "frame": {
+    "x": 112,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_down_2": {
+   "frame": {
+    "x": 224,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_down_3": {
+   "frame": {
+    "x": 336,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_down_4": {
+   "frame": {
+    "x": 448,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_down_5": {
+   "frame": {
+    "x": 560,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_down_6": {
+   "frame": {
+    "x": 672,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_down_7": {
+   "frame": {
+    "x": 784,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_left_0": {
+   "frame": {
+    "x": 0,
+    "y": 96,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_left_1": {
+   "frame": {
+    "x": 112,
+    "y": 96,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_left_2": {
+   "frame": {
+    "x": 224,
+    "y": 96,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_left_3": {
+   "frame": {
+    "x": 336,
+    "y": 96,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_left_4": {
+   "frame": {
+    "x": 448,
+    "y": 96,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_left_5": {
+   "frame": {
+    "x": 560,
+    "y": 96,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_left_6": {
+   "frame": {
+    "x": 672,
+    "y": 96,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_left_7": {
+   "frame": {
+    "x": 784,
+    "y": 96,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_right_0": {
+   "frame": {
+    "x": 0,
+    "y": 192,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_right_1": {
+   "frame": {
+    "x": 112,
+    "y": 192,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_right_2": {
+   "frame": {
+    "x": 224,
+    "y": 192,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_right_3": {
+   "frame": {
+    "x": 336,
+    "y": 192,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_right_4": {
+   "frame": {
+    "x": 448,
+    "y": 192,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_right_5": {
+   "frame": {
+    "x": 560,
+    "y": 192,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_right_6": {
+   "frame": {
+    "x": 672,
+    "y": 192,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_right_7": {
+   "frame": {
+    "x": 784,
+    "y": 192,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_up_0": {
+   "frame": {
+    "x": 0,
+    "y": 288,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_up_1": {
+   "frame": {
+    "x": 112,
+    "y": 288,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_up_2": {
+   "frame": {
+    "x": 224,
+    "y": 288,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_up_3": {
+   "frame": {
+    "x": 336,
+    "y": 288,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_up_4": {
+   "frame": {
+    "x": 448,
+    "y": 288,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_up_5": {
+   "frame": {
+    "x": 560,
+    "y": 288,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_up_6": {
+   "frame": {
+    "x": 672,
+    "y": 288,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_death_up_7": {
+   "frame": {
+    "x": 784,
+    "y": 288,
+    "w": 112,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  }
+ },
+ "meta": {
+  "app": "blender death_render.py + pack_death.py",
+  "version": "1.0",
+  "image": "goblin_brute_death.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 896,
+   "h": 384
+  },
+  "scale": "1",
+  "origin": {
+   "x": 0.5,
+   "y": 0.9271
+  },
+  "cell": {
+   "w": 112,
+   "h": 96
+  },
+  "pivotRowPx": 89,
+  "baseCell": {
+   "w": 96,
+   "h": 96
+  },
+  "note": "Death cell is wider than the base sheet; origin keeps feet aligned with the base sheet pivot (same camera, integer-pixel offset only).",
+  "pxPerUnit": 36.92,
+  "anims": {
+   "death": {
+    "frames": 8,
+    "directions": [
+     "down",
+     "left",
+     "right",
+     "up"
+    ],
+    "frameNames": "goblin_brute_death_<dir>_<i>",
+    "loop": false,
+    "holdLast": true,
+    "fps": 10,
+    "cell": [
+     112,
+     96
+    ],
+    "origin": [
+     0.5,
+     0.9271
+    ]
+   }
+  },
+  "footprint": {
+   "x": -20,
+   "y": -6,
+   "w": 40,
+   "h": 12,
+   "shape": "ellipse",
+   "note": "collision footprint centred on feet"
+  },
+  "hurtbox": {
+   "x": -24,
+   "y": -31,
+   "w": 48,
+   "h": 31,
+   "note": "body hurtbox, bottom on feet"
+  },
+  "feetPivotNote": "footprint/hurtbox/hitbox px relative to the feet pivot (origin), +y down; x,y = top-left"
+ }
+}

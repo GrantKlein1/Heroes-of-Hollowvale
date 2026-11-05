@@ -1,0 +1,368 @@
+{
+ "frames": {
+  "goblin_brute_telegraph_down_0": {
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_telegraph_down_1": {
+   "frame": {
+    "x": 96,
+    "y": 0,
+    "w": 96,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_telegraph_down_2": {
+   "frame": {
+    "x": 192,
+    "y": 0,
+    "w": 96,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_telegraph_left_0": {
+   "frame": {
+    "x": 0,
+    "y": 96,
+    "w": 96,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_telegraph_left_1": {
+   "frame": {
+    "x": 96,
+    "y": 96,
+    "w": 96,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_telegraph_left_2": {
+   "frame": {
+    "x": 192,
+    "y": 96,
+    "w": 96,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_telegraph_right_0": {
+   "frame": {
+    "x": 0,
+    "y": 192,
+    "w": 96,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_telegraph_right_1": {
+   "frame": {
+    "x": 96,
+    "y": 192,
+    "w": 96,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_telegraph_right_2": {
+   "frame": {
+    "x": 192,
+    "y": 192,
+    "w": 96,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_telegraph_up_0": {
+   "frame": {
+    "x": 0,
+    "y": 288,
+    "w": 96,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_telegraph_up_1": {
+   "frame": {
+    "x": 96,
+    "y": 288,
+    "w": 96,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  },
+  "goblin_brute_telegraph_up_2": {
+   "frame": {
+    "x": 192,
+    "y": 288,
+    "w": 96,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9271
+   }
+  }
+ },
+ "meta": {
+  "app": "blender clip_render.py + pack_clip.py (P1/P2)",
+  "version": "1.0",
+  "image": "goblin_brute_telegraph.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 288,
+   "h": 384
+  },
+  "scale": "1",
+  "origin": {
+   "x": 0.5,
+   "y": 0.9271
+  },
+  "cell": {
+   "w": 96,
+   "h": 96
+  },
+  "pivotRowPx": 89,
+  "baseCell": {
+   "w": 96,
+   "h": 96
+  },
+  "pxPerUnit": 36.92,
+  "note": "All 4 facings rendered (no flipX). Same camera as the base sheet; the cell only grows by whole rows/cols so the feet pivot matches.",
+  "anims": {
+   "telegraph": {
+    "fps": 8,
+    "loop": true,
+    "basedOn": "attack frame 1 (wind-up)",
+    "next": "attack",
+    "note": "wind-up hold: loop while the AI telegraphs, then play attack from frame 2 (or 1). Frame 1 = max raise. Weapon-tip glint baked on frames 1-2 (fx_common spark palette); no code tint needed.",
+    "glintFrames": [
+     1,
+     2
+    ],
+    "frames": 3,
+    "directions": [
+     "down",
+     "left",
+     "right",
+     "up"
+    ],
+    "frameNames": "goblin_brute_telegraph_<dir>_<i>",
+    "durations": [
+     125,
+     125,
+     125
+    ],
+    "cell": [
+     96,
+     96
+    ],
+    "origin": [
+     0.5,
+     0.9271
+    ]
+   }
+  },
+  "footprint": {
+   "x": -20,
+   "y": -6,
+   "w": 40,
+   "h": 12,
+   "shape": "ellipse",
+   "note": "collision footprint centred on feet"
+  },
+  "hurtbox": {
+   "x": -24,
+   "y": -31,
+   "w": 48,
+   "h": 31,
+   "note": "body hurtbox, bottom on feet"
+  },
+  "feetPivotNote": "footprint/hurtbox/hitbox px relative to the feet pivot (origin), +y down; x,y = top-left"
+ }
+}
