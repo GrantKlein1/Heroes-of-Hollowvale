@@ -21,7 +21,7 @@ function truncateToSentences(text = '', max = 8) {
 
 function classifyRequest(message, priorUserCount) {
   const m = String(message || '').toLowerCase();
-  const isDragon = /dragon\s*quest|ashfang|blackspire|red\s*dragon/.test(m) || (m.includes('dragon') && m.includes('quest'));
+  const isDragon = /dragon\s*quest|veyrath|cavern\s*of\s*embers|blackspire|red\s*dragon/.test(m) || (m.includes('dragon') && m.includes('quest'));
   const isTownHistory = /(town\s*history|history\s*of\s*hollowvale|hollowvale\s*history|history\s*of\s*the\s*town)/.test(m);
   const isLeave = /\b(leave|goodbye|farewell|i['’]?m\s*leaving|im\s*leaving|bye|take\s*my\s*leave)\b/.test(m);
   const leaveAfterFive = isLeave && priorUserCount >= 5;
@@ -67,17 +67,17 @@ router.post('/chat', async (req, res, next) => {
     '- Before responding, verify that sentence count and word count per sentence are within limits.',
     '- Prefer short paragraphs; avoid numbered lists unless specifically requested.',
     '- Here are 3 examples to provide guidance on response length only, not tone, lore, accuracy or anything else.:',
-    ' EXAMPLE1: Ashfang Cavern lies beyond the Blackspire Mountains, cloaked in mist and legend.',
+    ' EXAMPLE1: The Cavern of Embers lies beyond the Blackspire Mountains, cloaked in mist and legend.',
     '      From the tavern, follow the winding road directly south of here.',
     '      Take the path through the forest winding and narrow, lined with whispering pines.',
     '      The trail turns sharply right, stones shifting beneath your boots.',
     '      Soon, the mountain yawns open: a jagged mouth of shadow and silence.', 
-    'EXAMPLE2: Ashfang Cavern rests beyond the Blackspire Mountains, hidden behind mist and pine.',
+    'EXAMPLE2: The Cavern of Embers rests beyond the Blackspire Mountains, hidden behind mist and pine.',
     '      Leave the tavern, follow the cobbled road south past the market and old windmill.',
     '      Take the path narrow, winding, and lined with moss-covered stones.',
     '      The trail climbs steadily, wind whispering through the trees.',
     '      Eventually, the mountain opens: a dark mouth carved into jagged rock.',
-    'EXAMPLE3: Ashfang Cavern waits in the Blackspires, cloaked in fog and silence.',
+    'EXAMPLE3: The Cavern of Embers waits in the Blackspires, cloaked in fog and silence.',
     '       From the tavern, take the road that twists past the market and windmill.',
     '       Go left at the fork—steep, slick, and shadowed by looming cliffs.',
     '       The path narrows, stones loose beneath your boots.',

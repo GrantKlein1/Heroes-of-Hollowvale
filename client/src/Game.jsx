@@ -1463,7 +1463,7 @@ export default function Game() {
 
   // Topic-aware RAG hints for better retrieval on short follow-ups
   const TOPIC_RAG_HINTS = {
-    dragon: 'Ashfang Cavern, Blackspire Mountains, dragon raids, goblins, traps, hoard, Sword of Aeltharion',
+    dragon: 'Cavern of Embers, Veyrath, dragon raids, goblins, traps, hoard, Sword of Aeltharion',
     history: 'Hollowvale history, Empire of Drak’Tal, Dragonbind Chains, Veyrath, Pyrehold, Sword of Aeltharion'
   }
 
