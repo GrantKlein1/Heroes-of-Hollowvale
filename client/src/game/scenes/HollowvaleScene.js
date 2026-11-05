@@ -29,6 +29,7 @@ import { ScreenCamera } from '../screenCamera.js'
 import { DomFxLayer } from '../fxLayer.js'
 import { random } from '../rng.js'
 import { mountHvApi, teardownHvApi } from '../qa/hvApi.js'
+import { AssetRegistry } from '../assets/AssetRegistry.js'
 import {
   PAINTED_WORLD_W,
   PAINTED_WORLD_H,
@@ -138,6 +139,7 @@ export default class HollowvaleScene extends Phaser.Scene {
     this._id = 1
     this._skipRest = false
     this._missingAssets = []
+    this.assetRegistry = null
   }
 
   preload() {
@@ -165,9 +167,19 @@ export default class HollowvaleScene extends Phaser.Scene {
     for (const asset of TERRAIN_ASSETS) {
       if (asset.src) this.load.image(asset.id, asset.src)
     }
+
+    const search = typeof window !== 'undefined' ? window.location?.search : ''
+    const params = new URLSearchParams(search)
+    if (params.get('renderer') === 'blend') {
+      this.assetRegistry = new AssetRegistry(this)
+      this.assetRegistry.loadGroup('boot')
+    }
   }
 
   create() {
+    if (this.assetRegistry) {
+      this.assetRegistry.createAnims('boot')
+    }
     const params = new URLSearchParams(window.location.search)
     this.debugOn = params.get('debug') === '1'
 
