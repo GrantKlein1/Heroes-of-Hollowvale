@@ -1,19 +1,35 @@
 import { describe, it, expect } from 'vitest';
 import path from 'node:path';
 import fs from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import {
-  validateAtlas,
-  validateManifest,
-  extractAnchor,
-  isFxAtlas,
-  isAmbientCritter
-} from '../../../../../tools/assets/check_asset.mjs';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const REPO_ROOT = path.resolve(__dirname, '../../../../..');
 const MANIFEST_PATH = path.join(REPO_ROOT, 'client', 'public', 'assets', 'manifest.json');
+
+// Ensure Windows CRLF checkouts don't break ESM shebang loading
+const rawCheckAssetPath = path.resolve(REPO_ROOT, 'tools', 'assets', 'check_asset.mjs');
+let toolsModule;
+try {
+  toolsModule = await import(pathToFileURL(rawCheckAssetPath).href);
+} catch (err) {
+  const cacheDir = path.resolve(REPO_ROOT, 'node_modules', '.cache');
+  if (!fs.existsSync(cacheDir)) {
+    fs.mkdirSync(cacheDir, { recursive: true });
+  }
+  const cleanPath = path.join(cacheDir, 'check_asset_clean.mjs');
+  fs.writeFileSync(cleanPath, fs.readFileSync(rawCheckAssetPath, 'utf8').replace(/\r\n/g, '\n'), 'utf8');
+  toolsModule = await import(pathToFileURL(cleanPath).href);
+}
+
+const {
+  validateAtlas,
+  validateManifest,
+  extractAnchor,
+  isFxAtlas,
+  isAmbientCritter
+} = toolsModule;
 
 describe('Manifest & Atlas Contract Validation (Package 0-3)', () => {
   it('validates every atlas referenced by manifest.json with 0 errors', () => {
