@@ -1,0 +1,26 @@
+{
+ "releaseFrame": 6,
+ "spawnOffsetFromFeet": {
+  "down": {
+   "x": -3.5,
+   "y": -26.0,
+   "z": 0.802
+  },
+  "right": {
+   "x": 27.5,
+   "y": -31.0,
+   "z": 0.802
+  },
+  "up": {
+   "x": 3.5,
+   "y": -37.4,
+   "z": 0.802
+  },
+  "left": {
+   "x": -27.5,
+   "y": -32.4,
+   "z": 0.802
+  }
+ },
+ "note": "pixels in the 64x64 frame, relative to the feet pivot (32,60); +y is down. Tip of the arrow on frame 5 (arrow leaving the bow); spawn the projectile when frame 6 shows (string snap, arrow gone)."
+}

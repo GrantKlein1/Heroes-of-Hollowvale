@@ -1,0 +1,30 @@
+{
+ "hitFrame": 3,
+ "frameSize": [
+  96,
+  96
+ ],
+ "feetPivotPx": [
+  48.0,
+  89
+ ],
+ "weaponTipOffsetFromFeet": {
+  "down": {
+   "x": -27.6,
+   "y": -15.4
+  },
+  "right": {
+   "x": 35.7,
+   "y": -17.1
+  },
+  "up": {
+   "x": 27.6,
+   "y": -30.3
+  },
+  "left": {
+   "x": -35.7,
+   "y": -28.6
+  }
+ },
+ "note": "apply damage when hitFrame shows; offsets in frame pixels from the feet, +y down; use as the centre of a small hitbox"
+}
