@@ -1,6 +1,7 @@
 import fs from 'fs'
 // Use local embeddings implementation to avoid external API issues
 import { embedTexts, cosine } from './embeddings_local.js'
+import { rerank } from './rerank.js'
 import { LORE_JSON_PATH } from '../config/paths.js'
 
 let LORE = [] // [{ id, text, embedding: number[] }]
@@ -43,22 +44,31 @@ try {
 }
 
 /**
- * Retrieve up to topK lore texts most similar to the query
+ * Retrieve up to k candidate lore items with cosine similarity scores
  * @param {string} query
- * @param {number} topK
- * @returns {Promise<string[]>}
+ * @param {number} k
+ * @returns {Promise<Array<{ chunk: object, text: string, id: string|number, score: number, cosScore: number }>>}
  */
-async function retrieveLoreForQuery(query, topK = 3) {
+async function retrieveCandidates(query, k = 10) {
   if (!LORE.length) return []
   const embeds = await embedTexts([query])
   if (embeds && Array.isArray(embeds[0])) {
     const q = embeds[0]
     const scored = LORE
-      .map((c) => ({ chunk: c, score: cosine(q, c.embedding) }))
-      .sort((a, b) => b.score - a.score)
-      .slice(0, Math.max(1, topK))
+      .map((c) => {
+        const score = cosine(q, c.embedding)
+        return {
+          chunk: c,
+          text: c.text,
+          id: c.id,
+          score,
+          cosScore: score,
+        }
+      })
       .filter(x => Number.isFinite(x.score) && x.score > 0)
-    return scored.map(x => x.chunk.text)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, Math.max(1, k))
+    return scored
   }
 
   // Fallback: simple token-overlap similarity (no external API)
@@ -75,14 +85,20 @@ async function retrieveLoreForQuery(query, topK = 3) {
       // Length-normalized overlap (cosine on binary vectors)
       const denom = Math.sqrt(qLen) * Math.sqrt(tSet.size || 1)
       const score = denom ? (shared / denom) : 0
-      return { chunk: c, score }
+      return {
+        chunk: c,
+        text: c.text,
+        id: c.id,
+        score,
+        cosScore: score,
+      }
     })
-      .sort((a, b) => b.score - a.score)
-      .slice(0, Math.max(1, topK))
       .filter(x => Number.isFinite(x.score) && x.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, Math.max(1, k))
     if (scored.length) {
       console.info('[RAG] HF embeddings unavailable; using token-overlap fallback')
-      return scored.map(x => x.chunk.text)
+      return scored
     }
   } catch (e) {
     console.warn('[RAG] token-overlap fallback failed:', e.message)
@@ -90,4 +106,58 @@ async function retrieveLoreForQuery(query, topK = 3) {
   return []
 }
 
-export { retrieveLoreForQuery, loadLore }
+/**
+ * Retrieve up to topK lore texts most similar to the query
+ * @param {string} query
+ * @param {number} topK
+ * @returns {Promise<string[]>}
+ */
+async function retrieveLoreForQuery(query, topK = 3) {
+  const candidates = await retrieveCandidates(query, topK)
+  return candidates.slice(0, Math.max(1, topK)).map(x => x.text)
+}
+
+/**
+ * Retrieve candidates and evaluate cross-encoder reranking in shadow mode.
+ * Logs shadow metrics (maxCos, rerankTopScore, rerankScores) while returning
+ * the baseline cosine candidates to guarantee prompt/replies remain unchanged.
+ * @param {string} query
+ * @param {object} [options]
+ * @param {number} [options.candidateK=10]
+ * @param {number} [options.topK=3]
+ * @returns {Promise<{ loreChunks: string[], candidates: Array<object>, shadowMetrics: { maxCos: number, rerankTopScore: number|null, rerankScores: number[] } }>}
+ */
+async function retrieveLoreWithShadow(query, { candidateK = 10, topK = 3 } = {}) {
+  const candidates = await retrieveCandidates(query, candidateK)
+  const maxCos = candidates.length > 0 ? Number((candidates[0].cosScore ?? candidates[0].score ?? 0).toFixed(4)) : 0
+
+  let shadowReranked = []
+  let rerankTopScore = null
+  let rerankScores = []
+
+  if (candidates.length > 0) {
+    try {
+      shadowReranked = await rerank(query, candidates, topK)
+      if (shadowReranked.length > 0) {
+        rerankTopScore = Number((shadowReranked[0].rerankScore ?? shadowReranked[0].score ?? 0).toFixed(4))
+        rerankScores = shadowReranked.map(r => Number((r.rerankScore ?? r.score ?? 0).toFixed(4)))
+      }
+    } catch (re) {
+      console.warn('[RAG Shadow] rerank failed:', re?.message || re)
+    }
+  }
+
+  // Return baseline topK lore chunks for unchanged replies
+  const loreChunks = candidates.slice(0, Math.max(1, topK)).map(x => x.text)
+  return {
+    loreChunks,
+    candidates,
+    shadowMetrics: {
+      maxCos,
+      rerankTopScore,
+      rerankScores,
+    },
+  }
+}
+
+export { retrieveCandidates, retrieveLoreForQuery, retrieveLoreWithShadow, loadLore }

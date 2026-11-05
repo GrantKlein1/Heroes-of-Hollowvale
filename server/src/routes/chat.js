@@ -4,7 +4,7 @@ import { getNPC, NPC_IDS } from '../npcData.js';
 import * as memory from '../memory.js';
 import { chatCompletion } from '../groqClient.js';
 import { buildMessages, resolveNpcChatMaxTokens } from '../buildMessages.js';
-import { retrieveLoreForQuery } from '../rag/store.js';
+import { retrieveLoreForQuery, retrieveLoreWithShadow } from '../rag/store.js';
 import { getGroqApiKey } from '../config/secrets.js';
 
 // --- Helpers ---------------------------------------------------------------
@@ -100,10 +100,22 @@ router.post('/chat', async (req, res, next) => {
       retrievalQuery = `${message}\n\nHints:${ragHints.startsWith(' ')?'':''} ${ragHints}`.trim()
     }
 
-    // RAG: retrieve up to 3 relevant lore chunks for this player input
+    // RAG: retrieve up to 3 relevant lore chunks for this player input (evaluating reranker in shadow mode)
     let loreChunks = []
     try {
-      loreChunks = await retrieveLoreForQuery(retrievalQuery, 3)
+      const { loreChunks: retrievedLore, shadowMetrics } = await retrieveLoreWithShadow(retrievalQuery, {
+        candidateK: 10,
+        topK: 3,
+      })
+      loreChunks = retrievedLore
+      const maxCosStr = shadowMetrics?.maxCos !== undefined ? shadowMetrics.maxCos.toFixed(4) : '0.0000'
+      const rerankTopScoreStr = (shadowMetrics?.rerankTopScore !== null && shadowMetrics?.rerankTopScore !== undefined)
+        ? shadowMetrics.rerankTopScore.toFixed(4)
+        : 'none'
+      const scoresStr = Array.isArray(shadowMetrics?.rerankScores)
+        ? `[${shadowMetrics.rerankScores.map(s => Number(s).toFixed(4)).join(', ')}]`
+        : '[]'
+      console.info(`[RAG Shadow] maxCos: ${maxCosStr}, rerankTopScore: ${rerankTopScoreStr}, rerankScores: ${scoresStr}`)
     } catch (e) {
       console.warn('[RAG] retrieval failed, continuing without lore:', e.message)
     }
