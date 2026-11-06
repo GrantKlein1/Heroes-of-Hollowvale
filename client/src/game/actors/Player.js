@@ -3,10 +3,12 @@
  *
  * Implements:
  * - Dynamic 4-class configuration (knight, mage, thief, dwarf)
- * - 4-directional animations for idle, walk, and hurt
+ * - 4-directional animations for idle, walk, hurt, and attack
  * - Automatic sheet origin resolution and footprint collider binding
- * - Multi-sheet asset handling (e.g. mage_walk vs mage_hurt)
- * - Priority StateMachine driven animations (IDLE, WALK, HURT)
+ * - Multi-sheet asset handling (e.g. mage_walk vs mage_hurt, knight vs knight_attack)
+ * - Priority StateMachine driven animations (IDLE, WALK, HURT, ATTACK)
+ * - Frame-accurate melee attack hits on meta hitFrames with combat feedback
+ * - 600 ms I-frame protected takeDamage implementation
  */
 
 import Phaser from 'phaser'
@@ -14,30 +16,48 @@ import { Actor } from './Actor.js'
 import { ACTOR_STATES } from './stateMachine.js'
 import { isValidFacing, DEFAULT_FACING } from './facing.js'
 import { buildAnimKey } from '../assets/animKeys.js'
+import { isBlendRenderer } from '../config/flags.js'
+import { onMeleeSwing } from '../MainGameScene.js'
+import {
+  getAnimationFrameIndex,
+  getHitFrames,
+  executePlayerMeleeHit,
+} from '../combat/hitSystem.js'
+import {
+  isPlayerInvulnerable,
+  setPlayerInvulnerable,
+  applyFlash,
+  applyKnockback,
+  PLAYER_IFRAME_DURATION_MS,
+} from '../combat/feedback.js'
 
 export const CLASS_SHEETS = Object.freeze({
   knight: {
     defaultSheet: 'knight',
     walkSheet: 'knight',
     hurtSheet: 'knight',
+    attackSheet: 'knight_attack',
     initialFrame: 'knight_idle_down',
   },
   thief: {
     defaultSheet: 'thief',
     walkSheet: 'thief',
     hurtSheet: 'thief',
+    attackSheet: 'thief_attack',
     initialFrame: 'thief_idle_down',
   },
   dwarf: {
     defaultSheet: 'dwarf',
     walkSheet: 'dwarf',
     hurtSheet: 'dwarf',
+    attackSheet: 'dwarf_attack',
     initialFrame: 'dwarf_idle_down',
   },
   mage: {
     defaultSheet: 'mage_walk',
     walkSheet: 'mage_walk',
     hurtSheet: 'mage_hurt',
+    attackSheet: 'mage_attack2',
     initialFrame: 'mage_idle_down',
   },
 })
@@ -62,13 +82,49 @@ export class Player extends Actor {
 
     this.classId = validClass
     this._lastFacing = this.facing
+    this.currentSwingId = 0
+    this._hitFramesProcessed = new Set()
+    this.invulnerableUntil = 0
 
-    // Listen for animation completion to transition out of non-looping states (e.g. HURT)
+    // Listen for animation completion to transition out of non-looping states (HURT, ATTACK)
     if (typeof this.on === 'function') {
       const animCompleteEvent = Phaser?.Animations?.Events?.ANIMATION_COMPLETE || 'animationcomplete'
       this.on(animCompleteEvent, (anim) => {
         this.onAnimationComplete(anim)
       })
+    }
+
+    // Hook scene attack and hurt handlers if mounted in HollowvaleScene
+    if (scene && typeof scene._tryAttack === 'function' && !scene._hitSystemHooked) {
+      scene._hitSystemHooked = true
+      const origTryAttack = scene._tryAttack.bind(scene)
+      scene._tryAttack = (now) => {
+        if (isBlendRenderer() && scene.player instanceof Player) {
+          scene._attacking = true
+          scene._attackUntil = (now || performance.now()) + 450
+          return this.attack(now)
+        }
+        return origTryAttack(now)
+      }
+
+      const origHurtPlayer = scene._hurtPlayer ? scene._hurtPlayer.bind(scene) : null
+      if (origHurtPlayer) {
+        scene._hurtPlayer = (amount = 10) => {
+          if (isBlendRenderer() && scene.player instanceof Player) {
+            const tookDamage = this.takeDamage(
+              amount,
+              typeof performance !== 'undefined' ? performance.now() : Date.now()
+            )
+            if (!tookDamage) return false
+          }
+          return origHurtPlayer(amount)
+        }
+      }
+    }
+
+    // Expose lastFx getter on __hv if available
+    if (typeof window !== 'undefined' && window.__hv && !window.__hv.lastFx) {
+      window.__hv.lastFx = () => this.scene?._lastFx || this._lastFx || null
     }
 
     // Start with idle animation if scene anims are available
@@ -99,13 +155,15 @@ export class Player extends Actor {
       this.playAnim('walk', false)
     } else if (this.is(ACTOR_STATES.HURT)) {
       this.playAnim('hurt', false)
+    } else if (this.is(ACTOR_STATES.ATTACK)) {
+      this.playAnim('attack', false)
     } else {
       this.playAnim('idle', false)
     }
   }
 
   /**
-   * Resolves the sheet key for an animation (handles multi-sheet classes like mage).
+   * Resolves the sheet key for an animation (handles multi-sheet classes).
    *
    * @param {string} animName
    * @returns {string}
@@ -115,6 +173,9 @@ export class Player extends Actor {
     if (animName === 'hurt') {
       return classDef.hurtSheet
     }
+    if (animName === 'attack') {
+      return classDef.attackSheet || classDef.defaultSheet
+    }
     return classDef.walkSheet
   }
 
@@ -122,7 +183,7 @@ export class Player extends Actor {
    * Plays a player animation with 4-directional key resolution.
    * Automatically switches texture sheets and updates feet anchor when necessary.
    *
-   * @param {string} animName - 'idle' | 'walk' | 'hurt'
+   * @param {string} animName - 'idle' | 'walk' | 'hurt' | 'attack'
    * @param {boolean} [ignoreIfPlaying=true]
    * @returns {Player}
    */
@@ -137,6 +198,64 @@ export class Player extends Actor {
       this.anims.play(key, ignoreIfPlaying)
     }
     return this
+  }
+
+  /**
+   * Initiates a melee attack swing.
+   * Transitions state machine to ATTACK, plays directional attack animation,
+   * locks aim direction during swing, and clears hit tracking.
+   *
+   * @param {number} [now=performance.now()]
+   * @returns {boolean}
+   */
+  attack(now = (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
+    if (this.is(ACTOR_STATES.DEAD)) return false
+
+    // StateMachine priority: ATTACK (3) can interrupt WALK (1) or IDLE (0)
+    // If currently HURT (5) or DODGE (4), cannot interrupt; buffer input!
+    if (!this.stateMachine.canInterrupt(ACTOR_STATES.ATTACK)) {
+      this.bufferInput(ACTOR_STATES.ATTACK, now)
+      return false
+    }
+
+    const transitioned = this.transition(ACTOR_STATES.ATTACK, { time: now })
+    if (!transitioned) return false
+
+    this.currentSwingId = (this.currentSwingId || 0) + 1
+    this._hitFramesProcessed = new Set()
+
+    try {
+      onMeleeSwing()
+    } catch (_e) {
+      // Audio stub
+    }
+
+    return true
+  }
+
+  /**
+   * Receives incoming damage with 600 ms I-frame protection.
+   *
+   * @param {number} [amount=10]
+   * @param {number} [now=performance.now()]
+   * @param {object} [options]
+   * @returns {boolean} - True if damage was taken, false if blocked by I-frames
+   */
+  takeDamage(amount = 10, now = (typeof performance !== 'undefined' ? performance.now() : Date.now()), options = {}) {
+    if (this.is(ACTOR_STATES.DEAD)) return false
+    if (isPlayerInvulnerable(this, now)) {
+      return false
+    }
+
+    setPlayerInvulnerable(this, now, PLAYER_IFRAME_DURATION_MS)
+    applyFlash(this, this.scene)
+
+    if (options.fromX !== undefined && options.fromY !== undefined) {
+      applyKnockback(this, options.fromX, options.fromY, 120, 150)
+    }
+
+    this.transition(ACTOR_STATES.HURT)
+    return true
   }
 
   /**
@@ -155,6 +274,8 @@ export class Player extends Actor {
       this.playAnim('idle')
     } else if (newState === ACTOR_STATES.HURT) {
       this.playAnim('hurt', false)
+    } else if (newState === ACTOR_STATES.ATTACK) {
+      this.playAnim('attack', false)
     }
   }
 
@@ -166,7 +287,14 @@ export class Player extends Actor {
   onAnimationComplete(anim) {
     const key = anim?.key || this.anims?.currentAnim?.key || ''
     if (key.includes('hurt') && this.is(ACTOR_STATES.HURT)) {
-      // Consume any valid buffered input or return to IDLE
+      const consumed = this.consumeBuffer(Date.now())
+      if (!consumed) {
+        this.transition(ACTOR_STATES.IDLE, { force: true })
+      }
+    } else if (key.includes('attack') && this.is(ACTOR_STATES.ATTACK)) {
+      if (this.scene) {
+        this.scene._attacking = false
+      }
       const consumed = this.consumeBuffer(Date.now())
       if (!consumed) {
         this.transition(ACTOR_STATES.IDLE, { force: true })
@@ -175,7 +303,8 @@ export class Player extends Actor {
   }
 
   /**
-   * Sets facing explicitly and refreshes the current directional animation.
+   * Sets facing explicitly and refreshes the current directional animation
+   * unless in a directional locked state (e.g. ATTACK).
    *
    * @param {string} dir
    * @returns {string}
@@ -185,7 +314,9 @@ export class Player extends Actor {
     super.setFacing(dir)
     if (this.facing !== prev) {
       this._lastFacing = this.facing
-      this._refreshCurrentAnim()
+      if (!this.is(ACTOR_STATES.ATTACK)) {
+        this._refreshCurrentAnim()
+      }
     }
     return this.facing
   }
@@ -198,8 +329,28 @@ export class Player extends Actor {
       this.playAnim('walk', false)
     } else if (this.is(ACTOR_STATES.HURT)) {
       this.playAnim('hurt', false)
+    } else if (this.is(ACTOR_STATES.ATTACK)) {
+      this.playAnim('attack', false)
     } else {
       this.playAnim('idle', false)
+    }
+  }
+
+  /**
+   * Checks for hitFrame triggers during active attack animation.
+   *
+   * @param {number} time
+   */
+  _checkAttackHitFrames(time) {
+    const currentFrame = this.anims?.currentFrame
+    const frameIndex = getAnimationFrameIndex(currentFrame)
+    if (frameIndex >= 0 && !this._hitFramesProcessed.has(frameIndex)) {
+      const sheetKey = this.getSheetForAnim('attack')
+      const hitFrames = getHitFrames(this.scene, sheetKey, 'attack')
+      if (hitFrames.includes(frameIndex)) {
+        this._hitFramesProcessed.add(frameIndex)
+        executePlayerMeleeHit(this, frameIndex, time)
+      }
     }
   }
 
@@ -212,12 +363,17 @@ export class Player extends Actor {
   update(time = Date.now(), delta = 0) {
     super.update(time, delta)
 
+    // Check hitFrames during active attack
+    if (this.is(ACTOR_STATES.ATTACK)) {
+      this._checkAttackHitFrames(time)
+    }
+
     const vx = this.body?.velocity?.x || 0
     const vy = this.body?.velocity?.y || 0
     const isMoving = Math.abs(vx) > 0.1 || Math.abs(vy) > 0.1
 
     if (isMoving) {
-      if (!this.is(ACTOR_STATES.HURT) && !this.is(ACTOR_STATES.DEAD)) {
+      if (!this.is(ACTOR_STATES.HURT) && !this.is(ACTOR_STATES.DEAD) && !this.is(ACTOR_STATES.ATTACK)) {
         if (!this.is(ACTOR_STATES.WALK)) {
           this.transition(ACTOR_STATES.WALK)
         }
@@ -228,10 +384,12 @@ export class Player extends Actor {
       }
     }
 
-    // Refresh animation if facing changed during update
+    // Refresh animation if facing changed during update (except during attack)
     if (this.facing !== this._lastFacing) {
       this._lastFacing = this.facing
-      this._refreshCurrentAnim()
+      if (!this.is(ACTOR_STATES.ATTACK)) {
+        this._refreshCurrentAnim()
+      }
     }
   }
 
