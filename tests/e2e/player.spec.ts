@@ -68,6 +68,14 @@ test.describe('Heroes of Hollowvale — Player Actor (Package 1-3)', () => {
       );
       expect(await page.evaluate(() => (window as any).__hv.anim())).toBe(`${classId}_idle_down`);
 
+      // Package 1-3b: Verify calibrated native 1x actor scale under blend renderer
+      const playerScale = await page.evaluate(() => {
+        const p = (window as any).__scene?.player;
+        return { scaleX: p?.scaleX, scaleY: p?.scaleY };
+      });
+      expect(playerScale.scaleX).toBe(1);
+      expect(playerScale.scaleY).toBe(1);
+
       // Freeze frame 0 of idle animation to ensure a 100% deterministic visual baseline screenshot
       await page.evaluate(() => {
         const p = (window as any).__scene?.player;
@@ -122,8 +130,12 @@ test.describe('Heroes of Hollowvale — Player Actor (Package 1-3)', () => {
         `${classId}_hurt_`,
         { timeout: 5000 }
       );
-      const hurtKey = await page.evaluate(() => (window as any).__hv.anim());
-      expect(hurtKey).toBe(`${classId}_hurt_up`);
+      // Verify player cleanly completes hurt and transitions back to idle_up
+      await page.waitForFunction(
+        (expectedIdle) => (window as any).__hv.anim() === expectedIdle,
+        `${classId}_idle_up`,
+        { timeout: 5000 }
+      );
 
       // 6. Zero error invariant assertions
       expect(consoleErrors, 'Expected zero console errors').toEqual([]);
@@ -131,4 +143,69 @@ test.describe('Heroes of Hollowvale — Player Actor (Package 1-3)', () => {
       expect(notFoundResponses, 'Expected zero 404 responses').toEqual([]);
     });
   }
+
+  test('Package 1-3b: Calibrated 1920x1080 viewport and alignment verification', async ({ page }) => {
+    await page.setViewportSize({ width: 1920, height: 1080 });
+
+    await page.addInitScript(() => {
+      window.HTMLMediaElement.prototype.play = () => Promise.resolve();
+    });
+
+    await page.goto('/?renderer=blend&seed=1&qa=1');
+
+    const canvas = page.locator('canvas');
+    await expect(canvas).toBeVisible();
+
+    const startButton = page.getByRole('button', { name: 'Start Game' });
+    await expect(startButton).toBeVisible();
+    await startButton.click();
+
+    await page.getByRole('button', { name: 'Choose' }).nth(0).click();
+
+    await page.waitForFunction(() => {
+      return (
+        typeof (window as any).__hv?.anim === 'function' &&
+        (window as any).__hv.anim() === 'knight_idle_down'
+      );
+    });
+
+    // Verify calibrated scale and camera metrics
+    const metrics = await page.evaluate(() => {
+      const scene = (window as any).__scene;
+      const p = scene?.player;
+      const cam = scene?.cameras?.main;
+      return {
+        scaleX: p?.scaleX,
+        scaleY: p?.scaleY,
+        width: p?.displayWidth,
+        height: p?.displayHeight,
+        bodyWidth: p?.body?.width,
+        bodyHeight: p?.body?.height,
+        zoom: cam?.zoom,
+        worldViewWidth: cam?.worldView?.width,
+        worldViewHeight: cam?.worldView?.height,
+      };
+    });
+
+    expect(metrics.scaleX).toBe(1);
+    expect(metrics.scaleY).toBe(1);
+    expect(metrics.width).toBe(64);
+    expect(metrics.height).toBe(96);
+    // Footprint body matches atlas metadata (23x7)
+    expect(metrics.bodyWidth).toBe(23);
+    expect(metrics.bodyHeight).toBe(7);
+    // Camera zoom covers painted backdrop
+    expect(metrics.zoom).toBe(2);
+
+    // Freeze frame 0 and capture 1080p baseline screenshot
+    await page.evaluate(() => {
+      const p = (window as any).__scene?.player;
+      if (p?.anims?.currentAnim) {
+        p.anims.pause();
+        p.anims.setCurrentFrame(p.anims.currentAnim.frames[0]);
+      }
+    });
+    await page.waitForTimeout(300);
+    await expect(page).toHaveScreenshot('player-knight-1080p.png', { timeout: 30000 });
+  });
 });
