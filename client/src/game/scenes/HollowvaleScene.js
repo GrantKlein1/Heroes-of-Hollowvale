@@ -56,6 +56,8 @@ import {
   getEnemyDamage,
 } from '../combat/balance.js'
 import { isBlendRenderer, isDebug } from '../config/flags.js'
+import { Player } from '../actors/Player.js'
+import { ACTOR_STATES } from '../actors/stateMachine.js'
 
 const BARTENDER_GREETING =
   "Tharos: Hrm. Traveler. Dragon business or town history—what'll it be? If you're short on supplies, swing by the Market after this—head to the upper-left gate in the village and press E to browse wares."
@@ -174,12 +176,14 @@ export default class HollowvaleScene extends Phaser.Scene {
     if (isBlendRenderer()) {
       this.assetRegistry = new AssetRegistry(this)
       this.assetRegistry.loadGroup('boot')
+      this.assetRegistry.loadGroup('village')
     }
   }
 
   create() {
     if (this.assetRegistry) {
       this.assetRegistry.createAnims('boot')
+      this.assetRegistry.createAnims('village')
     }
     this.debugOn = isDebug()
 
@@ -202,11 +206,25 @@ export default class HollowvaleScene extends Phaser.Scene {
     this.consumeGfx = this.add.graphics().setDepth(26000)
     this.hpGfx = this.add.graphics().setDepth(18000)
 
-    this.player = this.physics.add.sprite(PAINTED_WORLD_W / 2, PAINTED_WORLD_H * 0.9, '__px')
-    this.player.setOrigin(0.5, 0.5)
-    this.player.setCollideWorldBounds(true)
-    this.player.setVisible(false)
-    this.player.body.setAllowGravity(false)
+    if (isBlendRenderer()) {
+      this.player = new Player(
+        this,
+        PAINTED_WORLD_W / 2,
+        PAINTED_WORLD_H * 0.9,
+        session.classId || 'knight'
+      )
+      this.player.setCollideWorldBounds(true)
+      this.player.setVisible(false)
+      if (this.player.body) {
+        this.player.body.setAllowGravity(false)
+      }
+    } else {
+      this.player = this.physics.add.sprite(PAINTED_WORLD_W / 2, PAINTED_WORLD_H * 0.9, '__px')
+      this.player.setOrigin(0.5, 0.5)
+      this.player.setCollideWorldBounds(true)
+      this.player.setVisible(false)
+      this.player.body.setAllowGravity(false)
+    }
 
     this.physics.add.collider(this.player, this.solids)
     this.physics.add.collider(this.enemies, this.solids)
@@ -241,6 +259,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       heal: (amount) => this._heal(amount),
       addMana: (amount) => this._addMana(amount),
       resetRun: () => this._resetRun(),
+      hurt: (amount) => this._hurtPlayer(amount),
     }
 
     mountHvApi(this)
@@ -284,6 +303,12 @@ export default class HollowvaleScene extends Phaser.Scene {
     const now = performance.now()
     this._syncSession(now)
     this._drive(now, dt)
+    if (isBlendRenderer() && this.player instanceof Player) {
+      this.player.update(now, delta)
+      if (this.player.facing) {
+        this._facing = this.player.facing
+      }
+    }
     if (this._skipRest) {
       this._skipRest = false
       this._present(now)
@@ -328,11 +353,23 @@ export default class HollowvaleScene extends Phaser.Scene {
     session.baseSpeed = CLASS_SPEED[id] || 160
     this._publishVitals(true)
     this.player.setVisible(true)
-    this._applySprite(session.spriteUrl || CLASS_SPRITES[id])
+    if (isBlendRenderer() && this.player instanceof Player) {
+      this.player.setClass(id)
+      this.player.setScale(this._playerIntegerScale || 2)
+    } else {
+      this._applySprite(session.spriteUrl || CLASS_SPRITES[id])
+    }
   }
 
   _applySprite(url) {
     this._spriteUrl = url || ''
+    if (isBlendRenderer() && this.player instanceof Player) {
+      if (session.classId) {
+        this.player.setClass(session.classId)
+      }
+      this.player.setScale(this._playerIntegerScale || 2)
+      return
+    }
     if (!url || !this.textures.exists(url)) return
     const targetH = Math.max(24, Math.round((this._playerScale || 0.13) * this.worldH))
     this.player.setTexture(url)
@@ -817,6 +854,9 @@ export default class HollowvaleScene extends Phaser.Scene {
           if (!invincible) {
             this.hp = Math.max(0, this.hp - dmg)
             onPlayerHurt()
+            if (isBlendRenderer() && this.player instanceof Player) {
+              this.player.transition(ACTOR_STATES.HURT)
+            }
           }
           this._iframeUntil = now + 900
           this._flashUntil = now + 200
@@ -954,6 +994,9 @@ export default class HollowvaleScene extends Phaser.Scene {
           if (!invincible) {
             this.hp = Math.max(0, this.hp - ARCHER_PROJECTILE.damage)
             onPlayerHurt()
+            if (isBlendRenderer() && this.player instanceof Player) {
+              this.player.transition(ACTOR_STATES.HURT)
+            }
           }
           this._iframeUntil = now + 900
           this._flashUntil = now + 250
@@ -1066,6 +1109,15 @@ export default class HollowvaleScene extends Phaser.Scene {
     this._publishVitals(true)
   }
 
+  _hurtPlayer(amount = 10) {
+    this.hp = Math.max(0, this.hp - amount)
+    onPlayerHurt()
+    if (isBlendRenderer() && this.player instanceof Player) {
+      this.player.transition(ACTOR_STATES.HURT)
+    }
+    this._publishVitals(true)
+  }
+
   _addMana(amount) {
     if (!(this.manaMax > 0)) return
     this.mana = Math.min(this.manaMax, (this.mana || 0) + amount)
@@ -1152,7 +1204,11 @@ export default class HollowvaleScene extends Phaser.Scene {
     const sp = spawn || def.spawn
     this._placePlayer(sp.nx, sp.ny)
     this._buildPrompts()
-    this.player.setDepth(10)
+    if (isBlendRenderer() && this.player instanceof Player) {
+      this.player.updateDepth()
+    } else {
+      this.player.setDepth(10)
+    }
   }
 
   _showWilderness(spawn, slideMs) {
@@ -1242,6 +1298,12 @@ export default class HollowvaleScene extends Phaser.Scene {
 
   _sizePlayer(scale) {
     this._playerScale = scale
+    if (isBlendRenderer() && this.player instanceof Player) {
+      const integerScale = Math.max(1, Math.round((scale * this.worldH) / 96))
+      this._playerIntegerScale = integerScale
+      this.player.setScale(integerScale)
+      return
+    }
     const url = this.player.texture?.key
     if (url && url !== '__px' && url !== '__MISSING') this._applySprite(this._spriteUrl || url)
     else {
@@ -1252,12 +1314,12 @@ export default class HollowvaleScene extends Phaser.Scene {
   }
 
   _placePlayer(nx, ny) {
-    const w = this.player.displayWidth
-    const h = this.player.displayHeight
+    const w = this.player.displayWidth || 64
+    const h = this.player.displayHeight || 96
     const x = Math.min(Math.max(nx * this.worldW, w / 2), this.worldW - w / 2)
     const y = Math.min(Math.max(ny * this.worldH, h / 2), this.worldH - h / 2)
     this.player.setPosition(x, y)
-    this.player.body.reset(x, y)
+    this.player.body?.reset?.(x, y)
   }
 
   _buildSolids(rects) {
