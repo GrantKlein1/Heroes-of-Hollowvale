@@ -1,0 +1,7658 @@
+{
+  "compressionlevel": -1,
+  "width": 20,
+  "height": 12,
+  "tilewidth": 32,
+  "tileheight": 32,
+  "infinite": false,
+  "orientation": "orthogonal",
+  "renderorder": "right-down",
+  "type": "map",
+  "version": "1.10",
+  "tiledversion": "1.10.2",
+  "nextlayerid": 8,
+  "nextobjectid": 21,
+  "properties": [
+    {
+      "name": "placeName",
+      "type": "string",
+      "value": "Brackenford"
+    },
+    {
+      "name": "leagueX",
+      "type": "int",
+      "value": 0
+    },
+    {
+      "name": "leagueY",
+      "type": "int",
+      "value": 0
+    }
+  ],
+  "tilesets": [
+    {
+      "firstgid": 1,
+      "columns": 4,
+      "image": "../assets/tiles/grass.png",
+      "imagewidth": 136,
+      "imageheight": 68,
+      "margin": 1,
+      "name": "grass",
+      "spacing": 2,
+      "tilecount": 8,
+      "tileheight": 32,
+      "tilewidth": 32,
+      "tiles": [
+        {
+          "id": 0,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        }
+      ],
+      "type": "tileset",
+      "version": "1.10",
+      "_baseGid": 1
+    },
+    {
+      "firstgid": 9,
+      "columns": 4,
+      "image": "../assets/tiles/dirt_road.png",
+      "imagewidth": 136,
+      "imageheight": 136,
+      "margin": 1,
+      "name": "dirt_road",
+      "spacing": 2,
+      "tilecount": 16,
+      "tileheight": 32,
+      "tilewidth": 32,
+      "tiles": [
+        {
+          "id": 0,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 8
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 8
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 9
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 9
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 11
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 11
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 13
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 13
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 14,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 14
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 14
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 15,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 15
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 15
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        }
+      ],
+      "type": "tileset",
+      "version": "1.10",
+      "_baseGid": 9
+    },
+    {
+      "firstgid": 25,
+      "columns": 4,
+      "image": "../assets/tiles/cobble_road.png",
+      "imagewidth": 136,
+      "imageheight": 136,
+      "margin": 1,
+      "name": "cobble_road",
+      "spacing": 2,
+      "tilecount": 16,
+      "tileheight": 32,
+      "tilewidth": 32,
+      "tiles": [
+        {
+          "id": 0,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 8
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 8
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 9
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 9
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 11
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 11
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 13
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 13
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 14,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 14
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 14
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 15,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 15
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 15
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        }
+      ],
+      "type": "tileset",
+      "version": "1.10",
+      "_baseGid": 25
+    },
+    {
+      "firstgid": 41,
+      "columns": 4,
+      "image": "../assets/tiles/water.png",
+      "imagewidth": 136,
+      "imageheight": 544,
+      "margin": 1,
+      "name": "water",
+      "spacing": 2,
+      "tilecount": 64,
+      "tileheight": 32,
+      "tilewidth": 32,
+      "tiles": [
+        {
+          "id": 0,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 1,
+              "duration": 160
+            },
+            {
+              "tileid": 17,
+              "duration": 160
+            },
+            {
+              "tileid": 33,
+              "duration": 160
+            },
+            {
+              "tileid": 49,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 2,
+              "duration": 160
+            },
+            {
+              "tileid": 18,
+              "duration": 160
+            },
+            {
+              "tileid": 34,
+              "duration": 160
+            },
+            {
+              "tileid": 50,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 3,
+              "duration": 160
+            },
+            {
+              "tileid": 19,
+              "duration": 160
+            },
+            {
+              "tileid": 35,
+              "duration": 160
+            },
+            {
+              "tileid": 51,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 4,
+              "duration": 160
+            },
+            {
+              "tileid": 20,
+              "duration": 160
+            },
+            {
+              "tileid": 36,
+              "duration": 160
+            },
+            {
+              "tileid": 52,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 5,
+              "duration": 160
+            },
+            {
+              "tileid": 21,
+              "duration": 160
+            },
+            {
+              "tileid": 37,
+              "duration": 160
+            },
+            {
+              "tileid": 53,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 6,
+              "duration": 160
+            },
+            {
+              "tileid": 22,
+              "duration": 160
+            },
+            {
+              "tileid": 38,
+              "duration": 160
+            },
+            {
+              "tileid": 54,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 7,
+              "duration": 160
+            },
+            {
+              "tileid": 23,
+              "duration": 160
+            },
+            {
+              "tileid": 39,
+              "duration": 160
+            },
+            {
+              "tileid": 55,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 8
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 8
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 8,
+              "duration": 160
+            },
+            {
+              "tileid": 24,
+              "duration": 160
+            },
+            {
+              "tileid": 40,
+              "duration": 160
+            },
+            {
+              "tileid": 56,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 9
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 9
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 9,
+              "duration": 160
+            },
+            {
+              "tileid": 25,
+              "duration": 160
+            },
+            {
+              "tileid": 41,
+              "duration": 160
+            },
+            {
+              "tileid": 57,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 10,
+              "duration": 160
+            },
+            {
+              "tileid": 26,
+              "duration": 160
+            },
+            {
+              "tileid": 42,
+              "duration": 160
+            },
+            {
+              "tileid": 58,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 11
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 11
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 11,
+              "duration": 160
+            },
+            {
+              "tileid": 27,
+              "duration": 160
+            },
+            {
+              "tileid": 43,
+              "duration": 160
+            },
+            {
+              "tileid": 59,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 12,
+              "duration": 160
+            },
+            {
+              "tileid": 28,
+              "duration": 160
+            },
+            {
+              "tileid": 44,
+              "duration": 160
+            },
+            {
+              "tileid": 60,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 13
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 13
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 13,
+              "duration": 160
+            },
+            {
+              "tileid": 29,
+              "duration": 160
+            },
+            {
+              "tileid": 45,
+              "duration": 160
+            },
+            {
+              "tileid": 61,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 14,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 14
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 14
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 14,
+              "duration": 160
+            },
+            {
+              "tileid": 30,
+              "duration": 160
+            },
+            {
+              "tileid": 46,
+              "duration": 160
+            },
+            {
+              "tileid": 62,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 15,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 15
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 15
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 15,
+              "duration": 160
+            },
+            {
+              "tileid": 31,
+              "duration": 160
+            },
+            {
+              "tileid": 47,
+              "duration": 160
+            },
+            {
+              "tileid": 63,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 16,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 16
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 17,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 17
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 18,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 18
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 19,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 19
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 20,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 20
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 21,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 21
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 22,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 22
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 23,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 23
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 24,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 24
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 8
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 25,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 25
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 9
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 26,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 26
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 27,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 27
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 11
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 28,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 28
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 29,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 29
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 13
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 30,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 30
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 14
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 31,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 31
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 15
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 32,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 32
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 33,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 33
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 34,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 34
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 35,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 35
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 36,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 36
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 37,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 37
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 38,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 38
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 39,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 39
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 40,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 40
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 8
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 41,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 41
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 9
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 42,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 42
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 43,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 43
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 11
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 44,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 44
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 45,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 45
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 13
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 46,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 46
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 14
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 47,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 47
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 15
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 48,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 48
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 49,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 49
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 50,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 50
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 51,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 51
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 52,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 52
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 53,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 53
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 54,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 54
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 55,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 55
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 56,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 56
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 8
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 57,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 57
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 9
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 58,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 58
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 59,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 59
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 11
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 60,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 60
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 61,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 61
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 13
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 62,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 62
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 14
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 63,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 63
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 15
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        }
+      ],
+      "type": "tileset",
+      "version": "1.10",
+      "_baseGid": 41
+    },
+    {
+      "firstgid": 105,
+      "columns": 4,
+      "image": "../assets/tiles/water_ford.png",
+      "imagewidth": 136,
+      "imageheight": 34,
+      "margin": 1,
+      "name": "water_ford",
+      "spacing": 2,
+      "tilecount": 4,
+      "tileheight": 32,
+      "tilewidth": 32,
+      "tiles": [
+        {
+          "id": 0,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        }
+      ],
+      "type": "tileset",
+      "version": "1.10",
+      "_baseGid": 105
+    },
+    {
+      "firstgid": 109,
+      "columns": 4,
+      "image": "../assets/tiles/bridge_plank.png",
+      "imagewidth": 136,
+      "imageheight": 34,
+      "margin": 1,
+      "name": "bridge_plank",
+      "spacing": 2,
+      "tilecount": 4,
+      "tileheight": 32,
+      "tilewidth": 32,
+      "tiles": [
+        {
+          "id": 0,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        }
+      ],
+      "type": "tileset",
+      "version": "1.10",
+      "_baseGid": 109
+    },
+    {
+      "firstgid": 113,
+      "columns": 4,
+      "image": "../assets/tiles/cliff.png",
+      "imagewidth": 136,
+      "imageheight": 136,
+      "margin": 1,
+      "name": "cliff",
+      "spacing": 2,
+      "tilecount": 16,
+      "tileheight": 32,
+      "tilewidth": 32,
+      "tiles": [
+        {
+          "id": 0,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 8
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 8
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 9
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 9
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 11
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 11
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 13
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 13
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 14,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 14
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 14
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 15,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 15
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 15
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        }
+      ],
+      "type": "tileset",
+      "version": "1.10",
+      "_baseGid": 113
+    },
+    {
+      "firstgid": 129,
+      "columns": 4,
+      "image": "../assets/tiles/cliff_face.png",
+      "imagewidth": 136,
+      "imageheight": 34,
+      "margin": 1,
+      "name": "cliff_face",
+      "spacing": 2,
+      "tilecount": 4,
+      "tileheight": 32,
+      "tilewidth": 32,
+      "tiles": [
+        {
+          "id": 0,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        }
+      ],
+      "type": "tileset",
+      "version": "1.10",
+      "_baseGid": 129
+    }
+  ],
+  "layers": [
+    {
+      "id": 1,
+      "name": "ground",
+      "type": "tilelayer",
+      "visible": true,
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "width": 20,
+      "height": 12,
+      "data": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        33,
+        37,
+        37,
+        37,
+        37,
+        37,
+        37,
+        37,
+        37,
+        37,
+        37,
+        29,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        35,
+        40,
+        32,
+        28,
+        28,
+        28,
+        28,
+        36,
+        40,
+        40,
+        40,
+        30,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        27,
+        28,
+        26,
+        24,
+        24,
+        24,
+        24,
+        27,
+        28,
+        28,
+        28,
+        26,
+        1,
+        1,
+        1,
+        56,
+        56,
+        56,
+        56,
+        56,
+        109,
+        109,
+        56,
+        105,
+        105,
+        105,
+        105,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        17,
+        21,
+        21,
+        13,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        11,
+        20,
+        16,
+        10,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        19,
+        14,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        17,
+        23,
+        22,
+        13,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": 2,
+      "name": "ground_detail",
+      "type": "tilelayer",
+      "visible": true,
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "width": 20,
+      "height": 12,
+      "data": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        6,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 3,
+      "name": "walls",
+      "type": "tilelayer",
+      "visible": true,
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "width": 20,
+      "height": 12,
+      "data": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        0,
+        0,
+        0,
+        129,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        129,
+        0,
+        0,
+        129,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        129,
+        0,
+        0,
+        129,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        129,
+        0,
+        0,
+        129,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        129,
+        0,
+        0,
+        129,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        129,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        129,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        129,
+        0,
+        0,
+        129,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        129,
+        0,
+        0,
+        0,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        0,
+        0,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 4,
+      "name": "props",
+      "type": "objectgroup",
+      "draworder": "topdown",
+      "visible": true,
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "objects": [
+        {
+          "name": "tavern_base",
+          "type": "prop",
+          "x": 176,
+          "y": -80,
+          "width": 192,
+          "height": 208,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-74,\"y\":-86,\"w\":148,\"h\":86,\"shape\":\"rect\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "id": 1
+        },
+        {
+          "name": "tavern_roof",
+          "type": "prop",
+          "x": 176,
+          "y": -80,
+          "width": 192,
+          "height": 208,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":0,\"y\":0,\"w\":0,\"h\":0,\"shape\":\"none\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "layer",
+              "type": "string",
+              "value": "overhead"
+            },
+            {
+              "name": "pairedBase",
+              "type": "string",
+              "value": "tavern_base"
+            }
+          ],
+          "id": 2
+        },
+        {
+          "name": "cottage_base",
+          "type": "prop",
+          "x": 0,
+          "y": 16,
+          "width": 160,
+          "height": 176,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-58,\"y\":-70,\"w\":116,\"h\":70,\"shape\":\"rect\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "id": 3
+        },
+        {
+          "name": "cottage_roof",
+          "type": "prop",
+          "x": 0,
+          "y": 16,
+          "width": 160,
+          "height": 176,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":0,\"y\":0,\"w\":0,\"h\":0,\"shape\":\"none\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "layer",
+              "type": "string",
+              "value": "overhead"
+            },
+            {
+              "name": "pairedBase",
+              "type": "string",
+              "value": "cottage_base"
+            }
+          ],
+          "id": 4
+        },
+        {
+          "name": "cottage_base",
+          "type": "prop",
+          "x": 352,
+          "y": -16,
+          "width": 160,
+          "height": 176,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-58,\"y\":-70,\"w\":116,\"h\":70,\"shape\":\"rect\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "id": 5
+        },
+        {
+          "name": "cottage_roof",
+          "type": "prop",
+          "x": 352,
+          "y": -16,
+          "width": 160,
+          "height": 176,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":0,\"y\":0,\"w\":0,\"h\":0,\"shape\":\"none\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "layer",
+              "type": "string",
+              "value": "overhead"
+            },
+            {
+              "name": "pairedBase",
+              "type": "string",
+              "value": "cottage_base"
+            }
+          ],
+          "id": 6
+        },
+        {
+          "name": "well",
+          "type": "prop",
+          "x": 496,
+          "y": 128,
+          "width": 64,
+          "height": 96,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-14,\"y\":-20,\"w\":28,\"h\":20,\"shape\":\"ellipse\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "id": 7
+        },
+        {
+          "name": "barrel",
+          "type": "prop",
+          "x": 128,
+          "y": 176,
+          "width": 32,
+          "height": 48,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-10,\"y\":-12,\"w\":20,\"h\":12,\"shape\":\"ellipse\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "id": 8
+        },
+        {
+          "name": "crate",
+          "type": "prop",
+          "x": 64,
+          "y": 208,
+          "width": 32,
+          "height": 48,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-10,\"y\":-12,\"w\":20,\"h\":12,\"shape\":\"rect\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "id": 9
+        },
+        {
+          "name": "torch",
+          "type": "prop",
+          "x": 256,
+          "y": 256,
+          "width": 32,
+          "height": 64,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-4,\"y\":-8,\"w\":8,\"h\":8,\"shape\":\"rect\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "id": 10
+        },
+        {
+          "name": "tree_pine_base",
+          "type": "prop",
+          "x": 48,
+          "y": -64,
+          "width": 128,
+          "height": 160,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-10,\"y\":-12,\"w\":20,\"h\":12,\"shape\":\"ellipse\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "id": 11
+        },
+        {
+          "name": "tree_pine_canopy",
+          "type": "prop",
+          "x": 48,
+          "y": -64,
+          "width": 128,
+          "height": 160,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":0,\"y\":0,\"w\":0,\"h\":0,\"shape\":\"none\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "layer",
+              "type": "string",
+              "value": "overhead"
+            },
+            {
+              "name": "pairedBase",
+              "type": "string",
+              "value": "tree_pine_base"
+            }
+          ],
+          "id": 12
+        },
+        {
+          "name": "tree_oak_base",
+          "type": "prop",
+          "x": 456,
+          "y": -16,
+          "width": 144,
+          "height": 144,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-12,\"y\":-12,\"w\":24,\"h\":12,\"shape\":\"ellipse\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "id": 13
+        },
+        {
+          "name": "tree_oak_canopy",
+          "type": "prop",
+          "x": 456,
+          "y": -16,
+          "width": 144,
+          "height": 144,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":0,\"y\":0,\"w\":0,\"h\":0,\"shape\":\"none\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "layer",
+              "type": "string",
+              "value": "overhead"
+            },
+            {
+              "name": "pairedBase",
+              "type": "string",
+              "value": "tree_oak_base"
+            }
+          ],
+          "id": 14
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "collision",
+      "type": "tilelayer",
+      "visible": true,
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "width": 20,
+      "height": 12,
+      "data": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        0,
+        0,
+        0,
+        129,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        129,
+        0,
+        0,
+        129,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        129,
+        0,
+        0,
+        129,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        129,
+        0,
+        0,
+        129,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        129,
+        0,
+        0,
+        129,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        129,
+        0,
+        113,
+        113,
+        113,
+        113,
+        113,
+        0,
+        0,
+        113,
+        0,
+        0,
+        0,
+        0,
+        113,
+        113,
+        113,
+        113,
+        113,
+        113,
+        113,
+        113,
+        0,
+        129,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        129,
+        0,
+        0,
+        129,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        129,
+        0,
+        0,
+        0,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        0,
+        0,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        129,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 6,
+      "name": "zones",
+      "type": "objectgroup",
+      "draworder": "topdown",
+      "visible": true,
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "objects": [
+        {
+          "name": "spawn_default",
+          "type": "spawn",
+          "x": 320,
+          "y": 192,
+          "width": 32,
+          "height": 32,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "spawn"
+            }
+          ],
+          "id": 15
+        },
+        {
+          "name": "spawn_south",
+          "type": "spawn",
+          "x": 288,
+          "y": 288,
+          "width": 32,
+          "height": 32,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "spawn"
+            }
+          ],
+          "id": 16
+        },
+        {
+          "name": "exit_south",
+          "type": "exit",
+          "x": 288,
+          "y": 320,
+          "width": 64,
+          "height": 32,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "exit"
+            },
+            {
+              "name": "targetMap",
+              "type": "string",
+              "value": "wilderness.tmj"
+            },
+            {
+              "name": "targetSpawn",
+              "type": "string",
+              "value": "spawn_north"
+            }
+          ],
+          "id": 17
+        },
+        {
+          "name": "door_tavern",
+          "type": "door",
+          "x": 256,
+          "y": 128,
+          "width": 64,
+          "height": 32,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "door"
+            },
+            {
+              "name": "prompt",
+              "type": "string",
+              "value": "Press E to enter The Flagon"
+            }
+          ],
+          "id": 18
+        },
+        {
+          "name": "The Flagon",
+          "type": "landmark",
+          "x": 224,
+          "y": 160,
+          "width": 32,
+          "height": 32,
+          "properties": [
+            {
+              "name": "canonName",
+              "type": "string",
+              "value": "The Flagon"
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "value": "The Flagon notice board"
+            }
+          ],
+          "id": 19
+        },
+        {
+          "name": "Brackenford",
+          "type": "landmark",
+          "x": 320,
+          "y": 128,
+          "width": 32,
+          "height": 32,
+          "properties": [
+            {
+              "name": "canonName",
+              "type": "string",
+              "value": "Brackenford"
+            },
+            {
+              "name": "placeName",
+              "type": "string",
+              "value": "Brackenford"
+            }
+          ],
+          "id": 20
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "overhead",
+      "type": "tilelayer",
+      "visible": true,
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "width": 20,
+      "height": 12,
+      "data": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}
