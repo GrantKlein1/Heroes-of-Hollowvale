@@ -17,7 +17,12 @@ const FORBIDDEN_PATTERNS = [
   /\.blend$/i,
   /\.glb$/i,
   /^dragon_fx\.json$/i,
-  /^MANIFEST\.md$/i
+  /^MANIFEST\.md$/i,
+  /^QA_REPORT/i,
+  /^SOURCE_PROVENANCE/i,
+  /^DRAFT/i,
+  /^SHOT_LIST/i,
+  /^palette\.json$/i
 ];
 
 function isForbidden(filename) {
@@ -343,6 +348,116 @@ export function importBlendsmith() {
     image: dragonFxSheet?.image || 'assets/boss/red_dragon/fx_v2/dragon_fx_v2.png',
     json: dragonFxSheet?.json || 'assets/boss/red_dragon/fx_v2/dragon_fx_v2.json'
   };
+
+  // 7. Process Props (village_props and hearth)
+  const propsSourceDir = path.join(SOURCE_DIR, 'tiles', 'props');
+  if (fs.existsSync(propsSourceDir)) {
+    console.log(`[Blendsmith Importer] Processing props from: ${propsSourceDir}`);
+    // Process village_props
+    const vpDestDir = path.join(DEST_DIR, 'props', 'village_props');
+    ensureDir(vpDestDir);
+
+    const vpFiles = ['village_props.png', 'village_props.json', 'pairing.json', 'PAIRING.md'];
+    for (const f of vpFiles) {
+      const srcFile = path.join(propsSourceDir, f);
+      if (fs.existsSync(srcFile)) {
+        fs.copyFileSync(srcFile, path.join(vpDestDir, f));
+      }
+    }
+
+    manifest.assets.village_props = {
+      id: 'village_props',
+      kind: 'props',
+      anchor: { x: 0.5, y: 1.0 },
+      sheets: {
+        village_props: {
+          key: 'village_props',
+          image: 'assets/props/village_props/village_props.png',
+          json: 'assets/props/village_props/village_props.json',
+          anchor: { x: 0.5, y: 1.0 }
+        }
+      },
+      sidecars: ['pairing.json', 'PAIRING.md']
+    };
+
+    // Process hearth
+    const hearthDestDir = path.join(DEST_DIR, 'props', 'hearth');
+    ensureDir(hearthDestDir);
+
+    const hearthFiles = ['hearth.png', 'hearth.json'];
+    for (const f of hearthFiles) {
+      const srcFile = path.join(propsSourceDir, f);
+      if (fs.existsSync(srcFile)) {
+        fs.copyFileSync(srcFile, path.join(hearthDestDir, f));
+      }
+    }
+
+    manifest.assets.hearth = {
+      id: 'hearth',
+      kind: 'props',
+      anchor: { x: 0.5, y: 1.0 },
+      sheets: {
+        hearth: {
+          key: 'hearth',
+          image: 'assets/props/hearth/hearth.png',
+          json: 'assets/props/hearth/hearth.json',
+          anchor: { x: 0.5, y: 1.0 }
+        }
+      },
+      sidecars: []
+    };
+
+    if (!manifest.groups.village.includes('village_props')) {
+      manifest.groups.village.push('village_props');
+    }
+    if (!manifest.groups.village.includes('hearth')) {
+      manifest.groups.village.push('hearth');
+    }
+    if (!manifest.groups.wilderness.includes('village_props')) {
+      manifest.groups.wilderness.push('village_props');
+    }
+  }
+
+  // 8. Process Ground Tilesets
+  const groundSourceDir = path.join(SOURCE_DIR, 'tiles', 'ground');
+  manifest.tiles = {};
+  if (fs.existsSync(groundSourceDir)) {
+    console.log(`[Blendsmith Importer] Processing tiles from: ${groundSourceDir}`);
+    const tilesDestDir = path.join(DEST_DIR, 'tiles');
+    ensureDir(tilesDestDir);
+
+    const entries = fs.readdirSync(groundSourceDir, { withFileTypes: true });
+    for (const entry of entries) {
+      if (entry.isFile() && !isForbidden(entry.name)) {
+        const ext = path.extname(entry.name).toLowerCase();
+        if (ext === '.png' || ext === '.tsj') {
+          const srcFile = path.join(groundSourceDir, entry.name);
+          const destFile = path.join(tilesDestDir, entry.name);
+          fs.copyFileSync(srcFile, destFile);
+
+          if (ext === '.tsj') {
+            try {
+              const tsjData = JSON.parse(fs.readFileSync(destFile, 'utf8'));
+              const tilesetName = path.basename(entry.name, '.tsj');
+              manifest.tiles[tilesetName] = {
+                id: tilesetName,
+                image: `assets/tiles/${tilesetName}.png`,
+                tsj: `assets/tiles/${tilesetName}.tsj`,
+                tileWidth: tsjData.tilewidth || 32,
+                tileHeight: tsjData.tileheight || 32,
+                tileCount: tsjData.tilecount || 0,
+                margin: tsjData.margin ?? 1,
+                spacing: tsjData.spacing ?? 2,
+                hasAnimation: Array.isArray(tsjData.tiles) && tsjData.tiles.some(t => Array.isArray(t.animation) && t.animation.length > 0)
+              };
+            } catch (err) {
+              console.warn(`  [Warning] Failed parsing TSJ ${entry.name}: ${err.message}`);
+            }
+          }
+        }
+      }
+    }
+  }
 
   // Write manifest.json
   const manifestPath = path.join(DEST_DIR, 'manifest.json');

@@ -1,0 +1,134 @@
+{
+  "columns": 4,
+  "image": "interior_tavern_floor.png",
+  "imageheight": 34,
+  "imagewidth": 136,
+  "margin": 1,
+  "spacing": 2,
+  "name": "interior_tavern_floor",
+  "tilecount": 4,
+  "tiledversion": "1.10.2",
+  "tileheight": 32,
+  "tilewidth": 32,
+  "type": "tileset",
+  "version": "1.10",
+  "tiles": [
+    {
+      "id": 0,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 0
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 1
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    }
+  ],
+  "properties": [
+    {
+      "name": "hollowvale",
+      "type": "string",
+      "value": "as2-v4-local"
+    },
+    {
+      "name": "draft",
+      "type": "bool",
+      "value": true
+    },
+    {
+      "name": "groundCamera",
+      "type": "string",
+      "value": "12deg_from_vertical"
+    },
+    {
+      "name": "propCamera",
+      "type": "string",
+      "value": "12deg_from_horizontal"
+    },
+    {
+      "name": "pxPerUnit",
+      "type": "float",
+      "value": 36.923
+    },
+    {
+      "name": "extrude",
+      "type": "int",
+      "value": 1
+    },
+    {
+      "name": "cameraNote",
+      "type": "string",
+      "value": "Local design: ground-only 12\u00b0 from vertical; props/characters 12\u00b0 from horizontal. Shared palette/light. Selected for local generation via coordinating Grok Bot; game integration is NOT approved."
+    }
+  ]
+}

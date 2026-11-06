@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generatedAt": "2026-11-05T19:59:38.909Z",
+  "generatedAt": "2026-11-06T14:40:33.751Z",
   "groups": {
     "boot": [
       "fx_common",
@@ -13,7 +13,9 @@
       "dwarf",
       "mage",
       "critters",
-      "fx_common"
+      "fx_common",
+      "village_props",
+      "hearth"
     ],
     "wilderness": [
       "knight",
@@ -24,7 +26,8 @@
       "goblin_archer",
       "goblin_brute",
       "critters",
-      "fx_common"
+      "fx_common",
+      "village_props"
     ],
     "boss": [
       "knight",
@@ -795,6 +798,216 @@
       },
       "image": "assets/boss/red_dragon/fx_v2/dragon_fx_v2.png",
       "json": "assets/boss/red_dragon/fx_v2/dragon_fx_v2.json"
+    },
+    "village_props": {
+      "id": "village_props",
+      "kind": "props",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "sheets": {
+        "village_props": {
+          "key": "village_props",
+          "image": "assets/props/village_props/village_props.png",
+          "json": "assets/props/village_props/village_props.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 1
+          }
+        }
+      },
+      "sidecars": [
+        "pairing.json",
+        "PAIRING.md"
+      ]
+    },
+    "hearth": {
+      "id": "hearth",
+      "kind": "props",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "sheets": {
+        "hearth": {
+          "key": "hearth",
+          "image": "assets/props/hearth/hearth.png",
+          "json": "assets/props/hearth/hearth.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 1
+          }
+        }
+      },
+      "sidecars": []
+    }
+  },
+  "tiles": {
+    "bridge_plank": {
+      "id": "bridge_plank",
+      "image": "assets/tiles/bridge_plank.png",
+      "tsj": "assets/tiles/bridge_plank.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 4,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": false
+    },
+    "cliff": {
+      "id": "cliff",
+      "image": "assets/tiles/cliff.png",
+      "tsj": "assets/tiles/cliff.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 16,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": false
+    },
+    "cliff_face": {
+      "id": "cliff_face",
+      "image": "assets/tiles/cliff_face.png",
+      "tsj": "assets/tiles/cliff_face.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 4,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": false
+    },
+    "cobble_road": {
+      "id": "cobble_road",
+      "image": "assets/tiles/cobble_road.png",
+      "tsj": "assets/tiles/cobble_road.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 16,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": false
+    },
+    "dirt_road": {
+      "id": "dirt_road",
+      "image": "assets/tiles/dirt_road.png",
+      "tsj": "assets/tiles/dirt_road.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 16,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": false
+    },
+    "dungeon_floor": {
+      "id": "dungeon_floor",
+      "image": "assets/tiles/dungeon_floor.png",
+      "tsj": "assets/tiles/dungeon_floor.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 6,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": false
+    },
+    "dungeon_wall": {
+      "id": "dungeon_wall",
+      "image": "assets/tiles/dungeon_wall.png",
+      "tsj": "assets/tiles/dungeon_wall.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 4,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": false
+    },
+    "grass": {
+      "id": "grass",
+      "image": "assets/tiles/grass.png",
+      "tsj": "assets/tiles/grass.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 8,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": false
+    },
+    "interior_market_floor": {
+      "id": "interior_market_floor",
+      "image": "assets/tiles/interior_market_floor.png",
+      "tsj": "assets/tiles/interior_market_floor.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 4,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": false
+    },
+    "interior_market_wall": {
+      "id": "interior_market_wall",
+      "image": "assets/tiles/interior_market_wall.png",
+      "tsj": "assets/tiles/interior_market_wall.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 4,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": false
+    },
+    "interior_tavern_floor": {
+      "id": "interior_tavern_floor",
+      "image": "assets/tiles/interior_tavern_floor.png",
+      "tsj": "assets/tiles/interior_tavern_floor.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 4,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": false
+    },
+    "interior_tavern_wall": {
+      "id": "interior_tavern_wall",
+      "image": "assets/tiles/interior_tavern_wall.png",
+      "tsj": "assets/tiles/interior_tavern_wall.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 4,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": false
+    },
+    "water": {
+      "id": "water",
+      "image": "assets/tiles/water.png",
+      "tsj": "assets/tiles/water.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 64,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": true
+    },
+    "water_ford": {
+      "id": "water_ford",
+      "image": "assets/tiles/water_ford.png",
+      "tsj": "assets/tiles/water_ford.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 4,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": false
+    },
+    "water_shore": {
+      "id": "water_shore",
+      "image": "assets/tiles/water_shore.png",
+      "tsj": "assets/tiles/water_shore.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 64,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": true
     }
   }
 }

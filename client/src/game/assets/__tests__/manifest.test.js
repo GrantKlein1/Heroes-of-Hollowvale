@@ -28,7 +28,8 @@ const {
   validateManifest,
   extractAnchor,
   isFxAtlas,
-  isAmbientCritter
+  isAmbientCritter,
+  isPropAtlas
 } = toolsModule;
 
 describe('Manifest & Atlas Contract Validation (Package 0-3)', () => {
@@ -333,5 +334,191 @@ describe('Broken Fixture Testing (Asset QA Failure Detection)', () => {
     });
     expect(result.valid).toBe(false);
     expect(result.errors.some(e => e.includes('is missing directions: up'))).toBe(true);
+  });
+
+  it('strictly rejects character sheets missing any cardinal facing without weakening checks', () => {
+    for (const dir of ['down', 'left', 'right', 'up']) {
+      const fixture = createValidBaseFixture();
+      delete fixture.frames[`hero_walk_${dir}_0`];
+
+      const result = validateAtlas(fixture, {
+        kind: 'characters',
+        sheetKey: `hero_missing_${dir}`
+      });
+      expect(result.valid).toBe(false);
+      expect(result.errors.some(e => e.includes(`is missing directions: ${dir}`))).toBe(true);
+    }
+  });
+
+  it('strictly rejects character sheets with non-directional frame names', () => {
+    const fixture = createValidBaseFixture();
+    fixture.frames['hero_slash'] = {
+      frame: { x: 0, y: 0, w: 64, h: 64 },
+      pivot: { x: 0.5, y: 0.9 }
+    };
+
+    const result = validateAtlas(fixture, {
+      kind: 'characters',
+      sheetKey: 'hero_bad_slash'
+    });
+    expect(result.valid).toBe(false);
+    expect(result.errors.some(e => e.includes("Frame 'hero_slash' does not match required naming convention"))).toBe(true);
+  });
+});
+
+describe('Prop and Tile Contract Validation (Phase 1 AS-2)', () => {
+  it('registers village_props and hearth in manifest assets under kind props', () => {
+    const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8'));
+
+    expect(manifest.assets.village_props).toBeDefined();
+    expect(manifest.assets.village_props.kind).toBe('props');
+    expect(manifest.assets.village_props.sheets.village_props).toBeDefined();
+    expect(manifest.assets.village_props.sidecars).toContain('pairing.json');
+
+    expect(manifest.assets.hearth).toBeDefined();
+    expect(manifest.assets.hearth.kind).toBe('props');
+    expect(manifest.assets.hearth.sheets.hearth).toBeDefined();
+
+    expect(manifest.groups.village).toContain('village_props');
+    expect(manifest.groups.village).toContain('hearth');
+    expect(manifest.groups.wilderness).toContain('village_props');
+  });
+
+  it('registers all 15 ground tilesets in manifest.tiles with margin 1 and spacing 2', () => {
+    const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8'));
+    expect(manifest.tiles).toBeDefined();
+
+    const expectedTilesets = [
+      'bridge_plank', 'cliff', 'cliff_face', 'cobble_road', 'dirt_road',
+      'dungeon_floor', 'dungeon_wall', 'grass', 'interior_market_floor',
+      'interior_market_wall', 'interior_tavern_floor', 'interior_tavern_wall',
+      'water', 'water_ford', 'water_shore'
+    ];
+
+    expect(Object.keys(manifest.tiles).length).toBe(15);
+    for (const tsName of expectedTilesets) {
+      const entry = manifest.tiles[tsName];
+      expect(entry, `Tileset '${tsName}' must be in manifest.tiles`).toBeDefined();
+      expect(entry.image).toBe(`assets/tiles/${tsName}.png`);
+      expect(entry.tsj).toBe(`assets/tiles/${tsName}.tsj`);
+      expect(entry.tileWidth).toBe(32);
+      expect(entry.tileHeight).toBe(32);
+      expect(entry.margin).toBe(1);
+      expect(entry.spacing).toBe(2);
+
+      const tsjPath = path.join(REPO_ROOT, 'client', 'public', entry.tsj);
+      expect(fs.existsSync(tsjPath), `TSJ file ${tsjPath} must exist on disk`).toBe(true);
+      const imgPath = path.join(REPO_ROOT, 'client', 'public', entry.image);
+      expect(fs.existsSync(imgPath), `Image file ${imgPath} must exist on disk`).toBe(true);
+    }
+
+    // Verify animated water flags
+    expect(manifest.tiles.water.hasAnimation).toBe(true);
+    expect(manifest.tiles.water_shore.hasAnimation).toBe(true);
+    expect(manifest.tiles.grass.hasAnimation).toBe(false);
+  });
+
+  it('validates village_props atlas with 19 frames and valid footprints', () => {
+    const report = validateManifest(MANIFEST_PATH, { repoRoot: REPO_ROOT });
+    const vpResult = report.results['village_props'];
+
+    expect(vpResult).toBeDefined();
+    expect(vpResult.valid).toBe(true);
+    expect(vpResult.errors).toEqual([]);
+  });
+
+  it('validates hearth animated atlas with 6 frames and single down direction', () => {
+    const report = validateManifest(MANIFEST_PATH, { repoRoot: REPO_ROOT });
+    const hearthResult = report.results['hearth'];
+
+    expect(hearthResult).toBeDefined();
+    expect(hearthResult.valid).toBe(true);
+    expect(hearthResult.errors).toEqual([]);
+  });
+
+  it('fails prop validation when a prop has an invalid footprint shape', () => {
+    const brokenPropFixture = {
+      frames: {
+        bad_barrel: {
+          frame: { x: 0, y: 0, w: 32, h: 48 },
+          pivot: { x: 0.5, y: 1.0 }
+        }
+      },
+      meta: {
+        origin: { x: 0.5, y: 1.0 },
+        props: {
+          bad_barrel: {
+            footprint: { x: -8, y: -4, w: 16, h: 8, shape: 'hexagon' }, // invalid shape
+            tall: false,
+            layer: 'props'
+          }
+        }
+      }
+    };
+
+    const result = validateAtlas(brokenPropFixture, {
+      kind: 'props',
+      sheetKey: 'bad_prop_shape'
+    });
+    expect(result.valid).toBe(false);
+    expect(result.errors.some(e => e.includes("invalid footprint shape 'hexagon'"))).toBe(true);
+  });
+
+  it('fails prop validation when an overhead prop has a colliding footprint shape', () => {
+    const brokenOverheadFixture = {
+      frames: {
+        bad_roof: {
+          frame: { x: 0, y: 0, w: 64, h: 64 },
+          pivot: { x: 0.5, y: 1.0 }
+        }
+      },
+      meta: {
+        origin: { x: 0.5, y: 1.0 },
+        props: {
+          bad_roof: {
+            footprint: { x: -32, y: -32, w: 64, h: 32, shape: 'rect' }, // overhead cannot collide!
+            tall: true,
+            layer: 'overhead'
+          }
+        }
+      }
+    };
+
+    const result = validateAtlas(brokenOverheadFixture, {
+      kind: 'props',
+      sheetKey: 'bad_overhead_collider'
+    });
+    expect(result.valid).toBe(false);
+    expect(result.errors.some(e => e.includes('cannot have colliding footprint shape'))).toBe(true);
+  });
+
+  it('fails animated prop validation when frames for declared direction are missing', () => {
+    const brokenHearthFixture = {
+      frames: {
+        hearth_burn_down_0: {
+          frame: { x: 0, y: 0, w: 96, h: 96 },
+          pivot: { x: 0.5, y: 1.0 }
+        }
+        // missing frames 1..5
+      },
+      meta: {
+        origin: { x: 0.5, y: 1.0 },
+        footprint: { x: -34, y: -30, w: 68, h: 30, shape: 'rect' },
+        anims: {
+          burn: {
+            frames: 6,
+            directions: ['down'],
+            frameNames: 'hearth_burn_down_<i>'
+          }
+        }
+      }
+    };
+
+    const result = validateAtlas(brokenHearthFixture, {
+      kind: 'props',
+      sheetKey: 'hearth_missing_frames'
+    });
+    expect(result.valid).toBe(false);
+    expect(result.errors.some(e => e.includes("missing expected frame 'hearth_burn_down_1'"))).toBe(true);
   });
 });

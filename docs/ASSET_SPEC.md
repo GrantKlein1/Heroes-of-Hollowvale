@@ -219,9 +219,15 @@ Copied verbatim from `art-source/blendsmith/goblin_archer/goblin_archer.json`:
 This section governs the upcoming 32 px tile and prop asset set (`AS-2` and Lane F / `MM-1`).
 
 ### A. Tile Resolution & Camera Alignment
-- **Base Grid Size:** $32 \times 32$ pixels per tile.
-- **Orthographic Rendering:** Matches the characters' $12^\circ$ camera angle and directional key lighting.
-- **Transparency:** All tiles and props are rendered against fully transparent alpha backgrounds.
+- **Base Grid Size:** $32 \times 32$ pixels per tile with 1px margin and 2px spacing in TSJ tilesets.
+- **Dual-Angle Orthographic Rendering:**
+  - **Ground Tiles:** Rendered at **$12^\circ$ from vertical** (overhead perspective tilted slightly forward, providing a clean ground plane view).
+  - **Characters & Props:** Rendered at **$12^\circ$ above horizontal** (front-facing elevation perspective standing upright). Note: this is documented explicitly as $12^\circ$ above horizontal, not as a loose "3/4" angle.
+  - **Shared Lighting & Palette:** Both angles share the exact same directional key/fill light rotation, fixed 36.9230769 PPU, and unified color palette (`palette.json`).
+- **Transparency & Extrusion:** All tiles and props are rendered against fully transparent alpha backgrounds. Ground tiles feature complete 1px edge and corner extrusion to prevent GPU edge-bleeding seams.
+- **Runtime Asset Directories:**
+  - Runtime tilesets and TSJ definitions reside in `client/public/assets/tiles/`.
+  - Runtime prop atlases and sidecars reside in `client/public/assets/props/`.
 
 ### B. Wang / Edge Set Autotiling Standard
 To allow seamless terrain transitions in Tiled (`.tmj` / `.tsj`) and Phaser, terrain sheets provide a standard 16-tile Wang/blob edge set (corners, cardinal edges, inner corners, full center) named:

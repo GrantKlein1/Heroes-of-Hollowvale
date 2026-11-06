@@ -1,0 +1,862 @@
+{
+  "frames": {
+    "barrel": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "bush_a": {
+      "frame": {
+        "x": 34,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "bush_b": {
+      "frame": {
+        "x": 84,
+        "y": 0,
+        "w": 40,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 40,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 40,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "cottage_base": {
+      "frame": {
+        "x": 126,
+        "y": 0,
+        "w": 160,
+        "h": 176
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 176
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 176
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "cottage_roof": {
+      "frame": {
+        "x": 288,
+        "y": 0,
+        "w": 160,
+        "h": 176
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 176
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 176
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "crate": {
+      "frame": {
+        "x": 450,
+        "y": 0,
+        "w": 32,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "fence_corner": {
+      "frame": {
+        "x": 484,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "fence_h": {
+      "frame": {
+        "x": 534,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "fence_v": {
+      "frame": {
+        "x": 584,
+        "y": 0,
+        "w": 32,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "rock_a": {
+      "frame": {
+        "x": 618,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "rock_b": {
+      "frame": {
+        "x": 668,
+        "y": 0,
+        "w": 40,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 40,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 40,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_base": {
+      "frame": {
+        "x": 710,
+        "y": 0,
+        "w": 192,
+        "h": 208
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 192,
+        "h": 208
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 208
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_roof": {
+      "frame": {
+        "x": 0,
+        "y": 210,
+        "w": 192,
+        "h": 208
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 192,
+        "h": 208
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 208
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "torch": {
+      "frame": {
+        "x": 194,
+        "y": 210,
+        "w": 32,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tree_oak_base": {
+      "frame": {
+        "x": 228,
+        "y": 210,
+        "w": 144,
+        "h": 144
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 144,
+        "h": 144
+      },
+      "sourceSize": {
+        "w": 144,
+        "h": 144
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tree_oak_canopy": {
+      "frame": {
+        "x": 374,
+        "y": 210,
+        "w": 144,
+        "h": 144
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 144,
+        "h": 144
+      },
+      "sourceSize": {
+        "w": 144,
+        "h": 144
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tree_pine_base": {
+      "frame": {
+        "x": 520,
+        "y": 210,
+        "w": 128,
+        "h": 160
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 160
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tree_pine_canopy": {
+      "frame": {
+        "x": 650,
+        "y": 210,
+        "w": 128,
+        "h": 160
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 160
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "well": {
+      "frame": {
+        "x": 780,
+        "y": 210,
+        "w": 64,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 96
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 96
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    }
+  },
+  "meta": {
+    "app": "Blendsmith AS-2 v3 local review",
+    "version": "4.0-review",
+    "image": "village_props.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 902,
+      "h": 418
+    },
+    "scale": "1",
+    "pxPerUnit": 36.923,
+    "origin": {
+      "x": 0.5,
+      "y": 1.0
+    },
+    "propCameraDegFromHorizontal": 12,
+    "groundCameraDegFromVertical": 12,
+    "draft": true,
+    "note": "Fixed PPU shared world-camera pairs. Base-anchored props. tall:true overhead canvases include empty space below content so same feet as base seats roof on eaves / canopy on trunk. See PAIRING.md. No invented loader keys.",
+    "props": {
+      "barrel": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -10.0,
+          "y": -12,
+          "w": 20,
+          "h": 12,
+          "shape": "ellipse"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "v3 fixed 36.923 PPU, world-derived same-feet projection; geometry-only details",
+        "size": {
+          "w": 32,
+          "h": 48
+        }
+      },
+      "bush_a": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -10.0,
+          "y": -10,
+          "w": 20,
+          "h": 10,
+          "shape": "ellipse"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "v3 fixed 36.923 PPU, world-derived same-feet projection; geometry-only details",
+        "size": {
+          "w": 48,
+          "h": 48
+        }
+      },
+      "bush_b": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -12.0,
+          "y": -12,
+          "w": 24,
+          "h": 12,
+          "shape": "ellipse"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "v3 fixed 36.923 PPU, world-derived same-feet projection; geometry-only details",
+        "size": {
+          "w": 40,
+          "h": 48
+        }
+      },
+      "cottage_base": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -58.0,
+          "y": -70,
+          "w": 116,
+          "h": 70,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "v3 fixed 36.923 PPU, world-derived same-feet projection; geometry-only details",
+        "size": {
+          "w": 160,
+          "h": 176
+        }
+      },
+      "cottage_roof": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": true,
+        "layer": "overhead",
+        "notes": "v3 fixed 36.923 PPU, world-derived same-feet projection; geometry-only details",
+        "size": {
+          "w": 160,
+          "h": 176
+        }
+      },
+      "crate": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -10.0,
+          "y": -12,
+          "w": 20,
+          "h": 12,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "v3 fixed 36.923 PPU, world-derived same-feet projection; geometry-only details",
+        "size": {
+          "w": 32,
+          "h": 48
+        }
+      },
+      "fence_corner": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -7.0,
+          "y": -14,
+          "w": 14,
+          "h": 14,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "v3 fixed 36.923 PPU, world-derived same-feet projection; geometry-only details",
+        "size": {
+          "w": 48,
+          "h": 48
+        }
+      },
+      "fence_h": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -14.0,
+          "y": -8,
+          "w": 28,
+          "h": 8,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "v3 fixed 36.923 PPU, world-derived same-feet projection; geometry-only details",
+        "size": {
+          "w": 48,
+          "h": 48
+        }
+      },
+      "fence_v": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -4.0,
+          "y": -24,
+          "w": 8,
+          "h": 24,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "v3 fixed 36.923 PPU, world-derived same-feet projection; geometry-only details",
+        "size": {
+          "w": 32,
+          "h": 48
+        }
+      },
+      "rock_a": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -12.0,
+          "y": -12,
+          "w": 24,
+          "h": 12,
+          "shape": "ellipse"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "v3 fixed 36.923 PPU, world-derived same-feet projection; geometry-only details",
+        "size": {
+          "w": 48,
+          "h": 48
+        }
+      },
+      "rock_b": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -14.0,
+          "y": -14,
+          "w": 28,
+          "h": 14,
+          "shape": "ellipse"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "v3 fixed 36.923 PPU, world-derived same-feet projection; geometry-only details",
+        "size": {
+          "w": 40,
+          "h": 48
+        }
+      },
+      "tavern_base": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -74.0,
+          "y": -86,
+          "w": 148,
+          "h": 86,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "v3 fixed 36.923 PPU, world-derived same-feet projection; geometry-only details",
+        "size": {
+          "w": 192,
+          "h": 208
+        }
+      },
+      "tavern_roof": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": true,
+        "layer": "overhead",
+        "notes": "v3 fixed 36.923 PPU, world-derived same-feet projection; geometry-only details",
+        "size": {
+          "w": 192,
+          "h": 208
+        }
+      },
+      "torch": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -4.0,
+          "y": -8,
+          "w": 8,
+          "h": 8,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "v3 fixed 36.923 PPU, world-derived same-feet projection; geometry-only details",
+        "size": {
+          "w": 32,
+          "h": 64
+        }
+      },
+      "tree_oak_base": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -12.0,
+          "y": -12,
+          "w": 24,
+          "h": 12,
+          "shape": "ellipse"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "v3 fixed 36.923 PPU, world-derived same-feet projection; geometry-only details",
+        "size": {
+          "w": 144,
+          "h": 144
+        }
+      },
+      "tree_oak_canopy": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": true,
+        "layer": "overhead",
+        "notes": "v3 fixed 36.923 PPU, world-derived same-feet projection; geometry-only details",
+        "size": {
+          "w": 144,
+          "h": 144
+        }
+      },
+      "tree_pine_base": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -10.0,
+          "y": -12,
+          "w": 20,
+          "h": 12,
+          "shape": "ellipse"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "v3 fixed 36.923 PPU, world-derived same-feet projection; geometry-only details",
+        "size": {
+          "w": 128,
+          "h": 160
+        }
+      },
+      "tree_pine_canopy": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": true,
+        "layer": "overhead",
+        "notes": "v3 fixed 36.923 PPU, world-derived same-feet projection; geometry-only details",
+        "size": {
+          "w": 128,
+          "h": 160
+        }
+      },
+      "well": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -14.0,
+          "y": -20,
+          "w": 28,
+          "h": 20,
+          "shape": "ellipse"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "v3 fixed 36.923 PPU, world-derived same-feet projection; geometry-only details",
+        "size": {
+          "w": 64,
+          "h": 96
+        }
+      }
+    }
+  }
+}

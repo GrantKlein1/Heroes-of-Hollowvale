@@ -40,6 +40,23 @@ export function isAmbientCritter(sheetKey = '', jsonPath = '', kind = '', assetI
 }
 
 /**
+ * Determines whether an asset is a prop atlas.
+ */
+export function isPropAtlas(sheetKey = '', jsonPath = '', kind = '', assetId = '') {
+  if (kind === 'props') return true;
+  const lowerKey = sheetKey.toLowerCase();
+  const lowerPath = jsonPath.toLowerCase().replace(/\\/g, '/');
+  const lowerAsset = (assetId || '').toLowerCase();
+  if (lowerKey === 'village_props' || lowerKey === 'hearth' || lowerAsset === 'village_props' || lowerAsset === 'hearth') {
+    return true;
+  }
+  if (lowerPath.includes('/props/')) {
+    return true;
+  }
+  return false;
+}
+
+/**
  * Extracts anchor from meta.origin, meta.anchor, frame pivot/anchor, or manifestAnchor.
  */
 export function extractAnchor(atlasData, options = {}) {
@@ -132,6 +149,7 @@ export function validateAtlas(atlasInput, options = {}) {
   const kind = options.kind || '';
   const isFx = isFxAtlas(sheetKey, jsonPath, kind);
   const isCritter = isAmbientCritter(sheetKey, jsonPath, kind, assetId);
+  const isProp = isPropAtlas(sheetKey, jsonPath, kind, assetId);
   const isMultiPage = options.isMultiPage ?? (assetId === 'red_dragon' || sheetKey.startsWith('red_dragon_p'));
 
   // 1. Frames collection validation
@@ -185,8 +203,8 @@ export function validateAtlas(atlasInput, options = {}) {
   }
 
   // 4. Footprint and hurtbox present in meta for character and enemy atlases
-  // (Excludes pure FX sheets, ambient critters)
-  const requiresCombatBoxes = !isFx && !isCritter && (kind === 'characters' || kind === 'enemies' || kind === 'boss');
+  // (Excludes pure FX sheets, ambient critters, props)
+  const requiresCombatBoxes = !isFx && !isCritter && !isProp && (kind === 'characters' || kind === 'enemies' || kind === 'boss');
   if (requiresCombatBoxes) {
     const fp = meta.footprint;
     if (!fp || typeof fp.x !== 'number' || typeof fp.y !== 'number' || typeof fp.w !== 'number' || typeof fp.h !== 'number') {
@@ -199,97 +217,205 @@ export function validateAtlas(atlasInput, options = {}) {
     }
   }
 
-  // 5. Frame-name regex validation (<asset>_<anim>_<dir>_<i>)
-  // Gather directions per animation to validate 4 facings or L/R for critters
+  // Gather directions and frame indices per animation
   const animDirections = new Map(); // animKey -> Set of directions
   const animFrameIndices = new Map(); // animKey -> Set of numeric frame indices
 
-  for (const [frameName] of frameEntries) {
-    const dirMatch = frameName.match(DIRECTIONAL_FRAME_REGEX);
-    if (dirMatch) {
-      const animKey = dirMatch[1];
-      const dir = dirMatch[2];
-      const indexStr = dirMatch[3];
+  if (isProp) {
+    // Explicit prop validation
+    const propMap = meta.props;
+    const hasPropsMap = propMap && typeof propMap === 'object';
+    const hasAnims = meta.anims && typeof meta.anims === 'object';
 
-      if (!VALID_DIRECTIONS.has(dir)) {
-        errors.push(`Frame '${frameName}' has invalid direction '${dir}' (expected down, left, right, up)`);
-      }
+    if (hasPropsMap) {
+      // 1. Static prop collection (e.g. village_props)
+      const declaredProps = new Set(Object.keys(propMap));
+      const frameNameSet = new Set(frameEntries.map(([name]) => name));
 
-      if (!animDirections.has(animKey)) {
-        animDirections.set(animKey, new Set());
-      }
-      animDirections.get(animKey).add(dir);
-
-      if (indexStr !== undefined) {
-        if (!animFrameIndices.has(animKey)) {
-          animFrameIndices.set(animKey, new Set());
+      // Validate each prop metadata definition
+      for (const [propName, propDef] of Object.entries(propMap)) {
+        if (!propDef || typeof propDef !== 'object') {
+          errors.push(`Prop '${propName}' in atlas '${sheetKey}' has invalid metadata definition`);
+          continue;
         }
-        animFrameIndices.get(animKey).add(Number(indexStr));
-      }
-      continue;
-    }
 
-    // Check if frame looks directional but has an invalid direction (e.g. north, south, east, west, forward, etc.)
-    const candidateDirMatch = frameName.match(/^([a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)*)_([a-zA-Z]+)(?:_([0-9]+))?$/);
-    if (candidateDirMatch && !isFx) {
-      const candDir = candidateDirMatch[2];
-      const COMMON_INVALID_DIRS = new Set(['north', 'south', 'east', 'west', 'forward', 'backward', 'back', 'diagonal']);
-      if (COMMON_INVALID_DIRS.has(candDir.toLowerCase())) {
-        errors.push(`Frame '${frameName}' has invalid direction '${candDir}' (expected down, left, right, up)`);
-        continue;
-      }
-    }
+        // Must exist in frames
+        if (!frameNameSet.has(propName)) {
+          errors.push(`Prop '${propName}' declared in meta.props is missing from atlas frames`);
+        }
 
-    // Check non-directional frames
-    const nonDirMatch = frameName.match(NON_DIRECTIONAL_FRAME_REGEX);
-    if (nonDirMatch) {
-      const animKey = nonDirMatch[1];
-      const index = Number(nonDirMatch[2]);
-      if (!animFrameIndices.has(animKey)) {
-        animFrameIndices.set(animKey, new Set());
-      }
-      animFrameIndices.get(animKey).add(index);
+        // Validate footprint: { x, y, w, h, shape }
+        const fp = propDef.footprint;
+        if (!fp || typeof fp !== 'object') {
+          errors.push(`Prop '${propName}' in atlas '${sheetKey}' is missing required footprint object`);
+        } else {
+          const VALID_SHAPES = new Set(['rect', 'ellipse', 'none']);
+          if (!VALID_SHAPES.has(fp.shape)) {
+            errors.push(`Prop '${propName}' in atlas '${sheetKey}' has invalid footprint shape '${fp.shape}' (expected rect, ellipse, none)`);
+          }
+          if (typeof fp.x !== 'number' || typeof fp.y !== 'number' || typeof fp.w !== 'number' || typeof fp.h !== 'number') {
+            errors.push(`Prop '${propName}' in atlas '${sheetKey}' has invalid numeric footprint coordinates {x, y, w, h}`);
+          }
+        }
 
-      // In non-FX sheets, non-directional frames are permitted if declared in meta.anims (e.g. arrow_impact)
-      let isDeclaredNonDir = isFx;
-      if (!isDeclaredNonDir && meta.anims && typeof meta.anims === 'object') {
-        for (const [aName, aDef] of Object.entries(meta.anims)) {
-          if (aDef.frameNames) {
-            const regexStr = '^' + aDef.frameNames.replace(/<i>/g, '\\d+').replace(/<dir>/g, '(?:down|left|right|up)') + '$';
-            if (new RegExp(regexStr).test(frameName)) {
-              if (!aDef.directions || aDef.directions.length === 0) {
-                isDeclaredNonDir = true;
-                break;
-              }
+        // Validate layer: 'props' or 'overhead'
+        if (propDef.layer !== 'props' && propDef.layer !== 'overhead') {
+          errors.push(`Prop '${propName}' in atlas '${sheetKey}' has invalid layer '${propDef.layer}' (expected props or overhead)`);
+        }
+
+        // Validate tall: boolean
+        if (typeof propDef.tall !== 'boolean') {
+          errors.push(`Prop '${propName}' in atlas '${sheetKey}' must specify boolean 'tall' flag`);
+        }
+
+        // Overheads must have no collision (shape === 'none')
+        if ((propDef.layer === 'overhead' || propDef.tall === true) && fp?.shape && fp.shape !== 'none') {
+          errors.push(`Overhead prop '${propName}' in atlas '${sheetKey}' cannot have colliding footprint shape '${fp.shape}' (must be 'none')`);
+        }
+      }
+
+      // Check all frames exist in meta.props
+      for (const [frameName] of frameEntries) {
+        if (!declaredProps.has(frameName)) {
+          errors.push(`Frame '${frameName}' in prop atlas '${sheetKey}' is not declared in meta.props`);
+        }
+      }
+    } else if (hasAnims) {
+      // 2. Animated prop (e.g. hearth)
+      for (const [animName, animDef] of Object.entries(meta.anims)) {
+        if (!animDef || typeof animDef !== 'object') {
+          errors.push(`Animation '${animName}' in prop atlas '${sheetKey}' has invalid definition`);
+          continue;
+        }
+
+        const declaredDirs = Array.isArray(animDef.directions) ? animDef.directions : ['down'];
+        for (const dir of declaredDirs) {
+          if (!VALID_DIRECTIONS.has(dir)) {
+            errors.push(`Animation '${animName}' has invalid direction '${dir}' (expected down, left, right, up)`);
+          }
+        }
+
+        const template = animDef.frameNames || `${sheetKey}_${animName}_<dir>_<i>`;
+        const frameCount = Number(animDef.frames) || 0;
+        if (frameCount <= 0) {
+          errors.push(`Animation '${animName}' in prop atlas '${sheetKey}' must specify positive integer 'frames'`);
+        }
+
+        const frameNameSet = new Set(frameEntries.map(([name]) => name));
+        for (const dir of declaredDirs) {
+          for (let i = 0; i < frameCount; i++) {
+            const expectedName = template.replace(/<dir>/g, dir).replace(/<i>/g, String(i));
+            if (!frameNameSet.has(expectedName)) {
+              errors.push(`Animation '${animName}' in prop atlas '${sheetKey}' is missing expected frame '${expectedName}'`);
             }
           }
         }
       }
 
-      if (!isDeclaredNonDir) {
-        errors.push(`Frame '${frameName}' in entity atlas '${sheetKey}' does not match required directional naming convention '<asset>_<anim>_<dir>_<i>'`);
+      // Validate prop footprint if present
+      if (meta.footprint) {
+        const fp = meta.footprint;
+        const VALID_SHAPES = new Set(['rect', 'ellipse', 'none']);
+        if (!VALID_SHAPES.has(fp.shape)) {
+          errors.push(`Prop atlas '${sheetKey}' has invalid footprint shape '${fp.shape}'`);
+        }
+        if (typeof fp.x !== 'number' || typeof fp.y !== 'number' || typeof fp.w !== 'number' || typeof fp.h !== 'number') {
+          errors.push(`Prop atlas '${sheetKey}' has invalid numeric footprint coordinates`);
+        }
       }
-      continue;
+    } else {
+      errors.push(`Prop atlas '${sheetKey}' must define either 'meta.props' (for static props) or 'meta.anims' (for animated props)`);
+    }
+  } else {
+    // 5. Frame-name regex validation (<asset>_<anim>_<dir>_<i>)
+    // Validate 4 facings or L/R for critters
+    for (const [frameName] of frameEntries) {
+      const dirMatch = frameName.match(DIRECTIONAL_FRAME_REGEX);
+      if (dirMatch) {
+        const animKey = dirMatch[1];
+        const dir = dirMatch[2];
+        const indexStr = dirMatch[3];
+
+        if (!VALID_DIRECTIONS.has(dir)) {
+          errors.push(`Frame '${frameName}' has invalid direction '${dir}' (expected down, left, right, up)`);
+        }
+
+        if (!animDirections.has(animKey)) {
+          animDirections.set(animKey, new Set());
+        }
+        animDirections.get(animKey).add(dir);
+
+        if (indexStr !== undefined) {
+          if (!animFrameIndices.has(animKey)) {
+            animFrameIndices.set(animKey, new Set());
+          }
+          animFrameIndices.get(animKey).add(Number(indexStr));
+        }
+        continue;
+      }
+
+      // Check if frame looks directional but has an invalid direction (e.g. north, south, east, west, forward, etc.)
+      const candidateDirMatch = frameName.match(/^([a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)*)_([a-zA-Z]+)(?:_([0-9]+))?$/);
+      if (candidateDirMatch && !isFx) {
+        const candDir = candidateDirMatch[2];
+        const COMMON_INVALID_DIRS = new Set(['north', 'south', 'east', 'west', 'forward', 'backward', 'back', 'diagonal']);
+        if (COMMON_INVALID_DIRS.has(candDir.toLowerCase())) {
+          errors.push(`Frame '${frameName}' has invalid direction '${candDir}' (expected down, left, right, up)`);
+          continue;
+        }
+      }
+
+      // Check non-directional frames
+      const nonDirMatch = frameName.match(NON_DIRECTIONAL_FRAME_REGEX);
+      if (nonDirMatch) {
+        const animKey = nonDirMatch[1];
+        const index = Number(nonDirMatch[2]);
+        if (!animFrameIndices.has(animKey)) {
+          animFrameIndices.set(animKey, new Set());
+        }
+        animFrameIndices.get(animKey).add(index);
+
+        // In non-FX sheets, non-directional frames are permitted if declared in meta.anims (e.g. arrow_impact)
+        let isDeclaredNonDir = isFx;
+        if (!isDeclaredNonDir && meta.anims && typeof meta.anims === 'object') {
+          for (const [aName, aDef] of Object.entries(meta.anims)) {
+            if (aDef.frameNames) {
+              const regexStr = '^' + aDef.frameNames.replace(/<i>/g, '\\d+').replace(/<dir>/g, '(?:down|left|right|up)') + '$';
+              if (new RegExp(regexStr).test(frameName)) {
+                if (!aDef.directions || aDef.directions.length === 0) {
+                  isDeclaredNonDir = true;
+                  break;
+                }
+              }
+            }
+          }
+        }
+
+        if (!isDeclaredNonDir) {
+          errors.push(`Frame '${frameName}' in entity atlas '${sheetKey}' does not match required directional naming convention '<asset>_<anim>_<dir>_<i>'`);
+        }
+        continue;
+      }
+
+      // If frame matches neither pattern, it is invalid
+      errors.push(`Frame '${frameName}' does not match required naming convention '<asset>_<anim>_<dir>_<i>'`);
     }
 
-    // If frame matches neither pattern, it is invalid
-    errors.push(`Frame '${frameName}' does not match required naming convention '<asset>_<anim>_<dir>_<i>'`);
-  }
-
-  // 6. Directions check: 4 directions (down, left, right, up) or declared L/R only for critters
-  for (const [animKey, dirs] of animDirections.entries()) {
-    if (isCritter) {
-      const hasOnlyLR = dirs.size <= 2 && [...dirs].every(d => d === 'left' || d === 'right');
-      if (hasOnlyLR) {
-        warnings.push(`Critters animation '${animKey}' renders Left/Right only (Phase 1 specification)`);
-      } else if (dirs.size < 4) {
-        warnings.push(`Critters animation '${animKey}' has partial directions: ${[...dirs].join(', ')}`);
-      }
-    } else if (!isMultiPage && !isFx) {
-      // Regular character/enemy sheets must have all 4 directions for directional animations
-      const missing = ['down', 'left', 'right', 'up'].filter(d => !dirs.has(d));
-      if (missing.length > 0) {
-        errors.push(`Animation '${animKey}' in sheet '${sheetKey}' is missing directions: ${missing.join(', ')} (expected down, left, right, up)`);
+    // 6. Directions check: 4 directions (down, left, right, up) or declared L/R only for critters
+    for (const [animKey, dirs] of animDirections.entries()) {
+      if (isCritter) {
+        const hasOnlyLR = dirs.size <= 2 && [...dirs].every(d => d === 'left' || d === 'right');
+        if (hasOnlyLR) {
+          warnings.push(`Critters animation '${animKey}' renders Left/Right only (Phase 1 specification)`);
+        } else if (dirs.size < 4) {
+          warnings.push(`Critters animation '${animKey}' has partial directions: ${[...dirs].join(', ')}`);
+        }
+      } else if (!isMultiPage && !isFx) {
+        // Regular character/enemy sheets must have all 4 directions for directional animations
+        const missing = ['down', 'left', 'right', 'up'].filter(d => !dirs.has(d));
+        if (missing.length > 0) {
+          errors.push(`Animation '${animKey}' in sheet '${sheetKey}' is missing directions: ${missing.join(', ')} (expected down, left, right, up)`);
+        }
       }
     }
   }
@@ -327,7 +453,7 @@ export function validateAtlas(atlasInput, options = {}) {
     }
   }
 
-  if (meta.anims && typeof meta.anims === 'object') {
+  if (!isProp && meta.anims && typeof meta.anims === 'object') {
     for (const [animName, animDef] of Object.entries(meta.anims)) {
       let maxIndex = -1;
       for (const [key, indices] of animFrameIndices.entries()) {
@@ -343,7 +469,7 @@ export function validateAtlas(atlasInput, options = {}) {
   }
 
   // Also check attacks sidecar if merged into meta.attacks
-  if (meta.attacks?.anims && typeof meta.attacks.anims === 'object') {
+  if (!isProp && meta.attacks?.anims && typeof meta.attacks.anims === 'object') {
     for (const [animName, animDef] of Object.entries(meta.attacks.anims)) {
       let maxIndex = -1;
       for (const [key, indices] of animFrameIndices.entries()) {
