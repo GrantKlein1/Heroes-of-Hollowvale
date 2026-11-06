@@ -459,8 +459,21 @@ export function importBlendsmith() {
     }
   }
 
-  // Write manifest.json
+  // Write manifest.json (preserving generatedAt if contents are identical to ensure repeatable idempotency)
   const manifestPath = path.join(DEST_DIR, 'manifest.json');
+  if (fs.existsSync(manifestPath)) {
+    try {
+      const existing = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+      const existingClone = { ...existing, generatedAt: null };
+      const currentClone = { ...manifest, generatedAt: null };
+      if (JSON.stringify(existingClone) === JSON.stringify(currentClone)) {
+        manifest.generatedAt = existing.generatedAt;
+      }
+    } catch {
+      // ignore parse errors and overwrite
+    }
+  }
+
   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf8');
   console.log(`[Blendsmith Importer] Manifest written: ${manifestPath}`);
 

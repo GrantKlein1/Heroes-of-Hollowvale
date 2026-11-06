@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import path from 'node:path';
 import fs from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -520,5 +521,21 @@ describe('Prop and Tile Contract Validation (Phase 1 AS-2)', () => {
     });
     expect(result.valid).toBe(false);
     expect(result.errors.some(e => e.includes("missing expected frame 'hearth_burn_down_1'"))).toBe(true);
+  });
+
+  it('verifies that running the importer consecutively produces byte-identical outputs', () => {
+    const importScriptPath = path.resolve(REPO_ROOT, 'tools', 'assets', 'import_blendsmith.mjs');
+    const manifestBefore = fs.readFileSync(MANIFEST_PATH, 'utf8');
+
+    // Run 1
+    execFileSync(process.execPath, [importScriptPath], { cwd: REPO_ROOT, encoding: 'utf8' });
+    const manifestAfterRun1 = fs.readFileSync(MANIFEST_PATH, 'utf8');
+
+    // Run 2
+    execFileSync(process.execPath, [importScriptPath], { cwd: REPO_ROOT, encoding: 'utf8' });
+    const manifestAfterRun2 = fs.readFileSync(MANIFEST_PATH, 'utf8');
+
+    expect(manifestAfterRun1).toBe(manifestBefore);
+    expect(manifestAfterRun2).toBe(manifestAfterRun1);
   });
 });
