@@ -142,6 +142,40 @@ function createMockScene() {
       },
       frameDef: { w: 64, h: 96, pivot: { x: 0.5, y: 0.927 } },
     },
+    knight_attack: {
+      meta: {
+        origin: { x: 0.5, y: 0.9271 },
+        footprint: { x: -12, y: -4, w: 23, h: 7, shape: 'ellipse' },
+        anims: {
+          attack: {
+            hitFrames: [3],
+            hitbox: {
+              '3': {
+                down: { x: -68, y: -68, w: 56, h: 40 },
+                right: { x: 12, y: -68, w: 56, h: 40 },
+              },
+            },
+          },
+        },
+      },
+      frameDef: { w: 64, h: 96, pivot: { x: 0.5, y: 0.9271 } },
+    },
+    thief_attack: {
+      meta: {
+        origin: { x: 0.5, y: 0.9271 },
+        footprint: { x: -12, y: -4, w: 24, h: 7, shape: 'ellipse' },
+        anims: {
+          attack: {
+            hitFrames: [1, 3],
+            hitbox: {
+              '1': { down: { x: -42, y: -29, w: 40, h: 37 } },
+              '3': { down: { x: 3, y: -29, w: 40, h: 37 } },
+            },
+          },
+        },
+      },
+      frameDef: { w: 64, h: 96, pivot: { x: 0.5, y: 0.9271 } },
+    },
   }
 
   return {
@@ -308,6 +342,44 @@ describe('Player Actor — Package 1-3', () => {
 
       expect(player.is(ACTOR_STATES.IDLE)).toBe(true)
       expect(player.anims.play).toHaveBeenCalledWith('dwarf_idle_right', expect.anything())
+    })
+  })
+
+  describe('Melee Attack and Hit Timing (Package 1-4)', () => {
+    it('switches to attackSheet and plays directional attack on attack()', () => {
+      const player = new Player(mockScene, 100, 200, 'knight', { facing: 'right' })
+      expect(player.is(ACTOR_STATES.IDLE)).toBe(true)
+
+      const started = player.attack(1000)
+      expect(started).toBe(true)
+      expect(player.is(ACTOR_STATES.ATTACK)).toBe(true)
+      expect(player.getSheetForAnim('attack')).toBe('knight_attack')
+      expect(player.anims.play).toHaveBeenCalledWith('knight_attack_right', false)
+    })
+
+    it('returns to IDLE when attack animation finishes', () => {
+      const player = new Player(mockScene, 100, 200, 'knight')
+      player.attack(1000)
+      expect(player.is(ACTOR_STATES.ATTACK)).toBe(true)
+
+      player.emit('animationcomplete', { key: 'knight_attack_down' })
+      expect(player.is(ACTOR_STATES.IDLE)).toBe(true)
+      expect(player.anims.play).toHaveBeenCalledWith('knight_idle_down', expect.anything())
+    })
+
+    it('enforces 600 ms i-frames on takeDamage()', () => {
+      const player = new Player(mockScene, 100, 200, 'knight')
+      const firstHit = player.takeDamage(10, 1000)
+      expect(firstHit).toBe(true)
+      expect(player.is(ACTOR_STATES.HURT)).toBe(true)
+
+      // Second hit at t = 1300 ms (< 600 ms) is ignored
+      const secondHit = player.takeDamage(10, 1300)
+      expect(secondHit).toBe(false)
+
+      // Hit at t = 1601 ms (> 600 ms) is accepted
+      const thirdHit = player.takeDamage(10, 1601)
+      expect(thirdHit).toBe(true)
     })
   })
 })
