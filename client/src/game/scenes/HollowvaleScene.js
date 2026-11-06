@@ -263,6 +263,9 @@ export default class HollowvaleScene extends Phaser.Scene {
     }
 
     mountHvApi(this)
+    if (typeof window !== 'undefined') {
+      window.__scene = this
+    }
 
     this.enterScene('village', PAINTED_SCENES.village.spawn)
     session.ready = true
@@ -276,6 +279,9 @@ export default class HollowvaleScene extends Phaser.Scene {
   }
 
   _shutdown() {
+    if (typeof window !== 'undefined' && window.__scene === this) {
+      delete window.__scene
+    }
     session.api = null
     session.ready = false
     teardownHvApi()

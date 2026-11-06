@@ -234,4 +234,18 @@ export class Player extends Actor {
       this._refreshCurrentAnim()
     }
   }
+
+  // --- StateMachine Pass-Through API (with setter to prevent Phaser GameObject collision) ---
+
+  get state() {
+    return this.stateMachine ? this.stateMachine.state : this._state
+  }
+
+  set state(val) {
+    if (this.stateMachine) {
+      this.stateMachine.state = val
+    } else {
+      this._state = val
+    }
+  }
 }
