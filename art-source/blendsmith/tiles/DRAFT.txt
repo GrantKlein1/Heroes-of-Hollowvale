@@ -1,0 +1,1 @@
+AS-2 v4 LOCAL art scope complete; DRAFT integration status. NOT integrated/approved. Read README.md and QA_REPORT.md. No PR/push/merge authorization.

@@ -1,0 +1,44 @@
+{
+  "pairs": [
+    {
+      "base": "cottage_base",
+      "name": "cottage_roof",
+      "canvas": {
+        "w": 160,
+        "h": 176
+      },
+      "sameFeet": true,
+      "method": "shared world camera, fixed PPU and pivot; no guessed image padding"
+    },
+    {
+      "base": "tavern_base",
+      "name": "tavern_roof",
+      "canvas": {
+        "w": 192,
+        "h": 208
+      },
+      "sameFeet": true,
+      "method": "shared world camera, fixed PPU and pivot; no guessed image padding"
+    },
+    {
+      "base": "tree_pine_base",
+      "name": "tree_pine_canopy",
+      "canvas": {
+        "w": 128,
+        "h": 160
+      },
+      "sameFeet": true,
+      "method": "shared world camera, fixed PPU and pivot; no guessed image padding"
+    },
+    {
+      "base": "tree_oak_base",
+      "name": "tree_oak_canopy",
+      "canvas": {
+        "w": 144,
+        "h": 144
+      },
+      "sameFeet": true,
+      "method": "shared world camera, fixed PPU and pivot; no guessed image padding"
+    }
+  ]
+}

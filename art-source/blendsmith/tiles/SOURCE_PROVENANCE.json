@@ -1,0 +1,4274 @@
+{
+  "source_audit": {
+    "files": [
+      {
+        "asset": "bridge_plank_0.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 103,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "be8418b48583a44aa52b1e0f43e2c3f408b9a542c658ea5f9cd03b3f49cb29f7"
+      },
+      {
+        "asset": "bridge_plank_1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 103,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "be8418b48583a44aa52b1e0f43e2c3f408b9a542c658ea5f9cd03b3f49cb29f7"
+      },
+      {
+        "asset": "bridge_plank_2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 103,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "be8418b48583a44aa52b1e0f43e2c3f408b9a542c658ea5f9cd03b3f49cb29f7"
+      },
+      {
+        "asset": "bridge_plank_3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 103,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "be8418b48583a44aa52b1e0f43e2c3f408b9a542c658ea5f9cd03b3f49cb29f7"
+      },
+      {
+        "asset": "cliff_face_0.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 62,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "804b96809f6fe16de4e4657b424886b3b0f7f030d51575ab9026ef4ba7c8f269"
+      },
+      {
+        "asset": "cliff_face_1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 62,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "804b96809f6fe16de4e4657b424886b3b0f7f030d51575ab9026ef4ba7c8f269"
+      },
+      {
+        "asset": "cliff_face_2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 62,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "804b96809f6fe16de4e4657b424886b3b0f7f030d51575ab9026ef4ba7c8f269"
+      },
+      {
+        "asset": "cliff_face_3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 64,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "804b96809f6fe16de4e4657b424886b3b0f7f030d51575ab9026ef4ba7c8f269"
+      },
+      {
+        "asset": "cliff_w00.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 181,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cliff_w01.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 207,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cliff_w02.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 202,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cliff_w03.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 227,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cliff_w04.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 201,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cliff_w05.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 217,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cliff_w06.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 255,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cliff_w07.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 209,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cliff_w08.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 212,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cliff_w09.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 249,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cliff_w10.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 229,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cliff_w11.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 200,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cliff_w12.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 218,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cliff_w13.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 198,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cliff_w14.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 212,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cliff_w15.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 188,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cobble_road_w00.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 150,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cobble_road_w01.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 183,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cobble_road_w02.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 180,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cobble_road_w03.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 206,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cobble_road_w04.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 189,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cobble_road_w05.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 216,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cobble_road_w06.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 246,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cobble_road_w07.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 219,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cobble_road_w08.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 199,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cobble_road_w09.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 241,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cobble_road_w10.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 222,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cobble_road_w11.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 213,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cobble_road_w12.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 227,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cobble_road_w13.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 222,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cobble_road_w14.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 231,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cobble_road_w15.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 218,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "rerender_different_RGBA_pixels": 0
+      },
+      {
+        "asset": "dirt_road_w00.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 181,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "dirt_road_w01.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 196,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "dirt_road_w02.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 188,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "dirt_road_w03.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 204,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "dirt_road_w04.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 190,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "dirt_road_w05.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 198,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "dirt_road_w06.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 224,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "dirt_road_w07.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 179,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "dirt_road_w08.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 197,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "dirt_road_w09.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 224,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "dirt_road_w10.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 197,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "dirt_road_w11.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 167,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "dirt_road_w12.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 196,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "dirt_road_w13.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 168,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "dirt_road_w14.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 177,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "dirt_road_w15.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 154,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "rerender_different_RGBA_pixels": 0
+      },
+      {
+        "asset": "dungeon_floor_0.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 31,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "a2787e56c8378937164a619abfe2aa18a04964d06089430f50b8b1a9c05cfb2c"
+      },
+      {
+        "asset": "dungeon_floor_1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 31,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "a2787e56c8378937164a619abfe2aa18a04964d06089430f50b8b1a9c05cfb2c"
+      },
+      {
+        "asset": "dungeon_floor_2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 31,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "a2787e56c8378937164a619abfe2aa18a04964d06089430f50b8b1a9c05cfb2c"
+      },
+      {
+        "asset": "dungeon_floor_3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 31,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "a2787e56c8378937164a619abfe2aa18a04964d06089430f50b8b1a9c05cfb2c"
+      },
+      {
+        "asset": "dungeon_floor_4.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 31,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "a2787e56c8378937164a619abfe2aa18a04964d06089430f50b8b1a9c05cfb2c",
+        "rerender_different_RGBA_pixels": 0
+      },
+      {
+        "asset": "dungeon_floor_5.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 31,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "a2787e56c8378937164a619abfe2aa18a04964d06089430f50b8b1a9c05cfb2c"
+      },
+      {
+        "asset": "dungeon_wall_0.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 34,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "f08e1ff929c201d3e5cfc7dc62288ed77dec271eb0887b1607b81eda79e6d64e"
+      },
+      {
+        "asset": "dungeon_wall_1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 34,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "f08e1ff929c201d3e5cfc7dc62288ed77dec271eb0887b1607b81eda79e6d64e"
+      },
+      {
+        "asset": "dungeon_wall_2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 34,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "f08e1ff929c201d3e5cfc7dc62288ed77dec271eb0887b1607b81eda79e6d64e"
+      },
+      {
+        "asset": "dungeon_wall_3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 34,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "f08e1ff929c201d3e5cfc7dc62288ed77dec271eb0887b1607b81eda79e6d64e"
+      },
+      {
+        "asset": "grass_base0.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 54,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "rerender_different_RGBA_pixels": 0
+      },
+      {
+        "asset": "grass_base1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 54,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "grass_base2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 54,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "grass_flower_r.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 60,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "grass_flower_w.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 60,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "grass_flower_y.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 60,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "grass_tuft0.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 63,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "grass_tuft1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 63,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "interior_market_floor_0.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 77,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "8743e51e712d87766c8febed2fa5920078b3e1b65f98f79f81c2ed763a7acc51"
+      },
+      {
+        "asset": "interior_market_floor_1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 77,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "8743e51e712d87766c8febed2fa5920078b3e1b65f98f79f81c2ed763a7acc51"
+      },
+      {
+        "asset": "interior_market_floor_2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 77,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "8743e51e712d87766c8febed2fa5920078b3e1b65f98f79f81c2ed763a7acc51"
+      },
+      {
+        "asset": "interior_market_floor_3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 77,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "8743e51e712d87766c8febed2fa5920078b3e1b65f98f79f81c2ed763a7acc51"
+      },
+      {
+        "asset": "interior_market_wall_0.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 19,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "5008f3c46e9285ea74b025a78fa8b4a33a4bd98a344bd3b26299909cb89ae185"
+      },
+      {
+        "asset": "interior_market_wall_1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 19,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "5008f3c46e9285ea74b025a78fa8b4a33a4bd98a344bd3b26299909cb89ae185"
+      },
+      {
+        "asset": "interior_market_wall_2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 19,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "5008f3c46e9285ea74b025a78fa8b4a33a4bd98a344bd3b26299909cb89ae185"
+      },
+      {
+        "asset": "interior_market_wall_3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 19,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "5008f3c46e9285ea74b025a78fa8b4a33a4bd98a344bd3b26299909cb89ae185"
+      },
+      {
+        "asset": "interior_tavern_floor_0.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 71,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "be8418b48583a44aa52b1e0f43e2c3f408b9a542c658ea5f9cd03b3f49cb29f7"
+      },
+      {
+        "asset": "interior_tavern_floor_1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 71,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "be8418b48583a44aa52b1e0f43e2c3f408b9a542c658ea5f9cd03b3f49cb29f7"
+      },
+      {
+        "asset": "interior_tavern_floor_2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 71,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "be8418b48583a44aa52b1e0f43e2c3f408b9a542c658ea5f9cd03b3f49cb29f7",
+        "rerender_different_RGBA_pixels": 0
+      },
+      {
+        "asset": "interior_tavern_floor_3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 71,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "be8418b48583a44aa52b1e0f43e2c3f408b9a542c658ea5f9cd03b3f49cb29f7"
+      },
+      {
+        "asset": "interior_tavern_wall_0.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 8,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "ef639d959bdc88d447efac94f250d4fe5dbecbff5c59ee7f7b19414883d4f0e2"
+      },
+      {
+        "asset": "interior_tavern_wall_1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 8,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "ef639d959bdc88d447efac94f250d4fe5dbecbff5c59ee7f7b19414883d4f0e2"
+      },
+      {
+        "asset": "interior_tavern_wall_2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 8,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "ef639d959bdc88d447efac94f250d4fe5dbecbff5c59ee7f7b19414883d4f0e2"
+      },
+      {
+        "asset": "interior_tavern_wall_3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 8,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "ef639d959bdc88d447efac94f250d4fe5dbecbff5c59ee7f7b19414883d4f0e2"
+      },
+      {
+        "asset": "water_ford_0.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 315,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_ford_1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 315,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_ford_2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 315,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_ford_3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 315,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w00.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 194,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w00_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 194,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w00_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 194,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w00_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 194,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w01.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 260,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w01_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 255,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w01_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 251,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w01_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 245,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w02.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 254,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w02_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 248,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w02_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 245,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w02_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 239,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w03.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 323,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w03_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 303,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w03_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 303,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w03_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 303,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w04.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 267,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w04_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 271,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w04_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 277,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w04_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 286,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w05.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 333,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w05_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 333,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w05_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 333,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w05_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 333,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w06.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 373,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w06_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 366,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w06_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 366,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w06_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 371,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w07.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 367,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w07_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 363,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w07_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 357,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w07_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 353,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w08.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 274,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w08_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 280,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w08_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 285,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w08_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 292,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w09.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 359,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w09_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 352,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w09_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 352,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w09_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 356,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w10.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 335,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w10_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 335,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w10_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 335,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w10_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 335,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w11.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 356,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w11_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 350,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w11_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 346,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w11_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 340,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w12.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 345,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w12_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 351,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w12_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 351,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w12_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 361,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w13.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 367,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w13_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 371,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w13_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 374,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w13_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 384,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w14.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 374,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w14_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 379,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w14_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 382,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w14_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 390,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w15.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 394,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w15_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 394,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w15_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 394,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_shore_w15_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 394,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w00.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 181,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w00_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 181,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w00_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 181,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w00_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 181,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w01.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 252,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w01_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 247,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w01_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 243,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w01_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 237,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w02.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 243,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w02_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 237,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w02_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 234,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w02_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 228,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w03.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 325,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w03_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 305,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w03_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 305,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w03_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 305,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w04.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 255,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w04_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 259,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w04_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 265,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w04_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 274,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w05.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 327,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w05_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 327,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w05_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 327,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w05_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 327,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w06.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 362,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w06_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 355,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w06_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 355,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w06_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 360,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w07.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 369,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w07_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 365,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w07_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 359,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w07_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 355,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w08.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 258,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w08_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 264,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w08_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 269,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w08_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 276,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w09.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 357,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w09_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 350,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w09_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 350,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w09_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 354,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w10.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 326,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w10_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 326,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w10_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 326,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w10_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 326,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w11.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 357,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w11_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 351,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w11_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 347,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w11_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 341,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w12.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 332,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w12_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 338,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w12_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 338,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w12_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 348,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w13.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 364,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w13_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 368,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w13_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 371,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w13_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 381,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w14.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 371,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w14_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 376,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w14_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 379,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w14_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 387,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w15.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 394,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "rerender_different_RGBA_pixels": 0
+      },
+      {
+        "asset": "water_w15_phase1.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 394,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "water_w15_phase2.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 394,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "rerender_different_RGBA_pixels": 0
+      },
+      {
+        "asset": "water_w15_phase3.blend",
+        "group": "ground",
+        "opened": true,
+        "mesh_objects": 394,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 11.999993,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "hearth_burn_down_0.blend",
+        "group": "hearth",
+        "opened": true,
+        "mesh_objects": 38,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "rerender_different_RGBA_pixels": 0
+      },
+      {
+        "asset": "hearth_burn_down_1.blend",
+        "group": "hearth",
+        "opened": true,
+        "mesh_objects": 38,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "hearth_burn_down_2.blend",
+        "group": "hearth",
+        "opened": true,
+        "mesh_objects": 38,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "hearth_burn_down_3.blend",
+        "group": "hearth",
+        "opened": true,
+        "mesh_objects": 38,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "rerender_different_RGBA_pixels": 0
+      },
+      {
+        "asset": "hearth_burn_down_4.blend",
+        "group": "hearth",
+        "opened": true,
+        "mesh_objects": 38,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "hearth_burn_down_5.blend",
+        "group": "hearth",
+        "opened": true,
+        "mesh_objects": 38,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "barrel_v3.blend",
+        "group": "retained_prop",
+        "opened": true,
+        "mesh_objects": 3,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "bush_a_v3.blend",
+        "group": "retained_prop",
+        "opened": true,
+        "mesh_objects": 3,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "bush_b_v3.blend",
+        "group": "retained_prop",
+        "opened": true,
+        "mesh_objects": 4,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cottage_base_v3.blend",
+        "group": "retained_prop",
+        "opened": true,
+        "mesh_objects": 40,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "cottage_roof_v3.blend",
+        "group": "retained_prop",
+        "opened": true,
+        "mesh_objects": 120,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "crate_v3.blend",
+        "group": "retained_prop",
+        "opened": true,
+        "mesh_objects": 2,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "fence_corner_v3.blend",
+        "group": "retained_prop",
+        "opened": true,
+        "mesh_objects": 3,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "2f191e49dd7e3d80c2b715167fcd95f159fb543e4151338b2a7d0428caef1ef8"
+      },
+      {
+        "asset": "fence_h_v3.blend",
+        "group": "retained_prop",
+        "opened": true,
+        "mesh_objects": 4,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "fence_v_v3.blend",
+        "group": "retained_prop",
+        "opened": true,
+        "mesh_objects": 4,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "rock_a_v3.blend",
+        "group": "retained_prop",
+        "opened": true,
+        "mesh_objects": 2,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "rock_b_v3.blend",
+        "group": "retained_prop",
+        "opened": true,
+        "mesh_objects": 3,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "tavern_base_v3.blend",
+        "group": "retained_prop",
+        "opened": true,
+        "mesh_objects": 46,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "tavern_roof_v3.blend",
+        "group": "retained_prop",
+        "opened": true,
+        "mesh_objects": 154,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "torch_v3.blend",
+        "group": "retained_prop",
+        "opened": true,
+        "mesh_objects": 4,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "tree_oak_base_v3.blend",
+        "group": "retained_prop",
+        "opened": true,
+        "mesh_objects": 3,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "tree_oak_canopy_v3.blend",
+        "group": "retained_prop",
+        "opened": true,
+        "mesh_objects": 4,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "tree_pine_base_v3.blend",
+        "group": "retained_prop",
+        "opened": true,
+        "mesh_objects": 5,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "tree_pine_canopy_v3.blend",
+        "group": "retained_prop",
+        "opened": true,
+        "mesh_objects": 3,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT"
+      },
+      {
+        "asset": "well_v3.blend",
+        "group": "retained_prop",
+        "opened": true,
+        "mesh_objects": 22,
+        "image_texture_nodes": 0,
+        "camera_x_degrees": 78.000002,
+        "engine": "BLENDER_EEVEE_NEXT",
+        "structural_geometry_sha256": "6ffb55fe1f440203d68d4772a08100517307579d9fe718149d3bf2a03d34e68f"
+      }
+    ],
+    "counts": {
+      "ground": 222,
+      "hearth": 6,
+      "retained_prop": 19
+    },
+    "rerenders": 9,
+    "structural_geometry": {
+      "bridge_plank": [
+        {
+          "asset": "bridge_plank_0",
+          "hash": "be8418b48583a44aa52b1e0f43e2c3f408b9a542c658ea5f9cd03b3f49cb29f7"
+        },
+        {
+          "asset": "bridge_plank_1",
+          "hash": "be8418b48583a44aa52b1e0f43e2c3f408b9a542c658ea5f9cd03b3f49cb29f7"
+        },
+        {
+          "asset": "bridge_plank_2",
+          "hash": "be8418b48583a44aa52b1e0f43e2c3f408b9a542c658ea5f9cd03b3f49cb29f7"
+        },
+        {
+          "asset": "bridge_plank_3",
+          "hash": "be8418b48583a44aa52b1e0f43e2c3f408b9a542c658ea5f9cd03b3f49cb29f7"
+        }
+      ],
+      "cliff_face": [
+        {
+          "asset": "cliff_face_0",
+          "hash": "804b96809f6fe16de4e4657b424886b3b0f7f030d51575ab9026ef4ba7c8f269"
+        },
+        {
+          "asset": "cliff_face_1",
+          "hash": "804b96809f6fe16de4e4657b424886b3b0f7f030d51575ab9026ef4ba7c8f269"
+        },
+        {
+          "asset": "cliff_face_2",
+          "hash": "804b96809f6fe16de4e4657b424886b3b0f7f030d51575ab9026ef4ba7c8f269"
+        },
+        {
+          "asset": "cliff_face_3",
+          "hash": "804b96809f6fe16de4e4657b424886b3b0f7f030d51575ab9026ef4ba7c8f269"
+        }
+      ],
+      "dungeon_floor": [
+        {
+          "asset": "dungeon_floor_0",
+          "hash": "a2787e56c8378937164a619abfe2aa18a04964d06089430f50b8b1a9c05cfb2c"
+        },
+        {
+          "asset": "dungeon_floor_1",
+          "hash": "a2787e56c8378937164a619abfe2aa18a04964d06089430f50b8b1a9c05cfb2c"
+        },
+        {
+          "asset": "dungeon_floor_2",
+          "hash": "a2787e56c8378937164a619abfe2aa18a04964d06089430f50b8b1a9c05cfb2c"
+        },
+        {
+          "asset": "dungeon_floor_3",
+          "hash": "a2787e56c8378937164a619abfe2aa18a04964d06089430f50b8b1a9c05cfb2c"
+        },
+        {
+          "asset": "dungeon_floor_4",
+          "hash": "a2787e56c8378937164a619abfe2aa18a04964d06089430f50b8b1a9c05cfb2c"
+        },
+        {
+          "asset": "dungeon_floor_5",
+          "hash": "a2787e56c8378937164a619abfe2aa18a04964d06089430f50b8b1a9c05cfb2c"
+        }
+      ],
+      "dungeon_wall": [
+        {
+          "asset": "dungeon_wall_0",
+          "hash": "f08e1ff929c201d3e5cfc7dc62288ed77dec271eb0887b1607b81eda79e6d64e"
+        },
+        {
+          "asset": "dungeon_wall_1",
+          "hash": "f08e1ff929c201d3e5cfc7dc62288ed77dec271eb0887b1607b81eda79e6d64e"
+        },
+        {
+          "asset": "dungeon_wall_2",
+          "hash": "f08e1ff929c201d3e5cfc7dc62288ed77dec271eb0887b1607b81eda79e6d64e"
+        },
+        {
+          "asset": "dungeon_wall_3",
+          "hash": "f08e1ff929c201d3e5cfc7dc62288ed77dec271eb0887b1607b81eda79e6d64e"
+        }
+      ],
+      "interior_market_floor": [
+        {
+          "asset": "interior_market_floor_0",
+          "hash": "8743e51e712d87766c8febed2fa5920078b3e1b65f98f79f81c2ed763a7acc51"
+        },
+        {
+          "asset": "interior_market_floor_1",
+          "hash": "8743e51e712d87766c8febed2fa5920078b3e1b65f98f79f81c2ed763a7acc51"
+        },
+        {
+          "asset": "interior_market_floor_2",
+          "hash": "8743e51e712d87766c8febed2fa5920078b3e1b65f98f79f81c2ed763a7acc51"
+        },
+        {
+          "asset": "interior_market_floor_3",
+          "hash": "8743e51e712d87766c8febed2fa5920078b3e1b65f98f79f81c2ed763a7acc51"
+        }
+      ],
+      "interior_market_wall": [
+        {
+          "asset": "interior_market_wall_0",
+          "hash": "5008f3c46e9285ea74b025a78fa8b4a33a4bd98a344bd3b26299909cb89ae185"
+        },
+        {
+          "asset": "interior_market_wall_1",
+          "hash": "5008f3c46e9285ea74b025a78fa8b4a33a4bd98a344bd3b26299909cb89ae185"
+        },
+        {
+          "asset": "interior_market_wall_2",
+          "hash": "5008f3c46e9285ea74b025a78fa8b4a33a4bd98a344bd3b26299909cb89ae185"
+        },
+        {
+          "asset": "interior_market_wall_3",
+          "hash": "5008f3c46e9285ea74b025a78fa8b4a33a4bd98a344bd3b26299909cb89ae185"
+        }
+      ],
+      "interior_tavern_floor": [
+        {
+          "asset": "interior_tavern_floor_0",
+          "hash": "be8418b48583a44aa52b1e0f43e2c3f408b9a542c658ea5f9cd03b3f49cb29f7"
+        },
+        {
+          "asset": "interior_tavern_floor_1",
+          "hash": "be8418b48583a44aa52b1e0f43e2c3f408b9a542c658ea5f9cd03b3f49cb29f7"
+        },
+        {
+          "asset": "interior_tavern_floor_2",
+          "hash": "be8418b48583a44aa52b1e0f43e2c3f408b9a542c658ea5f9cd03b3f49cb29f7"
+        },
+        {
+          "asset": "interior_tavern_floor_3",
+          "hash": "be8418b48583a44aa52b1e0f43e2c3f408b9a542c658ea5f9cd03b3f49cb29f7"
+        }
+      ],
+      "interior_tavern_wall": [
+        {
+          "asset": "interior_tavern_wall_0",
+          "hash": "ef639d959bdc88d447efac94f250d4fe5dbecbff5c59ee7f7b19414883d4f0e2"
+        },
+        {
+          "asset": "interior_tavern_wall_1",
+          "hash": "ef639d959bdc88d447efac94f250d4fe5dbecbff5c59ee7f7b19414883d4f0e2"
+        },
+        {
+          "asset": "interior_tavern_wall_2",
+          "hash": "ef639d959bdc88d447efac94f250d4fe5dbecbff5c59ee7f7b19414883d4f0e2"
+        },
+        {
+          "asset": "interior_tavern_wall_3",
+          "hash": "ef639d959bdc88d447efac94f250d4fe5dbecbff5c59ee7f7b19414883d4f0e2"
+        }
+      ],
+      "fence_corner": [
+        {
+          "asset": "fence_corner_v3",
+          "hash": "2f191e49dd7e3d80c2b715167fcd95f159fb543e4151338b2a7d0428caef1ef8"
+        }
+      ],
+      "well": [
+        {
+          "asset": "well_v3",
+          "hash": "6ffb55fe1f440203d68d4772a08100517307579d9fe718149d3bf2a03d34e68f"
+        }
+      ]
+    },
+    "success": true
+  },
+  "ground_finish": {
+    "method": "Blender mesh rendering, 4x mode/palette/binary-alpha finish, then canonical1px boundary compositing. No v3 raster ground pixels used. All30x30 interiors unchanged.",
+    "render_sample_colors": {
+      "grass": [
+        79,
+        125,
+        44,
+        255
+      ],
+      "dirt": [
+        138,
+        98,
+        57,
+        255
+      ],
+      "cobble": [
+        122,
+        117,
+        111,
+        255
+      ],
+      "water": [
+        47,
+        106,
+        150,
+        255
+      ],
+      "shore": [
+        194,
+        178,
+        128,
+        255
+      ],
+      "cliff": [
+        106,
+        94,
+        78,
+        255
+      ]
+    },
+    "material_sample_sources": {
+      "grass": "grass_base0",
+      "dirt": "dirt_road_w15",
+      "cobble": "cobble_road_w15",
+      "water": "water_w15",
+      "shore": "water_shore_w00",
+      "cliff": "cliff_w15"
+    },
+    "rows": [
+      {
+        "name": "bridge_plank_0",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "1e321444b95ce71d431bd5eac6cb24224c841a580acd31b61b457e6a9d1faad9",
+        "finished_pixel_sha256": "1e321444b95ce71d431bd5eac6cb24224c841a580acd31b61b457e6a9d1faad9"
+      },
+      {
+        "name": "bridge_plank_1",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "19309b4347d71d27018b18add7c2822b9a45973aacad294526df7ea6ca1db403",
+        "finished_pixel_sha256": "19309b4347d71d27018b18add7c2822b9a45973aacad294526df7ea6ca1db403"
+      },
+      {
+        "name": "bridge_plank_2",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "c4ff0c20df515e8440b4af67f1199090615300480f2c165d8368af37479ee01d",
+        "finished_pixel_sha256": "c4ff0c20df515e8440b4af67f1199090615300480f2c165d8368af37479ee01d"
+      },
+      {
+        "name": "bridge_plank_3",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "ce20dad9fe02f325f9e6804750d5c909e0feaf2f6e4ef37b2448119df9a09cc3",
+        "finished_pixel_sha256": "ce20dad9fe02f325f9e6804750d5c909e0feaf2f6e4ef37b2448119df9a09cc3"
+      },
+      {
+        "name": "cliff_face_0",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "3ba7e7f9bca048ffaeb596c6923e2547dcc6e3c0772e24aa3670b7449e1a77ec",
+        "finished_pixel_sha256": "3ba7e7f9bca048ffaeb596c6923e2547dcc6e3c0772e24aa3670b7449e1a77ec"
+      },
+      {
+        "name": "cliff_face_1",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "4603a6d0f61e7455688322b8e90d3f46025a56ece2ef2d292bc4e3a179c71316",
+        "finished_pixel_sha256": "4603a6d0f61e7455688322b8e90d3f46025a56ece2ef2d292bc4e3a179c71316"
+      },
+      {
+        "name": "cliff_face_2",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "df818231d89e598cc5de2bf419306cd0258c5eb571f646b5c642d852dce155ca",
+        "finished_pixel_sha256": "df818231d89e598cc5de2bf419306cd0258c5eb571f646b5c642d852dce155ca"
+      },
+      {
+        "name": "cliff_face_3",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "1a762a20b3d787c90601fc53967d188e959778d40a76faede40719076036d72d",
+        "finished_pixel_sha256": "1a762a20b3d787c90601fc53967d188e959778d40a76faede40719076036d72d"
+      },
+      {
+        "name": "cliff_w00",
+        "changed_boundary_pixels": 3,
+        "boundary_pixel_fraction": 0.0029296875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "633b4e53ebe897ec80eff3f2ecd9fdaa35ec6e299340450f0c565602f0099dc3",
+        "finished_pixel_sha256": "29ee63d354a5e57eab78fe1d416912e2cfb704ab1ca35eee08cf0e3259f7bd31"
+      },
+      {
+        "name": "cliff_w01",
+        "changed_boundary_pixels": 15,
+        "boundary_pixel_fraction": 0.0146484375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "667f3006c395a14f17ce75065836492940e7135b75394f4f9b2d87f2bc2508b3",
+        "finished_pixel_sha256": "8f45aa23445c852e0a488200ad93107e0d709543be933f6441d4295d76f4e9b1"
+      },
+      {
+        "name": "cliff_w02",
+        "changed_boundary_pixels": 11,
+        "boundary_pixel_fraction": 0.0107421875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "952ced4291731312ec73fb4444c48d0053005e93703e6ce2195ecf121d50d331",
+        "finished_pixel_sha256": "6d705a844b77c9fe38d21031a0408e190f85cb587f397a5fcdc36b2808bce179"
+      },
+      {
+        "name": "cliff_w03",
+        "changed_boundary_pixels": 23,
+        "boundary_pixel_fraction": 0.0224609375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "ff68f137532de10acdb40c363d5b5d8c104d24edf8d4bdaee1f1f6610d3ef4d6",
+        "finished_pixel_sha256": "59e69d3d10385de88e091a7d54f5fa978611c83dbba0295506795a2406876b81"
+      },
+      {
+        "name": "cliff_w04",
+        "changed_boundary_pixels": 11,
+        "boundary_pixel_fraction": 0.0107421875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "1844870b0678bdfe65d0fe5d3ebb3b0fc5ed542f90247e859fee3dc7187d57f3",
+        "finished_pixel_sha256": "cd93412d617d9c7268f14d6916c2393e5b42380f5c9f4356c0eb53e51f63172d"
+      },
+      {
+        "name": "cliff_w05",
+        "changed_boundary_pixels": 23,
+        "boundary_pixel_fraction": 0.0224609375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "5f560eb39bac61b9fdf8658390b4c3d36b93625af441a932d7583cd2b4eaa4b3",
+        "finished_pixel_sha256": "59023f59cb611b844c8e4b49128132fc347f990f265257f18f1fdde3abd25723"
+      },
+      {
+        "name": "cliff_w06",
+        "changed_boundary_pixels": 19,
+        "boundary_pixel_fraction": 0.0185546875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "995c6857740a8bc4410110d274daf7fbfaefc292897886b7276ec15d697ca48c",
+        "finished_pixel_sha256": "1001f79140198d01b0ccbd06cb137b05940b0863784b26ce3a5070defac00abe"
+      },
+      {
+        "name": "cliff_w07",
+        "changed_boundary_pixels": 31,
+        "boundary_pixel_fraction": 0.0302734375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "251f89061cab415640e7b8a3287108724b7eb18dbb6d52459ad63c6dd9d91f32",
+        "finished_pixel_sha256": "c8a1ce0a957ec63bea8cb63ed48867da820ae39113786806888c44f2b88ad98a"
+      },
+      {
+        "name": "cliff_w08",
+        "changed_boundary_pixels": 23,
+        "boundary_pixel_fraction": 0.0224609375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "4ff30a0ce53b9e1d7936e06929df126a79db2fbdfa4c604e23ac6a21d52e820a",
+        "finished_pixel_sha256": "51a91a66589648a80a87b0c9a6053512037ab04b5423edb1f4c781158f1b68e3"
+      },
+      {
+        "name": "cliff_w09",
+        "changed_boundary_pixels": 35,
+        "boundary_pixel_fraction": 0.0341796875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "206aefa581a4f179b61e61c2ee221412cfbf4bf77acb9b0eb66c8c33f16f704b",
+        "finished_pixel_sha256": "c4963b1d8c919af8f4d04a8758007a9cd4515dc39c9ee88ae8406614291adc2e"
+      },
+      {
+        "name": "cliff_w10",
+        "changed_boundary_pixels": 31,
+        "boundary_pixel_fraction": 0.0302734375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "e1726e17b113c5662e54974843ec9bf0f1daca5d53d865c290e61b13f15a0cd7",
+        "finished_pixel_sha256": "a76d26813109ced83475ac741f035f3defacd658e2a661288d60c25d79b88e7b"
+      },
+      {
+        "name": "cliff_w11",
+        "changed_boundary_pixels": 43,
+        "boundary_pixel_fraction": 0.0419921875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "4722c3c9b428e037de77c5f851e1d14511f78353973125baf13c26669aa98706",
+        "finished_pixel_sha256": "af9f5f2001eaf00001e38a27be01d786b9953b5b0d5d7cb43a67a19aaf49b2ce"
+      },
+      {
+        "name": "cliff_w12",
+        "changed_boundary_pixels": 31,
+        "boundary_pixel_fraction": 0.0302734375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "59ccd2b8a47ee3dda74d71722ab23e32cfac89563f785b7ee30e710b24577865",
+        "finished_pixel_sha256": "b73b953e2f65fbef1620b8dc74fdf1f84feda2583ede30b0600c32a91848a9c6"
+      },
+      {
+        "name": "cliff_w13",
+        "changed_boundary_pixels": 43,
+        "boundary_pixel_fraction": 0.0419921875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "047a31ff1a3f49563cabcc186fe377bb8afad421f1552f1a49e8cc82ffb8f138",
+        "finished_pixel_sha256": "de5344f2a8c84d054c1392fa182f50542273a9ba9aafaf4040c3cd93395a004d"
+      },
+      {
+        "name": "cliff_w14",
+        "changed_boundary_pixels": 39,
+        "boundary_pixel_fraction": 0.0380859375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "459a2e4f54f11383d1dd2cc3969d5beedd3c0675a96007a7bfc6cb8f562f6a20",
+        "finished_pixel_sha256": "3be6a48af64d5541e2e8a6ee4c0ccd3246c34511ed25bbe33326be5831dc74a6"
+      },
+      {
+        "name": "cliff_w15",
+        "changed_boundary_pixels": 51,
+        "boundary_pixel_fraction": 0.0498046875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "2b98babfc4e063220581c40936765c7667a47103e25a264720ffb46e9d35d4f5",
+        "finished_pixel_sha256": "233b24feb4bd90c0acf19063aa47fec664d1b62a37de294528c707f9012a7df5"
+      },
+      {
+        "name": "cobble_road_w00",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "6e4afc5be90fdf443024d533f423158364786eb70e110b13611e549dd7cc2bf8",
+        "finished_pixel_sha256": "6e4afc5be90fdf443024d533f423158364786eb70e110b13611e549dd7cc2bf8"
+      },
+      {
+        "name": "cobble_road_w01",
+        "changed_boundary_pixels": 31,
+        "boundary_pixel_fraction": 0.0302734375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "0c7fc74004dc6777546acd67410d44e0636dfe790ed32ba364b7c8e6488d6e39",
+        "finished_pixel_sha256": "31eeca141ab5ad25ba9351c1573924eb8498badf0a6a3ea584bcc0a9ab01b1ca"
+      },
+      {
+        "name": "cobble_road_w02",
+        "changed_boundary_pixels": 20,
+        "boundary_pixel_fraction": 0.01953125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "c75f6f61da3eed0246191fe96a96c69858a145a09fbdefc5af9d79300acbbab8",
+        "finished_pixel_sha256": "e63a877424fb39b65ea030700d5639f27a0a454601faf1c0abf56646cda79e52"
+      },
+      {
+        "name": "cobble_road_w03",
+        "changed_boundary_pixels": 51,
+        "boundary_pixel_fraction": 0.0498046875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "988fc799701d94f36af5ebb8b040ba7b73577cd2f4180c8c3b2141d7dd38f43e",
+        "finished_pixel_sha256": "93712216408fcc9516d4d62cea91417927d983c8863ee100d820965a69223ce9"
+      },
+      {
+        "name": "cobble_road_w04",
+        "changed_boundary_pixels": 26,
+        "boundary_pixel_fraction": 0.025390625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "2623526480e4214ffde55f4fb72c0dd57af03a3817a93f913eb1b7a5e207e9db",
+        "finished_pixel_sha256": "a6ded4cb2fb3c4e0a0aa70c12dc1a953aa4176faf570a16e2e9b856a77b3570c"
+      },
+      {
+        "name": "cobble_road_w05",
+        "changed_boundary_pixels": 57,
+        "boundary_pixel_fraction": 0.0556640625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "6ae43af284f5494a468ca5e999de28415e5aa80672ae2ef6c1b7dff16dac2e1f",
+        "finished_pixel_sha256": "5c7781fb52e911ed16e8486a30f5246542dca1fc290cdb363a684db99d7f6b03"
+      },
+      {
+        "name": "cobble_road_w06",
+        "changed_boundary_pixels": 46,
+        "boundary_pixel_fraction": 0.044921875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "c9d3da7f15c5221c7ee2247af03e09e2afc386634081db7eba6598a884711575",
+        "finished_pixel_sha256": "d32ca061ef4585044cb62179d64d0dc2fe033709660e82e555bd528ab57d5236"
+      },
+      {
+        "name": "cobble_road_w07",
+        "changed_boundary_pixels": 77,
+        "boundary_pixel_fraction": 0.0751953125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "50a0e1d104d47972a3452e6835a006e10079afc06e47da480888e8a312e4d01e",
+        "finished_pixel_sha256": "506e65babb4a9d945f29820cd86c65fa09e7a1458700d5866b7df292b58cf168"
+      },
+      {
+        "name": "cobble_road_w08",
+        "changed_boundary_pixels": 18,
+        "boundary_pixel_fraction": 0.017578125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "ec0ca5c785447635a4a8c902230fe9a7ba1de75e47ccdf31c8f09f1e07b21f7e",
+        "finished_pixel_sha256": "ff8ac982d5ca9c7268b8de7d8eb8a99e36f80869b481259d33fa477954204ae8"
+      },
+      {
+        "name": "cobble_road_w09",
+        "changed_boundary_pixels": 49,
+        "boundary_pixel_fraction": 0.0478515625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "47788c0f00a6d74fa8dfa370d70d48c55fc5f59c5ba984c62bb9e9d9e3a1fb03",
+        "finished_pixel_sha256": "0e47e38d127f5f062a6f1222e942db6a8a5a9cbf5393a78c748cb9e54350236e"
+      },
+      {
+        "name": "cobble_road_w10",
+        "changed_boundary_pixels": 38,
+        "boundary_pixel_fraction": 0.037109375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "66ffaddf7ba475d5991da1bc08700ba0865ff147d048c9a34a96fb4fc7a223b1",
+        "finished_pixel_sha256": "408f742a0ef5acdb22474c2db8c51d40b4fe007e0695d82433b8a7c3351a5be2"
+      },
+      {
+        "name": "cobble_road_w11",
+        "changed_boundary_pixels": 69,
+        "boundary_pixel_fraction": 0.0673828125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "74e5b9738f9323ebcc442e846c4e5d21de37272a1fa1be409845546e66162a86",
+        "finished_pixel_sha256": "cc5010cc25f7523b9932f8cec95ee38aca3ac1d0f269e597bdeed8714f526d86"
+      },
+      {
+        "name": "cobble_road_w12",
+        "changed_boundary_pixels": 44,
+        "boundary_pixel_fraction": 0.04296875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "f6198c6fb808100404e328ed33ba099de55a23677c689e1a2d28196adf9485df",
+        "finished_pixel_sha256": "d47fa350ae0aeee65b02ee2c03f83aecb5e8c8c62d28a8a2b2c3a3451983c19a"
+      },
+      {
+        "name": "cobble_road_w13",
+        "changed_boundary_pixels": 75,
+        "boundary_pixel_fraction": 0.0732421875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "261fdb3c4967725dc7553f32fea3f8183ffbd6be19ebba7eef858ba071568dd1",
+        "finished_pixel_sha256": "bff102e5ab6a02eb3ac2d875350ec2d86fb1012decb8a749056b9f7fdf6f5713"
+      },
+      {
+        "name": "cobble_road_w14",
+        "changed_boundary_pixels": 64,
+        "boundary_pixel_fraction": 0.0625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "f59433e1a392d3e8d5a02afad3ce843b06aabbd927464b08a495d257e8c28516",
+        "finished_pixel_sha256": "6c4f3d6f8a241f212bed9d72dfb0cbb345240a16c0a7258f991d35ba1e70d81f"
+      },
+      {
+        "name": "cobble_road_w15",
+        "changed_boundary_pixels": 95,
+        "boundary_pixel_fraction": 0.0927734375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "8abe490be582228350061f962eaab22ae0e8137a4bbe3ae03641b7d9262c85a3",
+        "finished_pixel_sha256": "88015d2df53b6fa43770d5f38a3c3a36681e813b2fc69dcf91db2ba69129bf9b"
+      },
+      {
+        "name": "dirt_road_w00",
+        "changed_boundary_pixels": 3,
+        "boundary_pixel_fraction": 0.0029296875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "633b4e53ebe897ec80eff3f2ecd9fdaa35ec6e299340450f0c565602f0099dc3",
+        "finished_pixel_sha256": "29ee63d354a5e57eab78fe1d416912e2cfb704ab1ca35eee08cf0e3259f7bd31"
+      },
+      {
+        "name": "dirt_road_w01",
+        "changed_boundary_pixels": 2,
+        "boundary_pixel_fraction": 0.001953125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "5686c0d20b54cbbda64785598c76d3caa72b1eb91a8856b2735f22cf40cfb892",
+        "finished_pixel_sha256": "3d6a69d78e9d4d15f28774dfe4c3e23d1f134711e6613fc651edef1c7013ea58"
+      },
+      {
+        "name": "dirt_road_w02",
+        "changed_boundary_pixels": 2,
+        "boundary_pixel_fraction": 0.001953125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "dab509d4741bf1169de33794d0c99f0211574737afb9793aeaafe03fb449ee4e",
+        "finished_pixel_sha256": "c60cf926427664cf5259b8239c1e082ca711895f1f9123ce6f1365ded742faf2"
+      },
+      {
+        "name": "dirt_road_w03",
+        "changed_boundary_pixels": 1,
+        "boundary_pixel_fraction": 0.0009765625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "1ba3b7eda5d67c0cef1fb1f4170295be498a61f0645f8eda01ba3765a9b5924d",
+        "finished_pixel_sha256": "e17a7a8a75ad3b0e6c2f3dd5ba6fb1ea505d1cdcf46dcc96d879b26d3b06c4ca"
+      },
+      {
+        "name": "dirt_road_w04",
+        "changed_boundary_pixels": 2,
+        "boundary_pixel_fraction": 0.001953125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "2c0cea7c4fbc4ab01c9880cf8bc217d2159d930ff7611060b9a3b6d8c3520be9",
+        "finished_pixel_sha256": "4f4ba6821bdd366d40978f20f36e8197ea7516eacbf2a9bc14581735912b7860"
+      },
+      {
+        "name": "dirt_road_w05",
+        "changed_boundary_pixels": 1,
+        "boundary_pixel_fraction": 0.0009765625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "ed8b78fd2bc489f42834d187bea613f98fbb656bb39f8d76909d2c3d6a6dcd2b",
+        "finished_pixel_sha256": "4c965109c68dbf3352edb067ce5dcda727cb23ad33e73e3d53fa3c57ccc018a6"
+      },
+      {
+        "name": "dirt_road_w06",
+        "changed_boundary_pixels": 1,
+        "boundary_pixel_fraction": 0.0009765625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "1bc4798a4411b3b02d1a2a928b537d0cc751afa5ec5923a4f7bfaca73b2da929",
+        "finished_pixel_sha256": "93e6b75b9a93c21feb6f576130da67edd3b4dbf13231bf087a55682c808077e0"
+      },
+      {
+        "name": "dirt_road_w07",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "feba11d28378b2390cdb3acc85e987b0f1bc6d33d28d666516b3b387a322b11a",
+        "finished_pixel_sha256": "feba11d28378b2390cdb3acc85e987b0f1bc6d33d28d666516b3b387a322b11a"
+      },
+      {
+        "name": "dirt_road_w08",
+        "changed_boundary_pixels": 3,
+        "boundary_pixel_fraction": 0.0029296875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "1d37d6414c3e614ec01a351215698af44744f04f971f5b3e349a41287fe88382",
+        "finished_pixel_sha256": "34308d6ac61884223608d355835a390e296fedb5a3a03d859154ccebbb91586a"
+      },
+      {
+        "name": "dirt_road_w09",
+        "changed_boundary_pixels": 2,
+        "boundary_pixel_fraction": 0.001953125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "60b0eaff2f1f1992f62f67b6ef88601bad880562f3bc9f5c0b4f16d47ea181b4",
+        "finished_pixel_sha256": "256df9b54c16faec543b5af35db03e85e5dd2ab22ae1ae5baac52ff63cd10c97"
+      },
+      {
+        "name": "dirt_road_w10",
+        "changed_boundary_pixels": 2,
+        "boundary_pixel_fraction": 0.001953125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "2c79dcada2ef00066f707560bf87433cef7e56a50b2ce9b157dd1d9e6766566d",
+        "finished_pixel_sha256": "ae77ce71c158245f317d53f3f3324422b3960f418075c0d70b3240c4b981f4f4"
+      },
+      {
+        "name": "dirt_road_w11",
+        "changed_boundary_pixels": 1,
+        "boundary_pixel_fraction": 0.0009765625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "a73684f8be746b4a8c2ae2fb0ce00dc527d537ee4c0a080ce5f218e60a0a54c2",
+        "finished_pixel_sha256": "817b4081a947db3886e78cae99dd8097fc15b7b5f2345ed349a220910c441d43"
+      },
+      {
+        "name": "dirt_road_w12",
+        "changed_boundary_pixels": 2,
+        "boundary_pixel_fraction": 0.001953125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "5831884edab28effa70d89a250b8d01ae29a8c018bc492c5044ac46a9d28dcda",
+        "finished_pixel_sha256": "3b027aac5026ac6c7b652171bdf23d71af06ef649aed9c54a9028550112478f0"
+      },
+      {
+        "name": "dirt_road_w13",
+        "changed_boundary_pixels": 1,
+        "boundary_pixel_fraction": 0.0009765625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "822b4eb4acca4c8e88024b652cf11bac63ff45b40ee8e9ff36d03925659748ad",
+        "finished_pixel_sha256": "3a7ca0c50a1e4ddaca3e3fc3e23727f8f21616ebe518f2c40f6a5d830d181377"
+      },
+      {
+        "name": "dirt_road_w14",
+        "changed_boundary_pixels": 1,
+        "boundary_pixel_fraction": 0.0009765625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "924646de901db5982cbf8c69bbfeda31f85808de7540ef78c85d392c31180f94",
+        "finished_pixel_sha256": "2404cbd5144c74b4d2c8128f6cdf66d62930b6ef5d809b08e98386baac668bf8"
+      },
+      {
+        "name": "dirt_road_w15",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "35173f26465dcf41bdbcfe99714b0c0390c36f4eaf81c5fdb9d18058865819b7",
+        "finished_pixel_sha256": "35173f26465dcf41bdbcfe99714b0c0390c36f4eaf81c5fdb9d18058865819b7"
+      },
+      {
+        "name": "dungeon_floor_0",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "261fe8c89a31ab62a519f639f4ef8c50e502eb60708c9b274cce93fc32149e0a",
+        "finished_pixel_sha256": "261fe8c89a31ab62a519f639f4ef8c50e502eb60708c9b274cce93fc32149e0a"
+      },
+      {
+        "name": "dungeon_floor_1",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "0dea9224617d671dd66fccb2d41767dbae6b9ede8252f023bedbc0e56aa88dc4",
+        "finished_pixel_sha256": "0dea9224617d671dd66fccb2d41767dbae6b9ede8252f023bedbc0e56aa88dc4"
+      },
+      {
+        "name": "dungeon_floor_2",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "5320c786d4cba30457ccf46bf9f060339bc9151463815f351ab3b70dd6e8970a",
+        "finished_pixel_sha256": "5320c786d4cba30457ccf46bf9f060339bc9151463815f351ab3b70dd6e8970a"
+      },
+      {
+        "name": "dungeon_floor_3",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "e4e0e3fafbfb419176eaa285a8164b623d0786a21a7a7fe3e84a0bf351b59775",
+        "finished_pixel_sha256": "e4e0e3fafbfb419176eaa285a8164b623d0786a21a7a7fe3e84a0bf351b59775"
+      },
+      {
+        "name": "dungeon_floor_4",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "0b2f5d9a995aa756d464e633acdafa2eef6602cf96f674b68f9d14cfe6b3a0b7",
+        "finished_pixel_sha256": "0b2f5d9a995aa756d464e633acdafa2eef6602cf96f674b68f9d14cfe6b3a0b7"
+      },
+      {
+        "name": "dungeon_floor_5",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "184985c6cafd193fc2519943ff2e5ba40e1e6cd8bfe6989d172d83d840c8b772",
+        "finished_pixel_sha256": "184985c6cafd193fc2519943ff2e5ba40e1e6cd8bfe6989d172d83d840c8b772"
+      },
+      {
+        "name": "dungeon_wall_0",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "ecf1c1117232481bfe700e6d3e88e256fdf4c69fd72925a9011d6410ede6990c",
+        "finished_pixel_sha256": "ecf1c1117232481bfe700e6d3e88e256fdf4c69fd72925a9011d6410ede6990c"
+      },
+      {
+        "name": "dungeon_wall_1",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "537510787f6b5b20f1fc79eed0c7b0085ee7142508cf35fdfbc495626f1aca49",
+        "finished_pixel_sha256": "537510787f6b5b20f1fc79eed0c7b0085ee7142508cf35fdfbc495626f1aca49"
+      },
+      {
+        "name": "dungeon_wall_2",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "15a4260778b9114c6e13100a0e03675ee048fd0ac5b15019305a85ae74f6901d",
+        "finished_pixel_sha256": "15a4260778b9114c6e13100a0e03675ee048fd0ac5b15019305a85ae74f6901d"
+      },
+      {
+        "name": "dungeon_wall_3",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "0a3f4c7c2a158eaba98ab625b38f58248e8ce631d327bdcbdf379d56ca0aaff3",
+        "finished_pixel_sha256": "0a3f4c7c2a158eaba98ab625b38f58248e8ce631d327bdcbdf379d56ca0aaff3"
+      },
+      {
+        "name": "grass_base0",
+        "changed_boundary_pixels": 3,
+        "boundary_pixel_fraction": 0.0029296875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "633b4e53ebe897ec80eff3f2ecd9fdaa35ec6e299340450f0c565602f0099dc3",
+        "finished_pixel_sha256": "29ee63d354a5e57eab78fe1d416912e2cfb704ab1ca35eee08cf0e3259f7bd31"
+      },
+      {
+        "name": "grass_base1",
+        "changed_boundary_pixels": 4,
+        "boundary_pixel_fraction": 0.00390625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "ce24a4ece234ee5fedabfd257402981d9c1a0145e1ac5683cff61f68c1c420fe",
+        "finished_pixel_sha256": "3e98348ecf535dcc41012662cd34d1f933af0fe15ca536eb2e671111c8c563e6"
+      },
+      {
+        "name": "grass_base2",
+        "changed_boundary_pixels": 6,
+        "boundary_pixel_fraction": 0.005859375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "32caa8ae53f281103ae9e29f1ad234f9fda79b949f48ac4c53b415051eaf6225",
+        "finished_pixel_sha256": "8935d2f7a8e9048f2678ec54da3278b79d22241bbec894860f54cea7639bd8ad"
+      },
+      {
+        "name": "grass_flower_r",
+        "changed_boundary_pixels": 4,
+        "boundary_pixel_fraction": 0.00390625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "e92d2e2f0f76bdcad3d94063d71d69c1f66b7fd1d4abcc47c4d1a79128a5d3c6",
+        "finished_pixel_sha256": "4ee1957ab7f47a39dac9ea0555c5667ce611c0fe7d1a847a9ea3067e4340ad5b"
+      },
+      {
+        "name": "grass_flower_w",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "10412799709c142f0e4bdb78dcd707ed69fc1cdc7ca774515c58c8cf7c1114e5",
+        "finished_pixel_sha256": "10412799709c142f0e4bdb78dcd707ed69fc1cdc7ca774515c58c8cf7c1114e5"
+      },
+      {
+        "name": "grass_flower_y",
+        "changed_boundary_pixels": 1,
+        "boundary_pixel_fraction": 0.0009765625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "24f819d165effa3959e6b8bc455254f6a2f752f131b91689440aa3cb6581240e",
+        "finished_pixel_sha256": "92797bb03fc081da8b27e3039dee21f8e30d80495b8d95ad4d0377d1ef6cb5db"
+      },
+      {
+        "name": "grass_tuft0",
+        "changed_boundary_pixels": 5,
+        "boundary_pixel_fraction": 0.0048828125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "698f6b0992cf9452c84cf28d4570a5f63fc14ffb69b37cfa6c0a6dcf4163843d",
+        "finished_pixel_sha256": "4f249ca97eda4200fcda732846acb45c37a0f8d00bfe267241c707939003425b"
+      },
+      {
+        "name": "grass_tuft1",
+        "changed_boundary_pixels": 2,
+        "boundary_pixel_fraction": 0.001953125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "867c64e2d3071789cfb050a67f742ad7ce02531b434043af6ebc765540d4a0eb",
+        "finished_pixel_sha256": "b6502d3a1ad8fa35b1e8dfda4bf8927853ca9fe8e166c046f502677b2121af80"
+      },
+      {
+        "name": "interior_market_floor_0",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "b2b3197543715c43aa7e9edc71838e62f7349898d78b4fc0562e9091ec07f6a9",
+        "finished_pixel_sha256": "b2b3197543715c43aa7e9edc71838e62f7349898d78b4fc0562e9091ec07f6a9"
+      },
+      {
+        "name": "interior_market_floor_1",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "ea8c7e9c16599001382354c4b1ef7b75d499485bc9ec91e09283871b75a83872",
+        "finished_pixel_sha256": "ea8c7e9c16599001382354c4b1ef7b75d499485bc9ec91e09283871b75a83872"
+      },
+      {
+        "name": "interior_market_floor_2",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "6cf56bc5776fbd1859d37c2ad3728c94a0cde44ce76ccf5e7b7ef7887b325baa",
+        "finished_pixel_sha256": "6cf56bc5776fbd1859d37c2ad3728c94a0cde44ce76ccf5e7b7ef7887b325baa"
+      },
+      {
+        "name": "interior_market_floor_3",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "09c760b70ddd2720d205632730d683e99b57f98cb6bb458ebac8e62bfd2f34e9",
+        "finished_pixel_sha256": "09c760b70ddd2720d205632730d683e99b57f98cb6bb458ebac8e62bfd2f34e9"
+      },
+      {
+        "name": "interior_market_wall_0",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "ac5464b78bcfd8172afcce29aae7aa12407b6786a1606a88a3a02fcbb79cb8be",
+        "finished_pixel_sha256": "ac5464b78bcfd8172afcce29aae7aa12407b6786a1606a88a3a02fcbb79cb8be"
+      },
+      {
+        "name": "interior_market_wall_1",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "85fd4e5b2bcd8c16335fbed68cf80038198ceed40c20106bb550859d405fea54",
+        "finished_pixel_sha256": "85fd4e5b2bcd8c16335fbed68cf80038198ceed40c20106bb550859d405fea54"
+      },
+      {
+        "name": "interior_market_wall_2",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "bc27801f3a5efe79265ca3785bd4529e53731aeafe4704628d7699717af9ce30",
+        "finished_pixel_sha256": "bc27801f3a5efe79265ca3785bd4529e53731aeafe4704628d7699717af9ce30"
+      },
+      {
+        "name": "interior_market_wall_3",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "89f32968429f8f2fc581fc2ab9cd301fbcd0bbf74de2770c62192014d92ed11e",
+        "finished_pixel_sha256": "89f32968429f8f2fc581fc2ab9cd301fbcd0bbf74de2770c62192014d92ed11e"
+      },
+      {
+        "name": "interior_tavern_floor_0",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "1e321444b95ce71d431bd5eac6cb24224c841a580acd31b61b457e6a9d1faad9",
+        "finished_pixel_sha256": "1e321444b95ce71d431bd5eac6cb24224c841a580acd31b61b457e6a9d1faad9"
+      },
+      {
+        "name": "interior_tavern_floor_1",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "1a9ef21bab39d6097a6d2f2b0f903095d7f5d02eafed50531e21ae946fdb8e53",
+        "finished_pixel_sha256": "1a9ef21bab39d6097a6d2f2b0f903095d7f5d02eafed50531e21ae946fdb8e53"
+      },
+      {
+        "name": "interior_tavern_floor_2",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "c4ff0c20df515e8440b4af67f1199090615300480f2c165d8368af37479ee01d",
+        "finished_pixel_sha256": "c4ff0c20df515e8440b4af67f1199090615300480f2c165d8368af37479ee01d"
+      },
+      {
+        "name": "interior_tavern_floor_3",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "ce20dad9fe02f325f9e6804750d5c909e0feaf2f6e4ef37b2448119df9a09cc3",
+        "finished_pixel_sha256": "ce20dad9fe02f325f9e6804750d5c909e0feaf2f6e4ef37b2448119df9a09cc3"
+      },
+      {
+        "name": "interior_tavern_wall_0",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "4797a0ebb46735b89fba0b0138ec02974c69b96ed3fed224b62013e8d6c5bab9",
+        "finished_pixel_sha256": "4797a0ebb46735b89fba0b0138ec02974c69b96ed3fed224b62013e8d6c5bab9"
+      },
+      {
+        "name": "interior_tavern_wall_1",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "b5f099a454e8abbb4ae7e7540d944c0d57312407c86a4bc1d17a3cc626c7d82c",
+        "finished_pixel_sha256": "b5f099a454e8abbb4ae7e7540d944c0d57312407c86a4bc1d17a3cc626c7d82c"
+      },
+      {
+        "name": "interior_tavern_wall_2",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "cbd9b38511dae2f742882eb9a3a3c7dc9b6d4246b81cdaf823cf8c7a44d0cebb",
+        "finished_pixel_sha256": "cbd9b38511dae2f742882eb9a3a3c7dc9b6d4246b81cdaf823cf8c7a44d0cebb"
+      },
+      {
+        "name": "interior_tavern_wall_3",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "4d96cbc4b6aa667f49e42ba747e78e6da31c6583d3ac6f320cf818fdc976c285",
+        "finished_pixel_sha256": "4d96cbc4b6aa667f49e42ba747e78e6da31c6583d3ac6f320cf818fdc976c285"
+      },
+      {
+        "name": "water_ford_0",
+        "changed_boundary_pixels": 45,
+        "boundary_pixel_fraction": 0.0439453125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "8bbeb044f46254adb9d60e3035551f0550631b50e8946585176f7cc19ecac635",
+        "finished_pixel_sha256": "d1ec72873330d714da2a140e113a68e1f4994f3f4d615b7cdfb3d85801d77c30"
+      },
+      {
+        "name": "water_ford_1",
+        "changed_boundary_pixels": 45,
+        "boundary_pixel_fraction": 0.0439453125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "18a0480a9bff7db45a0554bcec2a07ee28f69d6c4dc2bfd9af35994c2d6ae8a4",
+        "finished_pixel_sha256": "625ffa23d5cd046a4f8e04957d845f5c832ac4499e041606fd956b1b8a875c17"
+      },
+      {
+        "name": "water_ford_2",
+        "changed_boundary_pixels": 45,
+        "boundary_pixel_fraction": 0.0439453125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "d18b3cfcbad658eb8324fd2d72dca32ef88c7bf5855b1f985b23a2c7b00c124a",
+        "finished_pixel_sha256": "c9353781f1068f70d99ac819a24c43c3d7da756ebdc9320e8fc8b1f617883f6b"
+      },
+      {
+        "name": "water_ford_3",
+        "changed_boundary_pixels": 45,
+        "boundary_pixel_fraction": 0.0439453125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "cf4b271bfec269d0094260bbf3dca82803b0e8900b925f526d9fe9fd7cf40190",
+        "finished_pixel_sha256": "e5d32c8a328f6dd587c163066e239b21fcefa91540aaee69687479c3ab4139dd"
+      },
+      {
+        "name": "water_shore_w00",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "ecce9f3a6ce3b8de190d8046522394cb059cb84bb9a017dbe6f8505c49b85e4d",
+        "finished_pixel_sha256": "ecce9f3a6ce3b8de190d8046522394cb059cb84bb9a017dbe6f8505c49b85e4d"
+      },
+      {
+        "name": "water_shore_w00_phase1",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "ecce9f3a6ce3b8de190d8046522394cb059cb84bb9a017dbe6f8505c49b85e4d",
+        "finished_pixel_sha256": "ecce9f3a6ce3b8de190d8046522394cb059cb84bb9a017dbe6f8505c49b85e4d"
+      },
+      {
+        "name": "water_shore_w00_phase2",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "ecce9f3a6ce3b8de190d8046522394cb059cb84bb9a017dbe6f8505c49b85e4d",
+        "finished_pixel_sha256": "ecce9f3a6ce3b8de190d8046522394cb059cb84bb9a017dbe6f8505c49b85e4d"
+      },
+      {
+        "name": "water_shore_w00_phase3",
+        "changed_boundary_pixels": 0,
+        "boundary_pixel_fraction": 0.0,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "ecce9f3a6ce3b8de190d8046522394cb059cb84bb9a017dbe6f8505c49b85e4d",
+        "finished_pixel_sha256": "ecce9f3a6ce3b8de190d8046522394cb059cb84bb9a017dbe6f8505c49b85e4d"
+      },
+      {
+        "name": "water_shore_w01",
+        "changed_boundary_pixels": 14,
+        "boundary_pixel_fraction": 0.013671875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "f6e765debfd77f00b9dd1cbe222adff698f09c92ae4c638c3ad8707dd5e5bff6",
+        "finished_pixel_sha256": "2c89ac74449b5e87e46c841f30c7c44f59b506a2c6e0c86ca7cbd9907e06a97b"
+      },
+      {
+        "name": "water_shore_w01_phase1",
+        "changed_boundary_pixels": 9,
+        "boundary_pixel_fraction": 0.0087890625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "b31724d1bd214e75917f58d517048781eb57f1d1c50aa55917f423991e6c5577",
+        "finished_pixel_sha256": "5c73486ed38471d9643ccbf2a1ea4ce1e06b99d4aa9ae470ca9c62ae5ad35135"
+      },
+      {
+        "name": "water_shore_w01_phase2",
+        "changed_boundary_pixels": 4,
+        "boundary_pixel_fraction": 0.00390625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "0ed56f4fac58875a3cdb43dc8b1fdad2308d97b8a02728dcd6075a7d3d1db885",
+        "finished_pixel_sha256": "9e46733cb872575548a925a60ec07cd9498a69b2d596d65e8e958042fd2a988a"
+      },
+      {
+        "name": "water_shore_w01_phase3",
+        "changed_boundary_pixels": 10,
+        "boundary_pixel_fraction": 0.009765625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "0c06e19589ba881aafbbff47e55413613d690434fcad94a40a651b14d9d48186",
+        "finished_pixel_sha256": "08e5c5f034d07851dca65506337d068665346e35653cd859ae9a53f04413a9c0"
+      },
+      {
+        "name": "water_shore_w02",
+        "changed_boundary_pixels": 14,
+        "boundary_pixel_fraction": 0.013671875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "1fd3ca15169356fd08a003611fe57354ea321bacdebd2b768b6a3869e232a4ab",
+        "finished_pixel_sha256": "8186fe92ca3d03ba5cb9908e731bd247012973d4f7440a387c40c19514430bf4"
+      },
+      {
+        "name": "water_shore_w02_phase1",
+        "changed_boundary_pixels": 6,
+        "boundary_pixel_fraction": 0.005859375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "6f42442f1c9dfed9e99472242a925eb91b089fb9ac1a623d06f9a5544378a25a",
+        "finished_pixel_sha256": "b066b4ff32d1ac267e411b4f032d9f45fcc58b8429bca4a4f797538e2ccdb338"
+      },
+      {
+        "name": "water_shore_w02_phase2",
+        "changed_boundary_pixels": 4,
+        "boundary_pixel_fraction": 0.00390625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "befbe77992f5aabdef4871354bdc56f308b86458c65453bcb1c412e9135e3e50",
+        "finished_pixel_sha256": "208828ce6d7dbbbf81aafdaf2a34fc5ce952171e59a29b9804e882327eac1554"
+      },
+      {
+        "name": "water_shore_w02_phase3",
+        "changed_boundary_pixels": 8,
+        "boundary_pixel_fraction": 0.0078125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "0d080fd6ffb62f161b4cec4ead3d3c46efcd36e624ac927c574a00cdbbae8cdc",
+        "finished_pixel_sha256": "561b10b88ce7cddbc811204cd425af27473f5ca9a460fe87114e8f9db9c2a1d4"
+      },
+      {
+        "name": "water_shore_w03",
+        "changed_boundary_pixels": 28,
+        "boundary_pixel_fraction": 0.02734375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "94a6fb1c53175d0330fb2d64205ca3e61bf9782c535314eb5ac2aa2f97a0adeb",
+        "finished_pixel_sha256": "ab4d5cbe9813388086c1db4da5b6475ebb0ce5a5c90fc3c0032ac99c7faea54f"
+      },
+      {
+        "name": "water_shore_w03_phase1",
+        "changed_boundary_pixels": 15,
+        "boundary_pixel_fraction": 0.0146484375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "af89b6e5fe7e3be7777ed8187e6db6bb4e0afb463bee3328787d3e6395bca8a0",
+        "finished_pixel_sha256": "caa91bb0ade20eb24fe86254c73ab30b628df9f929cbc04d8c4e55eee103fa95"
+      },
+      {
+        "name": "water_shore_w03_phase2",
+        "changed_boundary_pixels": 8,
+        "boundary_pixel_fraction": 0.0078125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "4ccab8baa53428d48d381a99d1ca51b4949d2355c54e16200e378f9db3bf2fb0",
+        "finished_pixel_sha256": "3716c1af25111346112dcd3165412ae099c52a8b32ac6be4d415b133306a9ad6"
+      },
+      {
+        "name": "water_shore_w03_phase3",
+        "changed_boundary_pixels": 19,
+        "boundary_pixel_fraction": 0.0185546875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "04afc85278a8accfad7313b32bf6e6264df693c9795fe1c2895cb9e09ac5b844",
+        "finished_pixel_sha256": "f94387c8599208b6b48bf37743c986aba23509c540fab6aadaba6c6fad5bcc84"
+      },
+      {
+        "name": "water_shore_w04",
+        "changed_boundary_pixels": 8,
+        "boundary_pixel_fraction": 0.0078125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "3136f1c9d800685398ad718f2964c57bdaea6f654a61d255913db379d2989da2",
+        "finished_pixel_sha256": "b841503678f0f7de287dbe43e1a5fb9d71106ec4ef936accfa4559564e68756a"
+      },
+      {
+        "name": "water_shore_w04_phase1",
+        "changed_boundary_pixels": 4,
+        "boundary_pixel_fraction": 0.00390625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "ce0f6512a1c2e4fbbd099f813fe213d1ca1bd488e8997477226d0bc0047964e7",
+        "finished_pixel_sha256": "45911c6d00f5e85e9e2fe728c3141ad47fbcb4778f52cd1225956a03dcc8c420"
+      },
+      {
+        "name": "water_shore_w04_phase2",
+        "changed_boundary_pixels": 4,
+        "boundary_pixel_fraction": 0.00390625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "18ee19ac8ed37e78413b37aec167a227ce384c878bfd98f2f8aebd8449916c68",
+        "finished_pixel_sha256": "bc12f87b3839bda658adc823e8f5205216828bb15d9600400e8ce2118fbc2f00"
+      },
+      {
+        "name": "water_shore_w04_phase3",
+        "changed_boundary_pixels": 17,
+        "boundary_pixel_fraction": 0.0166015625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "50ea4b194e6cedaa458b1ddff2015d3ffb8a3de0a4ff8a3f8e8dc496fb0891f9",
+        "finished_pixel_sha256": "c72b5378e6c29843c5726d6467052582277fbb37838b13946d6a5e8007a52e34"
+      },
+      {
+        "name": "water_shore_w05",
+        "changed_boundary_pixels": 22,
+        "boundary_pixel_fraction": 0.021484375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "0c239b059b3b5841f0bcce01399ebcd4b48396b03ba319b6039eb07531e7b351",
+        "finished_pixel_sha256": "0bd9aa82ebfaccda36b03aa11fc29f5f115efae3c91f5a7589a3865915cdcf1c"
+      },
+      {
+        "name": "water_shore_w05_phase1",
+        "changed_boundary_pixels": 13,
+        "boundary_pixel_fraction": 0.0126953125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "69ad74f8d995e87c541e3ba56377b0fa2802e58e49f5453b6038f406bbf6d022",
+        "finished_pixel_sha256": "5c0b097c9a634f712419c50f2c45eb2a312540082b9cc6d91d7c6563eb088268"
+      },
+      {
+        "name": "water_shore_w05_phase2",
+        "changed_boundary_pixels": 8,
+        "boundary_pixel_fraction": 0.0078125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "a71746ac4214cde06c89b321adf0f4fecd312101fc21d40a9b54e7d935ae81eb",
+        "finished_pixel_sha256": "cfe061c81c2e401e8fb82c59075ef66d1c3f6d76d250e2981075b7a481200b29"
+      },
+      {
+        "name": "water_shore_w05_phase3",
+        "changed_boundary_pixels": 27,
+        "boundary_pixel_fraction": 0.0263671875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "bb40425623c13508f2fc3f6508a82aa7a79d240f338725a70cb09f6057d356ad",
+        "finished_pixel_sha256": "7b62265a6d073c3fca609d495891e83a8598bbe88d3153c782667ddff43edc64"
+      },
+      {
+        "name": "water_shore_w06",
+        "changed_boundary_pixels": 22,
+        "boundary_pixel_fraction": 0.021484375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "257eba693cfe7f8a6450ab8e5af594e747829099d9ddefb719ffca2d91b3cbd6",
+        "finished_pixel_sha256": "6dbdd0c301047b3f9a6cbb7c0b30f5c608e7db3662e9c8dd3f767d8d2e2916dc"
+      },
+      {
+        "name": "water_shore_w06_phase1",
+        "changed_boundary_pixels": 10,
+        "boundary_pixel_fraction": 0.009765625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "8eb6f62ff0facb0e25f4c5096d325acc0da3db90d51c946735a9f7bc2a18dc47",
+        "finished_pixel_sha256": "c13ac9a9eef28dab40868a07e58a070491635af55adadc690815ce7197af8faf"
+      },
+      {
+        "name": "water_shore_w06_phase2",
+        "changed_boundary_pixels": 8,
+        "boundary_pixel_fraction": 0.0078125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "c346bad0d10bc694428d22a24e5b0fd63961f86a04d59c1c253fc70127651ba8",
+        "finished_pixel_sha256": "fb04b1ff1ba7c9a6153ef654421dfade24a1a254ca53e47d02bed5ef13955a34"
+      },
+      {
+        "name": "water_shore_w06_phase3",
+        "changed_boundary_pixels": 26,
+        "boundary_pixel_fraction": 0.025390625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "05b9650993cde9d589adaff35b76bf11a755254ef877beded753259efaf2014e",
+        "finished_pixel_sha256": "5adc901a752ae94a3f7a33decf07b451fff47d736b551df6d75116eec2da672a"
+      },
+      {
+        "name": "water_shore_w07",
+        "changed_boundary_pixels": 36,
+        "boundary_pixel_fraction": 0.03515625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "a2a7dfdc5edf1ef8ee891fc19ae3ae94447af71e723b54daa358ed251eec3748",
+        "finished_pixel_sha256": "8ae8c0547337bedabdff259133ea5a874c519bd721881ce284084bb0caab63f9"
+      },
+      {
+        "name": "water_shore_w07_phase1",
+        "changed_boundary_pixels": 19,
+        "boundary_pixel_fraction": 0.0185546875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "84f55922a83f103aa0eb71bf5ce40c8ff1412eeacd5b42fe3d8c850c36f8ad16",
+        "finished_pixel_sha256": "f0ea0da1d7d025fafa27df99974f7a2f4b6ce7fc1a50bbb1ad45b087ca1bc6d3"
+      },
+      {
+        "name": "water_shore_w07_phase2",
+        "changed_boundary_pixels": 12,
+        "boundary_pixel_fraction": 0.01171875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "6cf567e3d78e1bf497802bb8d17c0c0e5582cbef1d87f570d15efb0f9fe57499",
+        "finished_pixel_sha256": "5d354f45c1db519749bd0a43982c15e79e901f7f020f250987289b19426dc679"
+      },
+      {
+        "name": "water_shore_w07_phase3",
+        "changed_boundary_pixels": 36,
+        "boundary_pixel_fraction": 0.03515625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "753fef5d55bb979c4fd4f4ef18af840b02ed473d2f31064d6dc3edc4e1b7ba4d",
+        "finished_pixel_sha256": "e10d2af90c23a3696f647c0b18149e8c3a2f1fb9667e6f22169a85b9960da09c"
+      },
+      {
+        "name": "water_shore_w08",
+        "changed_boundary_pixels": 10,
+        "boundary_pixel_fraction": 0.009765625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "e2bf1f0a26f59137607c42a9f862a88ae34263d0288ba4ed0eed38d51ceaf556",
+        "finished_pixel_sha256": "8e8657d0b5f54bc04832a3c1ec77f39de8d5224d535f6b79e407398df8318cc8"
+      },
+      {
+        "name": "water_shore_w08_phase1",
+        "changed_boundary_pixels": 5,
+        "boundary_pixel_fraction": 0.0048828125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "67c07ff2342e7623950250aa7826ad419395aff93d17e22bd0bd897fc4cc6581",
+        "finished_pixel_sha256": "b4ee879790be5f44267fcff28888ec55695fc47dafed25bffbd889a0e6292cde"
+      },
+      {
+        "name": "water_shore_w08_phase2",
+        "changed_boundary_pixels": 4,
+        "boundary_pixel_fraction": 0.00390625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "26c5c0f5326836a158297d0e7a541f20daa34596610ea1c82f189ff47c7baeeb",
+        "finished_pixel_sha256": "1fbb7724249be67f3fcd885c6c917aaa9fbcde2b8b951452f0935670c1d9988f"
+      },
+      {
+        "name": "water_shore_w08_phase3",
+        "changed_boundary_pixels": 12,
+        "boundary_pixel_fraction": 0.01171875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "cb6e82c24702b0f124c1a2a5785dae00480c81e3bb68fd31b33c39636d77387a",
+        "finished_pixel_sha256": "8a401ae349743ede95f3e5ced96f5dd9e7250f1e33ed21257c6c9f6d225e7b7f"
+      },
+      {
+        "name": "water_shore_w09",
+        "changed_boundary_pixels": 23,
+        "boundary_pixel_fraction": 0.0224609375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "769923f59be99745b5155c3091259379840852cb948afca9e448e1c8e2afc61b",
+        "finished_pixel_sha256": "6143a255708ee54edbe232dd30e8671686ac88a1b7c1c29192c5b4c9013766db"
+      },
+      {
+        "name": "water_shore_w09_phase1",
+        "changed_boundary_pixels": 14,
+        "boundary_pixel_fraction": 0.013671875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "8f565089ceb35970343a728b2e54f1844bbf0f267f9f2704d6ae80515fe64e3d",
+        "finished_pixel_sha256": "e77b2141084afd23f2b9b3f3b9b96140f2abaf4cb498be6523fbcedc7b5bdbd9"
+      },
+      {
+        "name": "water_shore_w09_phase2",
+        "changed_boundary_pixels": 8,
+        "boundary_pixel_fraction": 0.0078125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "9b465b5b7db61d183da3011707143272a3e72caa94667f9cadfe45dcf43a209d",
+        "finished_pixel_sha256": "5762e89a8a51cf71e7c3cc7dfb2f5bbbea1b75a3869bbcd7e9ba5d684c1bd1d7"
+      },
+      {
+        "name": "water_shore_w09_phase3",
+        "changed_boundary_pixels": 22,
+        "boundary_pixel_fraction": 0.021484375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "72962d3270ddba6f3d771fcfbac4cd65fde998b6251ae9140d039612fe658c76",
+        "finished_pixel_sha256": "5314adf935b8f7a8b25ec31c643a08c9fae3e2f47edc353477a43d4d4113a930"
+      },
+      {
+        "name": "water_shore_w10",
+        "changed_boundary_pixels": 23,
+        "boundary_pixel_fraction": 0.0224609375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "bdcb048bbded4fe69973cdc66546f570686781e15a640d4e9773d6834b2d82ee",
+        "finished_pixel_sha256": "ee0ac29c6e07a39509b34e4f596e9daa3ce3e3ce701e0bc14dd868de9e443a9d"
+      },
+      {
+        "name": "water_shore_w10_phase1",
+        "changed_boundary_pixels": 11,
+        "boundary_pixel_fraction": 0.0107421875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "3ab7336fc11c96d25a262a6f187c3f608835a9718b40a3611ef471168464cb1a",
+        "finished_pixel_sha256": "c2dee743d1df5664dad3399cee7f1075326d5cff628ab17851b85508fa7a6d80"
+      },
+      {
+        "name": "water_shore_w10_phase2",
+        "changed_boundary_pixels": 8,
+        "boundary_pixel_fraction": 0.0078125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "108ea4197d0a1ed9b965675b15f54592e5593d0e516729a5120e618ba642d947",
+        "finished_pixel_sha256": "6ba2481068cfa029ca876c27a5527ebafc081a5346c8fc4bed13d87962e67a3c"
+      },
+      {
+        "name": "water_shore_w10_phase3",
+        "changed_boundary_pixels": 21,
+        "boundary_pixel_fraction": 0.0205078125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "318f314cdee237bf8a842f51d46b9281ec2a604af3d368160a2ce9b51714a27d",
+        "finished_pixel_sha256": "45a575df0b644d594bde85a5f1b0a68588d7bf992b828cdee0cef810ddae6bb5"
+      },
+      {
+        "name": "water_shore_w11",
+        "changed_boundary_pixels": 37,
+        "boundary_pixel_fraction": 0.0361328125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "5f954e481ff1937bf1ab8ba2bf199e3860bf87eea62a41dd7ee47a5ffcf40aee",
+        "finished_pixel_sha256": "7d712249bf3b4ea9baa295af747e0fdbd4a66e96d6a85048fa4171374213fac4"
+      },
+      {
+        "name": "water_shore_w11_phase1",
+        "changed_boundary_pixels": 20,
+        "boundary_pixel_fraction": 0.01953125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "3165babe3363fdd3b79d13643328cb119602a2140d5a16e1d8d1af767eaf5d37",
+        "finished_pixel_sha256": "6f2b38beb155d3ae6c6524ba3c0f809adc95fa7119c61e812b13411623f89fc5"
+      },
+      {
+        "name": "water_shore_w11_phase2",
+        "changed_boundary_pixels": 12,
+        "boundary_pixel_fraction": 0.01171875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "409d9c3bc6079b6cfb568a3e0b55054918f43c8b656f4710314ed1c7106adc12",
+        "finished_pixel_sha256": "56a8103c25d334ef7e61724a0a1e4e3faeb545c1c661ba4a119a15121682dc31"
+      },
+      {
+        "name": "water_shore_w11_phase3",
+        "changed_boundary_pixels": 31,
+        "boundary_pixel_fraction": 0.0302734375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "4ca231ed74df9c37a8d5f2cfb38ca719def3abc6977cc6b7166691c2c6432f18",
+        "finished_pixel_sha256": "003e1620eccf9fdfbf395b4ae67a9f678fd1c54d5732374c9ca1e7f2089cad7c"
+      },
+      {
+        "name": "water_shore_w12",
+        "changed_boundary_pixels": 17,
+        "boundary_pixel_fraction": 0.0166015625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "b6219cbf12efa66d039d009fd87d099916d5d27329b9bb1cd2e36266486f7c3b",
+        "finished_pixel_sha256": "134314d70d0aabe7fc2aee5f778fdf44983738575fe633ed8c4eef04d4fea376"
+      },
+      {
+        "name": "water_shore_w12_phase1",
+        "changed_boundary_pixels": 9,
+        "boundary_pixel_fraction": 0.0087890625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "0c9ef6534c68c8e9347c4219db535dbd2f2f0281bf99bdc64e04d6af43bba47e",
+        "finished_pixel_sha256": "4b5fa10d0e8c9ffb7bec766b322170648dc319c9b428f2b47e8b96081503e501"
+      },
+      {
+        "name": "water_shore_w12_phase2",
+        "changed_boundary_pixels": 8,
+        "boundary_pixel_fraction": 0.0078125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "0afa52f97218fce992ed1101a7409dab3464c5124656676462843b78bc3b5148",
+        "finished_pixel_sha256": "bafba422fe19bb6d02f08621d4c489fb67e0022e5c3f31c191ac55bfe3756ef5"
+      },
+      {
+        "name": "water_shore_w12_phase3",
+        "changed_boundary_pixels": 29,
+        "boundary_pixel_fraction": 0.0283203125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "d51f38e0103a8f41d6aaed1e4c0927dfb6a33c66f20e52c99830c37d309cd4ff",
+        "finished_pixel_sha256": "c485b882ec2113ff40798c1d4f4b6be52c1f06ce8251e2cdd62d327387a8dc93"
+      },
+      {
+        "name": "water_shore_w13",
+        "changed_boundary_pixels": 31,
+        "boundary_pixel_fraction": 0.0302734375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "5af9e87702b76bb0e0659dfef29b4ddf71a644ca7364e5fe0997ceef8f1f6af3",
+        "finished_pixel_sha256": "f64c1ca140fb0011d24006902f27a2268c551e283f49dcbcb8a912088dacd292"
+      },
+      {
+        "name": "water_shore_w13_phase1",
+        "changed_boundary_pixels": 18,
+        "boundary_pixel_fraction": 0.017578125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "786be1398628af52a8d9b8dd02d4073b040c4474ea9e4c0b7b66e2ed1b260183",
+        "finished_pixel_sha256": "693bb3905a09fe8714be6b1fe63c2ee11319eafb76f5b6c5d9f2492d2ff4de58"
+      },
+      {
+        "name": "water_shore_w13_phase2",
+        "changed_boundary_pixels": 12,
+        "boundary_pixel_fraction": 0.01171875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "305b8b644d6f4bf8b3f57dcd4fabc09f659800656210f24532c0799b20468606",
+        "finished_pixel_sha256": "40ce1da63c4a292d408a87852bb2f9ca5ff550de8ef32f90e1f3530156841062"
+      },
+      {
+        "name": "water_shore_w13_phase3",
+        "changed_boundary_pixels": 39,
+        "boundary_pixel_fraction": 0.0380859375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "6a15e68d6c79a68367858430c7d33b238b50adf2583a4f295e7bfced104ec3d1",
+        "finished_pixel_sha256": "5a395778429b4a163d0e955bed013b87d1e60e314169a1adbb70b3e0cb668cdd"
+      },
+      {
+        "name": "water_shore_w14",
+        "changed_boundary_pixels": 31,
+        "boundary_pixel_fraction": 0.0302734375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "b2a03b50d74245298383edf3ba565cf8e21df9ebdf1a8b0043698ed8ff03675e",
+        "finished_pixel_sha256": "5d25380ad1829062b44cbb22ba698a4401310171b9a8172ff40418a9eb7025fe"
+      },
+      {
+        "name": "water_shore_w14_phase1",
+        "changed_boundary_pixels": 15,
+        "boundary_pixel_fraction": 0.0146484375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "832bf21a94defe314e952eba090e3ac92dfbc1f229360d7d4d8e5f488d065da1",
+        "finished_pixel_sha256": "fb9707ec3b422fc4512061e75e7a085b8d8382b08b28d51dbf2e68fcfc3eb4d8"
+      },
+      {
+        "name": "water_shore_w14_phase2",
+        "changed_boundary_pixels": 12,
+        "boundary_pixel_fraction": 0.01171875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "f9fec91b1e02e1dff92b9f52142ea1237f2f9be0cf6b513607f7e4929e738968",
+        "finished_pixel_sha256": "031b02730d1fa6876c1406a6cb3ac8fb22a5aa1442158fb264077b46ac409c5e"
+      },
+      {
+        "name": "water_shore_w14_phase3",
+        "changed_boundary_pixels": 38,
+        "boundary_pixel_fraction": 0.037109375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "9bc8a9e8e1c355f9a73639594b4c00cd16f2867f90a9c4a0d3f96cc47eb9f99e",
+        "finished_pixel_sha256": "2252e5008ffcc2be506cf9ae25a7affe76ed59f2ab17fee4bf3682e9893fbb52"
+      },
+      {
+        "name": "water_shore_w15",
+        "changed_boundary_pixels": 45,
+        "boundary_pixel_fraction": 0.0439453125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "48644704dbe64a695e2ecb748fb4207c44815449b093ffd9a4ed517e335f9c79",
+        "finished_pixel_sha256": "2dc2c8b0cac5c575aa0f8d4c37b74ca29f035d7a86551d4b7eff9104c94a397a"
+      },
+      {
+        "name": "water_shore_w15_phase1",
+        "changed_boundary_pixels": 24,
+        "boundary_pixel_fraction": 0.0234375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "180995b2695bf1e8d84e0e8a04690d2da660735fd16b941f56ebcd5adabf01f1",
+        "finished_pixel_sha256": "5fe01e33d4298e0266b4e293f4bccbba0638cdeb0d1ab35ef115dc2a5a24f1f5"
+      },
+      {
+        "name": "water_shore_w15_phase2",
+        "changed_boundary_pixels": 16,
+        "boundary_pixel_fraction": 0.015625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "c62a94b1ab9e8d8fe1dfe0f97cc173f7071dcc987d2381268cfe8663007ed9e4",
+        "finished_pixel_sha256": "faf5bca2d88628d102269e949724cd16ae232f1372e1a8201ba989ed63e119ad"
+      },
+      {
+        "name": "water_shore_w15_phase3",
+        "changed_boundary_pixels": 48,
+        "boundary_pixel_fraction": 0.046875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "d99bd66b4d94ecb9f9bc05ae085188ee1747a7c89eebd78202cf5e44a12f8bf2",
+        "finished_pixel_sha256": "8186ca920f733966d4a5b70172c8b5b32d2703f10d3cc008c1f1b251646fe6bd"
+      },
+      {
+        "name": "water_w00",
+        "changed_boundary_pixels": 3,
+        "boundary_pixel_fraction": 0.0029296875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "633b4e53ebe897ec80eff3f2ecd9fdaa35ec6e299340450f0c565602f0099dc3",
+        "finished_pixel_sha256": "29ee63d354a5e57eab78fe1d416912e2cfb704ab1ca35eee08cf0e3259f7bd31"
+      },
+      {
+        "name": "water_w00_phase1",
+        "changed_boundary_pixels": 3,
+        "boundary_pixel_fraction": 0.0029296875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "633b4e53ebe897ec80eff3f2ecd9fdaa35ec6e299340450f0c565602f0099dc3",
+        "finished_pixel_sha256": "29ee63d354a5e57eab78fe1d416912e2cfb704ab1ca35eee08cf0e3259f7bd31"
+      },
+      {
+        "name": "water_w00_phase2",
+        "changed_boundary_pixels": 3,
+        "boundary_pixel_fraction": 0.0029296875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "633b4e53ebe897ec80eff3f2ecd9fdaa35ec6e299340450f0c565602f0099dc3",
+        "finished_pixel_sha256": "29ee63d354a5e57eab78fe1d416912e2cfb704ab1ca35eee08cf0e3259f7bd31"
+      },
+      {
+        "name": "water_w00_phase3",
+        "changed_boundary_pixels": 3,
+        "boundary_pixel_fraction": 0.0029296875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "633b4e53ebe897ec80eff3f2ecd9fdaa35ec6e299340450f0c565602f0099dc3",
+        "finished_pixel_sha256": "29ee63d354a5e57eab78fe1d416912e2cfb704ab1ca35eee08cf0e3259f7bd31"
+      },
+      {
+        "name": "water_w01",
+        "changed_boundary_pixels": 16,
+        "boundary_pixel_fraction": 0.015625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "5dd0e83ae7146d7195d4e1eb03e80d4eb138d0cc6758d2c99056588c46b43320",
+        "finished_pixel_sha256": "1161db5df17105a9cff886a8600ec79cdc665ac5c9fe944178dcea2cd33d0866"
+      },
+      {
+        "name": "water_w01_phase1",
+        "changed_boundary_pixels": 11,
+        "boundary_pixel_fraction": 0.0107421875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "99ac4b12b1476fdba30029def8ab0c045858327445603a79edf7d435bbd4390a",
+        "finished_pixel_sha256": "850083045e5bbc42cb8da39b7a0dca1b958fd41e4efd43629e9da96df309fee1"
+      },
+      {
+        "name": "water_w01_phase2",
+        "changed_boundary_pixels": 6,
+        "boundary_pixel_fraction": 0.005859375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "2a6914a3c6a68653d2110c22c3ec087e5f5472b813755e1d9c3fd602fbd196f2",
+        "finished_pixel_sha256": "399aebf7513ff14296c90d45e6c6fbd6d2f941fd17a62d18cf0b7d5ca7dfa289"
+      },
+      {
+        "name": "water_w01_phase3",
+        "changed_boundary_pixels": 12,
+        "boundary_pixel_fraction": 0.01171875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "cb966082b833e014b19b5cc213134edd7b9582bf9d6ea43ce950ab482e6e7e37",
+        "finished_pixel_sha256": "13f8b2e0c2fe6aaaf7106b6ce4c85d38f38410cca9215598686cb4e98f82b1a8"
+      },
+      {
+        "name": "water_w02",
+        "changed_boundary_pixels": 16,
+        "boundary_pixel_fraction": 0.015625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "8cd3a78a3a46f5abe49785e17a1f2bd6e4e04a460aa3da733b29fa9cdca93862",
+        "finished_pixel_sha256": "f5202eec648dbe00f7ee728f93ef3bfcd9acd00824116b549c7e66075045f29a"
+      },
+      {
+        "name": "water_w02_phase1",
+        "changed_boundary_pixels": 8,
+        "boundary_pixel_fraction": 0.0078125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "516eb61891bc66db145c6c8c1177a95144a4b799614f27dc64df5cc09e506e3b",
+        "finished_pixel_sha256": "b0a7a04c41c14e275310cb1b197850014f3f53c6010c9b15961d36a899bca180"
+      },
+      {
+        "name": "water_w02_phase2",
+        "changed_boundary_pixels": 6,
+        "boundary_pixel_fraction": 0.005859375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "69a4b68f77cb5065747c28b01adb245aeaf2703c7dd6d5c034805a59a02537dc",
+        "finished_pixel_sha256": "6ee3a8589424806c11142a963f403db044e2b9a8bdbb11375e9c9fa3c879b036"
+      },
+      {
+        "name": "water_w02_phase3",
+        "changed_boundary_pixels": 10,
+        "boundary_pixel_fraction": 0.009765625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "f29193e463e9cf9032d1231f6aa93d174946f31667622a65a6e54690ac2a0baf",
+        "finished_pixel_sha256": "539c05d29ce048f27256b773b88abc81d3ef26c2e1fbd30c8171bcded569fde1"
+      },
+      {
+        "name": "water_w03",
+        "changed_boundary_pixels": 29,
+        "boundary_pixel_fraction": 0.0283203125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "f54e9630db50bb1e9a42ba40b748730607fdb6aa5f74af0edc01dea415ee6b58",
+        "finished_pixel_sha256": "4a032ae6ae1e790837c19e0187604e98b6e307ba98b3b50ca19ec443d400af97"
+      },
+      {
+        "name": "water_w03_phase1",
+        "changed_boundary_pixels": 16,
+        "boundary_pixel_fraction": 0.015625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "c4af84ff698906455875ed01feb8bda8856fb98f9791388058dfa3aa09187a92",
+        "finished_pixel_sha256": "0373bedcbb3ed08132b4ef6e456c218aa9b8725bbe6dda2c731596abb5f242ac"
+      },
+      {
+        "name": "water_w03_phase2",
+        "changed_boundary_pixels": 9,
+        "boundary_pixel_fraction": 0.0087890625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "5233eea82aa8278529cdb6aacdb1504cf1c494ba5245d77e7bdb656b4b92654b",
+        "finished_pixel_sha256": "a8155dc397517f7d4e3a88f52f8bd5feb1665d6fdaa15e057b0131de1f392ad3"
+      },
+      {
+        "name": "water_w03_phase3",
+        "changed_boundary_pixels": 20,
+        "boundary_pixel_fraction": 0.01953125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "acaf2bb3fce0a29b1dbdaca41dd54c2165c44e973bd1194c2259f3a4adeac65a",
+        "finished_pixel_sha256": "9010deb45a249ac3eb830f8db07fdb100cd8514b5fb9fda2a190d9cd45e8d449"
+      },
+      {
+        "name": "water_w04",
+        "changed_boundary_pixels": 10,
+        "boundary_pixel_fraction": 0.009765625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "92e71bedd6f9822ebedb740d5d5653e1464f53550d1d6a389ab6897a6d125d43",
+        "finished_pixel_sha256": "146d4cd1219bf117e77fdbf9b705bd19084fe1249e40e7858d6453c8bcbe4137"
+      },
+      {
+        "name": "water_w04_phase1",
+        "changed_boundary_pixels": 6,
+        "boundary_pixel_fraction": 0.005859375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "bd324ad2a0dc7663c8038227de67c326008c119897c4f638da86fb22dedba4e4",
+        "finished_pixel_sha256": "f35ecfae07188da8c32c52f653b4cb40195078b6f87c8f5ba657f9669213c8ff"
+      },
+      {
+        "name": "water_w04_phase2",
+        "changed_boundary_pixels": 6,
+        "boundary_pixel_fraction": 0.005859375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "9014eb72e90557f4183f90b79b39442ccf854eb4c8735cb02d6d148366a11d98",
+        "finished_pixel_sha256": "2607f1cbbc70a9f34b60983a962ec8a8a3130be39ce0b516a950a91b00ca7ddb"
+      },
+      {
+        "name": "water_w04_phase3",
+        "changed_boundary_pixels": 19,
+        "boundary_pixel_fraction": 0.0185546875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "7cd23dfdb39d47a468f6d52f69ed711969f3c454df408e4ba522b373806c2ffd",
+        "finished_pixel_sha256": "489161ec586b1510eacf000a30d064598aa217687676277b7eb6712f1f30c9eb"
+      },
+      {
+        "name": "water_w05",
+        "changed_boundary_pixels": 23,
+        "boundary_pixel_fraction": 0.0224609375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "82c0e195b6ef311b5959b6c12048964a9d32331b94749f53f951abe3bcd24270",
+        "finished_pixel_sha256": "30c7d4ef1a5ff67b6b4b6ccd98b1c4fb6122d0506a5428c02a9a025fcba858b7"
+      },
+      {
+        "name": "water_w05_phase1",
+        "changed_boundary_pixels": 14,
+        "boundary_pixel_fraction": 0.013671875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "d458aef2518b9f9742c49438d3d9c442da794b60cccfc02dd8b4890f16f99015",
+        "finished_pixel_sha256": "4662a2c91ef7987f7195368de1b679360e9a800f0502fa365f67427cb33aee26"
+      },
+      {
+        "name": "water_w05_phase2",
+        "changed_boundary_pixels": 9,
+        "boundary_pixel_fraction": 0.0087890625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "d5942cdf26dee4351d9b1b107e2ae9c20500764b38c0f57ccea932ca8d70067c",
+        "finished_pixel_sha256": "7f79b091a73aff8eaf4d3d4ef504954554c6ea0d73d71f0e02f9b8a0f6b5cd2d"
+      },
+      {
+        "name": "water_w05_phase3",
+        "changed_boundary_pixels": 28,
+        "boundary_pixel_fraction": 0.02734375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "1ec1e6dd7a722cd619ef7d302c3b49f2bd49cc57a37ab698be3c6066aa602a06",
+        "finished_pixel_sha256": "f65ca479187f21220b39cbf5796fd828ab32f8fca4de7eca1cd22b579d940c77"
+      },
+      {
+        "name": "water_w06",
+        "changed_boundary_pixels": 23,
+        "boundary_pixel_fraction": 0.0224609375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "8517d8b9d954b0fabc696a60b882d46aa0793a526bfeac0384afad0cd20640e1",
+        "finished_pixel_sha256": "2f4d0dec10109c45e66fde378f3914db2d9d91422ff8be908158317854fcb65d"
+      },
+      {
+        "name": "water_w06_phase1",
+        "changed_boundary_pixels": 11,
+        "boundary_pixel_fraction": 0.0107421875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "16a2d307b67ca0761f23fa423893e4df6f065d910c5b746b3f15e6f37dbcc743",
+        "finished_pixel_sha256": "a6f65d14481ad41aa90a3fddc7d286555a5c04102a1b83cb40a51ea1b7791834"
+      },
+      {
+        "name": "water_w06_phase2",
+        "changed_boundary_pixels": 9,
+        "boundary_pixel_fraction": 0.0087890625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "df70d77bf2f53f6d766e3cb81b4a855bbfebccd73d0e2616deb3f68a11edc178",
+        "finished_pixel_sha256": "163fc3c8505badb2ebb9b3bbfa190835d063f9bb12c267ea79d86597525441dc"
+      },
+      {
+        "name": "water_w06_phase3",
+        "changed_boundary_pixels": 27,
+        "boundary_pixel_fraction": 0.0263671875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "2f8e39b28546d7b88fe48f97b2f2d5ef54e4303899222d8f62961ac170c736a0",
+        "finished_pixel_sha256": "f087d48007dea6603ed9aaa0a81dde78856c5e4bb854aaaf8d8794599c177075"
+      },
+      {
+        "name": "water_w07",
+        "changed_boundary_pixels": 36,
+        "boundary_pixel_fraction": 0.03515625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "2938db97a9fdeee4bada62d09eed25dcde65ca02800823e2cd731603a2edb256",
+        "finished_pixel_sha256": "d91550559cfffaaa0306ecf7ecc9a28b31b9bdf8dfb017fc03ad5a01ddf7d414"
+      },
+      {
+        "name": "water_w07_phase1",
+        "changed_boundary_pixels": 19,
+        "boundary_pixel_fraction": 0.0185546875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "8b1bb814e4118d66b759a1aab21101eef52e04dfaacecfbf886eb62b8dcda179",
+        "finished_pixel_sha256": "912e9da8fbc2109e215958cedbcc54ddefe844fa1c3ca3929b9484cade27375d"
+      },
+      {
+        "name": "water_w07_phase2",
+        "changed_boundary_pixels": 12,
+        "boundary_pixel_fraction": 0.01171875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "3db0bef38138a99abb3fabc064f63b3754354b0fb3dbac35b141f106b1f28745",
+        "finished_pixel_sha256": "330adf9f6b8560a4b1cfda02c8565f314a06148a138517fc5b6b5d174d55771c"
+      },
+      {
+        "name": "water_w07_phase3",
+        "changed_boundary_pixels": 36,
+        "boundary_pixel_fraction": 0.03515625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "8e749ee639678b93191c3689b3793ace603472b3c9e215bffe383931361a489e",
+        "finished_pixel_sha256": "d87c63f4640f2b3dd14ae7700c4a00449855984bc6c0e64cad51d8db23791d3a"
+      },
+      {
+        "name": "water_w08",
+        "changed_boundary_pixels": 13,
+        "boundary_pixel_fraction": 0.0126953125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "1195cdb40c44ff9b7bc10fbcc2253af41251b115c890303b8d6de3d1520a998b",
+        "finished_pixel_sha256": "7e01586cff68104f16368a7df7b9d0751d91968646325497b016855bb4844cb0"
+      },
+      {
+        "name": "water_w08_phase1",
+        "changed_boundary_pixels": 8,
+        "boundary_pixel_fraction": 0.0078125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "b6d21533441ae7256e97fbc6bdab4b7a743eb33dd86dc2a2dce9f9cd9691039d",
+        "finished_pixel_sha256": "6c8e4738fdee151f95b0a7e9bde9926ff09b1d8ddee69c8b84f9450c05ddf38b"
+      },
+      {
+        "name": "water_w08_phase2",
+        "changed_boundary_pixels": 7,
+        "boundary_pixel_fraction": 0.0068359375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "c29b809c277a402a947569435303def820f651d123f0d4fe9df71822c54a3361",
+        "finished_pixel_sha256": "4500b11576115062a7e6c7689a8574d72c64b95adf840ac68d94f70c86d9d1e2"
+      },
+      {
+        "name": "water_w08_phase3",
+        "changed_boundary_pixels": 15,
+        "boundary_pixel_fraction": 0.0146484375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "6fcb388534fde4888657e7306ddef7acf7024acf42fa0c99152488f95344c138",
+        "finished_pixel_sha256": "5938e3f2f36f8a45e79c6658e99139d91040c6681033b753b903c0085866fd49"
+      },
+      {
+        "name": "water_w09",
+        "changed_boundary_pixels": 25,
+        "boundary_pixel_fraction": 0.0244140625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "996e46a45e09dede2411908720c7244272a9f846f3ca77d236a5eb1cf8a3bc36",
+        "finished_pixel_sha256": "e05e03b8ded318a876f7efaa2b875023293f22c793e43a909ed2a28bd2530e65"
+      },
+      {
+        "name": "water_w09_phase1",
+        "changed_boundary_pixels": 16,
+        "boundary_pixel_fraction": 0.015625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "865590dda97d90390fabe95358f77a7cd6668c97c47b4402924286b2fdca7b8c",
+        "finished_pixel_sha256": "686ae4d5b1fdbcc6e9baa783b533c741aac71e10857f128d054d6ca7a4e8d282"
+      },
+      {
+        "name": "water_w09_phase2",
+        "changed_boundary_pixels": 10,
+        "boundary_pixel_fraction": 0.009765625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "e6381ee12a37e4bad5c44bdf61b9e09395ede1e6131696be1c68ffa97ffe2ebb",
+        "finished_pixel_sha256": "c91253e0e5453876d7aadfc57accdda482248d92b987baf74ec1e209b22e7d29"
+      },
+      {
+        "name": "water_w09_phase3",
+        "changed_boundary_pixels": 24,
+        "boundary_pixel_fraction": 0.0234375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "6e9b232cf0ed6d3b24ee5d2be43a29e98bf71408e81ab902eec10e23e5fec23f",
+        "finished_pixel_sha256": "b462f3e1b14ad2929a735b729ab89fbf3d50ac42d1bc86225320ea8dfffcfb17"
+      },
+      {
+        "name": "water_w10",
+        "changed_boundary_pixels": 25,
+        "boundary_pixel_fraction": 0.0244140625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "d5f7f1f814d23857abb42a50c85b9fc5d7d6b6e022e7efe7828132cf9fd4d7b8",
+        "finished_pixel_sha256": "3ff19280d1a5751c4812be646d88d0d1de09f6ac688eab517ebf6b1e8f4d73a5"
+      },
+      {
+        "name": "water_w10_phase1",
+        "changed_boundary_pixels": 13,
+        "boundary_pixel_fraction": 0.0126953125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "c71420f77a73e317aece99e32ef786cbe9937add66e883d0861813081641bf29",
+        "finished_pixel_sha256": "092d3b0a5da5ef8d5245da5e5a4e192e843de42ec9dd2bcaa9f519d747d659a9"
+      },
+      {
+        "name": "water_w10_phase2",
+        "changed_boundary_pixels": 10,
+        "boundary_pixel_fraction": 0.009765625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "11769d5f2ae6d6198db3e92838f8d01d5b74690b09d419fe19dca49fbd7255d8",
+        "finished_pixel_sha256": "80a7ced013778cb39a9a6ade4ec6f373c619a7ee6282bc8be02c131bfb2c50b6"
+      },
+      {
+        "name": "water_w10_phase3",
+        "changed_boundary_pixels": 23,
+        "boundary_pixel_fraction": 0.0224609375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "7f1f9905a34f408300d97136a7b847843353e3c432c8d77264d0dcec4258668a",
+        "finished_pixel_sha256": "a81fa798912a48c0c6511d33c48922647b62512de375c0f282ac756ca7f5ec45"
+      },
+      {
+        "name": "water_w11",
+        "changed_boundary_pixels": 38,
+        "boundary_pixel_fraction": 0.037109375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "ba28e5ebe0538e62bc399156f559cb168a81967ab34de90fbd79fa06d2267564",
+        "finished_pixel_sha256": "53edbfb1cb5e9c4581a2742b699ff726cae3a767b9d46240d07b89c40ac62bf9"
+      },
+      {
+        "name": "water_w11_phase1",
+        "changed_boundary_pixels": 21,
+        "boundary_pixel_fraction": 0.0205078125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "7d2b70094dbc21011198d85c68cc84e3cde335316f6d5927b268c6f8886807d4",
+        "finished_pixel_sha256": "bdada57581524d11b656b0fe3e6b3b4ce79267085d3055bb6fee656452fa3ffb"
+      },
+      {
+        "name": "water_w11_phase2",
+        "changed_boundary_pixels": 13,
+        "boundary_pixel_fraction": 0.0126953125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "4c62f4c9dbdd83ed5175234819756aecbaca01a7d4de52b60995e8edf177c604",
+        "finished_pixel_sha256": "bd0bfa4465e2d81b4025e82f96ceb148c66128150a88f934913294d1e22a9035"
+      },
+      {
+        "name": "water_w11_phase3",
+        "changed_boundary_pixels": 32,
+        "boundary_pixel_fraction": 0.03125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "bf77f223bf3fab7ec597cdb2bf6d1142d4a93ede1862f847a391eab8824b1c38",
+        "finished_pixel_sha256": "024dd78d58caba866f6219b878376e1dd54a6992c6e192f08bbed5079d6396bc"
+      },
+      {
+        "name": "water_w12",
+        "changed_boundary_pixels": 19,
+        "boundary_pixel_fraction": 0.0185546875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "c1fb5103a88886a0b6bdafc81e170a1037d288d1bb54d5d988c566c60a3fe373",
+        "finished_pixel_sha256": "c61d2808236faa7874463619c0f47eb7f6a95d864969e6b6a7d057c6f82fc77d"
+      },
+      {
+        "name": "water_w12_phase1",
+        "changed_boundary_pixels": 11,
+        "boundary_pixel_fraction": 0.0107421875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "c99e5a5f24f7f1c4a1730c1b37bfda0ae578294e75b5b4bf84ab0e9c7b1e2769",
+        "finished_pixel_sha256": "2e1de12c0ded86ae612b1300871cace7485310147d0dfd8e09bbdf7a6d2b0513"
+      },
+      {
+        "name": "water_w12_phase2",
+        "changed_boundary_pixels": 10,
+        "boundary_pixel_fraction": 0.009765625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "be2b5bee76f55432776ea7d911cd6fb3b98ce1bb45ecbbe0e0cd1b1063003220",
+        "finished_pixel_sha256": "6d18a3e3621b0da3858e909c743322719fc7391750c0ee2b353bb45ac4257f6b"
+      },
+      {
+        "name": "water_w12_phase3",
+        "changed_boundary_pixels": 31,
+        "boundary_pixel_fraction": 0.0302734375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "4f0153d38347a1bf87c89670831016337feb40764caeb8e25906210d4e74510c",
+        "finished_pixel_sha256": "4194a62910024cdc52999d00185c5d570bd2ebf698e62941e963f95a9ad8b1c9"
+      },
+      {
+        "name": "water_w13",
+        "changed_boundary_pixels": 32,
+        "boundary_pixel_fraction": 0.03125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "05ee323a671a40fd26ee03160e48998d215a78f5d3e5e21f4baf66b977edf5bf",
+        "finished_pixel_sha256": "4874de7de821862589d93ea074d5ef06f48f79107c32465d9bc6b53fdce8bd93"
+      },
+      {
+        "name": "water_w13_phase1",
+        "changed_boundary_pixels": 19,
+        "boundary_pixel_fraction": 0.0185546875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "87380b8c667b7e5d9abe0156a97dadf0bad0b1bd22cc790050f6a8e99da8aa90",
+        "finished_pixel_sha256": "8346e9ba57564c4e46149333bba59b798efda64b43169e366db49e8b989c16dc"
+      },
+      {
+        "name": "water_w13_phase2",
+        "changed_boundary_pixels": 13,
+        "boundary_pixel_fraction": 0.0126953125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "4b132e8fd41838c79d76cd9a3509cd55381e7358f07a5fa49b4fabf53aac2aa8",
+        "finished_pixel_sha256": "66318b86488be1c380e611c6119c9c4d28cb5fad64ffd689c8211f2fad3b0686"
+      },
+      {
+        "name": "water_w13_phase3",
+        "changed_boundary_pixels": 40,
+        "boundary_pixel_fraction": 0.0390625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "deb389020399b838b87450f865f6777ebdbd71c3c424ce7d9bb9f0ca6a32b5f0",
+        "finished_pixel_sha256": "c7151b230523e8a3d7852898e434ffef709db00945a54fe3c64b365927d6bcae"
+      },
+      {
+        "name": "water_w14",
+        "changed_boundary_pixels": 32,
+        "boundary_pixel_fraction": 0.03125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "2411d50c3b0e3bd422421af617169ffa1346ee06b7cbd2f7aa865fc2a82dc110",
+        "finished_pixel_sha256": "621e982105d6f998e8b425d75d214c91b8274ba2d029b25fc94858845b2443a0"
+      },
+      {
+        "name": "water_w14_phase1",
+        "changed_boundary_pixels": 16,
+        "boundary_pixel_fraction": 0.015625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "50d21f276ff546fd7e6ab2323b3e7949043d50bc98e70e0b1f0ac466157fecc8",
+        "finished_pixel_sha256": "dca8425b5045975471e246e1e06f1c0dba1cdfa5e8db1c11d6b77502ce7d3606"
+      },
+      {
+        "name": "water_w14_phase2",
+        "changed_boundary_pixels": 13,
+        "boundary_pixel_fraction": 0.0126953125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "6730bc4a6a2a70629aa7129b8f771e5279680c9a1497da94bfc38d6882b6c093",
+        "finished_pixel_sha256": "353ea7a29862ab85ac73ef990e5d9278f9b50612724e2d378702bad35aac8f7c"
+      },
+      {
+        "name": "water_w14_phase3",
+        "changed_boundary_pixels": 39,
+        "boundary_pixel_fraction": 0.0380859375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "0af2bd190f49aeec550bdd06aaa49bb52c41fed1a9c1fbdd194e70d507956b46",
+        "finished_pixel_sha256": "0dbb575d48079fc0d4c15e131eae3405c8abf4a624c557cb7535a62af88ad1ad"
+      },
+      {
+        "name": "water_w15",
+        "changed_boundary_pixels": 45,
+        "boundary_pixel_fraction": 0.0439453125,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "48644704dbe64a695e2ecb748fb4207c44815449b093ffd9a4ed517e335f9c79",
+        "finished_pixel_sha256": "2dc2c8b0cac5c575aa0f8d4c37b74ca29f035d7a86551d4b7eff9104c94a397a"
+      },
+      {
+        "name": "water_w15_phase1",
+        "changed_boundary_pixels": 24,
+        "boundary_pixel_fraction": 0.0234375,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "180995b2695bf1e8d84e0e8a04690d2da660735fd16b941f56ebcd5adabf01f1",
+        "finished_pixel_sha256": "5fe01e33d4298e0266b4e293f4bccbba0638cdeb0d1ab35ef115dc2a5a24f1f5"
+      },
+      {
+        "name": "water_w15_phase2",
+        "changed_boundary_pixels": 16,
+        "boundary_pixel_fraction": 0.015625,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "c62a94b1ab9e8d8fe1dfe0f97cc173f7071dcc987d2381268cfe8663007ed9e4",
+        "finished_pixel_sha256": "faf5bca2d88628d102269e949724cd16ae232f1372e1a8201ba989ed63e119ad"
+      },
+      {
+        "name": "water_w15_phase3",
+        "changed_boundary_pixels": 48,
+        "boundary_pixel_fraction": 0.046875,
+        "interior_30x30_identical_to_blender": true,
+        "raw_pixelized_sha256": "d99bd66b4d94ecb9f9bc05ae085188ee1747a7c89eebd78202cf5e44a12f8bf2",
+        "finished_pixel_sha256": "8186ca920f733966d4a5b70172c8b5b32d2703f10d3cc008c1f1b251646fe6bd"
+      }
+    ]
+  }
+}
