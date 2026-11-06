@@ -68,6 +68,25 @@ test.describe('Heroes of Hollowvale — Player Actor (Package 1-3)', () => {
       );
       expect(await page.evaluate(() => (window as any).__hv.anim())).toBe(`${classId}_idle_down`);
 
+      // Freeze frame 0 of idle animation to ensure a 100% deterministic visual baseline screenshot
+      await page.evaluate(() => {
+        const p = (window as any).__scene?.player;
+        if (p?.anims?.currentAnim) {
+          p.anims.pause();
+          p.anims.setCurrentFrame(p.anims.currentAnim.frames[0]);
+        }
+      });
+      await page.waitForTimeout(300);
+      await expect(page).toHaveScreenshot(`player-${classId}.png`);
+
+      // Resume animation for movement and combat tests
+      await page.evaluate(() => {
+        const p = (window as any).__scene?.player;
+        if (p?.anims?.isPaused) {
+          p.anims.resume();
+        }
+      });
+
       // 4. Test directional walk animations (Down, Left, Right, Up)
       const directions = [
         { key: 'ArrowDown', anim: `${classId}_walk_down`, idle: `${classId}_idle_down` },
@@ -93,10 +112,6 @@ test.describe('Heroes of Hollowvale — Player Actor (Package 1-3)', () => {
         );
         expect(await page.evaluate(() => (window as any).__hv.anim())).toBe(idle);
       }
-
-      // Settle and capture visual screenshot for the class
-      await page.waitForTimeout(500);
-      await expect(page).toHaveScreenshot(`player-${classId}.png`);
 
       // 5. Test hurt animation
       await page.evaluate(() => {
