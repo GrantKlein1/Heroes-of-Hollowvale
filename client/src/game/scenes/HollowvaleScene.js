@@ -361,7 +361,7 @@ export default class HollowvaleScene extends Phaser.Scene {
     this.player.setVisible(true)
     if (isBlendRenderer() && this.player instanceof Player) {
       this.player.setClass(id)
-      this.player.setScale(this._playerIntegerScale || 2)
+      this.player.setScale(this._playerIntegerScale || 1)
     } else {
       this._applySprite(session.spriteUrl || CLASS_SPRITES[id])
     }
@@ -373,7 +373,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       if (session.classId) {
         this.player.setClass(session.classId)
       }
-      this.player.setScale(this._playerIntegerScale || 2)
+      this.player.setScale(this._playerIntegerScale || 1)
       return
     }
     if (!url || !this.textures.exists(url)) return
@@ -1299,13 +1299,15 @@ export default class HollowvaleScene extends Phaser.Scene {
     this.worldH = h
     this.unit = h / 900
     this.physics.world.setBounds(x, y, w, h)
-    this.screenCamera.setScreenBounds({ x, y, width: w, height: h }, { slideMs })
+    this.screenCamera.setScreenBounds({ x, y, width: w, height: h, isTiled: (w <= 640 && h <= 384) }, { slideMs })
   }
 
   _sizePlayer(scale) {
     this._playerScale = scale
     if (isBlendRenderer() && this.player instanceof Player) {
-      const integerScale = Math.max(1, Math.round((scale * this.worldH) / 96))
+      // Package 1-3b calibration: Blend renderer actor is calibrated to native 1x scale
+      // (64x96 px = 2x3 tiles on 32px grid), resolving double magnification.
+      const integerScale = 1
       this._playerIntegerScale = integerScale
       this.player.setScale(integerScale)
       return

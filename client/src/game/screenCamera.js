@@ -1,4 +1,4 @@
-import { integerCoverZoom } from './worldMetrics.js'
+import { integerCoverZoom, integerTiledZoom } from './worldMetrics.js'
 
 /**
  * Camera clamp for one screen.
@@ -15,6 +15,7 @@ export class ScreenCamera {
   constructor(scene) {
     this.scene = scene
     this.bounds = { x: 0, y: 0, width: 1024, height: 1536 }
+    this.isTiled = false
     this._onResize = () => this.refreshZoom()
     scene.scale.on('resize', this._onResize)
   }
@@ -24,10 +25,11 @@ export class ScreenCamera {
   }
 
   /**
-   * @param {{ x: number, y: number, width: number, height: number }} bounds
-   * @param {{ slideMs?: number }} [opts]
+   * @param {{ x: number, y: number, width: number, height: number, isTiled?: boolean }} bounds
+   * @param {{ slideMs?: number, isTiled?: boolean }} [opts]
    */
   setScreenBounds(bounds, opts = {}) {
+    this.isTiled = Boolean(opts.isTiled ?? bounds.isTiled ?? this.isTiled)
     const slideMs = opts.slideMs || 0
     if (!(slideMs > 0)) {
       this.bounds = bounds
@@ -47,7 +49,10 @@ export class ScreenCamera {
   refreshZoom() {
     const cam = this.scene.cameras.main
     const { x, y, width, height } = this.bounds
-    const zoom = integerCoverZoom(this.scene.scale.width, this.scene.scale.height, width, height)
+    const isTiled = Boolean(this.isTiled || (width <= 640 && height <= 384))
+    const zoom = isTiled
+      ? integerTiledZoom(this.scene.scale.width, this.scene.scale.height)
+      : integerCoverZoom(this.scene.scale.width, this.scene.scale.height, width, height)
     cam.setZoom(zoom)
     cam.setBounds(x, y, width, height)
     cam.roundPixels = true
