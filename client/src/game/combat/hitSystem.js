@@ -57,7 +57,10 @@ export function getHitFrames(scene, sheetKey, animName = 'attack') {
     meta = tex?.customData?.meta
   }
 
-  const animMeta = meta?.anims?.[animName]
+  let animMeta = meta?.anims?.[animName]
+  if (!animMeta && animName === 'attack' && meta?.anims?.attack_2) {
+    animMeta = meta.anims.attack_2
+  }
   if (Array.isArray(animMeta?.hitFrames)) {
     return animMeta.hitFrames
   }
@@ -83,7 +86,10 @@ export function getHitbox(scene, sheetKey, frameIndex, facing, animName = 'attac
     meta = tex?.customData?.meta
   }
 
-  const animMeta = meta?.anims?.[animName]
+  let animMeta = meta?.anims?.[animName]
+  if (!animMeta && animName === 'attack' && meta?.anims?.attack_2) {
+    animMeta = meta.anims.attack_2
+  }
   const frameStr = String(frameIndex)
   const dirDef = animMeta?.hitbox?.[frameStr]?.[facing] || animMeta?.hitbox?.[frameIndex]?.[facing]
   if (dirDef && typeof dirDef.w === 'number' && typeof dirDef.h === 'number') {
@@ -111,7 +117,10 @@ export function getWeaponTip(scene, sheetKey, frameIndex, facing, animName = 'at
     meta = tex?.customData?.meta
   }
 
-  const animMeta = meta?.anims?.[animName]
+  let animMeta = meta?.anims?.[animName]
+  if (!animMeta && animName === 'attack' && meta?.anims?.attack_2) {
+    animMeta = meta.anims.attack_2
+  }
   const frameStr = String(frameIndex)
   const tip = animMeta?.weaponTipOffsetFromFeet?.[frameStr]?.[facing] || animMeta?.weaponTipOffsetFromFeet?.[frameIndex]?.[facing]
   if (tip && typeof tip.x === 'number' && typeof tip.y === 'number') {
@@ -224,12 +233,12 @@ export function rectIntersects(a, b) {
  * @param {number} [now=performance.now()] - Current timestamp
  * @returns {number} - Count of enemies struck
  */
-export function executePlayerMeleeHit(player, frameIndex, now = (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
+export function executePlayerMeleeHit(player, frameIndex, now = (typeof performance !== 'undefined' ? performance.now() : Date.now()), animName = 'attack') {
   if (!player?.scene) return 0
 
   const scene = player.scene
   const sheetKey = player.getSheetForAnim ? player.getSheetForAnim('attack') : player.texture?.key
-  const hitboxDef = getHitbox(scene, sheetKey, frameIndex, player.facing, 'attack')
+  const hitboxDef = getHitbox(scene, sheetKey, frameIndex, player.facing, animName)
 
   if (!hitboxDef) return 0
 

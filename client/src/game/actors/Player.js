@@ -101,7 +101,6 @@ export class Player extends Actor {
       scene._tryAttack = (now) => {
         if (isBlendRenderer() && scene.player instanceof Player) {
           scene._attacking = true
-          scene._attackUntil = (now || performance.now()) + 450
           return this.attack(now)
         }
         return origTryAttack(now)
@@ -156,10 +155,25 @@ export class Player extends Actor {
     } else if (this.is(ACTOR_STATES.HURT)) {
       this.playAnim('hurt', false)
     } else if (this.is(ACTOR_STATES.ATTACK)) {
-      this.playAnim('attack', false)
+      this.playAnim('attack', true)
     } else {
       this.playAnim('idle', false)
     }
+  }
+
+  /**
+   * Resolves the animation key for an animation action.
+   * Special case: Mage melee staff bonk is named 'attack_2' in mage_attack2.json.
+   *
+   * @param {string} anim
+   * @param {string} [dir=this.facing]
+   * @returns {string}
+   */
+  getAnimKey(anim, dir = this.facing) {
+    if (anim === 'attack' && this.classId === 'mage') {
+      return buildAnimKey(this.assetId, 'attack_2', dir)
+    }
+    return super.getAnimKey(anim, dir)
   }
 
   /**
@@ -181,7 +195,8 @@ export class Player extends Actor {
 
   /**
    * Plays a player animation with 4-directional key resolution.
-   * Automatically switches texture sheets and updates feet anchor when necessary.
+   * Automatically switches texture sheets and updates feet anchor and physics footprint.
+   * Safely handles missing animation keys without locking the state machine.
    *
    * @param {string} animName - 'idle' | 'walk' | 'hurt' | 'attack'
    * @param {boolean} [ignoreIfPlaying=true]
@@ -194,9 +209,30 @@ export class Player extends Actor {
     }
 
     const key = this.getAnimKey(animName)
+
+    // Missing animation key safety:
+    // If the scene animation manager exists but key is missing, never get stuck in ATTACK/HURT
+    if (this.scene?.anims && typeof this.scene.anims.exists === 'function' && !this.scene.anims.exists(key)) {
+      console.warn(`[Player] Animation key "${key}" not found in scene anims.`)
+      if (this.is(ACTOR_STATES.ATTACK) || this.is(ACTOR_STATES.HURT)) {
+        if (this.scene) {
+          this.scene._attacking = false
+        }
+        this.transition(ACTOR_STATES.IDLE, { force: true })
+      }
+      return this
+    }
+
     if (this.anims && typeof this.anims.play === 'function') {
       this.anims.play(key, ignoreIfPlaying)
     }
+
+    // Always synchronize feet origin, collision footprint, and hurtbox with the active target sheet
+    if (targetSheet) {
+      this.applySheetOrigin(targetSheet)
+      this.applyFootprint(targetSheet)
+    }
+
     return this
   }
 
@@ -346,10 +382,11 @@ export class Player extends Actor {
     const frameIndex = getAnimationFrameIndex(currentFrame)
     if (frameIndex >= 0 && !this._hitFramesProcessed.has(frameIndex)) {
       const sheetKey = this.getSheetForAnim('attack')
-      const hitFrames = getHitFrames(this.scene, sheetKey, 'attack')
+      const animMetaKey = this.classId === 'mage' ? 'attack_2' : 'attack'
+      const hitFrames = getHitFrames(this.scene, sheetKey, animMetaKey)
       if (hitFrames.includes(frameIndex)) {
         this._hitFramesProcessed.add(frameIndex)
-        executePlayerMeleeHit(this, frameIndex, time)
+        executePlayerMeleeHit(this, frameIndex, time, animMetaKey)
       }
     }
   }
