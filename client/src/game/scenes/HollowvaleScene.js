@@ -30,6 +30,15 @@ import { DomFxLayer } from '../fxLayer.js'
 import { random } from '../rng.js'
 import { mountHvApi, teardownHvApi } from '../qa/hvApi.js'
 import { AssetRegistry, defaultManifest } from '../assets/AssetRegistry.js'
+import {
+  ensureSpellAnimations,
+  castFireball,
+  castLightning,
+  castLeech,
+  castShield,
+  castBlink,
+  throwPoisonVial,
+} from '../combat/spells.js'
 import { MapLoader } from '../maps/MapLoader.js'
 import {
   PAINTED_WORLD_W,
@@ -202,6 +211,7 @@ export default class HollowvaleScene extends Phaser.Scene {
     if (this.assetRegistry) {
       this.assetRegistry.createAnims('boot')
       this.assetRegistry.createAnims('village')
+      ensureSpellAnimations(this)
     }
     this.debugOn = isDebug()
 
@@ -283,6 +293,10 @@ export default class HollowvaleScene extends Phaser.Scene {
     mountHvApi(this)
     if (typeof window !== 'undefined') {
       window.__scene = this
+      window.__session = session
+      if (window.__hv) {
+        window.__hv.cast = (spellId) => this.player?.cast?.(spellId)
+      }
     }
 
     this.enterScene('village', PAINTED_SCENES.village.spawn)
@@ -982,6 +996,10 @@ export default class HollowvaleScene extends Phaser.Scene {
     hurt.h = Math.max(1, pb.h - inset * 2)
     for (let i = this.projectiles.length - 1; i >= 0; i--) {
       const pr = this.projectiles[i]
+      if (typeof pr.update === 'function') {
+        pr.update(now, dt)
+        continue
+      }
       pr.x += pr.vx * dt
       pr.y += pr.vy * dt
       if (pr.dom) {
@@ -1054,6 +1072,11 @@ export default class HollowvaleScene extends Phaser.Scene {
 
   _killProjectile(i, linger) {
     const pr = removeAt(this.projectiles, i)
+    if (!pr) return
+    if (typeof pr.destroy === 'function') {
+      pr.destroy()
+      return
+    }
     if (linger) {
       const isPoison = pr.impact === 'poison'
       const src = isPoison ? PATHS.poisonPotionGif : PATHS.animatedFireSmallGif
