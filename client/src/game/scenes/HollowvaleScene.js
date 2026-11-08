@@ -29,7 +29,8 @@ import { ScreenCamera } from '../screenCamera.js'
 import { DomFxLayer } from '../fxLayer.js'
 import { random } from '../rng.js'
 import { mountHvApi, teardownHvApi } from '../qa/hvApi.js'
-import { AssetRegistry } from '../assets/AssetRegistry.js'
+import { AssetRegistry, defaultManifest } from '../assets/AssetRegistry.js'
+import { MapLoader } from '../maps/MapLoader.js'
 import {
   PAINTED_WORLD_W,
   PAINTED_WORLD_H,
@@ -55,7 +56,7 @@ import {
   getEnemySpeed,
   getEnemyDamage,
 } from '../combat/balance.js'
-import { isBlendRenderer, isDebug } from '../config/flags.js'
+import { isBlendRenderer, isDebug, isTiledMaps } from '../config/flags.js'
 import { Player } from '../actors/Player.js'
 import { ACTOR_STATES } from '../actors/stateMachine.js'
 
@@ -177,6 +178,23 @@ export default class HollowvaleScene extends Phaser.Scene {
       this.assetRegistry = new AssetRegistry(this)
       this.assetRegistry.loadGroup('boot')
       this.assetRegistry.loadGroup('village')
+    }
+
+    if (isTiledMaps()) {
+      this.load.tilemapTiledJSON('brackenford', 'maps/brackenford.tmj')
+      const tiles = defaultManifest.tiles || {}
+      for (const tileDef of Object.values(tiles)) {
+        if (tileDef.id && tileDef.image && !this.textures.exists(tileDef.id)) {
+          this.load.image(tileDef.id, tileDef.image)
+        }
+      }
+      if (!isBlendRenderer() && !this.textures.exists('village_props')) {
+        this.load.atlas(
+          'village_props',
+          'assets/props/village_props/village_props.png',
+          'assets/props/village_props/village_props.json'
+        )
+      }
     }
   }
 
@@ -1182,6 +1200,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       this.nextWaveAt = 0
     }
     if (id === 'wilderness') this._showWilderness(spawn, slideMs)
+    else if (isTiledMaps() && id === 'village') this._showTiledMap('brackenford', spawn, slideMs)
     else this._showPainted(id, spawn, slideMs)
     this._skipRest = true
     this._activeLabel = null
@@ -1214,6 +1233,103 @@ export default class HollowvaleScene extends Phaser.Scene {
       this.player.updateDepth()
     } else {
       this.player.setDepth(10)
+    }
+  }
+
+  _showTiledMap(mapKey, spawn, slideMs) {
+    this._clearVisuals()
+    const tilemapCache = this.cache?.tilemap?.get(mapKey)
+    const mapData = tilemapCache?.data || tilemapCache
+    if (!mapData) {
+      console.warn(`[HollowvaleScene] Tiled map data not found for "${mapKey}", falling back to painted`)
+      this._showPainted('village', spawn, slideMs)
+      return
+    }
+
+    const loader = new MapLoader(mapData, { scene: this, debug: this.debugOn })
+    this.tiledMapLoader = loader
+
+    const worldW = loader.worldWidth
+    const worldH = loader.worldHeight
+    this._setPlayfield(0, 0, worldW, worldH, slideMs)
+
+    // Mount tile layers, props, and physics colliders
+    const mounted = loader.mount(this, { key: mapKey, propAtlasKey: 'village_props' })
+
+    // Wire collision layer to physics solids
+    const collisionLayer = mounted?.layers?.get('collision')
+    if (collisionLayer) {
+      this.physics.add.collider(this.player, collisionLayer)
+      this.physics.add.collider(this.enemies, collisionLayer)
+    }
+
+    // Wire prop footprints static group
+    if (mounted?.propGroup) {
+      this.physics.add.collider(this.player, mounted.propGroup)
+      this.physics.add.collider(this.enemies, mounted.propGroup)
+    }
+
+    // Size player
+    this._sizePlayer(0.13)
+
+    // Place player at requested spawn or default spawn
+    let px = worldW / 2
+    let py = worldH * 0.5
+    if (spawn && typeof spawn.x === 'number' && typeof spawn.y === 'number') {
+      px = spawn.x
+      py = spawn.y
+    } else if (spawn && typeof spawn.nx === 'number' && typeof spawn.ny === 'number') {
+      px = spawn.nx * worldW
+      py = spawn.ny * worldH
+    } else {
+      const spawns = loader.getSpawns()
+      const defSpawn = spawns.find((s) => s.name === 'spawn_default') || spawns[0]
+      if (defSpawn) {
+        px = defSpawn.x + defSpawn.width / 2
+        py = defSpawn.y + defSpawn.height / 2
+      }
+    }
+    this.player.setPosition(px, py)
+    this.player.body?.reset?.(px, py)
+
+    // Build interaction and exit prompts from zones
+    this._buildTiledPrompts(loader)
+
+    if (isBlendRenderer() && this.player instanceof Player) {
+      this.player.updateDepth()
+    } else {
+      this.player.setDepth(10)
+    }
+  }
+
+  _buildTiledPrompts(loader) {
+    for (let i = 0; i < this.beaconLabels.length; i++) this.beaconLabels[i].destroy()
+    this.beaconLabels.length = 0
+    this.prompts = []
+
+    const zones = loader.zones?.getAll ? loader.zones.getAll() : (loader.zones?.all || [])
+    for (const z of zones) {
+      const rect = {
+        x: z.x / this.worldW,
+        y: z.y / this.worldH,
+        w: z.width / this.worldW,
+        h: z.height / this.worldH,
+      }
+
+      if (z.isExit || z.type === 'exit') {
+        const target = z.properties?.targetMap || 'wilderness'
+        const prompt = this._pushPrompt(rect, `Press E to exit to ${target}`, 'Wilderness', 'exit', 'wilderness')
+        prompt.targetMap = target
+        prompt.targetSpawn = z.properties?.targetSpawn
+      } else if (z.isDoor || z.type === 'door' || z.name === 'door_tavern') {
+        const prompt = this._pushPrompt(rect, z.properties?.prompt || 'Press E to enter The Flagon', 'The Flagon', 'exit', 'travel')
+        prompt.to = 'tavern'
+        prompt.spawn = { nx: 0.5, ny: 0.82 }
+        prompt.save = 'village'
+      } else if (z.type === 'landmark' || z.name === 'The Flagon') {
+        const label = z.properties?.label || z.properties?.prompt || 'The Flagon notice board'
+        this._pushPrompt(rect, `Press E to inspect: ${label}`, 'Notice', 'talk', 'bartender')
+      }
     }
   }
 
@@ -1297,7 +1413,7 @@ export default class HollowvaleScene extends Phaser.Scene {
   _setPlayfield(x, y, w, h, slideMs) {
     this.worldW = w
     this.worldH = h
-    this.unit = h / 900
+    this.unit = (w <= 640 && h <= 384) ? 1 : h / 900
     this.physics.world.setBounds(x, y, w, h)
     this.screenCamera.setScreenBounds({ x, y, width: w, height: h, isTiled: (w <= 640 && h <= 384) }, { slideMs })
   }
@@ -1443,6 +1559,13 @@ export default class HollowvaleScene extends Phaser.Scene {
     if (now < (this._flashUntil || 0)) this.player.setAlpha(0.5)
     else this.player.setAlpha(1)
     if (this.sceneId === 'wilderness') this.player.setDepth(this.player.body.bottom)
+    else if (this.tiledMapLoader) {
+      if (isBlendRenderer() && this.player instanceof Player) {
+        this.player.updateDepth()
+      } else if (this.player?.body) {
+        this.player.setDepth(this.player.body.bottom)
+      }
+    }
     this._drawEnemyHp()
 
     this._syncStealth(now, vanishing, smoke)
@@ -1583,6 +1706,10 @@ export default class HollowvaleScene extends Phaser.Scene {
   }
 
   _clearVisuals() {
+    if (this.tiledMapLoader) {
+      this.tiledMapLoader.destroy()
+      this.tiledMapLoader = null
+    }
     if (this.bg) {
       this.bg.destroy()
       this.bg = null

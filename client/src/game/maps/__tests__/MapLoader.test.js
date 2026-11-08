@@ -403,4 +403,160 @@ describe('Package 2-1: MapLoader & Tiled TMJ Architecture', () => {
       expect(loader.isBlockedPoint(80, 88)).toBe(true)
     })
   })
+
+  // =========================================================================
+  // Package 2-3: Brackenford Tiled Map Integration
+  // =========================================================================
+  describe('Package 2-3: Brackenford Tiled Map & Multi-Tileset Integration', () => {
+    const brackenfordPath = path.resolve(__dirname, '../../../../public/maps/brackenford.tmj')
+    const brackenfordData = JSON.parse(fs.readFileSync(brackenfordPath, 'utf-8'))
+
+    it('loads brackenford.tmj and verifies 640x384 league world metrics', () => {
+      const loader = new MapLoader(brackenfordData)
+      expect(loader.width).toBe(20)
+      expect(loader.height).toBe(12)
+      expect(loader.tileWidth).toBe(32)
+      expect(loader.tileHeight).toBe(32)
+      expect(loader.worldWidth).toBe(640)
+      expect(loader.worldHeight).toBe(384)
+      expect(loader.validateLayers().valid).toBe(true)
+    })
+
+    it('blocks movement on deep water tiles but allows passage over bridge planks and water fords', () => {
+      const loader = new MapLoader(brackenfordData)
+
+      // Row 7 has River Bracken (y in [224..256])
+      // Col 2 (x: 80, y: 240) is deep water: must block
+      expect(loader.isTileColliding(2, 7)).toBe(true)
+      expect(loader.isBlockedPoint(80, 240)).toBe(true)
+
+      // Col 5 (x: 176, y: 240) is bridge_plank: passable!
+      expect(loader.isTileColliding(5, 7)).toBe(false)
+      expect(loader.isBlockedPoint(176, 240)).toBe(false)
+
+      // Col 6 (x: 208, y: 240) is bridge_plank: passable!
+      expect(loader.isTileColliding(6, 7)).toBe(false)
+      expect(loader.isBlockedPoint(208, 240)).toBe(false)
+
+      // Col 9 (x: 304, y: 240) is water_ford: passable!
+      expect(loader.isTileColliding(9, 7)).toBe(false)
+      expect(loader.isBlockedPoint(304, 240)).toBe(false)
+
+      // Col 10 (x: 336, y: 240) is water_ford: passable!
+      expect(loader.isTileColliding(10, 7)).toBe(false)
+      expect(loader.isBlockedPoint(336, 240)).toBe(false)
+
+      // Col 15 (x: 496, y: 240) is deep water: must block
+      expect(loader.isTileColliding(15, 7)).toBe(true)
+      expect(loader.isBlockedPoint(496, 240)).toBe(true)
+    })
+
+    it('verifies barrier crossing sweep at maximum movement speed (300 px/s)', () => {
+      const loader = new MapLoader(brackenfordData)
+
+      // Thief with speed boost moving south at 300 px/s (5 px/frame at 60 FPS)
+      // Moving toward deep water at (x: 80, y: 224..256)
+      const collider = { x: 72, y: 192, width: 24, height: 16 }
+      // Desired movement 50px south (would land inside y: 242, which is deep water)
+      const sweepResult = loader.sweep(collider, 0, 50)
+
+      expect(sweepResult.collided).toBe(true)
+      expect(sweepResult.collidedY).toBe(true)
+      // Player bottom edge must not penetrate deep water at y = 224
+      expect(sweepResult.y + collider.height).toBeLessThanOrEqual(224)
+    })
+
+    it('verifies building base and roof paired coordinates and overhead non-collision', () => {
+      const loader = new MapLoader(brackenfordData)
+
+      const tavernBase = loader.propObjects.find((p) => p.name === 'tavern_base')
+      const tavernRoof = loader.propObjects.find((p) => p.name === 'tavern_roof')
+      expect(tavernBase).toBeDefined()
+      expect(tavernRoof).toBeDefined()
+
+      // Shared authored coordinates and untrimmed canvas dimensions
+      expect(tavernBase.x).toBe(tavernRoof.x)
+      expect(tavernBase.y).toBe(tavernRoof.y)
+      expect(tavernBase.width).toBe(tavernRoof.width)
+      expect(tavernBase.height).toBe(tavernRoof.height)
+      expect(tavernBase.feetY).toBe(tavernRoof.feetY)
+
+      // Base collides, roof has shape 'none' and does not collide
+      expect(tavernBase.footprint.shape).toBe('rect')
+      expect(tavernRoof.footprint.shape).toBe('none')
+      expect(tavernRoof.footprint.width).toBe(0)
+      expect(tavernRoof.footprint.height).toBe(0)
+
+      // Only base is included in solid propFootprints
+      const baseInFootprints = loader.propFootprints.some((p) => p.name === 'tavern_base')
+      const roofInFootprints = loader.propFootprints.some((p) => p.name === 'tavern_roof')
+      expect(baseInFootprints).toBe(true)
+      expect(roofInFootprints).toBe(false)
+    })
+
+    it('advances water animation frames across 4 steps via stepWaterAnimation', () => {
+      const loader = new MapLoader(brackenfordData)
+
+      const putTiles = []
+      const mockGroundLayer = {
+        name: 'ground',
+        putTileAt: (gid, col, row) => {
+          putTiles.push({ gid, col, row })
+        },
+      }
+      loader.tilemapLayers.set('ground', mockGroundLayer)
+      loader._initWaterAnimation({})
+
+      expect(loader.waterTiles.length).toBeGreaterThan(0)
+      expect(loader.waterFrame).toBe(0)
+
+      // Step 1: frame 1 (+16 GID offset)
+      putTiles.length = 0
+      loader.stepWaterAnimation()
+      expect(loader.waterFrame).toBe(1)
+      expect(putTiles.length).toBe(loader.waterTiles.length)
+      expect(putTiles[0].gid).toBe(41 + loader.waterTiles[0].baseTileId + 16)
+
+      // Step 2: frame 2 (+32 GID offset)
+      putTiles.length = 0
+      loader.stepWaterAnimation()
+      expect(loader.waterFrame).toBe(2)
+      expect(putTiles[0].gid).toBe(41 + loader.waterTiles[0].baseTileId + 32)
+
+      // Step 3: frame 3 (+48 GID offset)
+      putTiles.length = 0
+      loader.stepWaterAnimation()
+      expect(loader.waterFrame).toBe(3)
+      expect(putTiles[0].gid).toBe(41 + loader.waterTiles[0].baseTileId + 48)
+
+      // Step 4: cycles back to frame 0 (0 offset)
+      putTiles.length = 0
+      loader.stepWaterAnimation()
+      expect(loader.waterFrame).toBe(0)
+      expect(putTiles[0].gid).toBe(41 + loader.waterTiles[0].baseTileId)
+    })
+
+    it('documents and verifies AABB approximation for ellipse footprints', () => {
+      const loader = new MapLoader(brackenfordData)
+
+      // Well has ellipse footprint
+      const well = loader.propObjects.find((p) => p.name === 'well')
+      expect(well).toBeDefined()
+      expect(well.footprint.shape).toBe('ellipse')
+
+      // The bounding AABB is used for 2D Arcade collision
+      const wellFootprint = loader.propFootprints.find((p) => p.name === 'well')
+      expect(wellFootprint).toBeDefined()
+      expect(wellFootprint.bounds.width).toBe(28)
+      expect(wellFootprint.bounds.height).toBe(20)
+
+      // Point in center of well footprint blocks
+      const cx = wellFootprint.bounds.x + wellFootprint.bounds.width / 2
+      const cy = wellFootprint.bounds.y + wellFootprint.bounds.height / 2
+      expect(loader.isBlockedPoint(cx, cy)).toBe(true)
+
+      // Point just outside the bounding box does not block
+      expect(loader.isBlockedPoint(wellFootprint.bounds.x - 2, cy)).toBe(false)
+    })
+  })
 })

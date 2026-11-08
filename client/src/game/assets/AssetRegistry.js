@@ -8,6 +8,8 @@
 import defaultManifest from '../../../public/assets/manifest.json'
 import { buildAnimKey, buildFrameConfigs } from './animKeys.js'
 
+export { defaultManifest }
+
 export class AssetRegistry {
   /**
    * @param {import('phaser').Scene} scene - Active Phaser scene
