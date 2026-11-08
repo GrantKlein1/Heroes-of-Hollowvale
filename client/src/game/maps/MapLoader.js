@@ -81,9 +81,22 @@ export function parsePropFootprint(propObj) {
   }
 
   if (rawFootprint && typeof rawFootprint === 'object') {
+    const shape = String(rawFootprint.shape || 'rect').toLowerCase()
+    if (shape === 'none') {
+      return {
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+        shape: 'none',
+      }
+    }
+
     // Relative to prop feet or prop origin
-    const w = Number(rawFootprint.w ?? rawFootprint.width) || fp.w
-    const h = Number(rawFootprint.h ?? rawFootprint.height) || fp.h
+    const rawW = rawFootprint.w ?? rawFootprint.width
+    const rawH = rawFootprint.h ?? rawFootprint.height
+    const w = Number.isFinite(Number(rawW)) ? Number(rawW) : fp.w
+    const h = Number.isFinite(Number(rawH)) ? Number(rawH) : fp.h
     const relX = Number(rawFootprint.x) || 0
     const relY = Number(rawFootprint.y) || 0
 
@@ -106,7 +119,7 @@ export function parsePropFootprint(propObj) {
       y: worldY,
       width: w,
       height: h,
-      shape: String(rawFootprint.shape || 'rect').toLowerCase(),
+      shape,
     }
   }
 
@@ -262,6 +275,9 @@ export class MapLoader {
       const fp = parsePropFootprint(raw)
       const feetY = resolveFeetY(raw)
       const depth = calculateDepth(feetY)
+      const tall = Boolean(raw.properties?.find?.((p) => p.name === 'tall')?.value)
+      const layer = raw.properties?.find?.((p) => p.name === 'layer')?.value || 'props'
+      const isOverhead = layer === 'overhead'
 
       const propEntry = {
         id: raw.id,
@@ -272,20 +288,25 @@ export class MapLoader {
         width: raw.width || 32,
         height: raw.height || 32,
         feetY,
-        depth,
+        depth: isOverhead ? LAYER_DEPTHS.overhead : depth,
         footprint: fp,
-        tall: Boolean(raw.properties?.find?.((p) => p.name === 'tall')?.value),
+        tall,
+        layer,
         raw,
       }
 
       this.propObjects.push(propEntry)
-      this.propFootprints.push({
-        id: raw.id,
-        name: raw.name || 'prop',
-        bounds: { x: fp.x, y: fp.y, width: fp.width, height: fp.height },
-        shape: fp.shape,
-        feetY,
-      })
+
+      // Only add to solid footprints if it has a non-empty collision shape and is not overhead
+      if (fp.shape !== 'none' && fp.width > 0 && fp.height > 0 && layer !== 'overhead') {
+        this.propFootprints.push({
+          id: raw.id,
+          name: raw.name || 'prop',
+          bounds: { x: fp.x, y: fp.y, width: fp.width, height: fp.height },
+          shape: fp.shape,
+          feetY,
+        })
+      }
     }
   }
 
@@ -600,27 +621,58 @@ export class MapLoader {
   }
 
   /**
-   * Phaser Scene Integration: Builds Phaser TilemapLayers and physics colliders.
+   * Phaser Scene Integration: Builds Phaser TilemapLayers, prop sprites, and physics colliders.
    * Called when running inside an active Phaser scene.
    *
    * @param {import('phaser').Scene} scene
-   * @param {string} tilesetName
-   * @param {string} tilesetTextureKey
-   * @returns {object} { tilemap, layers, propGroup }
+   * @param {object|string} [options={}] - Config object or default tilesetName string for backward compatibility
+   * @returns {object} { tilemap, layers, propGroup, propSprites, destroy }
    */
-  mount(scene, tilesetName = 'placeholder_tiles', tilesetTextureKey = 'placeholder_tiles') {
+  mount(scene, options = {}) {
     if (!scene || !scene.make || !scene.make.tilemap) {
       return null
     }
 
-    const map = scene.make.tilemap({ data: this.data })
+    const defaultTilesetName = typeof options === 'string' ? options : (options?.tilesetName || 'placeholder_tiles')
+    const defaultTextureKey = typeof options === 'string' ? options : (options?.tilesetTextureKey || defaultTilesetName)
+    const mapKey = typeof options === 'object' && options?.key ? options.key : 'brackenford'
+
+    let map = null
+    if (scene.cache?.tilemap?.has?.(mapKey)) {
+      map = scene.make.tilemap({ key: mapKey })
+    } else if (scene.make?.tilemap) {
+      if (scene.cache?.tilemap?.add && Phaser?.Tilemaps?.Formats?.TILED_JSON) {
+        scene.cache.tilemap.add(mapKey, {
+          format: Phaser.Tilemaps.Formats.TILED_JSON,
+          data: this.data,
+        })
+        map = scene.make.tilemap({ key: mapKey })
+      } else {
+        map = scene.make.tilemap({ data: this.data })
+      }
+    }
+
+    if (!map) return null
     this.phaserTilemap = map
-    const tileset = map.addTilesetImage(tilesetName, tilesetTextureKey)
+
+    // Register all tilesets
+    const tilesetImages = []
+    if (this.tilesets.length > 0) {
+      for (const ts of this.tilesets) {
+        const tsName = ts.name
+        const texKey = scene.textures?.exists?.(tsName) ? tsName : (options?.tilesetTextureKey || tsName)
+        const added = map.addTilesetImage(tsName, texKey)
+        if (added) tilesetImages.push(added)
+      }
+    } else {
+      const fallback = map.addTilesetImage(defaultTilesetName, defaultTextureKey)
+      if (fallback) tilesetImages.push(fallback)
+    }
 
     // Create tile layers with assigned depths
     for (const layerName of ['ground', 'ground_detail', 'walls', 'collision', 'overhead']) {
       if (this.hasLayer(layerName)) {
-        const phaserLayer = map.createLayer(layerName, tileset, 0, 0)
+        const phaserLayer = map.createLayer(layerName, tilesetImages, 0, 0)
         if (phaserLayer) {
           const depth = getLayerDepth(layerName)
           phaserLayer.setDepth(depth)
@@ -635,6 +687,25 @@ export class MapLoader {
       }
     }
 
+    // Instantiate prop visual sprites
+    const propSprites = []
+    const propAtlasKey = (typeof options === 'object' && options?.propAtlasKey) || 'village_props'
+    const hasPropAtlas = Boolean(scene.textures?.exists?.(propAtlasKey))
+
+    for (const prop of this.propObjects) {
+      const frameName = prop.name
+      const px = prop.x + prop.width / 2
+      const py = prop.y + prop.height
+
+      if (hasPropAtlas && scene.textures.get(propAtlasKey)?.has?.(frameName)) {
+        const sprite = scene.add.image(px, py, propAtlasKey, frameName)
+        sprite.setOrigin(0.5, 1.0)
+        sprite.setDepth(prop.depth)
+        propSprites.push(sprite)
+      }
+    }
+    this.propSprites = propSprites
+
     // Create static bodies for prop footprints if physics is present
     let propGroup = null
     if (scene.physics && scene.physics.add && scene.physics.add.staticGroup) {
@@ -646,11 +717,116 @@ export class MapLoader {
         propGroup.add(zone)
       }
     }
+    this.propGroup = propGroup
+
+    // Setup water animation loop if water tiles exist
+    this._initWaterAnimation(scene)
 
     return {
       tilemap: map,
       layers: this.tilemapLayers,
       propGroup,
+      propSprites,
+      destroy: () => this.destroy(),
     }
+  }
+
+  /**
+   * Initializes water tile animation loop.
+   * Cycles 4 frames (every 160ms) for animated water tiles.
+   *
+   * @param {import('phaser').Scene} scene
+   * @private
+   */
+  _initWaterAnimation(scene) {
+    const groundLayer = this.tilemapLayers.get('ground')
+    if (!groundLayer) return
+
+    this.waterTiles = []
+    const waterTileset = this.tilesets.find((ts) => ts.name === 'water')
+    if (!waterTileset) return
+
+    const firstgid = Number(waterTileset.firstgid) || 41
+    const groundData = this.layers.get('ground')?.data || []
+
+    for (let r = 0; r < this.height; r++) {
+      for (let c = 0; c < this.width; c++) {
+        const gid = groundData[r * this.width + c]
+        // Animated water tiles in water.tsj are tiles 1..15 -> GID firstgid + 1 .. firstgid + 15
+        if (gid >= firstgid + 1 && gid <= firstgid + 15) {
+          const baseTileId = gid - firstgid
+          this.waterTiles.push({ col: c, row: r, baseTileId })
+        }
+      }
+    }
+
+    if (this.waterTiles.length === 0) return
+
+    this.waterFrame = 0
+    this.waterTimer = null
+
+    if (scene.time && typeof scene.time.addEvent === 'function') {
+      this.waterTimer = scene.time.addEvent({
+        delay: 160,
+        loop: true,
+        callback: () => this.stepWaterAnimation(),
+      })
+    }
+  }
+
+  /**
+   * Advances water animation by one frame.
+   * Each frame advances the tile ID by 16 (4 frames total).
+   */
+  stepWaterAnimation() {
+    const groundLayer = this.tilemapLayers.get('ground')
+    if (!groundLayer || !this.waterTiles || this.waterTiles.length === 0) return
+
+    this.waterFrame = (this.waterFrame + 1) % 4
+    const waterTileset = this.tilesets.find((ts) => ts.name === 'water')
+    const firstgid = Number(waterTileset?.firstgid) || 41
+    const frameOffset = this.waterFrame * 16
+
+    for (const t of this.waterTiles) {
+      const nextGid = firstgid + t.baseTileId + frameOffset
+      if (typeof groundLayer.putTileAt === 'function') {
+        groundLayer.putTileAt(nextGid, t.col, t.row)
+      }
+    }
+  }
+
+  /**
+   * Cleans up timer events, prop sprites, and tilemap layers.
+   */
+  destroy() {
+    if (this.waterTimer) {
+      if (typeof this.waterTimer.remove === 'function') {
+        this.waterTimer.remove()
+      } else if (typeof this.waterTimer.destroy === 'function') {
+        this.waterTimer.destroy()
+      }
+      this.waterTimer = null
+    }
+    if (Array.isArray(this.propSprites)) {
+      for (const sprite of this.propSprites) {
+        if (sprite && typeof sprite.destroy === 'function') {
+          sprite.destroy()
+        }
+      }
+      this.propSprites = []
+    }
+    if (this.propGroup) {
+      if (typeof this.propGroup.clear === 'function') {
+        this.propGroup.clear(true, true)
+      }
+      this.propGroup = null
+    }
+    if (this.phaserTilemap) {
+      if (typeof this.phaserTilemap.destroy === 'function') {
+        this.phaserTilemap.destroy()
+      }
+      this.phaserTilemap = null
+    }
+    this.tilemapLayers.clear()
   }
 }

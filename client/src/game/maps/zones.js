@@ -199,6 +199,14 @@ export class ZonesRegistry {
   }
 
   /**
+   * Return all parsed zones.
+   * @returns {ParsedZone[]}
+   */
+  getAll() {
+    return this.all
+  }
+
+  /**
    * Look up zone by exact name.
    * @param {string} name
    * @returns {ParsedZone|undefined}
