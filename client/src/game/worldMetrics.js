@@ -30,6 +30,14 @@ export const TARGET_VIRTUAL_W = 640
 export const TARGET_VIRTUAL_H = 360
 
 /**
+ * Minimum vertical height of a virtual playfield before scaling up.
+ * 270 ensures common laptop viewports (e.g. 1366x768 or 1080p @ 125%/150% scaling,
+ * which yield ~540-680px inner window height after browser chrome) use integer 2x zoom
+ * rather than collapsing to 1x.
+ */
+export const TARGET_VIRTUAL_MIN_H = 270
+
+/**
  * Wilderness stays a 12×18 layout. Cells are 64px so a 1024×1024 terrain
  * PNG downscales by an exact factor of 16 and lands on the pixel grid.
  */
@@ -79,6 +87,6 @@ export function integerCoverZoom(viewW, viewH, worldW, worldH) {
 export function integerTiledZoom(viewW, viewH) {
   if (!(viewW > 0 && viewH > 0)) return 1
   const zX = viewW / TARGET_VIRTUAL_W
-  const zY = viewH / TARGET_VIRTUAL_H
+  const zY = viewH / TARGET_VIRTUAL_MIN_H
   return Math.max(1, Math.floor(Math.min(zX, zY) + 1e-4))
 }
