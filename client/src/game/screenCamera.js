@@ -1,6 +1,49 @@
 import { integerCoverZoom, integerTiledZoom } from './worldMetrics.js'
 
 /**
+ * Calculate camera bounds that keep the world map centered when the camera viewport
+ * is larger than the map, preventing Phaser's clamp from anchoring it top-left.
+ *
+ * When the viewport in world units (viewW / zoom) exceeds map width, Phaser's clampX
+ * collapses max scroll to min scroll (0), locking the map to the left. Expanding the
+ * bounds symmetrically by (dw - width) allows the camera to center the map with equal
+ * margins on both sides.
+ *
+ * @param {number} viewW - Viewport width in screen pixels
+ * @param {number} viewH - Viewport height in screen pixels
+ * @param {{ x?: number, y?: number, width: number, height: number }} bounds - World bounds
+ * @param {number} [zoom=1] - Camera zoom
+ * @returns {{ x: number, y: number, width: number, height: number }}
+ */
+export function centeredCameraBounds(viewW, viewH, bounds, zoom = 1) {
+  const z = Math.max(1e-4, zoom || 1)
+  const baseX = bounds.x ?? 0
+  const baseY = bounds.y ?? 0
+  const width = bounds.width
+  const height = bounds.height
+
+  const dw = viewW / z
+  const dh = viewH / z
+
+  const adjW = Math.max(width, dw)
+  const adjH = Math.max(height, dh)
+  const adjX = baseX - (adjW - width) / 2
+  const adjY = baseY - (adjH - height) / 2
+
+  const marginX = Math.max(0, Math.round((viewW - width * z) / 2))
+  const marginY = Math.max(0, Math.round((viewH - height * z) / 2))
+
+  return {
+    x: adjX,
+    y: adjY,
+    width: adjW,
+    height: adjH,
+    marginX,
+    marginY,
+  }
+}
+
+/**
  * Camera clamp for one screen.
  *
  * Today a "screen" is a whole painted backdrop or one wilderness grid.
@@ -48,13 +91,14 @@ export class ScreenCamera {
 
   refreshZoom() {
     const cam = this.scene.cameras.main
-    const { x, y, width, height } = this.bounds
+    const { width, height } = this.bounds
     const isTiled = Boolean(this.isTiled || (width <= 640 && height <= 384))
     const zoom = isTiled
       ? integerTiledZoom(this.scene.scale.width, this.scene.scale.height)
       : integerCoverZoom(this.scene.scale.width, this.scene.scale.height, width, height)
     cam.setZoom(zoom)
-    cam.setBounds(x, y, width, height)
+    const adj = centeredCameraBounds(this.scene.scale.width, this.scene.scale.height, this.bounds, zoom)
+    cam.setBounds(adj.x, adj.y, adj.width, adj.height)
     cam.roundPixels = true
     // Look slightly below the sprite so the feet sit above the hotbar.
     cam.setFollowOffset(0, -(56 / zoom))

@@ -7,6 +7,7 @@ import {
   LEAGUE_SCREEN_H,
   TARGET_VIRTUAL_W,
   TARGET_VIRTUAL_H,
+  TARGET_VIRTUAL_MIN_H,
   PAINTED_WORLD_W,
   PAINTED_WORLD_H,
   integerCoverZoom,
@@ -22,6 +23,7 @@ describe('Package 1-3b: worldMetrics and Camera Calibration', () => {
     expect(LEAGUE_SCREEN_H).toBe(384)
     expect(TARGET_VIRTUAL_W).toBe(640)
     expect(TARGET_VIRTUAL_H).toBe(360)
+    expect(TARGET_VIRTUAL_MIN_H).toBe(270)
   })
 
   describe('integerCoverZoom (painted scenes)', () => {
@@ -52,6 +54,10 @@ describe('Package 1-3b: worldMetrics and Camera Calibration', () => {
       expect(integerTiledZoom(3840, 2160)).toBe(6)
       // 1366x768 (laptop): floor yields zoom 2
       expect(integerTiledZoom(1366, 768)).toBe(2)
+      // Laptop viewports with browser chrome (inner height ~540-680px) get crisp 2x zoom:
+      expect(integerTiledZoom(1280, 580)).toBe(2)
+      expect(integerTiledZoom(1366, 600)).toBe(2)
+      expect(integerTiledZoom(1536, 680)).toBe(2)
     })
 
     it('handles edge cases safely', () => {
