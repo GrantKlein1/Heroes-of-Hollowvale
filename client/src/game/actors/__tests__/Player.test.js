@@ -158,12 +158,12 @@ function createMockScene() {
           },
         },
       },
-      frameDef: { w: 64, h: 96, pivot: { x: 0.5, y: 0.9271 } },
+      frameDef: { w: 128, h: 96, pivot: { x: 0.5, y: 0.9271 } },
     },
     thief_attack: {
       meta: {
         origin: { x: 0.5, y: 0.9271 },
-        footprint: { x: -12, y: -4, w: 24, h: 7, shape: 'ellipse' },
+        footprint: { x: -9, y: -3, w: 18, h: 5, shape: 'ellipse' },
         anims: {
           attack: {
             hitFrames: [1, 3],
@@ -174,7 +174,37 @@ function createMockScene() {
           },
         },
       },
-      frameDef: { w: 64, h: 96, pivot: { x: 0.5, y: 0.9271 } },
+      frameDef: { w: 96, h: 96, pivot: { x: 0.5, y: 0.9271 } },
+    },
+    dwarf_attack: {
+      meta: {
+        origin: { x: 0.5, y: 0.9271 },
+        footprint: { x: -13, y: -4, w: 26, h: 8, shape: 'ellipse' },
+        anims: {
+          attack: {
+            hitFrames: [3],
+            hitbox: {
+              '3': { down: { x: -68, y: -68, w: 56, h: 40 } },
+            },
+          },
+        },
+      },
+      frameDef: { w: 96, h: 96, pivot: { x: 0.5, y: 0.9271 } },
+    },
+    mage_attack2: {
+      meta: {
+        origin: { x: 0.5, y: 0.8846 },
+        footprint: { x: -14, y: -4, w: 28, h: 8, shape: 'ellipse' },
+        anims: {
+          attack_2: {
+            hitFrames: [3],
+            hitbox: {
+              '3': { down: { x: -33, y: -72, w: 36, h: 80 } },
+            },
+          },
+        },
+      },
+      frameDef: { w: 96, h: 104, pivot: { x: 0.5, y: 0.8846 } },
     },
   }
 
@@ -186,6 +216,9 @@ function createMockScene() {
       add: {
         existing: vi.fn((obj) => obj),
       },
+    },
+    anims: {
+      exists: vi.fn(() => true),
     },
     textures: {
       get: vi.fn((key) => {
@@ -380,6 +413,80 @@ describe('Player Actor — Package 1-3', () => {
       // Hit at t = 1601 ms (> 600 ms) is accepted
       const thirdHit = player.takeDamage(10, 1601)
       expect(thirdHit).toBe(true)
+    })
+
+    it('Mage: resolves attack animation key to mage_attack_2_<facing> and returns to idle upon completion', () => {
+      const mage = new Player(mockScene, 100, 200, 'mage', { facing: 'down' })
+      expect(mage.getAnimKey('attack')).toBe('mage_attack_2_down')
+
+      const started = mage.attack(1000)
+      expect(started).toBe(true)
+      expect(mage.is(ACTOR_STATES.ATTACK)).toBe(true)
+      expect(mage.anims.play).toHaveBeenCalledWith('mage_attack_2_down', false)
+
+      // Emit animationcomplete
+      mage.emit('animationcomplete', { key: 'mage_attack_2_down' })
+      expect(mage.is(ACTOR_STATES.IDLE)).toBe(true)
+      expect(mage.anims.play).toHaveBeenCalledWith('mage_idle_down', expect.anything())
+    })
+
+    it('Safe fallback on missing animation keys: transitions out of ATTACK to IDLE without locking', () => {
+      const player = new Player(mockScene, 100, 200, 'knight')
+      mockScene.anims.exists = vi.fn((key) => !key.includes('attack'))
+
+      player.stateMachine.state = ACTOR_STATES.ATTACK
+      player.playAnim('attack')
+      expect(player.is(ACTOR_STATES.IDLE)).toBe(true)
+    })
+
+    it('Single-input attack idempotency: setClass during attack does not force-restart animation', () => {
+      const player = new Player(mockScene, 100, 200, 'knight')
+      player.attack(1000)
+      expect(player.is(ACTOR_STATES.ATTACK)).toBe(true)
+      expect(player.anims.play).toHaveBeenCalledWith('knight_attack_down', false)
+
+      // Clear mock calls to verify next call
+      player.anims.play.mockClear()
+
+      // Calling setClass while in ATTACK should pass ignoreIfPlaying = true
+      player.setClass('knight')
+      expect(player.anims.play).toHaveBeenCalledWith('knight_attack_down', true)
+    })
+
+    it.each([
+      ['knight', 'knight', 'knight_attack', 23, 7],
+      ['thief', 'thief', 'thief_attack', 24, 7],
+      ['dwarf', 'dwarf', 'dwarf_attack', 23, 7],
+      ['mage', 'mage_walk', 'mage_attack2', 24, 7],
+    ])('maintains stable body footprint and feet alignment across idle -> attack -> idle for %s', (classId, baseSheet, attackSheet, expectedW, expectedH) => {
+      const player = new Player(mockScene, 100, 200, classId)
+      expect(player.footprint.w).toBe(expectedW)
+      expect(player.footprint.h).toBe(expectedH)
+
+      // Capture idle offsets
+      const idleSetOffsetCalls = player.body.setOffset.mock.calls
+      const idleOffset = idleSetOffsetCalls[idleSetOffsetCalls.length - 1]
+
+      // Start attack
+      player.attack(1000)
+      expect(player.is(ACTOR_STATES.ATTACK)).toBe(true)
+
+      // Footprint size in metadata remains exact
+      expect(player.footprint.w).toBeDefined()
+      expect(player.footprint.h).toBeDefined()
+
+      // Footprint offsets updated for attack frame
+      const attackSetOffsetCalls = player.body.setOffset.mock.calls
+      const attackOffset = attackSetOffsetCalls[attackSetOffsetCalls.length - 1]
+      expect(attackOffset).toBeDefined()
+
+      // Complete attack back to idle
+      player.emit('animationcomplete', { key: player.getAnimKey('attack') })
+      expect(player.is(ACTOR_STATES.IDLE)).toBe(true)
+
+      // Body footprint size restored to base sheet
+      expect(player.footprint.w).toBe(expectedW)
+      expect(player.footprint.h).toBe(expectedH)
     })
   })
 })

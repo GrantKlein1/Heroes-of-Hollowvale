@@ -351,12 +351,20 @@ export default class HollowvaleScene extends Phaser.Scene {
       this.debugOn = !this.debugOn
       this._redrawStaticDebug()
     }
-    if (!this._attacking && !this._stealthVisual() && session.spriteUrl !== this._spriteUrl) {
-      this._applySprite(session.spriteUrl)
-    }
-    if (this._attacking && now >= this._attackUntil) {
-      this._attacking = false
-      this._applySprite(session.spriteUrl)
+    const isBlend = isBlendRenderer() && this.player instanceof Player
+    if (!isBlend) {
+      if (!this._attacking && !this._stealthVisual() && session.spriteUrl !== this._spriteUrl) {
+        this._applySprite(session.spriteUrl)
+      }
+      if (this._attacking && now >= this._attackUntil) {
+        this._attacking = false
+        this._applySprite(session.spriteUrl)
+      }
+    } else {
+      // In blend renderer mode, do not disrupt active non-looping animations (ATTACK / HURT)
+      if (!this.player.is(ACTOR_STATES.ATTACK) && !this.player.is(ACTOR_STATES.HURT) && session.spriteUrl !== this._spriteUrl) {
+        this._applySprite(session.spriteUrl)
+      }
     }
     if (now >= session.thiefVanishUntil && this._vanishArmed && session.classId === 'thief') {
       this._vanishArmed = false

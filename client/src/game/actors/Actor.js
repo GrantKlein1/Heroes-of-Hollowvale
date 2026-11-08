@@ -178,9 +178,10 @@ export class Actor extends SpriteBase {
   applyFootprint(sheetKey, explicitFootprint = null) {
     const key = sheetKey || (typeof this.texture === 'string' ? this.texture : this.texture?.key)
     let meta = null
+    let tex = null
 
     if (this.scene?.textures?.get) {
-      const tex = this.scene.textures.get(key)
+      tex = this.scene.textures.get(key)
       meta = tex?.customData?.meta
     }
 
@@ -196,11 +197,26 @@ export class Actor extends SpriteBase {
     this.footprint = { ...fp }
 
     // Resolve frame dimensions and feet pivot in pixels
-    const frameW = this.frame?.realWidth || this.frame?.width || this.width || 64
-    const frameH = this.frame?.realHeight || this.frame?.height || this.height || 96
+    let frameW = this.frame?.realWidth || this.frame?.width || this.width || 64
+    let frameH = this.frame?.realHeight || this.frame?.height || this.height || 96
 
-    const originX = typeof this.originX === 'number' ? this.originX : (this.anchor?.x ?? 0.5)
-    const originY = typeof this.originY === 'number' ? this.originY : (this.anchor?.y ?? 0.9271)
+    if (meta?.cell && typeof meta.cell.w === 'number' && typeof meta.cell.h === 'number') {
+      frameW = meta.cell.w
+      frameH = meta.cell.h
+    } else if (Array.isArray(meta?.cell) && meta.cell.length >= 2) {
+      frameW = Number(meta.cell[0]) || frameW
+      frameH = Number(meta.cell[1]) || frameH
+    } else if (tex?.frames) {
+      const firstFrame = Object.values(tex.frames).find((f) => f && f.name !== '__BASE')
+      if (firstFrame && (firstFrame.realWidth || firstFrame.width)) {
+        frameW = firstFrame.realWidth || firstFrame.width
+        frameH = firstFrame.realHeight || firstFrame.height
+      }
+    }
+
+    const anchor = this.resolveAnchor(key)
+    const originX = typeof this.originX === 'number' ? this.originX : (anchor.x ?? 0.5)
+    const originY = typeof this.originY === 'number' ? this.originY : (anchor.y ?? 0.9271)
 
     const pivotX = originX * frameW
     const pivotY = originY * frameH
@@ -215,6 +231,9 @@ export class Actor extends SpriteBase {
       }
       if (typeof this.body.setOffset === 'function') {
         this.body.setOffset(offsetX, offsetY)
+      }
+      if (typeof this.body.updateFromGameObject === 'function') {
+        this.body.updateFromGameObject()
       }
     }
   }
