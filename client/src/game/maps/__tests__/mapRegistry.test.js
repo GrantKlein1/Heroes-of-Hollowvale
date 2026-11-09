@@ -101,4 +101,41 @@ describe('Data-driven Tiled Map Registry (mapRegistry.js)', () => {
     expect(getMapByFile('maps/tavern.tmj')?.key).toBe('tavern')
     expect(getMapByFile('tavern.tmj')?.key).toBe('tavern')
   })
+
+  it('proves "new map = one registry entry": registers a fixture map and resolves fixture doors to it', () => {
+    // 1. Single registry entry
+    registerMap({
+      key: 'fixture_dungeon',
+      file: 'maps/fixture_map.tmj',
+      sceneIds: ['dungeon_depths'],
+      assetGroups: ['dungeon'],
+    })
+
+    // 2. Door zone referencing targetMap
+    const doorWithTargetMap = {
+      name: 'door_dungeon',
+      type: 'door',
+      properties: {
+        targetMap: 'maps/fixture_map.tmj',
+        targetSpawn: 'spawn_boss',
+        prompt: 'Press E to enter Dungeon Depths',
+      },
+    }
+    const resolvedTarget = resolveMap(doorWithTargetMap.properties.targetMap)
+    expect(resolvedTarget).toBeDefined()
+    expect(resolvedTarget.key).toBe('fixture_dungeon')
+    expect(resolvedTarget.sceneIds).toContain('dungeon_depths')
+
+    // 3. Door zone referencing sceneId via 'to'
+    const doorWithTo = {
+      name: 'door_shortcut',
+      type: 'door',
+      properties: {
+        to: 'dungeon_depths',
+      },
+    }
+    const resolvedTo = resolveMap(doorWithTo.properties.to)
+    expect(resolvedTo).toBeDefined()
+    expect(resolvedTo.key).toBe('fixture_dungeon')
+  })
 })
