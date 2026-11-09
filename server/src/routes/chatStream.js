@@ -6,6 +6,8 @@ import { chatCompletionStream } from '../groqClient.js';
 import { buildMessages, resolveNpcChatMaxTokens } from '../buildMessages.js';
 import { retrieveLoreWithShadow } from '../rag/store.js';
 import { getGroqApiKey } from '../config/secrets.js';
+import { SentenceSplitter } from '../tts/sentenceSplitter.js';
+import { createTurn, addSentence, finishTurn } from '../tts/turnAudio.js';
 
 function classifyRequest(message, priorUserCount) {
   const m = String(message || '').toLowerCase();
@@ -128,8 +130,17 @@ router.post('/chat/stream', async (req, res, next) => {
       res.flushHeaders();
     }
 
-    // Emit meta event
-    res.write(`event: meta\ndata: ${JSON.stringify({ npc, sessionId, caps })}\n\n`);
+    // Allocate an audio turn for streaming TTS
+    const turn = createTurn();
+    const turnId = turn.turnId;
+    const splitter = new SentenceSplitter({
+      onSentence: (sentence) => {
+        addSentence(turnId, sentence);
+      },
+    });
+
+    // Emit meta event including turnId
+    res.write(`event: meta\ndata: ${JSON.stringify({ npc, sessionId, caps, turnId })}\n\n`);
 
     const hasKey = !!getGroqApiKey();
     let finalReply = '';
@@ -140,6 +151,7 @@ router.post('/chat/stream', async (req, res, next) => {
       const tokens = finalReply.match(/\S+\s*/g) || [finalReply];
       for (const token of tokens) {
         res.write(`event: delta\ndata: ${JSON.stringify({ text: token })}\n\n`);
+        splitter.feed(token);
       }
     } else {
       const result = await chatCompletionStream({
@@ -149,16 +161,24 @@ router.post('/chat/stream', async (req, res, next) => {
         maxTokens: resolveNpcChatMaxTokens(process.env.GROQ_MAX_TOKENS),
         onDelta: (deltaText) => {
           res.write(`event: delta\ndata: ${JSON.stringify({ text: deltaText })}\n\n`);
+          splitter.feed(deltaText);
         },
       });
       finalReply = String(result.text || '').trim();
     }
 
+    // Flush any remaining partial sentence
+    const finalSentence = splitter.flush();
+    if (finalSentence) {
+      addSentence(turnId, finalSentence);
+    }
+    finishTurn(turnId);
+
     // Persist to conversation memory
     memory.addExchange(sessionId, npc, message, finalReply);
 
     // Emit done event
-    res.write(`event: done\ndata: ${JSON.stringify({ reply: finalReply, npc, sessionId })}\n\n`);
+    res.write(`event: done\ndata: ${JSON.stringify({ reply: finalReply, npc, sessionId, turnId })}\n\n`);
     res.end();
   } catch (err) {
     if (res.headersSent) {

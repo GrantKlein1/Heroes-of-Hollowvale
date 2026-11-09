@@ -925,10 +925,10 @@ export default function Game() {
       }
     }
 
-    const onSpeak = ({ text } = {}) => {
-      if (!text || !ttsEnabledRef.current) return
+    const onSpeak = ({ text, turnId } = {}) => {
+      if ((!text && !turnId) || !ttsEnabledRef.current) return
       const vol = Math.max(0, Math.min(1, (ttsVolumeRef.current || 100) / 100))
-      speakNpcDialogue(text, { volume: vol, enabled: true }).catch(() => {})
+      speakNpcDialogue(text, { volume: vol, enabled: true, turnId }).catch(() => {})
     }
 
     const onClose = () => {
@@ -1481,8 +1481,15 @@ export default function Game() {
       const payload = { npc: 'bartender', message: text, context, ragHints }
 
       let hasInsertedBubble = false
+      let turnAudioStarted = false
       const res = await sendChatWithFallback({
         ...payload,
+        onMeta: ({ turnId } = {}) => {
+          if (ttsEnabledRef.current && turnId) {
+            turnAudioStarted = true
+            eventBus.emit(GameEvents.NPC_SPEAK, { npc: 'bartender', turnId })
+          }
+        },
         onDelta: (_chunk, accumulated) => {
           setChatMessages(msgs => {
             if (!hasInsertedBubble) {
@@ -1510,8 +1517,8 @@ export default function Game() {
         return [...msgs, { role: 'assistant', content: reply }]
       })
 
-      // Stream bartender reply over EventBus → Web Audio TTS player
-      if (ttsEnabled && reply) {
+      // Stream bartender reply over EventBus → Web Audio TTS player if not already started via turnId
+      if (ttsEnabled && reply && !turnAudioStarted) {
         eventBus.emit(GameEvents.NPC_SPEAK, { npc: 'bartender', text: reply })
       }
     } catch (err) {

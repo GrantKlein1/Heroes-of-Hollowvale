@@ -1,10 +1,55 @@
 import express from 'express'
 import axios from 'axios'
 import { getElevenLabsApiKey, getElevenLabsVoiceId } from '../config/secrets.js'
+import { pipeTurnAudio, createTurn, addSentence, finishTurn } from '../tts/turnAudio.js'
+import { splitSentences } from '../tts/sentenceSplitter.js'
 
 const router = express.Router()
 
 const DEFAULT_VOICE_ID = getElevenLabsVoiceId() || 'N2lVS1w4EtoT3dr4eOWO' // Callum
+
+/**
+ * GET /api/tts/turn/:turnId
+ * Streams audio chunks for an active turn (audio/mpeg) as sentences are synthesized.
+ */
+router.get('/tts/turn/:turnId', (req, res, next) => {
+  try {
+    const { turnId } = req.params
+    const result = pipeTurnAudio(turnId, res, req)
+    if (result && result.status && result.status !== 200) {
+      return res.status(result.status).json({ error: result.error })
+    }
+  } catch (err) {
+    if (!res.headersSent) {
+      return next(err)
+    }
+    try { res.end() } catch { /* ignore */ }
+  }
+})
+
+/**
+ * POST /api/tts/turn
+ * Creates a new turn for a complete text block, splits into sentences, and returns turnId.
+ */
+router.post('/tts/turn', (req, res, next) => {
+  try {
+    const { text, voiceId = DEFAULT_VOICE_ID, modelId, voiceSettings } = req.body || {}
+    if (!text || typeof text !== 'string') {
+      return res.status(400).json({ error: 'Missing required field: text' })
+    }
+
+    const turn = createTurn({ voiceId, modelId, voiceSettings })
+    const sentences = splitSentences(text)
+    for (const s of sentences) {
+      addSentence(turn.turnId, s)
+    }
+    finishTurn(turn.turnId)
+
+    return res.status(200).json({ turnId: turn.turnId, sentenceCount: sentences.length })
+  } catch (err) {
+    return next(err)
+  }
+})
 
 /**
  * POST /api/tts
