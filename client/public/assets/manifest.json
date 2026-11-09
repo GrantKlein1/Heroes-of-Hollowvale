@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generatedAt": "2026-11-06T14:40:33.751Z",
+  "generatedAt": "2026-11-09T20:50:18.740Z",
   "groups": {
     "boot": [
       "fx_common",
@@ -27,7 +27,10 @@
       "goblin_brute",
       "critters",
       "fx_common",
-      "village_props"
+      "village_props",
+      "wild_props",
+      "wild_props_4b",
+      "ember_vent"
     ],
     "boss": [
       "knight",
@@ -49,6 +52,22 @@
     "boss_p3": [
       "red_dragon_p3_a",
       "red_dragon_p3_b"
+    ],
+    "interiors": [
+      "interior_props",
+      "npc_bartender",
+      "npc_vendor"
+    ],
+    "cavern": [
+      "dungeon_props",
+      "dungeon_brazier",
+      "treasure_chest"
+    ],
+    "loot": [
+      "loot_pickups"
+    ],
+    "boss_fx_extra": [
+      "dragon_fx_extra"
     ]
   },
   "assets": {
@@ -617,6 +636,15 @@
         "y": 0.5
       },
       "sheets": {
+        "dragon_fx_extra": {
+          "key": "dragon_fx_extra",
+          "image": "assets/boss/red_dragon/fx_extra/dragon_fx_extra.png",
+          "json": "assets/boss/red_dragon/fx_extra/dragon_fx_extra.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.5
+          }
+        },
         "dragon_fx_v2": {
           "key": "dragon_fx_v2",
           "image": "assets/boss/red_dragon/fx_v2/dragon_fx_v2.png",
@@ -692,6 +720,7 @@
       },
       "sidecars": [
         "attacks.json",
+        "fx_extra/fx_defs_extra.json",
         "fx_v2/fx_manifest.json",
         "fx_v2/spawns.json"
       ],
@@ -841,9 +870,661 @@
         }
       },
       "sidecars": []
+    },
+    "dungeon_brazier": {
+      "id": "dungeon_brazier",
+      "kind": "props",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "image": "assets/env/dungeon_brazier/dungeon_brazier.png",
+      "json": "assets/env/dungeon_brazier/dungeon_brazier.json",
+      "sheets": {
+        "dungeon_brazier": {
+          "key": "dungeon_brazier",
+          "image": "assets/env/dungeon_brazier/dungeon_brazier.png",
+          "json": "assets/env/dungeon_brazier/dungeon_brazier.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 1
+          }
+        }
+      },
+      "sidecars": [],
+      "anims": {
+        "burn": {
+          "frames": 6,
+          "fps": 8,
+          "loop": true,
+          "directions": [
+            "down"
+          ],
+          "frameNames": "dungeon_brazier_burn_down_<i>"
+        }
+      }
+    },
+    "dungeon_props": {
+      "id": "dungeon_props",
+      "kind": "props",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "image": "assets/env/dungeon_props/dungeon_props.png",
+      "json": "assets/env/dungeon_props/dungeon_props.json",
+      "sheets": {
+        "dungeon_props": {
+          "key": "dungeon_props",
+          "image": "assets/env/dungeon_props/dungeon_props.png",
+          "json": "assets/env/dungeon_props/dungeon_props.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 1
+          }
+        }
+      },
+      "sidecars": [
+        "pairing.json",
+        "PAIRING.md"
+      ]
+    },
+    "ember_vent": {
+      "id": "ember_vent",
+      "kind": "props",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "image": "assets/env/ember_vent/ember_vent.png",
+      "json": "assets/env/ember_vent/ember_vent.json",
+      "sheets": {
+        "ember_vent": {
+          "key": "ember_vent",
+          "image": "assets/env/ember_vent/ember_vent.png",
+          "json": "assets/env/ember_vent/ember_vent.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 1
+          }
+        }
+      },
+      "sidecars": [],
+      "anims": {
+        "burn": {
+          "frames": 4,
+          "fps": 8,
+          "loop": true,
+          "directions": [
+            "down"
+          ],
+          "frameNames": "ember_vent_burn_down_<i>"
+        }
+      }
+    },
+    "interior_props": {
+      "id": "interior_props",
+      "kind": "props",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "image": "assets/env/interior_props/interior_props.png",
+      "json": "assets/env/interior_props/interior_props.json",
+      "sheets": {
+        "interior_props": {
+          "key": "interior_props",
+          "image": "assets/env/interior_props/interior_props.png",
+          "json": "assets/env/interior_props/interior_props.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 1
+          }
+        }
+      },
+      "sidecars": [
+        "pairing.json",
+        "PAIRING.md"
+      ],
+      "anims": {
+        "tavern_hearth_wall_burn": {
+          "frames": 6,
+          "fps": 8,
+          "loop": true,
+          "directions": [
+            "down"
+          ],
+          "frameNames": "tavern_hearth_wall_burn_down_<i>",
+          "holdLast": false
+        }
+      }
+    },
+    "treasure_chest": {
+      "id": "treasure_chest",
+      "kind": "props",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "image": "assets/env/treasure_chest/treasure_chest.png",
+      "json": "assets/env/treasure_chest/treasure_chest.json",
+      "sheets": {
+        "treasure_chest": {
+          "key": "treasure_chest",
+          "image": "assets/env/treasure_chest/treasure_chest.png",
+          "json": "assets/env/treasure_chest/treasure_chest.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 1
+          }
+        }
+      },
+      "sidecars": [],
+      "anims": {
+        "wood_open": {
+          "frames": 6,
+          "fps": 12,
+          "loop": false,
+          "holdLast": true,
+          "directions": [
+            "down"
+          ],
+          "frameNames": "chest_wood_open_down_<i>",
+          "downOnlyReason": "lid opens toward camera"
+        },
+        "iron_open": {
+          "frames": 6,
+          "fps": 12,
+          "loop": false,
+          "holdLast": true,
+          "directions": [
+            "down"
+          ],
+          "frameNames": "chest_iron_open_down_<i>",
+          "downOnlyReason": "lid opens toward camera"
+        }
+      }
+    },
+    "wild_props": {
+      "id": "wild_props",
+      "kind": "props",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "image": "assets/env/wild_props/wild_props.png",
+      "json": "assets/env/wild_props/wild_props.json",
+      "sheets": {
+        "wild_props": {
+          "key": "wild_props",
+          "image": "assets/env/wild_props/wild_props.png",
+          "json": "assets/env/wild_props/wild_props.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 1
+          }
+        }
+      },
+      "sidecars": [
+        "pairing.json",
+        "PAIRING.md"
+      ]
+    },
+    "wild_props_4b": {
+      "id": "wild_props_4b",
+      "kind": "props",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "image": "assets/env/wild_props_4b/wild_props_4b.png",
+      "json": "assets/env/wild_props_4b/wild_props_4b.json",
+      "sheets": {
+        "wild_props_4b": {
+          "key": "wild_props_4b",
+          "image": "assets/env/wild_props_4b/wild_props_4b.png",
+          "json": "assets/env/wild_props_4b/wild_props_4b.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 1
+          }
+        }
+      },
+      "sidecars": []
+    },
+    "npc_bartender": {
+      "id": "npc_bartender",
+      "kind": "npc",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9271
+      },
+      "image": "assets/npcs/npc_bartender/npc_bartender.png",
+      "json": "assets/npcs/npc_bartender/npc_bartender.json",
+      "sheets": {
+        "npc_bartender": {
+          "key": "npc_bartender",
+          "image": "assets/npcs/npc_bartender/npc_bartender.png",
+          "json": "assets/npcs/npc_bartender/npc_bartender.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        }
+      },
+      "anims": {
+        "idle": {
+          "frames": 4,
+          "fps": 6,
+          "loop": true,
+          "playback": "loop",
+          "durationMs": 667,
+          "directions": [
+            "down",
+            "left",
+            "right",
+            "up"
+          ],
+          "frameNames": "npc_bartender_idle_<dir>_<i>",
+          "role": "base idle (Gate D approved motion)"
+        },
+        "talk": {
+          "frames": 6,
+          "fps": 8,
+          "loop": true,
+          "playback": "loop",
+          "durationMs": 750,
+          "directions": [
+            "down",
+            "left",
+            "right",
+            "up"
+          ],
+          "frameNames": "npc_bartender_talk_<dir>_<i>",
+          "role": "play while the dialogue box is open"
+        },
+        "bottle_clean": {
+          "frames": 13,
+          "fps": 8,
+          "loop": false,
+          "playback": "oneshot",
+          "durationMs": 1625,
+          "directions": [
+            "down",
+            "left",
+            "right",
+            "up"
+          ],
+          "frameNames": "npc_bartender_bottle_clean_<dir>_<i>",
+          "role": "idle variant",
+          "startsOnIdleFrame0": true,
+          "endsOnIdleFrame0": true,
+          "returnTo": "idle",
+          "holdLast": false,
+          "note": "Dips to set the tankard down and take a bottle (prop swap on frames 2 and 10, the lowest point). Facing down behind the bar the counter hides the swap; in left/right/up the swap is visible at knee height as a quick pick-up/put-down from a low shelf."
+        },
+        "wipe_counter": {
+          "frames": 12,
+          "fps": 8,
+          "loop": false,
+          "playback": "oneshot",
+          "durationMs": 1500,
+          "directions": [
+            "down"
+          ],
+          "frameNames": "npc_bartender_wipe_counter_<dir>_<i>",
+          "role": "idle variant",
+          "startsOnIdleFrame0": true,
+          "endsOnIdleFrame0": true,
+          "returnTo": "idle",
+          "holdLast": false,
+          "downOnlyReason": "Needs the bar top in front of him: the rag is lowered to the B1 tavern_bar_counter top line, which only exists as a south-facing (camera-facing) prop. In left/right/up he would be wiping empty air at thigh height. When Tharos faces left/right/up, pick another variant."
+        },
+        "gesture": {
+          "frames": 10,
+          "fps": 8,
+          "loop": false,
+          "playback": "oneshot",
+          "durationMs": 1250,
+          "directions": [
+            "down",
+            "left",
+            "right",
+            "up"
+          ],
+          "frameNames": "npc_bartender_gesture_<dir>_<i>",
+          "role": "idle variant",
+          "startsOnIdleFrame0": true,
+          "endsOnIdleFrame0": true,
+          "returnTo": "idle",
+          "holdLast": false,
+          "note": "Facing left the wave uses its own per-facing beats (35<->75 deg forearm swing) so the far hand stays visible beside/above the head on every frame (2026-11-09 QA fix; other facings unchanged)."
+        }
+      },
+      "sidecars": [
+        "README.md"
+      ]
+    },
+    "npc_vendor": {
+      "id": "npc_vendor",
+      "kind": "npc",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9271
+      },
+      "image": "assets/npcs/npc_vendor/npc_vendor.png",
+      "json": "assets/npcs/npc_vendor/npc_vendor.json",
+      "sheets": {
+        "npc_vendor": {
+          "key": "npc_vendor",
+          "image": "assets/npcs/npc_vendor/npc_vendor.png",
+          "json": "assets/npcs/npc_vendor/npc_vendor.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        }
+      },
+      "anims": {
+        "idle": {
+          "frames": 4,
+          "fps": 6,
+          "loop": true,
+          "playback": "loop",
+          "durationMs": 667,
+          "directions": [
+            "down",
+            "left",
+            "right",
+            "up"
+          ],
+          "frameNames": "npc_vendor_idle_<dir>_<i>",
+          "role": "base idle (vendor gate approved motion)"
+        },
+        "talk": {
+          "frames": 6,
+          "fps": 8,
+          "loop": true,
+          "playback": "loop",
+          "durationMs": 750,
+          "directions": [
+            "down",
+            "left",
+            "right",
+            "up"
+          ],
+          "frameNames": "npc_vendor_talk_<dir>_<i>",
+          "role": "play while the dialogue box is open"
+        },
+        "count_coins": {
+          "frames": 12,
+          "fps": 8,
+          "loop": false,
+          "playback": "oneshot",
+          "durationMs": 1500,
+          "directions": [
+            "down",
+            "left",
+            "right",
+            "up"
+          ],
+          "frameNames": "npc_vendor_count_coins_<dir>_<i>",
+          "role": "idle variant",
+          "startsOnIdleFrame0": true,
+          "endsOnIdleFrame0": true,
+          "returnTo": "idle",
+          "holdLast": false,
+          "note": "Reaches into the purse on his right hip (frames 1-2), holds a stack of gold coins in the left palm and counts three taps with the right hand (coins visible frames 3-8), closes his hands on them (frame 9) and settles. Coins are a hand prop shown only on frames 3-8."
+        },
+        "present_goods": {
+          "frames": 12,
+          "fps": 8,
+          "loop": false,
+          "playback": "oneshot",
+          "durationMs": 1500,
+          "directions": [
+            "down",
+            "left",
+            "right",
+            "up"
+          ],
+          "frameNames": "npc_vendor_present_goods_<dir>_<i>",
+          "role": "idle variant",
+          "startsOnIdleFrame0": true,
+          "endsOnIdleFrame0": true,
+          "returnTo": "idle",
+          "holdLast": false,
+          "note": "Showman \"behold!\": draws in, arms flung wide (2-4), left hand sweeps out palm-up toward the counter to present the wares (5-8, small bow with a planted knee dip on 7-8), back to the clasp."
+        }
+      },
+      "sidecars": [
+        "README.md"
+      ]
+    },
+    "loot_pickups": {
+      "id": "loot_pickups",
+      "kind": "loot",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.875
+      },
+      "image": "assets/loot/loot_pickups/loot_pickups.png",
+      "json": "assets/loot/loot_pickups/loot_pickups.json",
+      "sheets": {
+        "loot_pickups": {
+          "key": "loot_pickups",
+          "image": "assets/loot/loot_pickups/loot_pickups.png",
+          "json": "assets/loot/loot_pickups/loot_pickups.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.875
+          }
+        }
+      },
+      "anims": {
+        "loot_ruby_idle": {
+          "frames": 6,
+          "fps": 8,
+          "loop": true,
+          "playback": "loop",
+          "directions": [
+            "down"
+          ],
+          "frameNames": "loot_ruby_idle_down_<i>",
+          "origin": {
+            "x": 0.5,
+            "y": 0.875
+          },
+          "cell": [
+            24,
+            24
+          ],
+          "durationMs": 750
+        },
+        "loot_sapphire_idle": {
+          "frames": 6,
+          "fps": 8,
+          "loop": true,
+          "playback": "loop",
+          "directions": [
+            "down"
+          ],
+          "frameNames": "loot_sapphire_idle_down_<i>",
+          "origin": {
+            "x": 0.5,
+            "y": 0.875
+          },
+          "cell": [
+            24,
+            24
+          ],
+          "durationMs": 750
+        },
+        "loot_emerald_idle": {
+          "frames": 6,
+          "fps": 8,
+          "loop": true,
+          "playback": "loop",
+          "directions": [
+            "down"
+          ],
+          "frameNames": "loot_emerald_idle_down_<i>",
+          "origin": {
+            "x": 0.5,
+            "y": 0.875
+          },
+          "cell": [
+            24,
+            24
+          ],
+          "durationMs": 750
+        },
+        "loot_healing_potion_idle": {
+          "frames": 6,
+          "fps": 8,
+          "loop": true,
+          "playback": "loop",
+          "directions": [
+            "down"
+          ],
+          "frameNames": "loot_healing_potion_idle_down_<i>",
+          "origin": {
+            "x": 0.5,
+            "y": 0.875
+          },
+          "cell": [
+            24,
+            24
+          ],
+          "durationMs": 750
+        },
+        "loot_mana_potion_idle": {
+          "frames": 6,
+          "fps": 8,
+          "loop": true,
+          "playback": "loop",
+          "directions": [
+            "down"
+          ],
+          "frameNames": "loot_mana_potion_idle_down_<i>",
+          "origin": {
+            "x": 0.5,
+            "y": 0.875
+          },
+          "cell": [
+            24,
+            24
+          ],
+          "durationMs": 750
+        },
+        "loot_speed_potion_idle": {
+          "frames": 6,
+          "fps": 8,
+          "loop": true,
+          "playback": "loop",
+          "directions": [
+            "down"
+          ],
+          "frameNames": "loot_speed_potion_idle_down_<i>",
+          "origin": {
+            "x": 0.5,
+            "y": 0.875
+          },
+          "cell": [
+            24,
+            24
+          ],
+          "durationMs": 750
+        },
+        "loot_collect": {
+          "frames": 5,
+          "fps": 16,
+          "loop": false,
+          "playback": "oneshot",
+          "directions": [
+            "down"
+          ],
+          "frameNames": "loot_collect_down_<i>",
+          "origin": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "cell": [
+            32,
+            32
+          ],
+          "durationMs": 312
+        }
+      },
+      "sidecars": []
+    },
+    "dragon_fx_extra": {
+      "id": "dragon_fx_extra",
+      "kind": "fx",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "image": "assets/boss/red_dragon/fx_extra/dragon_fx_extra.png",
+      "json": "assets/boss/red_dragon/fx_extra/dragon_fx_extra.json",
+      "sheets": {
+        "dragon_fx_extra": {
+          "key": "dragon_fx_extra",
+          "image": "assets/boss/red_dragon/fx_extra/dragon_fx_extra.png",
+          "json": "assets/boss/red_dragon/fx_extra/dragon_fx_extra.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.5
+          }
+        }
+      },
+      "anims": {
+        "dfx_meteor_marker": {
+          "frames": 7,
+          "fps": 10,
+          "loop": true,
+          "playback": "loop",
+          "frameNames": "dfx_meteor_marker_<i>",
+          "origin": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "cell": [
+            96,
+            48
+          ],
+          "durationMs": 700,
+          "note": "700ms telegraph; ground-aligned ellipse sized to 32px impact radius"
+        }
+      },
+      "sidecars": [
+        "fx_defs_extra.json"
+      ]
     }
   },
   "tiles": {
+    "ash_fill": {
+      "id": "ash_fill",
+      "image": "assets/tiles/ash_fill.png",
+      "tsj": "assets/tiles/ash_fill.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 5,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": false
+    },
+    "ash_ground": {
+      "id": "ash_ground",
+      "image": "assets/tiles/ash_ground.png",
+      "tsj": "assets/tiles/ash_ground.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 16,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": false
+    },
     "bridge_plank": {
       "id": "bridge_plank",
       "image": "assets/tiles/bridge_plank.png",
@@ -921,6 +1602,28 @@
       "spacing": 2,
       "hasAnimation": false
     },
+    "dungeon_wall_trim": {
+      "id": "dungeon_wall_trim",
+      "image": "assets/tiles/dungeon_wall_trim.png",
+      "tsj": "assets/tiles/dungeon_wall_trim.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 16,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": false
+    },
+    "forest_floor": {
+      "id": "forest_floor",
+      "image": "assets/tiles/forest_floor.png",
+      "tsj": "assets/tiles/forest_floor.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 8,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": false
+    },
     "grass": {
       "id": "grass",
       "image": "assets/tiles/grass.png",
@@ -954,6 +1657,17 @@
       "spacing": 2,
       "hasAnimation": false
     },
+    "interior_market_wall_trim": {
+      "id": "interior_market_wall_trim",
+      "image": "assets/tiles/interior_market_wall_trim.png",
+      "tsj": "assets/tiles/interior_market_wall_trim.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 16,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": false
+    },
     "interior_tavern_floor": {
       "id": "interior_tavern_floor",
       "image": "assets/tiles/interior_tavern_floor.png",
@@ -972,6 +1686,39 @@
       "tileWidth": 32,
       "tileHeight": 32,
       "tileCount": 4,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": false
+    },
+    "interior_tavern_wall_trim": {
+      "id": "interior_tavern_wall_trim",
+      "image": "assets/tiles/interior_tavern_wall_trim.png",
+      "tsj": "assets/tiles/interior_tavern_wall_trim.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 16,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": false
+    },
+    "molten_floor": {
+      "id": "molten_floor",
+      "image": "assets/tiles/molten_floor.png",
+      "tsj": "assets/tiles/molten_floor.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 64,
+      "margin": 1,
+      "spacing": 2,
+      "hasAnimation": true
+    },
+    "scorched_floor": {
+      "id": "scorched_floor",
+      "image": "assets/tiles/scorched_floor.png",
+      "tsj": "assets/tiles/scorched_floor.tsj",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "tileCount": 6,
       "margin": 1,
       "spacing": 2,
       "hasAnimation": false

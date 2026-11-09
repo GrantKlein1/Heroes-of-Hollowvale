@@ -1,0 +1,439 @@
+{
+  "columns": 4,
+  "image": "dungeon_wall_trim.png",
+  "imageheight": 136,
+  "imagewidth": 136,
+  "margin": 1,
+  "spacing": 2,
+  "name": "dungeon_wall_trim",
+  "tilecount": 16,
+  "tiledversion": "1.10.2",
+  "tileheight": 32,
+  "tilewidth": 32,
+  "type": "tileset",
+  "version": "1.10",
+  "tiles": [
+    {
+      "id": 0,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 0
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "value": "face"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 1
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "value": "face_var"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "value": "cap_top"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "value": "cap_top_var"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 4
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "value": "corner_NW"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 5
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "value": "corner_NE"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 6
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "value": "corner_SW"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 7
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "value": "corner_SE"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 8
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "value": "doorway"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 9
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "value": "doorway_var"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 10
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "value": "cap_bot"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 11
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "value": "cap_bot_var"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 12
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "value": "face_2"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 13
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "value": "face_3"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 14
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "value": "face_4"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 15
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "value": "face_5"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    }
+  ],
+  "properties": [
+    {
+      "name": "hollowvale",
+      "type": "string",
+      "value": "as2-b3"
+    },
+    {
+      "name": "groundCamera",
+      "type": "string",
+      "value": "12deg_from_vertical"
+    },
+    {
+      "name": "pxPerUnit",
+      "type": "float",
+      "value": 36.923
+    },
+    {
+      "name": "extrude",
+      "type": "int",
+      "value": 1
+    }
+  ]
+}

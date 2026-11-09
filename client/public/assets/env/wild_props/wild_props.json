@@ -1,0 +1,435 @@
+{
+  "frames": {
+    "tree_dead_base": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 144,
+        "h": 160
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 144,
+        "h": 160
+      },
+      "sourceSize": {
+        "w": 144,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tree_dead_canopy": {
+      "frame": {
+        "x": 146,
+        "y": 0,
+        "w": 144,
+        "h": 160
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 144,
+        "h": 160
+      },
+      "sourceSize": {
+        "w": 144,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "stump_charred": {
+      "frame": {
+        "x": 292,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "ember_fleck": {
+      "frame": {
+        "x": 342,
+        "y": 0,
+        "w": 8,
+        "h": 8
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 8,
+        "h": 8
+      },
+      "sourceSize": {
+        "w": 8,
+        "h": 8
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "cinder_patch": {
+      "frame": {
+        "x": 352,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "ash_drift_streak_a": {
+      "frame": {
+        "x": 378,
+        "y": 0,
+        "w": 112,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "ash_drift_streak_b": {
+      "frame": {
+        "x": 492,
+        "y": 0,
+        "w": 96,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 40
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "ash_drift_pool_a": {
+      "frame": {
+        "x": 590,
+        "y": 0,
+        "w": 80,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 80,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 80,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "ash_drift_pool_b": {
+      "frame": {
+        "x": 0,
+        "y": 162,
+        "w": 128,
+        "h": 80
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 80
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 80
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    }
+  },
+  "meta": {
+    "image": "wild_props.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 670,
+      "h": 242
+    },
+    "scale": "1",
+    "pxPerUnit": 36.923,
+    "origin": {
+      "x": 0.5,
+      "y": 1.0
+    },
+    "propCameraDegFromHorizontal": 12,
+    "groundCameraDegFromVertical": 12,
+    "props": {
+      "tree_dead_base": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -12,
+          "y": -12,
+          "w": 24,
+          "h": 12,
+          "shape": "ellipse"
+        },
+        "tall": false,
+        "layer": "props",
+        "collides": true,
+        "notes": "burned Veilroot elm/blackoak trunk; pair with tree_dead_canopy",
+        "size": {
+          "w": 144,
+          "h": 160
+        }
+      },
+      "tree_dead_canopy": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": true,
+        "layer": "overhead",
+        "collides": false,
+        "notes": "bare forked limbs (overhead); same canvas/camera/feet as base",
+        "size": {
+          "w": 144,
+          "h": 160
+        }
+      },
+      "stump_charred": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -10,
+          "y": -8,
+          "w": 20,
+          "h": 8,
+          "shape": "ellipse"
+        },
+        "tall": false,
+        "layer": "props",
+        "collides": true,
+        "notes": "knee-high charred stump with 1-2 camera-facing ember seams",
+        "size": {
+          "w": 48,
+          "h": 48
+        }
+      },
+      "ember_fleck": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": false,
+        "layer": "props",
+        "collides": false,
+        "notes": "sparse ash ember fleck (scene-placed)",
+        "size": {
+          "w": 8,
+          "h": 8
+        }
+      },
+      "cinder_patch": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": false,
+        "layer": "props",
+        "collides": false,
+        "notes": "readable cinder ~5-8px core + 2px halo (scene-placed)",
+        "size": {
+          "w": 24,
+          "h": 24
+        }
+      },
+      "ash_drift_streak_a": {
+        "anchor": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": false,
+        "layer": "props",
+        "collides": false,
+        "depth": "ground decal",
+        "notes": "soft light ash wind streak (~3.5 tiles); centre-anchored ground decal Frame pivot feet (contract); meta.anchor centre for placement.",
+        "size": {
+          "w": 112,
+          "h": 48
+        }
+      },
+      "ash_drift_streak_b": {
+        "anchor": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": false,
+        "layer": "props",
+        "collides": false,
+        "depth": "ground decal",
+        "notes": "soft light ash wind streak (~3 tiles); centre-anchored ground decal Frame pivot feet (contract); meta.anchor centre for placement.",
+        "size": {
+          "w": 96,
+          "h": 40
+        }
+      },
+      "ash_drift_pool_a": {
+        "anchor": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": false,
+        "layer": "props",
+        "collides": false,
+        "depth": "ground decal",
+        "notes": "soft dark charcoal ash pool (~2.5 tiles); centre-anchored ground decal Frame pivot feet (contract); meta.anchor centre for placement.",
+        "size": {
+          "w": 80,
+          "h": 64
+        }
+      },
+      "ash_drift_pool_b": {
+        "anchor": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": false,
+        "layer": "props",
+        "collides": false,
+        "depth": "ground decal",
+        "notes": "soft dark charcoal ash pool (~4 tiles); centre-anchored ground decal Frame pivot feet (contract); meta.anchor centre for placement.",
+        "size": {
+          "w": 128,
+          "h": 80
+        }
+      }
+    },
+    "app": "Blendsmith env_b4_wilderness",
+    "version": "b4-gateC-rev4",
+    "draft": true,
+    "note": "Gate C. Ground decals (ash_drift_*) use centre pivot (0.5,0.5) and depth ground decal. Embers scene-placed. Not runtime-accepted."
+  }
+}

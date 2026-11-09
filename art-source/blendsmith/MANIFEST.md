@@ -735,3 +735,37 @@ Generated from the atlas JSONs by a script (numbers not hand-typed).
 - `thief/hitbox.json` (1345 B)
 
 **Total atlas PNG+JSON size:** 9.29 MiB
+
+## AS-3 (2026-11-09)
+
+The following atlases and tilesets are art-locked Blendsmith deliverables added in package AS-3. Never re-encode, resize, rename frames, or edit JSON metadata.
+
+### Environment & Prop Atlases
+- `env/interior_props/interior_props`: 718×486 px, 36 frames, anchor `{"x": 0.5, "y": 1.0}` (includes animated `tavern_hearth_wall_burn_down_0..5`)
+- `env/dungeon_props/dungeon_props`: 764×436 px, 22 frames, anchor `{"x": 0.5, "y": 1.0}`
+- `env/dungeon_brazier/dungeon_brazier`: 398×98 px, 6 frames, anchor `{"x": 0.5, "y": 1.0}` (animated burn)
+- `env/treasure_chest/treasure_chest`: 500×100 px, 12 frames, anchor `{"x": 0.5, "y": 1.0}` (animated wood & iron open)
+- `env/wild_props/wild_props`: 670×242 px, 9 frames, anchor `{"x": 0.5, "y": 1.0}`
+- `env/wild_props_4b/wild_props_4b`: 314×56 px, 6 frames, anchor `{"x": 0.5, "y": 1.0}`
+- `env/ember_vent/ember_vent`: 198×48 px, 4 frames, anchor `{"x": 0.5, "y": 1.0}` (animated burn)
+
+### NPC Sheets
+- `npcs/npc_bartender/npc_bartender`: 832×1632 px, 144 frames (64×96 cells), anchor `{"x": 0.5, "y": 0.9271}`, non-hittable, clips in `meta.anims` (`idle`, `talk`, `bottle_clean`, `wipe_counter`, `gesture`)
+- `npcs/npc_vendor/npc_vendor`: 768×1536 px, 136 frames (64×96 cells), anchor `{"x": 0.5, "y": 0.9271}`, non-hittable, clips in `meta.anims` (`idle`, `talk`, `count_coins`, `present_goods`)
+
+### Loot Pickups
+- `loot/loot_pickups/loot_pickups`: 508×92 px, 41 frames, anchor `{"x": 0.5, "y": 0.875}`, 6 pickup idles + collect anim
+
+### Dragon FX Extra
+- `red_dragon/fx_extra/dragon_fx_extra`: 672×48 px, 7 frames, anchor `{"x": 0.5, "y": 0.5}`, includes `dfx_meteor_marker` (7@10 = 700 ms) and `fx_defs_extra.json` sidecar
+
+### Ground Tilesets (32 px, margin 1, spacing 2)
+- `tiles/ground/interior_tavern_wall_trim` (.png + .tsj)
+- `tiles/ground/interior_market_wall_trim` (.png + .tsj)
+- `tiles/ground/dungeon_wall_trim` (.png + .tsj)
+- `tiles/ground/molten_floor` (.png + .tsj)
+- `tiles/ground/scorched_floor` (.png + .tsj)
+- `tiles/ground/ash_ground` (.png + .tsj)
+- `tiles/ground/ash_fill` (.png + .tsj)
+- `tiles/ground/forest_floor` (.png + .tsj)
+

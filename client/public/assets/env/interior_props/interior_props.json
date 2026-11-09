@@ -1,0 +1,1626 @@
+{
+  "frames": {
+    "tavern_bar_counter": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 80
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 80
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 80
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_table_round": {
+      "frame": {
+        "x": 130,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_bench": {
+      "frame": {
+        "x": 196,
+        "y": 0,
+        "w": 64,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 40
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_keg_stack": {
+      "frame": {
+        "x": 262,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "market_stall_base": {
+      "frame": {
+        "x": 328,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "market_stall_awning": {
+      "frame": {
+        "x": 458,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_stool": {
+      "frame": {
+        "x": 588,
+        "y": 0,
+        "w": 32,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_table_long": {
+      "frame": {
+        "x": 622,
+        "y": 0,
+        "w": 96,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_shelf_bottles": {
+      "frame": {
+        "x": 0,
+        "y": 130,
+        "w": 64,
+        "h": 80
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 80
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 80
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_notice_board": {
+      "frame": {
+        "x": 66,
+        "y": 130,
+        "w": 48,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_rug": {
+      "frame": {
+        "x": 116,
+        "y": 130,
+        "w": 64,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 40
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "market_crate_produce": {
+      "frame": {
+        "x": 182,
+        "y": 130,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "market_sack_pile": {
+      "frame": {
+        "x": 232,
+        "y": 130,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "market_counter": {
+      "frame": {
+        "x": 282,
+        "y": 130,
+        "w": 112,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 96
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 96
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "market_hanging_goods": {
+      "frame": {
+        "x": 396,
+        "y": 130,
+        "w": 112,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 96
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 96
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "market_barrel_open": {
+      "frame": {
+        "x": 510,
+        "y": 130,
+        "w": 48,
+        "h": 56
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 56
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "interior_candle_table": {
+      "frame": {
+        "x": 560,
+        "y": 130,
+        "w": 40,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 40,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 40,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "interior_window_wall": {
+      "frame": {
+        "x": 602,
+        "y": 130,
+        "w": 48,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_shelf_crockery": {
+      "frame": {
+        "x": 652,
+        "y": 130,
+        "w": 64,
+        "h": 80
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 80
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 80
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_barrel_cluster": {
+      "frame": {
+        "x": 0,
+        "y": 228,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_crate_cluster": {
+      "frame": {
+        "x": 66,
+        "y": 228,
+        "w": 64,
+        "h": 56
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 56
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_coat_rack": {
+      "frame": {
+        "x": 132,
+        "y": 228,
+        "w": 48,
+        "h": 80
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 80
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 80
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_lantern_hang": {
+      "frame": {
+        "x": 182,
+        "y": 228,
+        "w": 32,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_lantern_beam": {
+      "frame": {
+        "x": 216,
+        "y": 228,
+        "w": 32,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 96
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 96
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_chandelier": {
+      "frame": {
+        "x": 250,
+        "y": 228,
+        "w": 64,
+        "h": 112
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 112
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 112
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_antlers": {
+      "frame": {
+        "x": 316,
+        "y": 228,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_shield_wall": {
+      "frame": {
+        "x": 366,
+        "y": 228,
+        "w": 40,
+        "h": 56
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 40,
+        "h": 56
+      },
+      "sourceSize": {
+        "w": 40,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_hearth_chair": {
+      "frame": {
+        "x": 408,
+        "y": 228,
+        "w": 40,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 40,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 40,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_woodpile": {
+      "frame": {
+        "x": 450,
+        "y": 228,
+        "w": 64,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_hearth_wall_burn_down_0": {
+      "frame": {
+        "x": 516,
+        "y": 228,
+        "w": 96,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_hearth_wall_burn_down_1": {
+      "frame": {
+        "x": 614,
+        "y": 228,
+        "w": 96,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_hearth_wall_burn_down_2": {
+      "frame": {
+        "x": 0,
+        "y": 358,
+        "w": 96,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_hearth_wall_burn_down_3": {
+      "frame": {
+        "x": 98,
+        "y": 358,
+        "w": 96,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_hearth_wall_burn_down_4": {
+      "frame": {
+        "x": 196,
+        "y": 358,
+        "w": 96,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_hearth_wall_burn_down_5": {
+      "frame": {
+        "x": 294,
+        "y": 358,
+        "w": 96,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "tavern_wall_sconce": {
+      "frame": {
+        "x": 392,
+        "y": 358,
+        "w": 40,
+        "h": 56
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 40,
+        "h": 56
+      },
+      "sourceSize": {
+        "w": 40,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    }
+  },
+  "meta": {
+    "app": "Blendsmith env_b2_interiors (AS-2 v5 style)",
+    "version": "b2b-dense-tavern",
+    "image": "interior_props.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 718,
+      "h": 486
+    },
+    "scale": "1",
+    "pxPerUnit": 36.923,
+    "origin": {
+      "x": 0.5,
+      "y": 1.0
+    },
+    "propCameraDegFromHorizontal": 12,
+    "groundCameraDegFromVertical": 12,
+    "draft": true,
+    "note": "B1+B2 frames frozen byte-identical. B2b appends tavern dressing + wall hearth anim. tavern_rug retained but NOT USED IN TAVERN sample. tavern_lantern_beam and tavern_wall_sconce retained but NOT USED IN TAVERN \u2014 light sources are the hearth and table candles only (Grant 2026-11-09).",
+    "props": {
+      "tavern_bar_counter": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -56,
+          "y": -22,
+          "w": 112,
+          "h": 22,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "B1 frozen. bar counter",
+        "size": {
+          "w": 128,
+          "h": 80
+        }
+      },
+      "tavern_table_round": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -22,
+          "y": -14,
+          "w": 44,
+          "h": 14,
+          "shape": "ellipse"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "B1 frozen. plan ellipse (-22,-14,44,14); alt in docs/FOOTPRINT_NOTES.md",
+        "size": {
+          "w": 64,
+          "h": 64
+        }
+      },
+      "tavern_bench": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -28,
+          "y": -12,
+          "w": 56,
+          "h": 12,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "B1 frozen. trestle bench 56x12",
+        "size": {
+          "w": 64,
+          "h": 40
+        }
+      },
+      "tavern_keg_stack": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -22,
+          "y": -16,
+          "w": 44,
+          "h": 16,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "B1 frozen. three kegs, 44 wide",
+        "size": {
+          "w": 64,
+          "h": 64
+        }
+      },
+      "market_stall_base": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -52,
+          "y": -20,
+          "w": 104,
+          "h": 20,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "B1 frozen. pair with market_stall_awning",
+        "size": {
+          "w": 128,
+          "h": 128
+        }
+      },
+      "market_stall_awning": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": true,
+        "layer": "overhead",
+        "notes": "B1 frozen. overhead",
+        "size": {
+          "w": 128,
+          "h": 128
+        }
+      },
+      "tavern_stool": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -10,
+          "y": -8,
+          "w": 20,
+          "h": 8,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "three-legged stool",
+        "size": {
+          "w": 32,
+          "h": 48
+        }
+      },
+      "tavern_table_long": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -44,
+          "y": -16,
+          "w": 88,
+          "h": 16,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "long trestle table",
+        "size": {
+          "w": 96,
+          "h": 64
+        }
+      },
+      "tavern_shelf_bottles": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -28,
+          "y": -8,
+          "w": 56,
+          "h": 8,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "wall-backed bottle shelf",
+        "size": {
+          "w": 64,
+          "h": 80
+        }
+      },
+      "tavern_notice_board": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "wall-hung notice board; no collision",
+        "size": {
+          "w": 48,
+          "h": 64
+        }
+      },
+      "tavern_rug": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "ground-decal rug (ground cam). NOT USED IN TAVERN sample \u2014 kept for market/other rooms",
+        "size": {
+          "w": 64,
+          "h": 40
+        }
+      },
+      "market_crate_produce": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -18,
+          "y": -14,
+          "w": 36,
+          "h": 14,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "crate of produce",
+        "size": {
+          "w": 48,
+          "h": 48
+        }
+      },
+      "market_sack_pile": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -18,
+          "y": -14,
+          "w": 36,
+          "h": 14,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "stacked sacks",
+        "size": {
+          "w": 48,
+          "h": 48
+        }
+      },
+      "market_counter": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -48,
+          "y": -18,
+          "w": 96,
+          "h": 18,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "market counter; pair with hanging_goods",
+        "size": {
+          "w": 112,
+          "h": 96
+        }
+      },
+      "market_hanging_goods": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": true,
+        "layer": "overhead",
+        "notes": "overhead hanging goods",
+        "size": {
+          "w": 112,
+          "h": 96
+        }
+      },
+      "market_barrel_open": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -16,
+          "y": -14,
+          "w": 32,
+          "h": 14,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "open barrel",
+        "size": {
+          "w": 48,
+          "h": 56
+        }
+      },
+      "interior_candle_table": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -14,
+          "y": -10,
+          "w": 28,
+          "h": 10,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "candle stand",
+        "size": {
+          "w": 40,
+          "h": 48
+        }
+      },
+      "interior_window_wall": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "wall window; no collision",
+        "size": {
+          "w": 48,
+          "h": 64
+        }
+      },
+      "tavern_shelf_crockery": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -28,
+          "y": -8,
+          "w": 56,
+          "h": 8,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "wall shelf with plates/mugs/jugs",
+        "size": {
+          "w": 64,
+          "h": 80
+        }
+      },
+      "tavern_barrel_cluster": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -26,
+          "y": -18,
+          "w": 52,
+          "h": 18,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "corner barrel cluster",
+        "size": {
+          "w": 64,
+          "h": 64
+        }
+      },
+      "tavern_crate_cluster": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -26,
+          "y": -16,
+          "w": 52,
+          "h": 16,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "corner crate stack",
+        "size": {
+          "w": 64,
+          "h": 56
+        }
+      },
+      "tavern_coat_rack": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -16,
+          "y": -8,
+          "w": 32,
+          "h": 8,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "coat rack with cloaks",
+        "size": {
+          "w": 48,
+          "h": 80
+        }
+      },
+      "tavern_lantern_hang": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": true,
+        "layer": "overhead",
+        "notes": "legacy short lantern (prefer tavern_lantern_beam)",
+        "size": {
+          "w": 32,
+          "h": 64
+        }
+      },
+      "tavern_lantern_beam": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": true,
+        "layer": "overhead",
+        "notes": "hanging lantern with long chain to beam/cap; tall; no collision; NOT USED IN TAVERN (frames kept; swapped for tavern_wall_sconce).",
+        "size": {
+          "w": 32,
+          "h": 96
+        }
+      },
+      "tavern_chandelier": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": true,
+        "layer": "overhead",
+        "notes": "overhead candle chandelier; tall canvas 64x112 (grew upward from 64x80 for readable hang chain); no collision; NOT USED IN TAVERN sample (frames kept).",
+        "size": {
+          "w": 64,
+          "h": 112
+        }
+      },
+      "tavern_antlers": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "wall-mounted antlers; no collision",
+        "size": {
+          "w": 48,
+          "h": 48
+        }
+      },
+      "tavern_shield_wall": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "wall-mounted shield; no collision",
+        "size": {
+          "w": 40,
+          "h": 56
+        }
+      },
+      "tavern_hearth_chair": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -14,
+          "y": -12,
+          "w": 28,
+          "h": 12,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "high-back chair 3/4 toward hearth (+X); hearth-side",
+        "size": {
+          "w": 40,
+          "h": 64
+        }
+      },
+      "tavern_woodpile": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -26,
+          "y": -14,
+          "w": 52,
+          "h": 14,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "stacked split logs with end-grain faces + hatchet in stump",
+        "size": {
+          "w": 64,
+          "h": 48
+        }
+      },
+      "tavern_hearth_wall_burn_down_0": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -36,
+          "y": -18,
+          "w": 72,
+          "h": 18,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "wall-mounted hearth burn frame 0/6 @8fps; stone courses+mortar+mantel (v5 vocab); soot firebox/logs/andirons/glow; chimney into cap row; base footprint collides",
+        "size": {
+          "w": 96,
+          "h": 128
+        }
+      },
+      "tavern_hearth_wall_burn_down_1": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -36,
+          "y": -18,
+          "w": 72,
+          "h": 18,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "wall-mounted hearth burn frame 1/6 @8fps; stone courses+mortar+mantel (v5 vocab); soot firebox/logs/andirons/glow; chimney into cap row; base footprint collides",
+        "size": {
+          "w": 96,
+          "h": 128
+        }
+      },
+      "tavern_hearth_wall_burn_down_2": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -36,
+          "y": -18,
+          "w": 72,
+          "h": 18,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "wall-mounted hearth burn frame 2/6 @8fps; stone courses+mortar+mantel (v5 vocab); soot firebox/logs/andirons/glow; chimney into cap row; base footprint collides",
+        "size": {
+          "w": 96,
+          "h": 128
+        }
+      },
+      "tavern_hearth_wall_burn_down_3": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -36,
+          "y": -18,
+          "w": 72,
+          "h": 18,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "wall-mounted hearth burn frame 3/6 @8fps; stone courses+mortar+mantel (v5 vocab); soot firebox/logs/andirons/glow; chimney into cap row; base footprint collides",
+        "size": {
+          "w": 96,
+          "h": 128
+        }
+      },
+      "tavern_hearth_wall_burn_down_4": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -36,
+          "y": -18,
+          "w": 72,
+          "h": 18,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "wall-mounted hearth burn frame 4/6 @8fps; stone courses+mortar+mantel (v5 vocab); soot firebox/logs/andirons/glow; chimney into cap row; base footprint collides",
+        "size": {
+          "w": 96,
+          "h": 128
+        }
+      },
+      "tavern_hearth_wall_burn_down_5": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -36,
+          "y": -18,
+          "w": 72,
+          "h": 18,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "wall-mounted hearth burn frame 5/6 @8fps; stone courses+mortar+mantel (v5 vocab); soot firebox/logs/andirons/glow; chimney into cap row; base footprint collides",
+        "size": {
+          "w": 96,
+          "h": 128
+        }
+      },
+      "tavern_wall_sconce": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": false,
+        "layer": "props",
+        "notes": "wall-mounted candle sconce; no collision; NOT USED IN TAVERN (frames kept; Grant removed sconces 2026-11-09: light = hearth + table candles)",
+        "size": {
+          "w": 40,
+          "h": 56
+        }
+      }
+    },
+    "aliases": {
+      "tavern_hearth_wall": "tavern_hearth_wall_burn_down_0"
+    },
+    "anims": {
+      "tavern_hearth_wall_burn": {
+        "frames": 6,
+        "fps": 8,
+        "loop": true,
+        "directions": [
+          "down"
+        ],
+        "frameNames": "tavern_hearth_wall_burn_down_<i>",
+        "holdLast": false
+      }
+    },
+    "table_round_footprint_note": "Frozen ellipse (-22,-14,44,14). Alt building-style depth in docs/FOOTPRINT_NOTES.md."
+  }
+}

@@ -1,0 +1,1150 @@
+{
+  "frames": {
+    "loot_ruby_idle_down_0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_ruby_idle_down_1": {
+      "frame": {
+        "x": 26,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_ruby_idle_down_2": {
+      "frame": {
+        "x": 52,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_ruby_idle_down_3": {
+      "frame": {
+        "x": 78,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_ruby_idle_down_4": {
+      "frame": {
+        "x": 104,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_ruby_idle_down_5": {
+      "frame": {
+        "x": 130,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_sapphire_idle_down_0": {
+      "frame": {
+        "x": 156,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_sapphire_idle_down_1": {
+      "frame": {
+        "x": 182,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_sapphire_idle_down_2": {
+      "frame": {
+        "x": 208,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_sapphire_idle_down_3": {
+      "frame": {
+        "x": 234,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_sapphire_idle_down_4": {
+      "frame": {
+        "x": 260,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_sapphire_idle_down_5": {
+      "frame": {
+        "x": 286,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_emerald_idle_down_0": {
+      "frame": {
+        "x": 312,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_emerald_idle_down_1": {
+      "frame": {
+        "x": 338,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_emerald_idle_down_2": {
+      "frame": {
+        "x": 364,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_emerald_idle_down_3": {
+      "frame": {
+        "x": 390,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_emerald_idle_down_4": {
+      "frame": {
+        "x": 416,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_emerald_idle_down_5": {
+      "frame": {
+        "x": 442,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_healing_potion_idle_down_0": {
+      "frame": {
+        "x": 468,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_healing_potion_idle_down_1": {
+      "frame": {
+        "x": 0,
+        "y": 26,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_healing_potion_idle_down_2": {
+      "frame": {
+        "x": 26,
+        "y": 26,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_healing_potion_idle_down_3": {
+      "frame": {
+        "x": 52,
+        "y": 26,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_healing_potion_idle_down_4": {
+      "frame": {
+        "x": 78,
+        "y": 26,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_healing_potion_idle_down_5": {
+      "frame": {
+        "x": 104,
+        "y": 26,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_mana_potion_idle_down_0": {
+      "frame": {
+        "x": 130,
+        "y": 26,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_mana_potion_idle_down_1": {
+      "frame": {
+        "x": 156,
+        "y": 26,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_mana_potion_idle_down_2": {
+      "frame": {
+        "x": 182,
+        "y": 26,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_mana_potion_idle_down_3": {
+      "frame": {
+        "x": 208,
+        "y": 26,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_mana_potion_idle_down_4": {
+      "frame": {
+        "x": 234,
+        "y": 26,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_mana_potion_idle_down_5": {
+      "frame": {
+        "x": 260,
+        "y": 26,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_speed_potion_idle_down_0": {
+      "frame": {
+        "x": 286,
+        "y": 26,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_speed_potion_idle_down_1": {
+      "frame": {
+        "x": 312,
+        "y": 26,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_speed_potion_idle_down_2": {
+      "frame": {
+        "x": 338,
+        "y": 26,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_speed_potion_idle_down_3": {
+      "frame": {
+        "x": 364,
+        "y": 26,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_speed_potion_idle_down_4": {
+      "frame": {
+        "x": 390,
+        "y": 26,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_speed_potion_idle_down_5": {
+      "frame": {
+        "x": 416,
+        "y": 26,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 24
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.875
+      }
+    },
+    "loot_collect_down_0": {
+      "frame": {
+        "x": 442,
+        "y": 26,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "loot_collect_down_1": {
+      "frame": {
+        "x": 476,
+        "y": 26,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "loot_collect_down_2": {
+      "frame": {
+        "x": 0,
+        "y": 60,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "loot_collect_down_3": {
+      "frame": {
+        "x": 34,
+        "y": 60,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "loot_collect_down_4": {
+      "frame": {
+        "x": 68,
+        "y": 60,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "combat_b7/pack_b7.py",
+    "version": "1.0",
+    "image": "loot_pickups.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 508,
+      "h": 92
+    },
+    "scale": "1",
+    "pxPerUnit": 36.923,
+    "origin": {
+      "x": 0.5,
+      "y": 0.875
+    },
+    "propCameraDegFromHorizontal": 12,
+    "groundCameraDegFromVertical": 12,
+    "anims": {
+      "loot_ruby_idle": {
+        "frames": 6,
+        "fps": 8,
+        "loop": true,
+        "playback": "loop",
+        "directions": [
+          "down"
+        ],
+        "frameNames": "loot_ruby_idle_down_<i>",
+        "origin": {
+          "x": 0.5,
+          "y": 0.875
+        },
+        "cell": [
+          24,
+          24
+        ],
+        "durationMs": 750
+      },
+      "loot_sapphire_idle": {
+        "frames": 6,
+        "fps": 8,
+        "loop": true,
+        "playback": "loop",
+        "directions": [
+          "down"
+        ],
+        "frameNames": "loot_sapphire_idle_down_<i>",
+        "origin": {
+          "x": 0.5,
+          "y": 0.875
+        },
+        "cell": [
+          24,
+          24
+        ],
+        "durationMs": 750
+      },
+      "loot_emerald_idle": {
+        "frames": 6,
+        "fps": 8,
+        "loop": true,
+        "playback": "loop",
+        "directions": [
+          "down"
+        ],
+        "frameNames": "loot_emerald_idle_down_<i>",
+        "origin": {
+          "x": 0.5,
+          "y": 0.875
+        },
+        "cell": [
+          24,
+          24
+        ],
+        "durationMs": 750
+      },
+      "loot_healing_potion_idle": {
+        "frames": 6,
+        "fps": 8,
+        "loop": true,
+        "playback": "loop",
+        "directions": [
+          "down"
+        ],
+        "frameNames": "loot_healing_potion_idle_down_<i>",
+        "origin": {
+          "x": 0.5,
+          "y": 0.875
+        },
+        "cell": [
+          24,
+          24
+        ],
+        "durationMs": 750
+      },
+      "loot_mana_potion_idle": {
+        "frames": 6,
+        "fps": 8,
+        "loop": true,
+        "playback": "loop",
+        "directions": [
+          "down"
+        ],
+        "frameNames": "loot_mana_potion_idle_down_<i>",
+        "origin": {
+          "x": 0.5,
+          "y": 0.875
+        },
+        "cell": [
+          24,
+          24
+        ],
+        "durationMs": 750
+      },
+      "loot_speed_potion_idle": {
+        "frames": 6,
+        "fps": 8,
+        "loop": true,
+        "playback": "loop",
+        "directions": [
+          "down"
+        ],
+        "frameNames": "loot_speed_potion_idle_down_<i>",
+        "origin": {
+          "x": 0.5,
+          "y": 0.875
+        },
+        "cell": [
+          24,
+          24
+        ],
+        "durationMs": 750
+      },
+      "loot_collect": {
+        "frames": 5,
+        "fps": 16,
+        "loop": false,
+        "playback": "oneshot",
+        "directions": [
+          "down"
+        ],
+        "frameNames": "loot_collect_down_<i>",
+        "origin": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "cell": [
+          32,
+          32
+        ],
+        "durationMs": 312
+      }
+    },
+    "note": "World-dropped loot. Idle bob+glint 6@8 Cycles. Collect 5@16 fx_common-style. Match legacy UI icons.",
+    "ids": [
+      "ruby",
+      "sapphire",
+      "emerald",
+      "healing_potion",
+      "mana_potion",
+      "speed_potion"
+    ]
+  }
+}

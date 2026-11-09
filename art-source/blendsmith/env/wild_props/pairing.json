@@ -1,0 +1,14 @@
+{
+  "pairs": [
+    {
+      "base": "tree_dead_base",
+      "name": "tree_dead_canopy",
+      "canvas": {
+        "w": 144,
+        "h": 160
+      },
+      "sameFeet": true,
+      "method": "shared world camera"
+    }
+  ]
+}

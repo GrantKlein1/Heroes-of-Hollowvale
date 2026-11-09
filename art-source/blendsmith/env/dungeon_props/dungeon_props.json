@@ -1,0 +1,750 @@
+{
+  "frames": {
+    "cavern_mouth_arch": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 256,
+        "h": 224
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 256,
+        "h": 224
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 224
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "cavern_mouth_base": {
+      "frame": {
+        "x": 258,
+        "y": 0,
+        "w": 256,
+        "h": 224
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 256,
+        "h": 224
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 224
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "cavern_rock_large_a": {
+      "frame": {
+        "x": 516,
+        "y": 0,
+        "w": 64,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "cavern_rock_large_b": {
+      "frame": {
+        "x": 582,
+        "y": 0,
+        "w": 64,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "cavern_torch_wall": {
+      "frame": {
+        "x": 648,
+        "y": 0,
+        "w": 32,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "dungeon_bones": {
+      "frame": {
+        "x": 682,
+        "y": 0,
+        "w": 48,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "dungeon_chain_wall": {
+      "frame": {
+        "x": 732,
+        "y": 0,
+        "w": 32,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "dungeon_pillar_base": {
+      "frame": {
+        "x": 0,
+        "y": 226,
+        "w": 64,
+        "h": 160
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 160
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "dungeon_pillar_top": {
+      "frame": {
+        "x": 66,
+        "y": 226,
+        "w": 64,
+        "h": 160
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 160
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "dungeon_rubble_a": {
+      "frame": {
+        "x": 132,
+        "y": 226,
+        "w": 48,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 40
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "dungeon_sealed_stair": {
+      "frame": {
+        "x": 182,
+        "y": 226,
+        "w": 64,
+        "h": 80
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 80
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 80
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "dungeon_secret_door_closed": {
+      "frame": {
+        "x": 248,
+        "y": 226,
+        "w": 48,
+        "h": 80
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 80
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 80
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "dungeon_secret_door_open": {
+      "frame": {
+        "x": 298,
+        "y": 226,
+        "w": 48,
+        "h": 80
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 80
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 80
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "dungeon_stalagmite_a": {
+      "frame": {
+        "x": 348,
+        "y": 226,
+        "w": 40,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 40,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 40,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "dungeon_stalagmite_b": {
+      "frame": {
+        "x": 390,
+        "y": 226,
+        "w": 40,
+        "h": 56
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 40,
+        "h": 56
+      },
+      "sourceSize": {
+        "w": 40,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "gold_pile_hoard": {
+      "frame": {
+        "x": 432,
+        "y": 226,
+        "w": 192,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 192,
+        "h": 96
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 96
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "gold_pile_small": {
+      "frame": {
+        "x": 626,
+        "y": 226,
+        "w": 48,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 40
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "dungeon_pillar_stump": {
+      "frame": {
+        "x": 676,
+        "y": 226,
+        "w": 40,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 40,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 40,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "dungeon_crate": {
+      "frame": {
+        "x": 718,
+        "y": 226,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 40,
+        "h": 40
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "dungeon_barrel": {
+      "frame": {
+        "x": 0,
+        "y": 388,
+        "w": 40,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 40,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 40,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "dungeon_crack_decal": {
+      "frame": {
+        "x": 42,
+        "y": 388,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "dungeon_debris": {
+      "frame": {
+        "x": 76,
+        "y": 388,
+        "w": 40,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 40,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 40,
+        "h": 32
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    }
+  },
+  "meta": {
+    "image": "dungeon_props.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 764,
+      "h": 436
+    },
+    "scale": "1",
+    "pxPerUnit": 36.923,
+    "origin": {
+      "x": 0.5,
+      "y": 1.0
+    },
+    "propCameraDegFromHorizontal": 12,
+    "groundCameraDegFromVertical": 12,
+    "props": {
+      "cavern_mouth_arch": {
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        }
+      },
+      "cavern_mouth_base": {
+        "footprint": {
+          "x": -100,
+          "y": -48,
+          "w": 200,
+          "h": 48,
+          "shape": "rect"
+        }
+      },
+      "cavern_rock_large_a": {
+        "footprint": {
+          "x": -22,
+          "y": -16,
+          "w": 44,
+          "h": 16,
+          "shape": "ellipse"
+        }
+      },
+      "cavern_rock_large_b": {
+        "footprint": {
+          "x": -20,
+          "y": -14,
+          "w": 40,
+          "h": 14,
+          "shape": "ellipse"
+        }
+      },
+      "cavern_torch_wall": {
+        "footprint": {
+          "x": -6,
+          "y": -6,
+          "w": 12,
+          "h": 6,
+          "shape": "rect"
+        }
+      },
+      "dungeon_bones": {
+        "footprint": {
+          "x": -16,
+          "y": -10,
+          "w": 32,
+          "h": 10,
+          "shape": "rect"
+        }
+      },
+      "dungeon_chain_wall": {
+        "footprint": {
+          "x": -6,
+          "y": -6,
+          "w": 12,
+          "h": 6,
+          "shape": "rect"
+        }
+      },
+      "dungeon_pillar_base": {
+        "footprint": {
+          "x": -14,
+          "y": -12,
+          "w": 28,
+          "h": 12,
+          "shape": "rect"
+        }
+      },
+      "dungeon_pillar_top": {
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        }
+      },
+      "dungeon_rubble_a": {
+        "footprint": {
+          "x": -16,
+          "y": -12,
+          "w": 32,
+          "h": 12,
+          "shape": "rect"
+        }
+      },
+      "dungeon_sealed_stair": {
+        "footprint": {
+          "x": -22,
+          "y": -16,
+          "w": 44,
+          "h": 16,
+          "shape": "rect"
+        }
+      },
+      "dungeon_secret_door_closed": {
+        "footprint": {
+          "x": -14,
+          "y": -8,
+          "w": 28,
+          "h": 8,
+          "shape": "rect"
+        }
+      },
+      "dungeon_secret_door_open": {
+        "footprint": {
+          "x": -14,
+          "y": -8,
+          "w": 28,
+          "h": 8,
+          "shape": "rect"
+        }
+      },
+      "dungeon_stalagmite_a": {
+        "footprint": {
+          "x": -10,
+          "y": -10,
+          "w": 20,
+          "h": 10,
+          "shape": "ellipse"
+        }
+      },
+      "dungeon_stalagmite_b": {
+        "footprint": {
+          "x": -10,
+          "y": -10,
+          "w": 20,
+          "h": 10,
+          "shape": "ellipse"
+        }
+      },
+      "gold_pile_hoard": {
+        "footprint": {
+          "x": -80,
+          "y": -32,
+          "w": 160,
+          "h": 32,
+          "shape": "ellipse"
+        }
+      },
+      "gold_pile_small": {
+        "footprint": {
+          "x": -16,
+          "y": -12,
+          "w": 32,
+          "h": 12,
+          "shape": "ellipse"
+        }
+      },
+      "dungeon_pillar_stump": {
+        "footprint": {
+          "x": -12,
+          "y": -10,
+          "w": 24,
+          "h": 10,
+          "shape": "ellipse"
+        }
+      },
+      "dungeon_crate": {
+        "footprint": {
+          "x": -12,
+          "y": -10,
+          "w": 24,
+          "h": 10,
+          "shape": "rect"
+        }
+      },
+      "dungeon_barrel": {
+        "footprint": {
+          "x": -12,
+          "y": -10,
+          "w": 24,
+          "h": 10,
+          "shape": "ellipse"
+        }
+      },
+      "dungeon_crack_decal": {
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        }
+      },
+      "dungeon_debris": {
+        "footprint": {
+          "x": -12,
+          "y": -8,
+          "w": 24,
+          "h": 8,
+          "shape": "ellipse"
+        }
+      }
+    },
+    "app": "hollowvale-blendsmith",
+    "version": "b3-densify-unified"
+  }
+}

@@ -1,0 +1,573 @@
+{
+  "frames": {
+    "chest_wood_open_down_0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "chest_wood_open_down_1": {
+      "frame": {
+        "x": 50,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "chest_wood_open_down_2": {
+      "frame": {
+        "x": 100,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "chest_wood_open_down_3": {
+      "frame": {
+        "x": 150,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "chest_wood_open_down_4": {
+      "frame": {
+        "x": 200,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "chest_wood_open_down_5": {
+      "frame": {
+        "x": 250,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "chest_iron_open_down_0": {
+      "frame": {
+        "x": 300,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "chest_iron_open_down_1": {
+      "frame": {
+        "x": 350,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "chest_iron_open_down_2": {
+      "frame": {
+        "x": 400,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "chest_iron_open_down_3": {
+      "frame": {
+        "x": 450,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "chest_iron_open_down_4": {
+      "frame": {
+        "x": 0,
+        "y": 50,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "chest_iron_open_down_5": {
+      "frame": {
+        "x": 50,
+        "y": 50,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    }
+  },
+  "meta": {
+    "app": "hollowvale-blendsmith",
+    "version": "b3",
+    "image": "treasure_chest.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 500,
+      "h": 100
+    },
+    "scale": "1",
+    "origin": {
+      "x": 0.5,
+      "y": 1.0
+    },
+    "props": {
+      "chest_wood_open_down_0": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -16,
+          "y": -12,
+          "w": 32,
+          "h": 12,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "size": {
+          "w": 48,
+          "h": 48
+        },
+        "notes": "wood chest; frame0=closed"
+      },
+      "chest_wood_open_down_1": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -16,
+          "y": -12,
+          "w": 32,
+          "h": 12,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "size": {
+          "w": 48,
+          "h": 48
+        },
+        "notes": "wood chest; frame0=closed"
+      },
+      "chest_wood_open_down_2": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -16,
+          "y": -12,
+          "w": 32,
+          "h": 12,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "size": {
+          "w": 48,
+          "h": 48
+        },
+        "notes": "wood chest; frame0=closed"
+      },
+      "chest_wood_open_down_3": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -16,
+          "y": -12,
+          "w": 32,
+          "h": 12,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "size": {
+          "w": 48,
+          "h": 48
+        },
+        "notes": "wood chest; frame0=closed"
+      },
+      "chest_wood_open_down_4": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -16,
+          "y": -12,
+          "w": 32,
+          "h": 12,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "size": {
+          "w": 48,
+          "h": 48
+        },
+        "notes": "wood chest; frame0=closed"
+      },
+      "chest_wood_open_down_5": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -16,
+          "y": -12,
+          "w": 32,
+          "h": 12,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "size": {
+          "w": 48,
+          "h": 48
+        },
+        "notes": "wood chest; frame0=closed"
+      },
+      "chest_iron_open_down_0": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -16,
+          "y": -12,
+          "w": 32,
+          "h": 12,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "size": {
+          "w": 48,
+          "h": 48
+        },
+        "notes": "iron locked"
+      },
+      "chest_iron_open_down_1": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -16,
+          "y": -12,
+          "w": 32,
+          "h": 12,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "size": {
+          "w": 48,
+          "h": 48
+        },
+        "notes": "iron locked"
+      },
+      "chest_iron_open_down_2": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -16,
+          "y": -12,
+          "w": 32,
+          "h": 12,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "size": {
+          "w": 48,
+          "h": 48
+        },
+        "notes": "iron locked"
+      },
+      "chest_iron_open_down_3": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -16,
+          "y": -12,
+          "w": 32,
+          "h": 12,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "size": {
+          "w": 48,
+          "h": 48
+        },
+        "notes": "iron locked"
+      },
+      "chest_iron_open_down_4": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -16,
+          "y": -12,
+          "w": 32,
+          "h": 12,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "size": {
+          "w": 48,
+          "h": 48
+        },
+        "notes": "iron locked"
+      },
+      "chest_iron_open_down_5": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -16,
+          "y": -12,
+          "w": 32,
+          "h": 12,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "size": {
+          "w": 48,
+          "h": 48
+        },
+        "notes": "iron locked"
+      }
+    },
+    "anims": {
+      "wood_open": {
+        "frames": 6,
+        "fps": 12,
+        "loop": false,
+        "holdLast": true,
+        "directions": [
+          "down"
+        ],
+        "frameNames": "chest_wood_open_down_<i>",
+        "downOnlyReason": "lid opens toward camera"
+      },
+      "iron_open": {
+        "frames": 6,
+        "fps": 12,
+        "loop": false,
+        "holdLast": true,
+        "directions": [
+          "down"
+        ],
+        "frameNames": "chest_iron_open_down_<i>",
+        "downOnlyReason": "lid opens toward camera"
+      }
+    }
+  }
+}

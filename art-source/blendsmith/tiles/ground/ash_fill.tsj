@@ -1,0 +1,139 @@
+{
+  "columns": 5,
+  "image": "ash_fill.png",
+  "imageheight": 34,
+  "imagewidth": 170,
+  "margin": 1,
+  "spacing": 2,
+  "name": "ash_fill",
+  "tilecount": 5,
+  "tiledversion": "1.10.2",
+  "tileheight": 32,
+  "tilewidth": 32,
+  "type": "tileset",
+  "version": "1.10",
+  "tiles": [
+    {
+      "id": 0,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 0
+        },
+        {
+          "name": "variant",
+          "type": "string",
+          "value": "ash_fill_0"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 1
+        },
+        {
+          "name": "variant",
+          "type": "string",
+          "value": "ash_fill_1"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "variant",
+          "type": "string",
+          "value": "ash_fill_2"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "variant",
+          "type": "string",
+          "value": "ash_fill_3"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 4
+        },
+        {
+          "name": "variant",
+          "type": "string",
+          "value": "ash_fill_4"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    }
+  ],
+  "properties": [
+    {
+      "name": "cameraDeg",
+      "type": "float",
+      "value": 12
+    },
+    {
+      "name": "pxPerUnit",
+      "type": "float",
+      "value": 36.923
+    },
+    {
+      "name": "extrude",
+      "type": "int",
+      "value": 1
+    },
+    {
+      "name": "wangBitmask",
+      "type": "string",
+      "value": "NW=1,NE=2,SW=4,SE=8"
+    }
+  ]
+}

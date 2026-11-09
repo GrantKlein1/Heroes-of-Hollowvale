@@ -1,0 +1,296 @@
+{
+  "frames": {
+    "dungeon_brazier_burn_down_0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 96
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 96
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "dungeon_brazier_burn_down_1": {
+      "frame": {
+        "x": 66,
+        "y": 0,
+        "w": 64,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 96
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 96
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "dungeon_brazier_burn_down_2": {
+      "frame": {
+        "x": 132,
+        "y": 0,
+        "w": 64,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 96
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 96
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "dungeon_brazier_burn_down_3": {
+      "frame": {
+        "x": 198,
+        "y": 0,
+        "w": 64,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 96
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 96
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "dungeon_brazier_burn_down_4": {
+      "frame": {
+        "x": 264,
+        "y": 0,
+        "w": 64,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 96
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 96
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "dungeon_brazier_burn_down_5": {
+      "frame": {
+        "x": 330,
+        "y": 0,
+        "w": 64,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 96
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 96
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    }
+  },
+  "meta": {
+    "app": "hollowvale-blendsmith",
+    "version": "b3",
+    "image": "dungeon_brazier.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 398,
+      "h": 98
+    },
+    "scale": "1",
+    "origin": {
+      "x": 0.5,
+      "y": 1.0
+    },
+    "props": {
+      "dungeon_brazier_burn_down_0": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -14,
+          "y": -12,
+          "w": 28,
+          "h": 12,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "size": {
+          "w": 64,
+          "h": 96
+        },
+        "notes": "wall or floor brazier"
+      },
+      "dungeon_brazier_burn_down_1": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -14,
+          "y": -12,
+          "w": 28,
+          "h": 12,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "size": {
+          "w": 64,
+          "h": 96
+        },
+        "notes": "wall or floor brazier"
+      },
+      "dungeon_brazier_burn_down_2": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -14,
+          "y": -12,
+          "w": 28,
+          "h": 12,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "size": {
+          "w": 64,
+          "h": 96
+        },
+        "notes": "wall or floor brazier"
+      },
+      "dungeon_brazier_burn_down_3": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -14,
+          "y": -12,
+          "w": 28,
+          "h": 12,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "size": {
+          "w": 64,
+          "h": 96
+        },
+        "notes": "wall or floor brazier"
+      },
+      "dungeon_brazier_burn_down_4": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -14,
+          "y": -12,
+          "w": 28,
+          "h": 12,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "size": {
+          "w": 64,
+          "h": 96
+        },
+        "notes": "wall or floor brazier"
+      },
+      "dungeon_brazier_burn_down_5": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -14,
+          "y": -12,
+          "w": 28,
+          "h": 12,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "size": {
+          "w": 64,
+          "h": 96
+        },
+        "notes": "wall or floor brazier"
+      }
+    },
+    "anims": {
+      "burn": {
+        "frames": 6,
+        "fps": 8,
+        "loop": true,
+        "directions": [
+          "down"
+        ],
+        "frameNames": "dungeon_brazier_burn_down_<i>"
+      }
+    }
+  }
+}

@@ -1,0 +1,296 @@
+{
+  "frames": {
+    "stump_mossy": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "log_fallen": {
+      "frame": {
+        "x": 50,
+        "y": 0,
+        "w": 96,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "mushroom_cluster": {
+      "frame": {
+        "x": 148,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 40,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 40,
+        "h": 40
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "fern": {
+      "frame": {
+        "x": 190,
+        "y": 0,
+        "w": 40,
+        "h": 56
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 40,
+        "h": 56
+      },
+      "sourceSize": {
+        "w": 40,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "flowers": {
+      "frame": {
+        "x": 232,
+        "y": 0,
+        "w": 32,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 40
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "rock_ash": {
+      "frame": {
+        "x": 266,
+        "y": 0,
+        "w": 48,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 40
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    }
+  },
+  "meta": {
+    "image": "wild_props_4b.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 314,
+      "h": 56
+    },
+    "scale": "1",
+    "pxPerUnit": 36.923,
+    "origin": {
+      "x": 0.5,
+      "y": 1.0
+    },
+    "propCameraDegFromHorizontal": 12,
+    "groundCameraDegFromVertical": 12,
+    "props": {
+      "stump_mossy": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -10,
+          "y": -8,
+          "w": 20,
+          "h": 8,
+          "shape": "ellipse"
+        },
+        "tall": false,
+        "layer": "props",
+        "collides": true,
+        "notes": "mossy emberwood stump; one design, variety via flip/scale/placement",
+        "size": {
+          "w": 48,
+          "h": 48
+        }
+      },
+      "log_fallen": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -28,
+          "y": -8,
+          "w": 56,
+          "h": 14,
+          "shape": "rect"
+        },
+        "tall": false,
+        "layer": "props",
+        "collides": true,
+        "notes": "fallen Veilroot/emberwood log; rect collide",
+        "size": {
+          "w": 96,
+          "h": 48
+        }
+      },
+      "mushroom_cluster": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -8,
+          "y": -6,
+          "w": 16,
+          "h": 10,
+          "shape": "ellipse"
+        },
+        "tall": false,
+        "layer": "props",
+        "collides": false,
+        "notes": "ash-cap mushroom cluster",
+        "size": {
+          "w": 40,
+          "h": 40
+        }
+      },
+      "fern": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -6,
+          "y": -4,
+          "w": 12,
+          "h": 8,
+          "shape": "ellipse"
+        },
+        "tall": false,
+        "layer": "props",
+        "collides": false,
+        "notes": "emberwood fern; one design",
+        "size": {
+          "w": 40,
+          "h": 56
+        }
+      },
+      "flowers": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        },
+        "tall": false,
+        "layer": "props",
+        "collides": false,
+        "notes": "wildflowers; no footprint",
+        "size": {
+          "w": 32,
+          "h": 40
+        }
+      },
+      "rock_ash": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -12,
+          "y": -8,
+          "w": 24,
+          "h": 12,
+          "shape": "ellipse"
+        },
+        "tall": false,
+        "layer": "props",
+        "collides": true,
+        "notes": "ash-dusted rock; collides",
+        "size": {
+          "w": 48,
+          "h": 40
+        }
+      }
+    },
+    "app": "Blendsmith env_b4_wilderness",
+    "version": "b4b",
+    "draft": true,
+    "note": "Batch 4b new static props. Gate C wild_props.json untouched. Not runtime-accepted."
+  }
+}

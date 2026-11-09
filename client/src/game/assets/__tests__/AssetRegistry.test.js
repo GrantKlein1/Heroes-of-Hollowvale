@@ -460,3 +460,80 @@ describe('AssetRegistry — Dragon Boss Phase Lazy-Loading and Eviction', () => 
     }).toThrow(/Legacy v1 dragon_fx is deprecated/i)
   })
 })
+
+describe('AssetRegistry — AS-3 Groups Loading (Interiors, Cavern, Loot, Boss FX Extra)', () => {
+  let mockScene
+  let registry
+
+  beforeEach(() => {
+    mockScene = createMockScene()
+    registry = new AssetRegistry(mockScene, defaultManifest)
+  })
+
+  it('loads interiors group (interior_props, npc_bartender, npc_vendor)', () => {
+    const loadedKeys = registry.loadGroup('interiors')
+    expect(registry.isGroupLoaded('interiors')).toBe(true)
+    expect(loadedKeys).toContain('interior_props')
+    expect(loadedKeys).toContain('npc_bartender')
+    expect(loadedKeys).toContain('npc_vendor')
+
+    expect(mockScene.load.atlas).toHaveBeenCalledWith(
+      'interior_props',
+      'assets/env/interior_props/interior_props.png',
+      'assets/env/interior_props/interior_props.json'
+    )
+    expect(mockScene.load.atlas).toHaveBeenCalledWith(
+      'npc_bartender',
+      'assets/npcs/npc_bartender/npc_bartender.png',
+      'assets/npcs/npc_bartender/npc_bartender.json'
+    )
+    expect(mockScene.load.atlas).toHaveBeenCalledWith(
+      'npc_vendor',
+      'assets/npcs/npc_vendor/npc_vendor.png',
+      'assets/npcs/npc_vendor/npc_vendor.json'
+    )
+  })
+
+  it('loads cavern group (dungeon_props, dungeon_brazier, treasure_chest)', () => {
+    const loadedKeys = registry.loadGroup('cavern')
+    expect(registry.isGroupLoaded('cavern')).toBe(true)
+    expect(loadedKeys).toContain('dungeon_props')
+    expect(loadedKeys).toContain('dungeon_brazier')
+    expect(loadedKeys).toContain('treasure_chest')
+  })
+
+  it('loads loot group (loot_pickups)', () => {
+    const loadedKeys = registry.loadGroup('loot')
+    expect(registry.isGroupLoaded('loot')).toBe(true)
+    expect(loadedKeys).toContain('loot_pickups')
+    expect(mockScene.load.atlas).toHaveBeenCalledWith(
+      'loot_pickups',
+      'assets/loot/loot_pickups/loot_pickups.png',
+      'assets/loot/loot_pickups/loot_pickups.json'
+    )
+  })
+
+  it('loads boss_fx_extra group (dragon_fx_extra)', () => {
+    const loadedKeys = registry.loadGroup('boss_fx_extra')
+    expect(registry.isGroupLoaded('boss_fx_extra')).toBe(true)
+    expect(loadedKeys).toContain('dragon_fx_extra')
+    expect(mockScene.load.atlas).toHaveBeenCalledWith(
+      'dragon_fx_extra',
+      'assets/boss/red_dragon/fx_extra/dragon_fx_extra.png',
+      'assets/boss/red_dragon/fx_extra/dragon_fx_extra.json'
+    )
+  })
+
+  it('resolves dynamic anchors for AS-3 assets from manifest', () => {
+    registry.loadGroup('interiors')
+    registry.loadGroup('cavern')
+    registry.loadGroup('loot')
+    registry.loadGroup('boss_fx_extra')
+
+    expect(registry.getAnchor('interior_props')).toEqual({ x: 0.5, y: 1.0 })
+    expect(registry.getAnchor('npc_bartender')).toEqual({ x: 0.5, y: 0.9271 })
+    expect(registry.getAnchor('npc_vendor')).toEqual({ x: 0.5, y: 0.9271 })
+    expect(registry.getAnchor('loot_pickups')).toEqual({ x: 0.5, y: 0.875 })
+    expect(registry.getAnchor('dragon_fx_extra')).toEqual({ x: 0.5, y: 0.5 })
+  })
+})

@@ -459,8 +459,248 @@ export function importBlendsmith() {
     }
   }
 
+  // 9. Process Environment Props (AS-3)
+  const envSourceDir = path.join(SOURCE_DIR, 'env');
+  if (fs.existsSync(envSourceDir)) {
+    console.log(`[Blendsmith Importer] Processing env props from: ${envSourceDir}`);
+    const envEntries = fs.readdirSync(envSourceDir, { withFileTypes: true });
+    for (const entry of envEntries) {
+      if (!entry.isDirectory() || entry.name.startsWith('_') || isForbidden(entry.name)) {
+        continue;
+      }
+      const atlasId = entry.name;
+      const srcDir = path.join(envSourceDir, atlasId);
+      const destDir = path.join(DEST_DIR, 'env', atlasId);
+      ensureDir(destDir);
+
+      const sidecars = [];
+      let atlasData = null;
+
+      const files = fs.readdirSync(srcDir, { withFileTypes: true });
+      for (const f of files) {
+        if (!f.isFile() || isForbidden(f.name)) continue;
+        const srcFile = path.join(srcDir, f.name);
+        const destFile = path.join(destDir, f.name);
+        fs.copyFileSync(srcFile, destFile);
+
+        if (f.name === `${atlasId}.json`) {
+          try {
+            atlasData = JSON.parse(fs.readFileSync(destFile, 'utf8'));
+          } catch (err) {
+            console.warn(`  [Warning] Failed parsing ${f.name}: ${err.message}`);
+          }
+        } else if (f.name !== `${atlasId}.png`) {
+          sidecars.push(f.name);
+        }
+      }
+
+      if (atlasData) {
+        const anchor = extractAnchor(atlasData);
+        const assetObj = {
+          id: atlasId,
+          kind: 'props',
+          anchor,
+          image: `assets/env/${atlasId}/${atlasId}.png`,
+          json: `assets/env/${atlasId}/${atlasId}.json`,
+          sheets: {
+            [atlasId]: {
+              key: atlasId,
+              image: `assets/env/${atlasId}/${atlasId}.png`,
+              json: `assets/env/${atlasId}/${atlasId}.json`,
+              anchor
+            }
+          },
+          sidecars
+        };
+        if (atlasData.meta?.anims) {
+          assetObj.anims = atlasData.meta.anims;
+        }
+        manifest.assets[atlasId] = assetObj;
+      }
+    }
+  }
+
+  // 10. Process NPCs (AS-3)
+  const npcsSourceDir = path.join(SOURCE_DIR, 'npcs');
+  if (fs.existsSync(npcsSourceDir)) {
+    console.log(`[Blendsmith Importer] Processing NPCs from: ${npcsSourceDir}`);
+    const npcEntries = fs.readdirSync(npcsSourceDir, { withFileTypes: true });
+    for (const entry of npcEntries) {
+      if (!entry.isDirectory() || isForbidden(entry.name)) continue;
+      const npcId = entry.name;
+      const srcDir = path.join(npcsSourceDir, npcId);
+      const destDir = path.join(DEST_DIR, 'npcs', npcId);
+      ensureDir(destDir);
+
+      const sidecars = [];
+      let atlasData = null;
+
+      const files = fs.readdirSync(srcDir, { withFileTypes: true });
+      for (const f of files) {
+        if (!f.isFile() || isForbidden(f.name)) continue;
+        const srcFile = path.join(srcDir, f.name);
+        const destFile = path.join(destDir, f.name);
+        fs.copyFileSync(srcFile, destFile);
+
+        if (f.name === `${npcId}.json`) {
+          try {
+            atlasData = JSON.parse(fs.readFileSync(destFile, 'utf8'));
+          } catch (err) {
+            console.warn(`  [Warning] Failed parsing ${f.name}: ${err.message}`);
+          }
+        } else if (f.name !== `${npcId}.png`) {
+          sidecars.push(f.name);
+        }
+      }
+
+      if (atlasData) {
+        const anchor = extractAnchor(atlasData);
+        manifest.assets[npcId] = {
+          id: npcId,
+          kind: 'npc',
+          anchor,
+          image: `assets/npcs/${npcId}/${npcId}.png`,
+          json: `assets/npcs/${npcId}/${npcId}.json`,
+          sheets: {
+            [npcId]: {
+              key: npcId,
+              image: `assets/npcs/${npcId}/${npcId}.png`,
+              json: `assets/npcs/${npcId}/${npcId}.json`,
+              anchor
+            }
+          },
+          anims: atlasData.meta?.anims || {},
+          sidecars
+        };
+      }
+    }
+  }
+
+  // 11. Process Loot Pickups (AS-3)
+  const lootSourceDir = path.join(SOURCE_DIR, 'loot', 'loot_pickups');
+  if (fs.existsSync(lootSourceDir)) {
+    console.log(`[Blendsmith Importer] Processing loot from: ${lootSourceDir}`);
+    const destDir = path.join(DEST_DIR, 'loot', 'loot_pickups');
+    ensureDir(destDir);
+
+    const sidecars = [];
+    let atlasData = null;
+
+    const files = fs.readdirSync(lootSourceDir, { withFileTypes: true });
+    for (const f of files) {
+      if (!f.isFile() || isForbidden(f.name)) continue;
+      const srcFile = path.join(lootSourceDir, f.name);
+      const destFile = path.join(destDir, f.name);
+      fs.copyFileSync(srcFile, destFile);
+
+      if (f.name === 'loot_pickups.json') {
+        try {
+          atlasData = JSON.parse(fs.readFileSync(destFile, 'utf8'));
+        } catch (err) {
+          console.warn(`  [Warning] Failed parsing ${f.name}: ${err.message}`);
+        }
+      } else if (f.name !== 'loot_pickups.png') {
+        sidecars.push(f.name);
+      }
+    }
+
+    if (atlasData) {
+      const anchor = extractAnchor(atlasData);
+      manifest.assets.loot_pickups = {
+        id: 'loot_pickups',
+        kind: 'loot',
+        anchor,
+        image: 'assets/loot/loot_pickups/loot_pickups.png',
+        json: 'assets/loot/loot_pickups/loot_pickups.json',
+        sheets: {
+          loot_pickups: {
+            key: 'loot_pickups',
+            image: 'assets/loot/loot_pickups/loot_pickups.png',
+            json: 'assets/loot/loot_pickups/loot_pickups.json',
+            anchor
+          }
+        },
+        anims: atlasData.meta?.anims || {},
+        sidecars
+      };
+    }
+  }
+
+  // 12. Process Dragon FX Extra (AS-3)
+  const dragonFxExtraDir = path.join(SOURCE_DIR, 'red_dragon', 'fx_extra');
+  if (fs.existsSync(dragonFxExtraDir)) {
+    console.log(`[Blendsmith Importer] Processing dragon fx_extra from: ${dragonFxExtraDir}`);
+    const destDir = path.join(DEST_DIR, 'boss', 'red_dragon', 'fx_extra');
+    ensureDir(destDir);
+
+    const sidecars = [];
+    let atlasData = null;
+
+    const files = fs.readdirSync(dragonFxExtraDir, { withFileTypes: true });
+    for (const f of files) {
+      if (!f.isFile() || isForbidden(f.name)) continue;
+      const srcFile = path.join(dragonFxExtraDir, f.name);
+      const destFile = path.join(destDir, f.name);
+      fs.copyFileSync(srcFile, destFile);
+
+      if (f.name === 'dragon_fx_extra.json') {
+        try {
+          atlasData = JSON.parse(fs.readFileSync(destFile, 'utf8'));
+        } catch (err) {
+          console.warn(`  [Warning] Failed parsing ${f.name}: ${err.message}`);
+        }
+      } else if (f.name !== 'dragon_fx_extra.png') {
+        sidecars.push(f.name);
+      }
+    }
+
+    if (atlasData) {
+      const anchor = extractAnchor(atlasData);
+      manifest.assets.dragon_fx_extra = {
+        id: 'dragon_fx_extra',
+        kind: 'fx',
+        anchor,
+        image: 'assets/boss/red_dragon/fx_extra/dragon_fx_extra.png',
+        json: 'assets/boss/red_dragon/fx_extra/dragon_fx_extra.json',
+        sheets: {
+          dragon_fx_extra: {
+            key: 'dragon_fx_extra',
+            image: 'assets/boss/red_dragon/fx_extra/dragon_fx_extra.png',
+            json: 'assets/boss/red_dragon/fx_extra/dragon_fx_extra.json',
+            anchor
+          }
+        },
+        anims: atlasData.meta?.anims || {},
+        sidecars
+      };
+    }
+  }
+
+  // 13. Register AS-3 Manifest Groups
+  manifest.groups.interiors = ['interior_props', 'npc_bartender', 'npc_vendor'];
+  manifest.groups.cavern = ['dungeon_props', 'dungeon_brazier', 'treasure_chest'];
+  manifest.groups.loot = ['loot_pickups'];
+  manifest.groups.boss_fx_extra = ['dragon_fx_extra'];
+
+  const wildernessAdditions = ['wild_props', 'wild_props_4b', 'ember_vent'];
+  for (const item of wildernessAdditions) {
+    if (!manifest.groups.wilderness.includes(item)) {
+      manifest.groups.wilderness.push(item);
+    }
+  }
+
   // Write manifest.json
   const manifestPath = path.join(DEST_DIR, 'manifest.json');
+  if (fs.existsSync(manifestPath)) {
+    try {
+      const existing = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+      const existingCopy = { ...existing, generatedAt: '' };
+      const currentCopy = { ...manifest, generatedAt: '' };
+      if (JSON.stringify(existingCopy) === JSON.stringify(currentCopy)) {
+        manifest.generatedAt = existing.generatedAt;
+      }
+    } catch {}
+  }
   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf8');
   console.log(`[Blendsmith Importer] Manifest written: ${manifestPath}`);
 
