@@ -489,5 +489,141 @@ describe('Player Actor — Package 1-3', () => {
       expect(player.footprint.h).toBe(expectedH)
     })
   })
+
+  describe('Dodge Mechanics (Package 1-6)', () => {
+    it.each(['knight', 'mage', 'thief', 'dwarf'])('allows %s to initiate dodge with 600 ms cooldown', (classId) => {
+      const player = new Player(mockScene, 100, 200, classId)
+      expect(player.is(ACTOR_STATES.IDLE)).toBe(true)
+
+      const dodged = player.dodge(1000)
+      expect(dodged).toBe(true)
+      expect(player.is(ACTOR_STATES.DODGE)).toBe(true)
+      expect(player.isDodging()).toBe(true)
+      expect(player.anims.play).toHaveBeenCalledWith(`${classId}_dodge_down`, false)
+
+      // Cooldown: second dodge at 1400 ms (< 1000 + 600 ms) is rejected
+      const tooEarly = player.dodge(1400)
+      expect(tooEarly).toBe(false)
+
+      // Completing dodge animation returns player to IDLE
+      player.emit('animationcomplete', { key: `${classId}_dodge_down` })
+      expect(player.is(ACTOR_STATES.IDLE)).toBe(true)
+      expect(player.isDodging()).toBe(false)
+
+      // After 600 ms (at 1601 ms), dodge succeeds again
+      const canDodgeAgain = player.dodge(1601)
+      expect(canDodgeAgain).toBe(true)
+      expect(player.is(ACTOR_STATES.DODGE)).toBe(true)
+    })
+
+    it('Dodging through an attack takes 0 damage during i-frames', () => {
+      const player = new Player(mockScene, 100, 200, 'knight')
+      player.dodge(1000)
+      expect(player.isDodging()).toBe(true)
+
+      // Mock current frame index inside iFrames [1, 4]
+      player.anims.currentFrame = {
+        frame: { name: 'knight_dodge_down_2' },
+        index: 3,
+      }
+
+      const tookDamage = player.takeDamage(15, 1150)
+      expect(tookDamage).toBe(false)
+      expect(player.is(ACTOR_STATES.DODGE)).toBe(true) // Not interrupted into HURT
+    })
+
+    it('Updates position along facing direction during dodge frames', () => {
+      const player = new Player(mockScene, 100, 200, 'knight', { facing: 'right' })
+      player.dodge(1000)
+
+      // Frame 1: travel reaches 7.2px
+      player.anims.currentFrame = { frame: { name: 'knight_dodge_right_1' }, index: 2 }
+      player.update(1062, 16)
+      expect(player.x).toBeCloseTo(107.2)
+
+      // Frame 2: travel reaches 21.6px (+14.4px)
+      player.anims.currentFrame = { frame: { name: 'knight_dodge_right_2' }, index: 3 }
+      player.update(1124, 16)
+      expect(player.x).toBeCloseTo(121.6)
+    })
+  })
+
+  describe('Knight Shield Block (Package 1-6)', () => {
+    it('Only knight can initiate shield block; other classes reject it', () => {
+      const knight = new Player(mockScene, 100, 200, 'knight')
+      expect(knight.startBlock(1000)).toBe(true)
+      expect(knight.is(ACTOR_STATES.BLOCK)).toBe(true)
+      expect(knight.isBlocking()).toBe(true)
+      expect(knight.anims.play).toHaveBeenCalledWith('knight_block_start_down', false)
+
+      const mage = new Player(mockScene, 100, 200, 'mage')
+      expect(mage.startBlock(1000)).toBe(false)
+      expect(mage.isBlocking()).toBe(false)
+    })
+
+    it('Advances from block_start to block_hold on animation complete', () => {
+      const knight = new Player(mockScene, 100, 200, 'knight')
+      knight.startBlock(1000)
+      expect(knight.blockState.stage).toBe('start')
+
+      knight.emit('animationcomplete', { key: 'knight_block_start_down' })
+      expect(knight.blockState.stage).toBe('hold')
+      expect(knight.anims.play).toHaveBeenCalledWith('knight_block_hold_down', true)
+
+      // stopBlock returns knight to IDLE
+      knight.stopBlock()
+      expect(knight.is(ACTOR_STATES.IDLE)).toBe(true)
+      expect(knight.isBlocking()).toBe(false)
+    })
+
+    it('Reduces frontal incoming damage by 70% and plays block_hit', () => {
+      const knight = new Player(mockScene, 100, 100, 'knight', { facing: 'right' })
+      knight.startBlock(1000)
+
+      // Attacker in front (x: 140, y: 100)
+      const tookDamage = knight.takeDamage(10, 1050, { fromX: 140, fromY: 100 })
+      expect(tookDamage).toBe(true)
+      expect(knight.lastDamageTaken).toBe(3) // 10 * (1 - 0.70) = 3
+      expect(knight.anims.play).toHaveBeenCalledWith('knight_block_hit_right', false)
+      expect(knight.is(ACTOR_STATES.BLOCK)).toBe(true) // Remains in block
+    })
+
+    it('Does not reduce damage when struck from behind; enters HURT', () => {
+      const knight = new Player(mockScene, 100, 100, 'knight', { facing: 'right' })
+      knight.startBlock(1000)
+
+      // Attacker behind knight (x: 60, y: 100)
+      const tookDamage = knight.takeDamage(10, 1050, { fromX: 60, fromY: 100 })
+      expect(tookDamage).toBe(true)
+      expect(knight.lastDamageTaken).toBe(10) // Full damage
+      expect(knight.is(ACTOR_STATES.HURT)).toBe(true)
+    })
+  })
+
+  describe('Death and Stealth (Package 1-6)', () => {
+    it.each(['knight', 'mage', 'thief', 'dwarf'])('plays real death animation and freezes on frame 9 for %s', (classId) => {
+      const player = new Player(mockScene, 100, 200, classId)
+      player.die()
+
+      expect(player.is(ACTOR_STATES.DEAD)).toBe(true)
+      expect(player.anims.play).toHaveBeenCalledWith(`${classId}_death_down`, false)
+      expect(player.attack()).toBe(false)
+      expect(player.dodge()).toBe(false)
+    })
+
+    it('supports thief vanish and reappear stealth mechanics', () => {
+      const thief = new Player(mockScene, 100, 200, 'thief')
+      expect(thief.vanish(1000)).toBe(true)
+      expect(thief.anims.play).toHaveBeenCalledWith('thief_vanish_down', false)
+
+      thief.emit('animationcomplete', { key: 'thief_vanish_down' })
+      expect(thief.vanishState.invisible).toBe(true)
+      expect(thief.visible).toBe(false)
+
+      expect(thief.reappear(2000)).toBe(true)
+      expect(thief.visible).toBe(true)
+      expect(thief.anims.play).toHaveBeenCalledWith('thief_reappear_down', false)
+    })
+  })
 })
 
