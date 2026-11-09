@@ -19,7 +19,7 @@ import {
   applyDepth,
   sortByFeet,
 } from './depth.js'
-import { parseZonesLayer, ZonesRegistry } from './zones.js'
+import { parseZonesLayer, ZonesRegistry, parseProperties } from './zones.js'
 
 /**
  * Checks if Tiled maps are enabled via URL search param `?maps=tiled`.
@@ -39,6 +39,157 @@ export function isTiledMapsEnabled(search) {
     return val === 'tiled' || val === '1' || val === 'true'
   }
   return false
+}
+
+/**
+ * Resolves list of prop atlas keys from mount options and map properties.
+ *
+ * @param {object|string} [options={}]
+ * @param {object} [mapProperties={}]
+ * @returns {string[]}
+ */
+export function resolvePropAtlasKeys(options = {}, mapProperties = {}) {
+  let keys = []
+  if (typeof options === 'object' && options?.propAtlasKeys) {
+    if (Array.isArray(options.propAtlasKeys)) {
+      keys = options.propAtlasKeys
+    } else if (typeof options.propAtlasKeys === 'string') {
+      keys = options.propAtlasKeys.split(',').map((s) => s.trim()).filter(Boolean)
+    }
+  } else if (typeof options === 'object' && options?.propAtlasKey && typeof options.propAtlasKey === 'string') {
+    keys = [options.propAtlasKey.trim()]
+  } else if (mapProperties?.propAtlases) {
+    if (typeof mapProperties.propAtlases === 'string') {
+      keys = mapProperties.propAtlases.split(',').map((s) => s.trim()).filter(Boolean)
+    } else if (Array.isArray(mapProperties.propAtlases)) {
+      keys = mapProperties.propAtlases
+    }
+  }
+  if (!keys || keys.length === 0) {
+    keys = ['village_props']
+  }
+  return keys
+}
+
+/**
+ * Resolves prop frame across a list of atlas keys.
+ * Returns the first matching atlas key and frame name, or null.
+ *
+ * @param {string} frameName
+ * @param {string[]} propAtlasKeys
+ * @param {object} textures - Phaser TextureManager
+ * @returns {{ atlasKey: string, frameName: string }|null}
+ */
+export function resolvePropFrame(frameName, propAtlasKeys, textures) {
+  if (!frameName || !Array.isArray(propAtlasKeys) || !textures) return null
+  for (const key of propAtlasKeys) {
+    if (typeof textures.exists === 'function' && !textures.exists(key)) continue
+    const tex = typeof textures.get === 'function' ? textures.get(key) : null
+    if (tex?.has?.(frameName)) {
+      return { atlasKey: key, frameName }
+    }
+  }
+  return null
+}
+
+/**
+ * Detects if a prop frame belongs to an animation in atlas metadata.
+ *
+ * @param {string} atlasKey
+ * @param {string} frameName
+ * @param {object} textures - Phaser TextureManager
+ * @param {object} anims - Phaser AnimationManager
+ * @returns {{ animKey: string, fps: number, repeat: number, frames: string[] }|null}
+ */
+export function detectPropAnimation(atlasKey, frameName, textures, anims) {
+  if (!atlasKey || !frameName || !textures) return null
+  const tex = typeof textures.get === 'function' ? textures.get(atlasKey) : null
+  const meta = tex?.customData?.meta
+  const animsDict = meta?.anims || meta?.animations
+  if (!animsDict || typeof animsDict !== 'object') return null
+
+  for (const [animName, animDef] of Object.entries(animsDict)) {
+    if (!animDef || typeof animDef !== 'object') continue
+
+    let frameList = []
+    if (Array.isArray(animDef.frames)) {
+      frameList = animDef.frames
+    } else if (typeof animDef.frames === 'number' && animDef.frameNames) {
+      const directions = Array.isArray(animDef.directions) && animDef.directions.length > 0 ? animDef.directions : ['']
+      for (const dir of directions) {
+        const template = animDef.frameNames.replace(/<dir>/g, dir)
+        const count = animDef.frames
+        for (let i = 0; i < count; i++) {
+          frameList.push(template.replace(/<i>/g, String(i)))
+        }
+      }
+    }
+
+    if (frameList.includes(frameName)) {
+      const fps = typeof animDef.fps === 'number' && animDef.fps > 0
+        ? animDef.fps
+        : (typeof animDef.frameRate === 'number' && animDef.frameRate > 0 ? animDef.frameRate : 10)
+      const repeat = typeof animDef.repeat === 'number'
+        ? animDef.repeat
+        : (animDef.loop !== false ? -1 : 0)
+
+      const candidates = [
+        animName,
+        `${atlasKey}_${animName}`,
+      ]
+      const matchDir = frameName.match(/^(.*)_[0-9]+$/)
+      if (matchDir && matchDir[1]) {
+        candidates.unshift(matchDir[1])
+      }
+
+      let animKey = candidates.find((k) => anims?.exists?.(k))
+
+      if (!animKey && typeof anims?.create === 'function') {
+        animKey = candidates[0]
+        const frameConfigs = frameList.map((f) => ({ key: atlasKey, frame: f }))
+        anims.create({
+          key: animKey,
+          frames: frameConfigs,
+          frameRate: fps,
+          repeat,
+        })
+      }
+
+      return { animKey, fps, repeat, frames: frameList }
+    }
+  }
+
+  return null
+}
+
+/**
+ * Calculates NPC sprite placement math (feet origin from meta).
+ *
+ * @param {object} zone - Tiled zone object
+ * @param {object} [meta] - Atlas metadata
+ * @returns {{ feetX: number, feetY: number, originX: number, originY: number, depth: number }}
+ */
+export function resolveNpcPlacement(zone, meta) {
+  const zx = Number(zone?.x) || 0
+  const zy = Number(zone?.y) || 0
+  const zw = Number(zone?.width) || 0
+  const zh = Number(zone?.height) || 0
+
+  const feetX = zx + zw / 2
+  const feetY = zy + zh
+  const originX = typeof meta?.origin?.x === 'number' ? Number(meta.origin.x) : 0.5
+  const originY = typeof meta?.origin?.y === 'number'
+    ? Number(meta.origin.y)
+    : (typeof meta?.origin?.bottom === 'number' ? Number(meta.origin.bottom) : 1.0)
+  const depth = calculateDepth(feetY)
+
+  return {
+    feetX,
+    feetY,
+    originX,
+    originY,
+    depth,
+  }
 }
 
 /**
@@ -169,6 +320,9 @@ export class MapLoader {
     this.collisionGrid = [] // 2D boolean array [y][x]
     this.propFootprints = [] // Array of { id, name, bounds, shape, feetY }
     this.propObjects = [] // Array of parsed props
+    this.propSprites = []
+    this.npcSprites = []
+    this._warnedMissingProps = new Set()
 
     // Zones
     this.zones = new ZonesRegistry([])
@@ -687,24 +841,90 @@ export class MapLoader {
       }
     }
 
-    // Instantiate prop visual sprites
-    const propSprites = []
-    const propAtlasKey = (typeof options === 'object' && options?.propAtlasKey) || 'village_props'
-    const hasPropAtlas = Boolean(scene.textures?.exists?.(propAtlasKey))
+    // Resolve prop atlases
+    const mapProps = parseProperties(this.data?.properties)
+    const propAtlasKeys = resolvePropAtlasKeys(options, mapProps)
+    this._warnedMissingProps = this._warnedMissingProps || new Set()
 
+    // Instantiate prop visual sprites (with multi-atlas resolution & animated prop detection)
+    const propSprites = []
     for (const prop of this.propObjects) {
       const frameName = prop.name
       const px = prop.x + prop.width / 2
       const py = prop.y + prop.height
 
-      if (hasPropAtlas && scene.textures.get(propAtlasKey)?.has?.(frameName)) {
-        const sprite = scene.add.image(px, py, propAtlasKey, frameName)
-        sprite.setOrigin(0.5, 1.0)
-        sprite.setDepth(prop.depth)
+      const resolved = resolvePropFrame(frameName, propAtlasKeys, scene.textures)
+      if (!resolved) {
+        if (!this._warnedMissingProps.has(frameName)) {
+          this._warnedMissingProps.add(frameName)
+          console.warn(`[MapLoader] Prop frame "${frameName}" not found across atlases [${propAtlasKeys.join(', ')}]`)
+        }
+        continue
+      }
+
+      const { atlasKey, frameName: matchedFrame } = resolved
+      const animInfo = detectPropAnimation(atlasKey, matchedFrame, scene.textures, scene.anims)
+
+      let sprite = null
+      if (animInfo && typeof scene.add?.sprite === 'function') {
+        sprite = scene.add.sprite(px, py, atlasKey, matchedFrame)
+        sprite.setOrigin?.(0.5, 1.0)
+        sprite.setDepth?.(prop.depth)
+        if (typeof sprite.play === 'function') {
+          sprite.play(animInfo.animKey)
+        }
+      } else if (typeof scene.add?.image === 'function') {
+        sprite = scene.add.image(px, py, atlasKey, matchedFrame)
+        sprite.setOrigin?.(0.5, 1.0)
+        sprite.setDepth?.(prop.depth)
+      } else if (typeof scene.add?.sprite === 'function') {
+        sprite = scene.add.sprite(px, py, atlasKey, matchedFrame)
+        sprite.setOrigin?.(0.5, 1.0)
+        sprite.setDepth?.(prop.depth)
+      }
+
+      if (sprite) {
         propSprites.push(sprite)
       }
     }
     this.propSprites = propSprites
+
+    // Instantiate NPC sprites if specified on NPC zones
+    const npcSprites = []
+    const zones = this.zones?.getAll ? this.zones.getAll() : []
+    for (const z of zones) {
+      if (!z.isNpc && z.type !== 'npc') continue
+      const spriteAtlas = z.properties?.sprite
+      const facing = z.properties?.facing || 'down'
+      if (!spriteAtlas) continue
+
+      // Skip silently if atlas is not loaded in textures
+      if (!scene.textures?.exists?.(spriteAtlas)) continue
+
+      const tex = scene.textures.get(spriteAtlas)
+      const meta = tex?.customData?.meta
+      const placement = resolveNpcPlacement(z, meta)
+
+      const animKey = `${spriteAtlas}_idle_${facing}`
+      const initialFrame = `${spriteAtlas}_idle_${facing}_0`
+      const firstFrame = tex?.has?.(initialFrame) ? initialFrame : (tex?.firstFrame || undefined)
+
+      let sprite = null
+      if (typeof scene.add?.sprite === 'function') {
+        sprite = scene.add.sprite(placement.feetX, placement.feetY, spriteAtlas, firstFrame)
+        sprite.setOrigin?.(placement.originX, placement.originY)
+        sprite.setDepth?.(placement.depth)
+
+        if (scene.anims?.exists?.(animKey) && typeof sprite.play === 'function') {
+          sprite.play(animKey)
+        }
+      }
+
+      if (sprite) {
+        npcSprites.push(sprite)
+      }
+    }
+    this.npcSprites = npcSprites
 
     // Create static bodies for prop footprints if physics is present
     let propGroup = null
@@ -727,6 +947,7 @@ export class MapLoader {
       layers: this.tilemapLayers,
       propGroup,
       propSprites,
+      npcSprites,
       destroy: () => this.destroy(),
     }
   }
@@ -814,6 +1035,14 @@ export class MapLoader {
         }
       }
       this.propSprites = []
+    }
+    if (Array.isArray(this.npcSprites)) {
+      for (const sprite of this.npcSprites) {
+        if (sprite && typeof sprite.destroy === 'function') {
+          sprite.destroy()
+        }
+      }
+      this.npcSprites = []
     }
     if (this.propGroup) {
       if (typeof this.propGroup.clear === 'function') {

@@ -2,7 +2,15 @@ import { describe, it, expect } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { MapLoader, isTiledMapsEnabled, parsePropFootprint } from '../MapLoader.js'
+import {
+  MapLoader,
+  isTiledMapsEnabled,
+  parsePropFootprint,
+  resolvePropAtlasKeys,
+  resolvePropFrame,
+  detectPropAnimation,
+  resolveNpcPlacement,
+} from '../MapLoader.js'
 import { LAYER_DEPTHS, calculateDepth, sortByFeet, resolveFeetY } from '../depth.js'
 import { parseZonesLayer } from '../zones.js'
 
@@ -557,6 +565,344 @@ describe('Package 2-1: MapLoader & Tiled TMJ Architecture', () => {
 
       // Point just outside the bounding box does not block
       expect(loader.isBlockedPoint(wellFootprint.bounds.x - 2, cy)).toBe(false)
+    })
+  })
+
+  // =========================================================================
+  // Package 2-4: Multi-Atlas Props, Animated Props & NPC Sprites
+  // =========================================================================
+  describe('Package 2-4: Multi-Atlas Props, Animated Props & NPC Sprites', () => {
+    describe('resolvePropAtlasKeys', () => {
+      it('resolves options.propAtlasKeys array and csv string', () => {
+        expect(resolvePropAtlasKeys({ propAtlasKeys: ['atlas_a', 'atlas_b'] })).toEqual(['atlas_a', 'atlas_b'])
+        expect(resolvePropAtlasKeys({ propAtlasKeys: 'atlas_1, atlas_2' })).toEqual(['atlas_1', 'atlas_2'])
+      })
+
+      it('falls back to options.propAtlasKey', () => {
+        expect(resolvePropAtlasKeys({ propAtlasKey: 'single_atlas' })).toEqual(['single_atlas'])
+      })
+
+      it('reads mapProperties.propAtlases if options do not specify keys', () => {
+        expect(resolvePropAtlasKeys({}, { propAtlases: 'map_props, dungeon_props' })).toEqual([
+          'map_props',
+          'dungeon_props',
+        ])
+        expect(resolvePropAtlasKeys({}, { propAtlases: ['prop_a', 'prop_b'] })).toEqual(['prop_a', 'prop_b'])
+      })
+
+      it('defaults to ["village_props"] when none provided', () => {
+        expect(resolvePropAtlasKeys({})).toEqual(['village_props'])
+        expect(resolvePropAtlasKeys(null, null)).toEqual(['village_props'])
+      })
+    })
+
+    describe('resolvePropFrame & Multi-Atlas Lookup', () => {
+      const mockTextures = {
+        exists: (key) => ['atlas_primary', 'atlas_secondary'].includes(key),
+        get: (key) => {
+          if (key === 'atlas_primary') {
+            return { has: (frame) => ['barrel', 'crate'].includes(frame) }
+          }
+          if (key === 'atlas_secondary') {
+            return { has: (frame) => ['hearth_burn_down_0', 'brazier'].includes(frame) }
+          }
+          return null
+        },
+      }
+
+      it('resolves frame found in the first atlas', () => {
+        const res = resolvePropFrame('barrel', ['atlas_primary', 'atlas_secondary'], mockTextures)
+        expect(res).toEqual({ atlasKey: 'atlas_primary', frameName: 'barrel' })
+      })
+
+      it('resolves frame found only in subsequent atlas', () => {
+        const res = resolvePropFrame('hearth_burn_down_0', ['atlas_primary', 'atlas_secondary'], mockTextures)
+        expect(res).toEqual({ atlasKey: 'atlas_secondary', frameName: 'hearth_burn_down_0' })
+      })
+
+      it('returns null when frame is missing across all atlases', () => {
+        const res = resolvePropFrame('missing_chest', ['atlas_primary', 'atlas_secondary'], mockTextures)
+        expect(res).toBeNull()
+      })
+    })
+
+    describe('detectPropAnimation', () => {
+      const mockTexturesWithAnims = {
+        get: (key) => {
+          if (key === 'hearth_atlas') {
+            return {
+              customData: {
+                meta: {
+                  anims: {
+                    burn: {
+                      frames: 6,
+                      fps: 8,
+                      loop: true,
+                      directions: ['down'],
+                      frameNames: 'hearth_burn_down_<i>',
+                    },
+                  },
+                },
+              },
+            }
+          }
+          return null
+        },
+      }
+
+      it('detects anim template and returns animation key, fps, and frame list', () => {
+        const createdAnims = []
+        const mockAnims = {
+          exists: () => false,
+          create: (def) => createdAnims.push(def),
+        }
+
+        const animInfo = detectPropAnimation('hearth_atlas', 'hearth_burn_down_0', mockTexturesWithAnims, mockAnims)
+        expect(animInfo).toBeDefined()
+        expect(animInfo.fps).toBe(8)
+        expect(animInfo.repeat).toBe(-1)
+        expect(animInfo.frames).toHaveLength(6)
+        expect(animInfo.frames).toContain('hearth_burn_down_0')
+        expect(animInfo.frames).toContain('hearth_burn_down_5')
+        expect(createdAnims).toHaveLength(1)
+      })
+
+      it('returns null for static props without matching animation frames', () => {
+        const animInfo = detectPropAnimation('hearth_atlas', 'static_stone', mockTexturesWithAnims, null)
+        expect(animInfo).toBeNull()
+      })
+    })
+
+    describe('resolveNpcPlacement Math', () => {
+      it('calculates feet coordinates, meta origin, and depth accurately', () => {
+        const zone = {
+          x: 200,
+          y: 100,
+          width: 64,
+          height: 32,
+        }
+        const meta = {
+          origin: {
+            x: 0.5,
+            y: 0.9375,
+          },
+        }
+
+        const placement = resolveNpcPlacement(zone, meta)
+        // feetX = x + width / 2 = 200 + 32 = 232
+        expect(placement.feetX).toBe(232)
+        // feetY = y + height = 100 + 32 = 132
+        expect(placement.feetY).toBe(132)
+        expect(placement.originX).toBe(0.5)
+        expect(placement.originY).toBe(0.9375)
+        expect(placement.depth).toBe(132)
+      })
+
+      it('falls back to origin 0.5, 1.0 when meta origin is omitted', () => {
+        const zone = { x: 50, y: 50, width: 20, height: 40 }
+        const placement = resolveNpcPlacement(zone, null)
+        expect(placement.feetX).toBe(60)
+        expect(placement.feetY).toBe(90)
+        expect(placement.originX).toBe(0.5)
+        expect(placement.originY).toBe(1.0)
+      })
+    })
+
+    describe('mount Integration with Multi-Atlas Props & NPC Sprites', () => {
+      it('spawns animated prop sprite and plays animation', () => {
+        const mapWithProps = {
+          ...fixtureData,
+          layers: fixtureData.layers.map((l) => {
+            if (l.name === 'props') {
+              return {
+                ...l,
+                objects: [
+                  {
+                    id: 99,
+                    name: 'hearth_burn_down_0',
+                    x: 64,
+                    y: 64,
+                    width: 32,
+                    height: 32,
+                  },
+                ],
+              }
+            }
+            return l
+          }),
+        }
+
+        const playedAnims = []
+        const createdSprites = []
+        const mockScene = {
+          make: {
+            tilemap: () => ({
+              addTilesetImage: () => ({}),
+              createLayer: () => ({ setDepth: () => {}, setCollisionByProperty: () => {}, setVisible: () => {} }),
+            }),
+          },
+          textures: {
+            exists: (key) => key === 'hearth_atlas',
+            get: (key) => ({
+              has: (frame) => frame === 'hearth_burn_down_0',
+              customData: {
+                meta: {
+                  anims: {
+                    burn: {
+                      frames: 6,
+                      fps: 8,
+                      loop: true,
+                      frameNames: 'hearth_burn_down_<i>',
+                    },
+                  },
+                },
+              },
+            }),
+          },
+          anims: {
+            exists: () => true,
+          },
+          add: {
+            sprite: (x, y, key, frame) => {
+              const spr = {
+                x,
+                y,
+                key,
+                frame,
+                originX: 0,
+                originY: 0,
+                depth: 0,
+                setOrigin: (ox, oy) => {
+                  spr.originX = ox
+                  spr.originY = oy
+                  return spr
+                },
+                setDepth: (d) => {
+                  spr.depth = d
+                  return spr
+                },
+                play: (anim) => playedAnims.push(anim),
+                destroy: () => {},
+              }
+              createdSprites.push(spr)
+              return spr
+            },
+            image: () => ({ setOrigin: () => {}, setDepth: () => {}, destroy: () => {} }),
+          },
+        }
+
+        const loader = new MapLoader(mapWithProps)
+        const mounted = loader.mount(mockScene, { propAtlasKeys: ['hearth_atlas'] })
+
+        expect(mounted.propSprites).toHaveLength(1)
+        expect(playedAnims.length).toBeGreaterThanOrEqual(1)
+        expect(playedAnims[0]).toBe('hearth_burn_down')
+      })
+
+      it('spawns NPC sprite when zone has sprite + facing, and skips silently when atlas missing', () => {
+        const mapWithNpc = {
+          ...fixtureData,
+          layers: fixtureData.layers.map((l) => {
+            if (l.name === 'zones') {
+              return {
+                ...l,
+                objects: [
+                  {
+                    id: 101,
+                    name: 'npc_guard',
+                    type: 'npc',
+                    x: 100,
+                    y: 100,
+                    width: 32,
+                    height: 32,
+                    properties: [
+                      { name: 'sprite', value: 'guard_atlas' },
+                      { name: 'facing', value: 'left' },
+                    ],
+                  },
+                  {
+                    id: 102,
+                    name: 'npc_ghost',
+                    type: 'npc',
+                    x: 200,
+                    y: 200,
+                    width: 32,
+                    height: 32,
+                    properties: [
+                      { name: 'sprite', value: 'missing_atlas' },
+                      { name: 'facing', value: 'down' },
+                    ],
+                  },
+                ],
+              }
+            }
+            return l
+          }),
+        }
+
+        const createdNpcSprites = []
+        const playedAnims = []
+        const mockScene = {
+          make: {
+            tilemap: () => ({
+              addTilesetImage: () => ({}),
+              createLayer: () => ({ setDepth: () => {}, setCollisionByProperty: () => {}, setVisible: () => {} }),
+            }),
+          },
+          textures: {
+            exists: (key) => key === 'guard_atlas', // missing_atlas does NOT exist
+            get: (key) => ({
+              has: () => true,
+              customData: {
+                meta: { origin: { x: 0.5, y: 0.92 } },
+              },
+            }),
+          },
+          anims: {
+            exists: (k) => k === 'guard_atlas_idle_left',
+          },
+          add: {
+            sprite: (x, y, key, frame) => {
+              const spr = {
+                x,
+                y,
+                key,
+                frame,
+                originX: 0,
+                originY: 0,
+                depth: 0,
+                setOrigin: (ox, oy) => {
+                  spr.originX = ox
+                  spr.originY = oy
+                  return spr
+                },
+                setDepth: (d) => {
+                  spr.depth = d
+                  return spr
+                },
+                play: (a) => playedAnims.push(a),
+                destroy: () => {},
+              }
+              createdNpcSprites.push(spr)
+              return spr
+            },
+            image: () => ({ setOrigin: () => {}, setDepth: () => {}, destroy: () => {} }),
+          },
+        }
+
+        const loader = new MapLoader(mapWithNpc)
+        const mounted = loader.mount(mockScene)
+
+        // Only guard_atlas spawned (missing_atlas was skipped silently)
+        expect(mounted.npcSprites).toHaveLength(1)
+        expect(createdNpcSprites[0].key).toBe('guard_atlas')
+        expect(createdNpcSprites[0].originY).toBe(0.92)
+        expect(playedAnims).toContain('guard_atlas_idle_left')
+
+        // Clean destroy cleans up both prop and npc sprites
+        loader.destroy()
+        expect(loader.npcSprites).toHaveLength(0)
+      })
     })
   })
 })
