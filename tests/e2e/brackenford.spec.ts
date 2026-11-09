@@ -130,7 +130,7 @@ test.describe('Package 2-3: Playable Brackenford Tiled Map Integration (?maps=ti
     });
 
     await page.keyboard.down('KeyS');
-    await page.waitForTimeout(1000);
+    await page.waitForFunction(() => (window as any).__scene.player.y > 256, { timeout: 10000 });
     await page.keyboard.up('KeyS');
 
     const bridgeCrossedY = await page.evaluate(() => (window as any).__scene.player.y);
@@ -144,7 +144,7 @@ test.describe('Package 2-3: Playable Brackenford Tiled Map Integration (?maps=ti
     });
 
     await page.keyboard.down('KeyS');
-    await page.waitForTimeout(1000);
+    await page.waitForFunction(() => (window as any).__scene.player.y > 256, { timeout: 10000 });
     await page.keyboard.up('KeyS');
 
     const fordCrossedY = await page.evaluate(() => (window as any).__scene.player.y);

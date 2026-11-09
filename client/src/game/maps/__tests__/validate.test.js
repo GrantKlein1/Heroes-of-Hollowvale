@@ -287,4 +287,45 @@ describe('Package 2-2: Tiled Map Validator & CI Test Suite', () => {
       expect(result.valid).toBe(true);
     });
   });
+
+  // =========================================================================
+  // Package 3-1: Lane F Interior Maps Validation (tavern.tmj & market.tmj)
+  // =========================================================================
+  describe('Package 3-1: Interior Maps Validation', () => {
+    const mapsDir = path.resolve(repoRoot, 'client/public/maps');
+    const tavernPath = path.join(mapsDir, 'tavern.tmj');
+    const marketPath = path.join(mapsDir, 'market.tmj');
+    const brackenfordPath = path.join(mapsDir, 'brackenford.tmj');
+
+    it('passes validateMap with 0 errors on tavern.tmj', () => {
+      const result = validateMap(tavernPath, { lorePath });
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+      expect(result.stats.mapWidth).toBe(20);
+      expect(result.stats.mapHeight).toBe(12);
+      expect(result.stats.tilesetCount).toBe(2);
+      expect(result.stats.spawnCount).toBeGreaterThanOrEqual(1);
+      expect(result.stats.exitCount).toBeGreaterThanOrEqual(1);
+    });
+
+    it('passes validateMap with 0 errors on market.tmj', () => {
+      const result = validateMap(marketPath, { lorePath });
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+      expect(result.stats.mapWidth).toBe(20);
+      expect(result.stats.mapHeight).toBe(12);
+      expect(result.stats.tilesetCount).toBe(2);
+      expect(result.stats.spawnCount).toBeGreaterThanOrEqual(1);
+      expect(result.stats.exitCount).toBeGreaterThanOrEqual(1);
+    });
+
+    it('verifies exits resolve back to brackenford.tmj', () => {
+      const availableMaps = new Set(['brackenford.tmj', 'tavern.tmj', 'market.tmj']);
+      const tavernResult = validateMap(tavernPath, { lorePath, availableMaps });
+      const marketResult = validateMap(marketPath, { lorePath, availableMaps });
+
+      expect(tavernResult.valid).toBe(true);
+      expect(marketResult.valid).toBe(true);
+    });
+  });
 });
