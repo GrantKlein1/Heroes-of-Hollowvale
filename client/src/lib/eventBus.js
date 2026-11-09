@@ -70,6 +70,7 @@ export const GameEvents = {
   LOOT: 'game:loot',
   ITEM_CONSUMED: 'item:consumed',
   DIED: 'player:died',
+  RESPAWN: 'player:respawn',
   SPELL_WHEEL: 'mage:spell-wheel',
   VENDOR: 'npc:vendor',
   ASSETS_READY: 'game:assets-ready',

@@ -28,6 +28,7 @@ import {
   computeWorldHurtbox,
   rectIntersects,
 } from '../combat/hitSystem.js'
+import { onEnemyDeathComplete } from '../combat/death.js'
 import {
   applyFlash,
   applyKnockback,
@@ -266,6 +267,7 @@ export class Enemy extends Actor {
       if (this.body) {
         this.body.enable = false
       }
+      onEnemyDeathComplete(this)
     }
   }
 

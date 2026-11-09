@@ -1413,6 +1413,10 @@ export default function Game() {
       gameOverRef.current = true
       setGameOver(true)
     }
+    const onRespawn = () => {
+      gameOverRef.current = false
+      setGameOver(false)
+    }
     const onWheel = ({ open } = {}) => setSpellWheelOpen(!!open)
     const onVendor = () => {
       setShopOpen(true)
@@ -1429,6 +1433,7 @@ export default function Game() {
       eventBus.on(GameEvents.LOOT, onLoot),
       eventBus.on(GameEvents.ITEM_CONSUMED, onConsumed),
       eventBus.on(GameEvents.DIED, onDied),
+      eventBus.on(GameEvents.RESPAWN, onRespawn),
       eventBus.on(GameEvents.SPELL_WHEEL, onWheel),
       eventBus.on(GameEvents.VENDOR, onVendor),
     ]

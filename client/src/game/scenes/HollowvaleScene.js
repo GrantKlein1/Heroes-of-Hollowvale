@@ -39,6 +39,16 @@ import {
   castBlink,
   throwPoisonVial,
 } from '../combat/spells.js'
+import {
+  handlePlayerDeath,
+  respawnPlayer,
+  onEnemyDeathComplete,
+  generateSeededLoot,
+} from '../combat/death.js'
+import {
+  Critter,
+  ensureCritterAnimations,
+} from '../ai/critter.js'
 import { MapLoader } from '../maps/MapLoader.js'
 import {
   PAINTED_WORLD_W,
@@ -785,6 +795,11 @@ export default class HollowvaleScene extends Phaser.Scene {
     this._updateProjectiles(now, dt)
     this._updateFires(now, dt)
     this._updateFloats(now, dt)
+    if (Array.isArray(this.critters)) {
+      for (let i = 0; i < this.critters.length; i++) {
+        this.critters[i]?.update?.(now, dt * 1000)
+      }
+    }
     if (session.classId === 'mage' && this.manaMax > 0 && !this.dead) {
       this.mana = Math.min(this.manaMax, this.mana + 5 * dt)
     }
@@ -979,10 +994,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       const e = kids[i]
       if (e instanceof Enemy) {
         if (e.hp <= 0 && !e._deathProcessed) {
-          e._deathProcessed = true
-          this._dropLoot(e)
-          this._float(e.x, e.y, '✕', '#ff4444')
-          if (e.hpText) e.hpText.destroy()
+          e.die()
         }
         continue
       }
@@ -1036,21 +1048,7 @@ export default class HollowvaleScene extends Phaser.Scene {
   }
 
   _dropLoot(e) {
-    const gems = { ruby: 0, sapphire: 0, emerald: 0 }
-    const items = []
-    const type = e.enemyType
-    if (type === 'goblin') {
-      if (random() < 0.35) gems.ruby += 1
-      if (random() < 0.15) gems.emerald += 1
-      if (random() < 0.15) items.push({ id: 'speed_potion', count: 1 })
-    } else if (type === 'brute') {
-      gems.ruby += random() < 0.6 ? 1 : 0
-      gems.sapphire += random() < 0.5 ? 1 : 0
-      if (random() < 0.25) items.push({ id: 'healing_potion', count: 1 })
-    } else if (type === 'archer') {
-      if (random() < 0.3) gems.sapphire += 1
-      if (random() < 0.25) items.push({ id: 'mana_potion', count: 1 })
-    }
+    const { gems, items } = generateSeededLoot(e?.enemyType)
     const had = gems.ruby || gems.sapphire || gems.emerald || items.length
     if (had) eventBus.emit(GameEvents.LOOT, { gems, items })
   }
@@ -1222,13 +1220,7 @@ export default class HollowvaleScene extends Phaser.Scene {
 
   _die(type) {
     if (this.dead) return
-    this.dead = true
-    this.player.setVelocity(0, 0)
-    if (isBlendRenderer() && this.player instanceof Player) {
-      this.player.die()
-    }
-    this._publishVitals(true)
-    eventBus.emit(GameEvents.DIED, { killer: enemyLabel(type) })
+    handlePlayerDeath(this, type)
   }
 
   _heal(amount) {
@@ -1293,6 +1285,7 @@ export default class HollowvaleScene extends Phaser.Scene {
 
   enterScene(id, spawn, slideMs = 0) {
     this.sceneId = id
+    this._areaEntrance = spawn ? { ...spawn } : null
     this._clearTransient()
     if (id !== 'dungeonInterior') {
       this._clearEnemies()
@@ -1334,6 +1327,7 @@ export default class HollowvaleScene extends Phaser.Scene {
     this._sizePlayer(def.playerScale || 0.13)
     const sp = spawn || def.spawn
     this._placePlayer(sp.nx, sp.ny)
+    this._areaEntrance = { x: this.player.x, y: this.player.y, nx: sp?.nx, ny: sp?.ny }
     this._buildPrompts()
     if (isBlendRenderer() && this.player instanceof Player) {
       this.player.updateDepth()
@@ -1397,6 +1391,7 @@ export default class HollowvaleScene extends Phaser.Scene {
     }
     this.player.setPosition(px, py)
     this.player.body?.reset?.(px, py)
+    this._areaEntrance = { x: px, y: py }
 
     // Build interaction and exit prompts from zones
     this._buildTiledPrompts(loader)
@@ -1456,6 +1451,7 @@ export default class HollowvaleScene extends Phaser.Scene {
     this._buildSolids(collidersWithExitGaps(layout))
     this._sizePlayer(0.11)
     this._placePlayer(spawn.nx, spawn.ny)
+    this._areaEntrance = { x: this.player.x, y: this.player.y, nx: spawn.nx, ny: spawn.ny }
     this._buildPrompts()
     this.wildLatchUntil = performance.now() + 600
   }
@@ -1838,6 +1834,15 @@ export default class HollowvaleScene extends Phaser.Scene {
     this.enemies.clear(true, true)
   }
 
+  spawnCritter(type = 'squirrel_red', x, y) {
+    this.critters = this.critters || []
+    const wx = x !== undefined ? x : (this.player ? this.player.x + 80 : 200)
+    const wy = y !== undefined ? y : (this.player ? this.player.y : 200)
+    const critter = new Critter(this, wx, wy, type)
+    this.critters.push(critter)
+    return critter
+  }
+
   _clearTransient() {
     for (let i = this.projectiles.length - 1; i >= 0; i--) this._killProjectile(i, false)
     for (let i = this.fires.length - 1; i >= 0; i--) {
@@ -1848,6 +1853,12 @@ export default class HollowvaleScene extends Phaser.Scene {
       this.fx.release(this._stealthNode)
       this._stealthNode = null
       this._stealthSrc = ''
+    }
+    if (Array.isArray(this.critters)) {
+      for (let i = 0; i < this.critters.length; i++) {
+        this.critters[i]?.destroy?.()
+      }
+      this.critters.length = 0
     }
   }
 
