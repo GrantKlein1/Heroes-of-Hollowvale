@@ -359,3 +359,104 @@ describe('AssetRegistry — Unload Group and Reference Counting', () => {
     expect(mockScene.textures.remove).toHaveBeenCalledWith('knight')
   })
 })
+
+describe('AssetRegistry — Dragon Boss Phase Lazy-Loading and Eviction', () => {
+  let mockScene
+  let registry
+
+  beforeEach(() => {
+    mockScene = createMockScene()
+    registry = new AssetRegistry(mockScene, defaultManifest)
+  })
+
+  it('loads dragon phase 1, phase 2 (+p2_land), and phase 3 groups', () => {
+    const p1Sheets = registry.loadDragonPhase(1)
+    expect(p1Sheets).toEqual(['red_dragon_p1_a', 'red_dragon_p1_b'])
+
+    const p2Sheets = registry.loadDragonPhase(2)
+    expect(p2Sheets).toEqual(['red_dragon_p2_a', 'red_dragon_p2_b', 'red_dragon_p2_land'])
+
+    const p3Sheets = registry.loadDragonPhase(3)
+    expect(p3Sheets).toEqual(['red_dragon_p3_a', 'red_dragon_p3_b'])
+  })
+
+  it('evicts previous phase textures and loads new phase via transitionDragonPhase', () => {
+    // 1. Load phase 1
+    registry.loadDragonPhase(1)
+    expect(registry.isGroupLoaded('boss_p1')).toBe(true)
+
+    // 2. Transition to phase 2: evicts phase 1
+    const result = registry.transitionDragonPhase(2, 1)
+
+    expect(registry.isGroupLoaded('boss_p1')).toBe(false)
+    expect(registry.isGroupLoaded('boss_p2')).toBe(true)
+    expect(result.loadedSheets).toEqual(['red_dragon_p2_a', 'red_dragon_p2_b', 'red_dragon_p2_land'])
+    expect(result.transitionDurationMs).toBeLessThan(100)
+
+    expect(mockScene.textures.remove).toHaveBeenCalledWith('red_dragon_p1_a')
+    expect(mockScene.textures.remove).toHaveBeenCalledWith('red_dragon_p1_b')
+  })
+
+  it('creates Phaser animations from meta.animations with explicit frame arrays', () => {
+    registry.loadDragonPhase(1)
+
+    mockScene.textures._addTexture('red_dragon_p1_a', {
+      key: 'red_dragon_p1_a',
+      customData: {
+        meta: {
+          animations: {
+            idle_left: {
+              frames: ['red_dragon_idle_left_0', 'red_dragon_idle_left_1'],
+              frameRate: 8,
+              repeat: -1,
+            },
+            claw_right: {
+              frames: ['red_dragon_claw_right_0', 'red_dragon_claw_right_1', 'red_dragon_claw_right_2'],
+              frameRate: 12,
+              repeat: 0,
+            },
+          },
+        },
+      },
+    })
+
+    const createdKeys = registry.createAnims('boss_p1')
+
+    expect(createdKeys).toContain('red_dragon_idle_left')
+    expect(createdKeys).toContain('red_dragon_claw_right')
+
+    expect(mockScene.anims.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        key: 'red_dragon_idle_left',
+        frameRate: 8,
+        repeat: -1,
+        frames: [
+          { key: 'red_dragon_p1_a', frame: 'red_dragon_idle_left_0' },
+          { key: 'red_dragon_p1_a', frame: 'red_dragon_idle_left_1' },
+        ],
+      })
+    )
+  })
+
+  it('rejects loading legacy v1 dragon_fx', () => {
+    const v1Manifest = {
+      groups: { bad_boss: ['legacy_dragon_fx'] },
+      assets: {
+        legacy_dragon_fx: {
+          id: 'legacy_dragon_fx',
+          sheets: {
+            dragon_fx: {
+              key: 'dragon_fx',
+              image: 'assets/boss/red_dragon/dragon_fx.png',
+              json: 'assets/boss/red_dragon/dragon_fx.json',
+            },
+          },
+        },
+      },
+    }
+    const badRegistry = new AssetRegistry(mockScene, v1Manifest)
+    expect(() => {
+      badRegistry.loadGroup('bad_boss')
+    }).toThrow(/Legacy v1 dragon_fx is deprecated/i)
+  })
+})

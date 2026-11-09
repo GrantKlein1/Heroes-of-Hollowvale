@@ -85,6 +85,15 @@ export class AssetRegistry {
     for (const assetId of groupAssets) {
       const sheets = this.getSheetsForAsset(assetId)
       for (const sheet of sheets) {
+        // Guard: legacy v1 dragon_fx is strictly forbidden; only dragon_fx_v2 is permitted
+        if (
+          sheet.key === 'dragon_fx' ||
+          sheet.image?.endsWith('dragon_fx.png') ||
+          sheet.json?.endsWith('dragon_fx.json')
+        ) {
+          throw new Error('[AssetRegistry] Legacy v1 dragon_fx is deprecated. Only dragon_fx_v2 is permitted.')
+        }
+
         // Record sheet definition
         this.loadedSheets.set(sheet.key, sheet)
 
@@ -147,19 +156,65 @@ export class AssetRegistry {
 
         // Access embedded atlas metadata from Phaser texture customData
         const meta = texture.customData?.meta
-        if (!meta || !meta.anims || typeof meta.anims !== 'object') continue
+        if (!meta) continue
 
-        for (const [animName, animDef] of Object.entries(meta.anims)) {
+        // Check meta.animations (dragon sheets format) or meta.anims (character/enemy standard)
+        const animsDict = (meta.animations && typeof meta.animations === 'object')
+          ? meta.animations
+          : (meta.anims && typeof meta.anims === 'object' ? meta.anims : null)
+
+        if (!animsDict) continue
+
+        for (const [animName, animDef] of Object.entries(animsDict)) {
           if (!animDef || typeof animDef !== 'object') continue
 
-          const directions = Array.isArray(animDef.directions) && animDef.directions.length > 0
-            ? animDef.directions
-            : ['']
+          const fps = typeof animDef.fps === 'number' && animDef.fps > 0
+            ? animDef.fps
+            : (typeof animDef.frameRate === 'number' && animDef.frameRate > 0 ? animDef.frameRate : 10)
 
-          const fps = typeof animDef.fps === 'number' && animDef.fps > 0 ? animDef.fps : 10
           const repeat = typeof animDef.repeat === 'number'
             ? animDef.repeat
             : (animDef.loop === true ? -1 : 0)
+
+          // Case A: animDef.frames is an explicit array of frame names (e.g. dragon sheets)
+          if (Array.isArray(animDef.frames) && animDef.frames.length > 0) {
+            let animKey
+            if (sheet.key.startsWith('red_dragon') || assetId.startsWith('red_dragon')) {
+              animKey = animName.startsWith('red_dragon_') ? animName : `red_dragon_${animName}`
+            } else {
+              animKey = animName.startsWith(`${assetId}_`) ? animName : `${assetId}_${animName}`
+            }
+
+            if (typeof this.scene?.anims?.exists === 'function' && this.scene.anims.exists(animKey)) {
+              continue
+            }
+
+            const frameConfigs = animDef.frames.map((frameName) => ({
+              key: sheet.key,
+              frame: frameName,
+            }))
+
+            if (frameConfigs.length > 0 && typeof this.scene?.anims?.create === 'function') {
+              this.scene.anims.create({
+                key: animKey,
+                frames: frameConfigs,
+                frameRate: fps,
+                repeat,
+              })
+              createdKeys.push(animKey)
+
+              if (!this.createdAnims.has(groupOrAssetId)) {
+                this.createdAnims.set(groupOrAssetId, new Set())
+              }
+              this.createdAnims.get(groupOrAssetId).add(animKey)
+            }
+            continue
+          }
+
+          // Case B: standard template frameNames with directions (e.g. knight, goblin)
+          const directions = Array.isArray(animDef.directions) && animDef.directions.length > 0
+            ? animDef.directions
+            : ['']
 
           for (const dir of directions) {
             const animKey = buildAnimKey(assetId, animName, dir)
@@ -320,5 +375,81 @@ export class AssetRegistry {
    */
   isGroupLoaded(groupName) {
     return this.loadedGroups.has(groupName)
+  }
+
+  /**
+   * Helper to resolve the manifest group name for a given dragon boss phase.
+   *
+   * @param {number|string} phase - Phase number (1, 2, 3)
+   * @returns {string} - Group name ('boss_p1', 'boss_p2', 'boss_p3')
+   */
+  getDragonPhaseGroup(phase) {
+    const p = String(phase).replace(/^p/, '')
+    return `boss_p${p}`
+  }
+
+  /**
+   * Loads the dragon phase manifest group and creates its animations.
+   *
+   * @param {number|string} phase - 1, 2, or 3
+   * @returns {Array<string>} - Array of loaded sheet keys
+   */
+  loadDragonPhase(phase) {
+    const groupName = this.getDragonPhaseGroup(phase)
+    const sheets = this.loadGroup(groupName)
+    this.createAnims(groupName)
+    return sheets
+  }
+
+  /**
+   * Unloads a dragon phase group, evicting its textures and animations.
+   *
+   * @param {number|string} phase - 1, 2, or 3
+   * @returns {boolean}
+   */
+  unloadDragonPhase(phase) {
+    const groupName = this.getDragonPhaseGroup(phase)
+    return this.unloadGroup(groupName)
+  }
+
+  /**
+   * Transitions from one dragon phase to another: unloads the previous phase
+   * and loads the next phase, recording the transition time in milliseconds.
+   *
+   * @param {number|string} nextPhase - Target phase (1, 2, 3)
+   * @param {number|string} [prevPhase] - Optional previous phase to evict
+   * @returns {{ loadedSheets: Array<string>, transitionDurationMs: number }}
+   */
+  transitionDragonPhase(nextPhase, prevPhase = null) {
+    const startTime = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now()
+
+    if (prevPhase !== null && prevPhase !== undefined) {
+      this.unloadDragonPhase(prevPhase)
+    }
+
+    const loadedSheets = this.loadDragonPhase(nextPhase)
+
+    const endTime = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now()
+    const transitionDurationMs = endTime - startTime
+
+    return {
+      loadedSheets,
+      transitionDurationMs,
+    }
+  }
+
+  /**
+   * Returns list of currently loaded dragon texture page keys in textures cache.
+   *
+   * @returns {Array<string>}
+   */
+  getActiveDragonPages() {
+    const dragonSheets = []
+    for (const [key] of this.loadedSheets) {
+      if (key.startsWith('red_dragon_p')) {
+        dragonSheets.push(key)
+      }
+    }
+    return dragonSheets
   }
 }
