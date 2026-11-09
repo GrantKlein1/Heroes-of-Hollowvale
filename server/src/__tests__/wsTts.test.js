@@ -16,6 +16,7 @@ import {
   finishTurn,
   resetTurns,
   getTurn,
+  abortTurn,
 } from '../tts/turnAudio.js';
 import ttsRouter from '../routes/tts.js';
 
@@ -314,6 +315,71 @@ test('Client disconnect cleans up turn listeners without memory leaks', async ()
     // Listeners must be cleaned up
     assert.equal(turnObj.listeners.size, 0);
     assert.equal(turnObj.doneListeners.size, 0);
+  } finally {
+    wss.close();
+    server.close();
+    delete process.env.TTS_MODE;
+    delete process.env.ELEVENLABS_API_KEY;
+  }
+});
+
+test('TTS_MODE=ws: aborting turn sends aborted event and cleans up listeners', async () => {
+  process.env.TTS_MODE = 'ws';
+  process.env.ELEVENLABS_API_KEY = 'test-key-mock';
+
+  const app = express();
+  const server = http.createServer(app);
+  const wss = attachWsTts(server);
+
+  await new Promise((resolve) => server.listen(0, resolve));
+  const port = server.address().port;
+
+  try {
+    const turn = createTurn({ turnId: 'turn-ws-abort' });
+    const ws = new WebSocket(`ws://127.0.0.1:${port}/api/tts/ws?turnId=turn-ws-abort`);
+
+    await new Promise((resolve) => ws.on('open', resolve));
+
+    const messages = [];
+    ws.on('message', (data, isBinary) => {
+      if (!isBinary) {
+        messages.push(JSON.parse(data.toString('utf8')));
+      }
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 30));
+
+    // Abort the turn
+    abortTurn('turn-ws-abort', 'superseded');
+
+    await new Promise((resolve) => setTimeout(resolve, 30));
+
+    const abortMsg = messages.find((m) => m.type === 'aborted');
+    assert.ok(abortMsg, 'WebSocket should have received aborted event');
+    assert.equal(abortMsg.turnId, 'turn-ws-abort');
+
+    // Turn listeners should be cleaned up
+    const turnObj = getTurn('turn-ws-abort');
+    assert.equal(turnObj.listeners.size, 0);
+    assert.equal(turnObj.abortListeners.size, 0);
+
+    // Subscribing to an already-aborted turn should immediately emit aborted
+    const ws2 = new WebSocket(`ws://127.0.0.1:${port}/api/tts/ws?turnId=turn-ws-abort`);
+    const abortedPromise = new Promise((resolve) => {
+      ws2.on('message', (data, isBinary) => {
+        if (!isBinary) {
+          const msg = JSON.parse(data.toString('utf8'));
+          if (msg.type === 'aborted') resolve(msg);
+        }
+      });
+    });
+
+    const msg2 = await abortedPromise;
+    assert.equal(msg2.type, 'aborted');
+    assert.equal(msg2.turnId, 'turn-ws-abort');
+
+    ws.close();
+    ws2.close();
   } finally {
     wss.close();
     server.close();

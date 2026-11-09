@@ -10,6 +10,8 @@ import {
   clearExpiredTurns,
   resetTurns,
   getActiveTurnCount,
+  abortTurn,
+  getTtsTimeoutMs,
 } from '../tts/turnAudio.js';
 
 beforeEach(() => {
@@ -118,4 +120,82 @@ test('turnAudio: pipeTurnAudio returns 404 for unknown turn', () => {
   const result = pipeTurnAudio('nonexistent-turn', mockRes);
   assert.equal(result.status, 404);
   delete process.env.ELEVENLABS_API_KEY;
+});
+
+test('turnAudio: abortTurn cancels synthesis, rejects new sentences, and ends pipe stream', async () => {
+  process.env.ELEVENLABS_API_KEY = 'mock-key';
+
+  let abortedInFetcher = false;
+  const mockFetcher = async ({ text, signal }) => {
+    const emitter = new EventEmitter();
+    if (signal) {
+      signal.addEventListener('abort', () => {
+        abortedInFetcher = true;
+      });
+    }
+    setTimeout(() => {
+      emitter.emit('data', Buffer.from(`[audio:${text}]`));
+      emitter.emit('end');
+    }, 50);
+    return emitter;
+  };
+
+  const turn = createTurn({
+    turnId: 'turn-abort-test',
+    ttsFetcher: mockFetcher,
+  });
+
+  const written = [];
+  let ended = false;
+  const mockRes = {
+    status(code) { this.statusCode = code; return this; },
+    setHeader() {},
+    write(chunk) { written.push(chunk.toString('utf8')); },
+    end() { ended = true; },
+  };
+
+  pipeTurnAudio('turn-abort-test', mockRes);
+  addSentence('turn-abort-test', 'Will be aborted.');
+
+  // Let synthesis start
+  await new Promise((r) => setTimeout(r, 10));
+
+  const didAbort = abortTurn('turn-abort-test', 'superseded');
+  assert.equal(didAbort, true);
+  assert.equal(turn.aborted, true);
+  assert.equal(turn.abortReason, 'superseded');
+
+  // Pipe response should end on abort
+  assert.equal(ended, true);
+
+  // New sentence should be rejected
+  const added = addSentence('turn-abort-test', 'Should not be added');
+  assert.equal(added, false);
+
+  // Subsequent pipe call should return 410
+  const pipe2 = pipeTurnAudio('turn-abort-test', mockRes);
+  assert.equal(pipe2.status, 410);
+
+  delete process.env.ELEVENLABS_API_KEY;
+});
+
+test('turnAudio: getTtsTimeoutMs returns env override or sane default 15000', () => {
+  const origTimeout = process.env.ELEVENLABS_TIMEOUT_MS;
+  const origTts = process.env.TTS_TIMEOUT_MS;
+
+  delete process.env.ELEVENLABS_TIMEOUT_MS;
+  delete process.env.TTS_TIMEOUT_MS;
+  assert.equal(getTtsTimeoutMs(), 15000);
+
+  process.env.TTS_TIMEOUT_MS = '7500';
+  assert.equal(getTtsTimeoutMs(), 7500);
+
+  process.env.ELEVENLABS_TIMEOUT_MS = '3000';
+  assert.equal(getTtsTimeoutMs(), 3000);
+
+  if (origTimeout !== undefined) process.env.ELEVENLABS_TIMEOUT_MS = origTimeout;
+  else delete process.env.ELEVENLABS_TIMEOUT_MS;
+
+  if (origTts !== undefined) process.env.TTS_TIMEOUT_MS = origTts;
+  else delete process.env.TTS_TIMEOUT_MS;
 });

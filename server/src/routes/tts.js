@@ -1,7 +1,7 @@
 import express from 'express'
 import axios from 'axios'
 import { getElevenLabsApiKey, getElevenLabsVoiceId } from '../config/secrets.js'
-import { pipeTurnAudio, createTurn, addSentence, finishTurn } from '../tts/turnAudio.js'
+import { pipeTurnAudio, createTurn, addSentence, finishTurn, getTtsTimeoutMs } from '../tts/turnAudio.js'
 import { splitSentences } from '../tts/sentenceSplitter.js'
 
 const router = express.Router()
@@ -109,7 +109,7 @@ router.post('/tts', async (req, res, next) => {
           'Content-Type': 'application/json',
           Accept: 'audio/mpeg',
         },
-        timeout: 60000,
+        timeout: getTtsTimeoutMs(),
         // Validate status so we can surface ElevenLabs error bodies
         validateStatus: (s) => s >= 200 && s < 300,
       }
