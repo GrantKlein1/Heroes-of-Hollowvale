@@ -103,6 +103,7 @@ export class Projectile extends SpriteBase {
     this.distanceTraveled = 0
     this.maxDist = config.maxDist ?? 220
     this.owner = config.owner || 'player'
+    this.shooter = config.shooter || null
     this.damage = config.damage ?? 10
     this.impactType = config.impact || ''
     this.special = config.special || ''
@@ -278,6 +279,8 @@ export class Projectile extends SpriteBase {
       this.onHit(target, this)
     } else if (target && this.owner === 'player') {
       this._applyPlayerHit(target, now)
+    } else if (target && this.owner === 'enemy') {
+      this._applyEnemyHit(target, now)
     }
 
     if (typeof this.onImpactCallback === 'function') {
@@ -286,6 +289,11 @@ export class Projectile extends SpriteBase {
 
     // Play impact animation if available
     if (this.hitAnim && this.anims && typeof this.anims.play === 'function') {
+      if (typeof this.setRotation === 'function') {
+        this.setRotation(0)
+      } else {
+        this.rotation = 0
+      }
       this.anims.play(this.hitAnim, true)
       if (typeof this.once === 'function') {
         const animComplete = Phaser?.Animations?.Events?.ANIMATION_COMPLETE || 'animationcomplete'
@@ -347,6 +355,30 @@ export class Projectile extends SpriteBase {
       enemy.flashUntil = now + 180
       const color = this.impactType === 'poison' ? '#6abe30' : '#ff6161'
       this.scene?._float?.(enemy.x, enemy.y - 6, `-${dmg}`, color)
+    }
+  }
+
+  /**
+   * Applies damage to player on enemy projectile hit.
+   *
+   * @param {object} player
+   * @param {number} now
+   * @private
+   */
+  _applyEnemyHit(player, now) {
+    const dmg = this.damage
+    if (typeof player?.takeDamage === 'function') {
+      player.takeDamage(dmg, now, {
+        attacker: this.shooter || null,
+        fromX: this.x,
+        fromY: this.y,
+        projectile: this,
+      })
+    } else if (typeof this.scene?._hurtPlayer === 'function') {
+      this.scene._hurtPlayer(dmg)
+    }
+    if (typeof this.scene?._float === 'function') {
+      this.scene._float(player.x, player.y - 6, `-${dmg}`, '#ff4444')
     }
   }
 

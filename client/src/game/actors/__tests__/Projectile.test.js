@@ -219,6 +219,40 @@ describe('Projectile Class (Package 1-5)', () => {
     expect(proj.active).toBe(false)
   })
 
+  it('detects collision of enemy projectile with player and plays impact animation', () => {
+    mockScene.player = {
+      x: 200,
+      y: 100,
+      takeDamage: vi.fn(),
+    }
+
+    const proj = new Projectile(mockScene, 100, 100, 'goblin_archer', 'goblin_archer_arrow_right', {
+      owner: 'enemy',
+      dirX: 1,
+      dirY: 0,
+      speed: 300,
+      maxDist: 400,
+      damage: 10,
+      hitAnim: 'goblin_archer_arrow_impact',
+    })
+
+    proj.anims = {
+      play: vi.fn(),
+    }
+
+    // Step 0.35s -> travel 105 px -> reach x = 205 (overlaps player at 200)
+    proj.update(1000, 0.35)
+
+    expect(proj.isImpacted).toBe(true)
+    expect(mockScene.player.takeDamage).toHaveBeenCalledWith(10, 1000, expect.objectContaining({
+      projectile: proj,
+      fromX: proj.x,
+      fromY: proj.y,
+    }))
+    expect(proj.anims.play).toHaveBeenCalledWith('goblin_archer_arrow_impact', true)
+    expect(proj.rotation).toBe(0)
+  })
+
   it('rectIntersects accurately determines overlap', () => {
     expect(rectIntersects({ x: 0, y: 0, w: 10, h: 10 }, { x: 5, y: 5, w: 10, h: 10 })).toBe(true)
     expect(rectIntersects({ x: 0, y: 0, w: 10, h: 10 }, { x: 20, y: 20, w: 10, h: 10 })).toBe(false)
