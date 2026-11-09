@@ -67,6 +67,8 @@ import {
 } from '../combat/balance.js'
 import { isBlendRenderer, isDebug, isTiledMaps } from '../config/flags.js'
 import { Player } from '../actors/Player.js'
+import { Enemy } from '../actors/Enemy.js'
+import { AttackTokenManager } from '../ai/tokens.js'
 import { ACTOR_STATES } from '../actors/stateMachine.js'
 
 const BARTENDER_GREETING =
@@ -187,6 +189,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       this.assetRegistry = new AssetRegistry(this)
       this.assetRegistry.loadGroup('boot')
       this.assetRegistry.loadGroup('village')
+      this.assetRegistry.loadGroup('wilderness')
     }
 
     if (isTiledMaps()) {
@@ -211,7 +214,11 @@ export default class HollowvaleScene extends Phaser.Scene {
     if (this.assetRegistry) {
       this.assetRegistry.createAnims('boot')
       this.assetRegistry.createAnims('village')
+      this.assetRegistry.createAnims('wilderness')
       ensureSpellAnimations(this)
+    }
+    if (!this.attackTokenManager) {
+      this.attackTokenManager = new AttackTokenManager(2)
     }
     this.debugOn = isDebug()
 
@@ -810,6 +817,13 @@ export default class HollowvaleScene extends Phaser.Scene {
   }
 
   _spawnEnemy(type, nx, ny, wave) {
+    if (isBlendRenderer() && type === 'goblin') {
+      const wx = nx > 1 ? nx : nx * this.worldW
+      const wy = ny > 1 ? ny : ny * this.worldH
+      const enemy = new Enemy(this, wx, wy, type, { wave })
+      this.enemies.add(enemy)
+      return enemy
+    }
     const key = ENEMY_SPRITES[type]
     const texKey = key && this.textures.exists(key) ? key : '__px'
     const targetH = Math.max(20, Math.round(0.11 * this.worldH))
@@ -850,6 +864,13 @@ export default class HollowvaleScene extends Phaser.Scene {
       nx = this.player.x / this.worldW
       ny = this.player.y / this.worldH
     }
+    if (isBlendRenderer() && type === 'goblin') {
+      const wx = (x !== undefined && x > 1) ? x : nx * this.worldW
+      const wy = (y !== undefined && y > 1) ? y : ny * this.worldH
+      const enemy = new Enemy(this, wx, wy, type, { wave: this.wave || 1 })
+      this.enemies.add(enemy)
+      return enemy
+    }
     return this._spawnEnemy(type, nx, ny, this.wave || 1)
   }
 
@@ -877,6 +898,12 @@ export default class HollowvaleScene extends Phaser.Scene {
     const invincible = session.classId === 'thief' && now < session.thiefSmokeUntil
     for (let i = 0; i < kids.length; i++) {
       const e = kids[i]
+      if (e instanceof Enemy) {
+        e.update(now, dt)
+        if (now < (e.flashUntil || 0)) e.setAlpha(0.6)
+        else e.setAlpha(1)
+        continue
+      }
       if (e.hp <= 0) continue
       if (now >= e.changeAt) {
         let tx = px - e.x
@@ -950,6 +977,15 @@ export default class HollowvaleScene extends Phaser.Scene {
     }
     for (let i = kids.length - 1; i >= 0; i--) {
       const e = kids[i]
+      if (e instanceof Enemy) {
+        if (e.hp <= 0 && !e._deathProcessed) {
+          e._deathProcessed = true
+          this._dropLoot(e)
+          this._float(e.x, e.y, '✕', '#ff4444')
+          if (e.hpText) e.hpText.destroy()
+        }
+        continue
+      }
       if (e.hp > 0 || e._deathProcessed) continue
       e._deathProcessed = true
       this._dropLoot(e)
