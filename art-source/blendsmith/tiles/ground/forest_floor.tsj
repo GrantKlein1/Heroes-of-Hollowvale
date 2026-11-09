@@ -1,0 +1,209 @@
+{
+  "columns": 4,
+  "image": "forest_floor.png",
+  "imageheight": 68,
+  "imagewidth": 136,
+  "margin": 1,
+  "spacing": 2,
+  "name": "forest_floor",
+  "tilecount": 8,
+  "tiledversion": "1.10.2",
+  "tileheight": 32,
+  "tilewidth": 32,
+  "type": "tileset",
+  "version": "1.10",
+  "tiles": [
+    {
+      "id": 0,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 0
+        },
+        {
+          "name": "variant",
+          "type": "string",
+          "value": "emberwood_0"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 1
+        },
+        {
+          "name": "variant",
+          "type": "string",
+          "value": "emberwood_1"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "variant",
+          "type": "string",
+          "value": "emberwood_2"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "variant",
+          "type": "string",
+          "value": "emberwood_3"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 4
+        },
+        {
+          "name": "variant",
+          "type": "string",
+          "value": "emberwood_4"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 5
+        },
+        {
+          "name": "variant",
+          "type": "string",
+          "value": "emberwood_5"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 6
+        },
+        {
+          "name": "variant",
+          "type": "string",
+          "value": "emberwood_6"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 7
+        },
+        {
+          "name": "variant",
+          "type": "string",
+          "value": "emberwood_7"
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    }
+  ],
+  "properties": [
+    {
+      "name": "cameraDeg",
+      "type": "float",
+      "value": 12
+    },
+    {
+      "name": "pxPerUnit",
+      "type": "float",
+      "value": 36.923
+    },
+    {
+      "name": "extrude",
+      "type": "int",
+      "value": 1
+    },
+    {
+      "name": "wangBitmask",
+      "type": "string",
+      "value": "NW=1,NE=2,SW=4,SE=8"
+    },
+    {
+      "name": "draft",
+      "type": "bool",
+      "value": true
+    },
+    {
+      "name": "note",
+      "type": "string",
+      "value": "Batch 4b emberwood interior fill variants"
+    }
+  ]
+}

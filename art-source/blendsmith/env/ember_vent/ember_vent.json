@@ -1,0 +1,217 @@
+{
+  "frames": {
+    "ember_vent_burn_down_0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "ember_vent_burn_down_1": {
+      "frame": {
+        "x": 50,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "ember_vent_burn_down_2": {
+      "frame": {
+        "x": 100,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "ember_vent_burn_down_3": {
+      "frame": {
+        "x": 150,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    }
+  },
+  "meta": {
+    "image": "ember_vent.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 198,
+      "h": 48
+    },
+    "scale": "1",
+    "pxPerUnit": 36.923,
+    "origin": {
+      "x": 0.5,
+      "y": 1.0
+    },
+    "propCameraDegFromHorizontal": 12,
+    "groundCameraDegFromVertical": 12,
+    "props": {
+      "ember_vent_burn_down_0": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -10,
+          "y": -8,
+          "w": 20,
+          "h": 12,
+          "shape": "ellipse"
+        },
+        "tall": false,
+        "layer": "props",
+        "collides": true,
+        "notes": "ember vent; 4 frames @ 8 fps",
+        "size": {
+          "w": 48,
+          "h": 48
+        }
+      },
+      "ember_vent_burn_down_1": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -10,
+          "y": -8,
+          "w": 20,
+          "h": 12,
+          "shape": "ellipse"
+        },
+        "tall": false,
+        "layer": "props",
+        "collides": true,
+        "notes": "ember vent; 4 frames @ 8 fps",
+        "size": {
+          "w": 48,
+          "h": 48
+        }
+      },
+      "ember_vent_burn_down_2": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -10,
+          "y": -8,
+          "w": 20,
+          "h": 12,
+          "shape": "ellipse"
+        },
+        "tall": false,
+        "layer": "props",
+        "collides": true,
+        "notes": "ember vent; 4 frames @ 8 fps",
+        "size": {
+          "w": 48,
+          "h": 48
+        }
+      },
+      "ember_vent_burn_down_3": {
+        "anchor": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "footprint": {
+          "x": -10,
+          "y": -8,
+          "w": 20,
+          "h": 12,
+          "shape": "ellipse"
+        },
+        "tall": false,
+        "layer": "props",
+        "collides": true,
+        "notes": "ember vent; 4 frames @ 8 fps",
+        "size": {
+          "w": 48,
+          "h": 48
+        }
+      }
+    },
+    "app": "Blendsmith env_b4_wilderness",
+    "version": "b4b",
+    "draft": true,
+    "anims": {
+      "burn": {
+        "frames": 4,
+        "fps": 8,
+        "loop": true,
+        "directions": [
+          "down"
+        ],
+        "frameNames": "ember_vent_burn_down_<i>"
+      }
+    },
+    "note": "Batch 4b ember_vent own atlas. Not runtime-accepted."
+  }
+}

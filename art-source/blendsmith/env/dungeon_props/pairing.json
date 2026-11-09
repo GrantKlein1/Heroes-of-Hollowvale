@@ -1,0 +1,24 @@
+{
+  "pairs": [
+    {
+      "base": "cavern_mouth_base",
+      "name": "cavern_mouth_arch",
+      "canvas": {
+        "w": 256,
+        "h": 224
+      },
+      "sameFeet": true,
+      "method": "shared world camera, fixed PPU and pivot"
+    },
+    {
+      "base": "dungeon_pillar_base",
+      "name": "dungeon_pillar_top",
+      "canvas": {
+        "w": 64,
+        "h": 160
+      },
+      "sameFeet": true,
+      "method": "shared world camera, fixed PPU and pivot"
+    }
+  ]
+}

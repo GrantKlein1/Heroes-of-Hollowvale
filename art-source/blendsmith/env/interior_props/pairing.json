@@ -1,0 +1,24 @@
+{
+  "pairs": [
+    {
+      "base": "market_stall_base",
+      "name": "market_stall_awning",
+      "canvas": {
+        "w": 128,
+        "h": 128
+      },
+      "sameFeet": true,
+      "method": "shared world camera, fixed PPU and pivot"
+    },
+    {
+      "base": "market_counter",
+      "name": "market_hanging_goods",
+      "canvas": {
+        "w": 112,
+        "h": 96
+      },
+      "sameFeet": true,
+      "method": "shared world camera, fixed PPU and pivot"
+    }
+  ]
+}
