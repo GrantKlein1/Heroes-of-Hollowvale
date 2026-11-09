@@ -50,7 +50,7 @@ export function isPropAtlas(sheetKey = '', jsonPath = '', kind = '', assetId = '
   if (lowerKey === 'village_props' || lowerKey === 'hearth' || lowerAsset === 'village_props' || lowerAsset === 'hearth') {
     return true;
   }
-  if (lowerPath.includes('/props/')) {
+  if (lowerPath.includes('/props/') || lowerPath.includes('/env/')) {
     return true;
   }
   return false;
@@ -150,6 +150,8 @@ export function validateAtlas(atlasInput, options = {}) {
   const isFx = isFxAtlas(sheetKey, jsonPath, kind);
   const isCritter = isAmbientCritter(sheetKey, jsonPath, kind, assetId);
   const isProp = isPropAtlas(sheetKey, jsonPath, kind, assetId);
+  const isNpc = kind === 'npc';
+  const isLoot = kind === 'loot';
   const isMultiPage = options.isMultiPage ?? (assetId === 'red_dragon' || sheetKey.startsWith('red_dragon_p'));
 
   // 1. Frames collection validation
@@ -203,8 +205,16 @@ export function validateAtlas(atlasInput, options = {}) {
   }
 
   // 4. Footprint and hurtbox present in meta for character and enemy atlases
-  // (Excludes pure FX sheets, ambient critters, props)
-  const requiresCombatBoxes = !isFx && !isCritter && !isProp && (kind === 'characters' || kind === 'enemies' || kind === 'boss');
+  // (Excludes pure FX sheets, ambient critters, props, loot)
+  // For NPCs: footprint is required, hurtbox is optional
+  if (isNpc) {
+    const fp = meta.footprint;
+    if (!fp || typeof fp.x !== 'number' || typeof fp.y !== 'number' || typeof fp.w !== 'number' || typeof fp.h !== 'number') {
+      errors.push(`Atlas '${sheetKey}' is missing required 'footprint' { x, y, w, h } in meta`);
+    }
+  }
+
+  const requiresCombatBoxes = !isFx && !isCritter && !isProp && !isNpc && !isLoot && (kind === 'characters' || kind === 'enemies' || kind === 'boss');
   if (requiresCombatBoxes) {
     const fp = meta.footprint;
     if (!fp || typeof fp.x !== 'number' || typeof fp.y !== 'number' || typeof fp.w !== 'number' || typeof fp.h !== 'number') {
@@ -258,13 +268,13 @@ export function validateAtlas(atlasInput, options = {}) {
           }
         }
 
-        // Validate layer: 'props' or 'overhead'
-        if (propDef.layer !== 'props' && propDef.layer !== 'overhead') {
+        // Validate layer: 'props' or 'overhead' (optional)
+        if (propDef.layer !== undefined && propDef.layer !== 'props' && propDef.layer !== 'overhead') {
           errors.push(`Prop '${propName}' in atlas '${sheetKey}' has invalid layer '${propDef.layer}' (expected props or overhead)`);
         }
 
-        // Validate tall: boolean
-        if (typeof propDef.tall !== 'boolean') {
+        // Validate tall: boolean (optional)
+        if (propDef.tall !== undefined && typeof propDef.tall !== 'boolean') {
           errors.push(`Prop '${propName}' in atlas '${sheetKey}' must specify boolean 'tall' flag`);
         }
 
@@ -411,10 +421,25 @@ export function validateAtlas(atlasInput, options = {}) {
           warnings.push(`Critters animation '${animKey}' has partial directions: ${[...dirs].join(', ')}`);
         }
       } else if (!isMultiPage && !isFx) {
-        // Regular character/enemy sheets must have all 4 directions for directional animations
-        const missing = ['down', 'left', 'right', 'up'].filter(d => !dirs.has(d));
-        if (missing.length > 0) {
-          errors.push(`Animation '${animKey}' in sheet '${sheetKey}' is missing directions: ${missing.join(', ')} (expected down, left, right, up)`);
+        if (isNpc || isLoot) {
+          // NPC & Loot: check directions declared in meta.anims if defined
+          const shortAnimKey = (sheetKey && animKey.startsWith(`${sheetKey}_`))
+            ? animKey.slice(sheetKey.length + 1)
+            : (assetId && animKey.startsWith(`${assetId}_`))
+              ? animKey.slice(assetId.length + 1)
+              : animKey;
+          const animDef = meta.anims?.[animKey] || meta.anims?.[shortAnimKey];
+          const expectedDirs = Array.isArray(animDef?.directions) ? animDef.directions : ['down', 'left', 'right', 'up'];
+          const missing = expectedDirs.filter(d => !dirs.has(d));
+          if (missing.length > 0) {
+            errors.push(`Animation '${animKey}' in sheet '${sheetKey}' is missing directions: ${missing.join(', ')} (expected ${expectedDirs.join(', ')})`);
+          }
+        } else {
+          // Regular character/enemy sheets must have all 4 directions for directional animations
+          const missing = ['down', 'left', 'right', 'up'].filter(d => !dirs.has(d));
+          if (missing.length > 0) {
+            errors.push(`Animation '${animKey}' in sheet '${sheetKey}' is missing directions: ${missing.join(', ')} (expected down, left, right, up)`);
+          }
         }
       }
     }
