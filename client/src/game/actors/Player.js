@@ -12,6 +12,7 @@
  * - Knight shield block with 70% frontal damage reduction, block_start/hold/hit states
  * - Real Blendsmith death animations with holdLast on completion
  * - Thief stealth vanish and reappear mechanics
+ * - Mage spell casting (Fireball, Lightning, Leech, Shield, Blink) and Thief poison vial
  */
 
 import Phaser from 'phaser'
@@ -33,6 +34,15 @@ import {
   applyKnockback,
   PLAYER_IFRAME_DURATION_MS,
 } from '../combat/feedback.js'
+import { session } from '../session.js'
+import {
+  castFireball,
+  castLightning,
+  castLeech,
+  castShield,
+  castBlink,
+  throwPoisonVial,
+} from '../combat/spells.js'
 import {
   DODGE_COOLDOWN_MS,
   getDodgeMeta,
@@ -78,6 +88,7 @@ export const CLASS_SHEETS = Object.freeze({
     walkSheet: 'mage_walk',
     hurtSheet: 'mage_hurt',
     attackSheet: 'mage_attack2',
+    castSheet: 'mage_cast',
     dodgeSheet: 'mage_dodge',
     deathSheet: 'mage_death',
     initialFrame: 'mage_idle_down',
@@ -131,6 +142,16 @@ export class Player extends Actor {
       const origTryAttack = scene._tryAttack.bind(scene)
       scene._tryAttack = (now) => {
         if (isBlendRenderer() && scene.player instanceof Player) {
+          const cls = session.classId
+          const item = session.equippedId
+          if (cls === 'thief' && item === 'poison_vial') {
+            scene._attacking = true
+            return throwPoisonVial(scene, this, now)
+          }
+          if (cls === 'mage' && item === 'spellbook') {
+            scene._attacking = true
+            return this.cast(session.spellId || 'lightning', now)
+          }
           scene._attacking = true
           return this.attack(now)
         }
@@ -155,9 +176,14 @@ export class Player extends Actor {
       }
     }
 
-    // Expose lastFx getter on __hv if available
-    if (typeof window !== 'undefined' && window.__hv && !window.__hv.lastFx) {
-      window.__hv.lastFx = () => this.scene?._lastFx || this._lastFx || null
+    // Expose lastFx and cast getters on __hv if available
+    if (typeof window !== 'undefined' && window.__hv) {
+      if (!window.__hv.lastFx) {
+        window.__hv.lastFx = () => this.scene?._lastFx || this._lastFx || null
+      }
+      if (!window.__hv.cast) {
+        window.__hv.cast = (spellId) => this.cast(spellId)
+      }
     }
 
     // Start with idle animation if scene anims are available
@@ -204,7 +230,7 @@ export class Player extends Actor {
   /**
    * Resolves sheet key for a given animation action type based on active class.
    *
-   * @param {string} animType - 'idle' | 'walk' | 'hurt' | 'attack' | 'dodge' | 'block' | 'death' | 'vanish'
+   * @param {string} animType - 'idle' | 'walk' | 'hurt' | 'attack' | 'cast' | 'dodge' | 'block' | 'death' | 'vanish'
    * @returns {string}
    */
   getSheetForAnim(animType) {
@@ -216,6 +242,8 @@ export class Player extends Actor {
         return classDef.hurtSheet
       case 'attack':
         return classDef.attackSheet
+      case 'cast':
+        return classDef.castSheet || classDef.attackSheet || classDef.defaultSheet
       case 'dodge':
         return classDef.dodgeSheet || classDef.defaultSheet
       case 'block':
@@ -236,6 +264,7 @@ export class Player extends Actor {
   /**
    * Resolves canonical animation key for a given action and direction.
    * Special case: Mage melee staff bonk is named 'attack_2' in mage_attack2.json.
+   * Special case: Mage spell casting is named 'cast' in mage_cast.json.
    *
    * @param {string} anim
    * @param {string} [dir=this.facing]
@@ -245,13 +274,16 @@ export class Player extends Actor {
     if (anim === 'attack' && this.classId === 'mage') {
       return buildAnimKey(this.assetId, 'attack_2', dir)
     }
+    if (anim === 'cast' && this.classId === 'mage') {
+      return buildAnimKey(this.assetId, 'cast', dir)
+    }
     return super.getAnimKey(anim, dir)
   }
 
   /**
    * Plays the directional animation for the given action type.
    *
-   * @param {string} animName - 'idle' | 'walk' | 'hurt' | 'attack' | 'dodge' | 'block_start' | 'death'
+   * @param {string} animName - 'idle' | 'walk' | 'hurt' | 'attack' | 'cast' | 'dodge' | 'block_start' | 'death'
    * @param {boolean} [ignoreIfPlaying=true]
    * @returns {Player}
    */
@@ -313,6 +345,49 @@ export class Player extends Actor {
     }
 
     return true
+  }
+
+  /**
+   * Initiates a spell cast (Mage Fireball, Lightning, Leech, Shield, Blink).
+   *
+   * @param {string} [spellId='fireball']
+   * @param {number} [now]
+   * @returns {boolean}
+   */
+  cast(spellId = 'fireball', now = (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
+    if (this.is(ACTOR_STATES.DEAD)) return false
+
+    if (!this.stateMachine.canInterrupt(ACTOR_STATES.ATTACK)) {
+      this.bufferInput(ACTOR_STATES.ATTACK, now)
+      return false
+    }
+
+    let success = false
+    if (spellId === 'fireball') {
+      const proj = castFireball(this.scene, this, now)
+      if (proj) success = true
+    } else if (spellId === 'lightning') {
+      const proj = castLightning(this.scene, this, now)
+      if (proj) success = true
+    } else if (spellId === 'leech') {
+      const proj = castLeech(this.scene, this, now)
+      if (proj) success = true
+    } else if (spellId === 'shield') {
+      const s = castShield(this.scene, this, now)
+      if (s) success = true
+    } else if (spellId === 'blink') {
+      success = castBlink(this.scene, this, now)
+    }
+
+    if (success) {
+      const transitioned = this.transition(ACTOR_STATES.ATTACK, { time: now })
+      if (transitioned) {
+        this.playAnim('cast', false)
+      }
+      return true
+    }
+
+    return false
   }
 
   /**
@@ -563,7 +638,7 @@ export class Player extends Actor {
       if (!consumed) {
         this.transition(ACTOR_STATES.IDLE, { force: true })
       }
-    } else if (key.includes('attack') && this.is(ACTOR_STATES.ATTACK)) {
+    } else if ((key.includes('attack') || key.includes('cast')) && this.is(ACTOR_STATES.ATTACK)) {
       if (this.scene) {
         this.scene._attacking = false
       }
@@ -639,7 +714,7 @@ export class Player extends Actor {
     } else if (this.is(ACTOR_STATES.HURT)) {
       this.playAnim('hurt', false)
     } else if (this.is(ACTOR_STATES.ATTACK)) {
-      this.playAnim('attack', false)
+      this.playAnim(this.anims?.currentAnim?.key?.includes('cast') ? 'cast' : 'attack', false)
     } else if (this.is(ACTOR_STATES.DODGE)) {
       this.playAnim('dodge', false)
     } else if (this.is(ACTOR_STATES.BLOCK)) {
