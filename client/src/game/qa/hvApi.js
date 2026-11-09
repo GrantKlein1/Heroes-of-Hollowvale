@@ -139,6 +139,52 @@ export function createHvApi(scene) {
     },
 
     /**
+     * Triggers player dodge roll if available.
+     */
+    dodge: (now) => {
+      if (typeof scene?.player?.dodge === 'function') {
+        return scene.player.dodge(now)
+      }
+      return false
+    },
+
+    /**
+     * Begins shield blocking for Knight.
+     */
+    block: (now) => {
+      if (typeof scene?.player?.startBlock === 'function') {
+        if (!scene.player.blockState) {
+          scene.player.blockState = { qaHolding: true }
+        } else {
+          scene.player.blockState.qaHolding = true
+        }
+        return scene.player.startBlock(now)
+      }
+      return false
+    },
+
+    /**
+     * Releases shield block.
+     */
+    unblock: () => {
+      if (typeof scene?.player?.stopBlock === 'function') {
+        if (scene.player.blockState) {
+          scene.player.blockState.qaHolding = false
+        }
+        scene.player.stopBlock()
+        return true
+      }
+      return false
+    },
+
+    /**
+     * Returns the player state machine state (e.g. 'IDLE', 'ATTACK', 'DODGE', 'BLOCK', 'HURT', 'DEAD').
+     */
+    playerState: () => {
+      return scene?.player?.state || null
+    },
+
+    /**
      * Debug entity spawner helper.
      */
     spawn: (type = 'goblin', x, y) => {

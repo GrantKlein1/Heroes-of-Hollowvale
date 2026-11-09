@@ -3,12 +3,15 @@
  *
  * Implements:
  * - Dynamic 4-class configuration (knight, mage, thief, dwarf)
- * - 4-directional animations for idle, walk, hurt, and attack
+ * - 4-directional animations for idle, walk, hurt, attack, dodge, block, stealth, and death
  * - Automatic sheet origin resolution and footprint collider binding
- * - Multi-sheet asset handling (e.g. mage_walk vs mage_hurt, knight vs knight_attack)
- * - Priority StateMachine driven animations (IDLE, WALK, HURT, ATTACK)
+ * - Multi-sheet asset handling (e.g. mage_walk vs mage_hurt, knight vs knight_attack/block/dodge)
+ * - Priority StateMachine driven animations (IDLE, WALK, BLOCK, ATTACK, DODGE, HURT, DEAD)
  * - Frame-accurate melee attack hits on meta hitFrames with combat feedback
- * - 600 ms I-frame protected takeDamage implementation
+ * - Dodge roll with metadata-driven I-frame range and 600 ms cooldown
+ * - Knight shield block with 70% frontal damage reduction, block_start/hold/hit states
+ * - Real Blendsmith death animations with holdLast on completion
+ * - Thief stealth vanish and reappear mechanics
  */
 
 import Phaser from 'phaser'
@@ -30,6 +33,15 @@ import {
   applyKnockback,
   PLAYER_IFRAME_DURATION_MS,
 } from '../combat/feedback.js'
+import {
+  DODGE_COOLDOWN_MS,
+  getDodgeMeta,
+  isDodgeInvulnerable,
+  getFacingDisplacement,
+} from '../combat/dodge.js'
+import {
+  calculateBlockMitigation,
+} from '../combat/block.js'
 
 export const CLASS_SHEETS = Object.freeze({
   knight: {
@@ -37,6 +49,9 @@ export const CLASS_SHEETS = Object.freeze({
     walkSheet: 'knight',
     hurtSheet: 'knight',
     attackSheet: 'knight_attack',
+    dodgeSheet: 'knight_dodge',
+    blockSheet: 'knight_block',
+    deathSheet: 'knight_death',
     initialFrame: 'knight_idle_down',
   },
   thief: {
@@ -44,6 +59,9 @@ export const CLASS_SHEETS = Object.freeze({
     walkSheet: 'thief',
     hurtSheet: 'thief',
     attackSheet: 'thief_attack',
+    dodgeSheet: 'thief_dodge',
+    deathSheet: 'thief_death',
+    stealthSheet: 'thief_stealth',
     initialFrame: 'thief_idle_down',
   },
   dwarf: {
@@ -51,6 +69,8 @@ export const CLASS_SHEETS = Object.freeze({
     walkSheet: 'dwarf',
     hurtSheet: 'dwarf',
     attackSheet: 'dwarf_attack',
+    dodgeSheet: 'dwarf_dodge',
+    deathSheet: 'dwarf_death',
     initialFrame: 'dwarf_idle_down',
   },
   mage: {
@@ -58,6 +78,8 @@ export const CLASS_SHEETS = Object.freeze({
     walkSheet: 'mage_walk',
     hurtSheet: 'mage_hurt',
     attackSheet: 'mage_attack2',
+    dodgeSheet: 'mage_dodge',
+    deathSheet: 'mage_death',
     initialFrame: 'mage_idle_down',
   },
 })
@@ -85,8 +107,17 @@ export class Player extends Actor {
     this.currentSwingId = 0
     this._hitFramesProcessed = new Set()
     this.invulnerableUntil = 0
+    this.lastDamageTaken = 0
 
-    // Listen for animation completion to transition out of non-looping states (HURT, ATTACK)
+    // Dodge & Block states
+    this.dodgeCooldownUntil = 0
+    this.dodgeState = { active: false, startTime: 0, meta: null, frameIndex: 0 }
+    this._lastDodgeFrame = -1
+
+    this.blockState = { active: false, stage: 'idle', startTime: 0, holding: false, qaHolding: false }
+    this.vanishState = { active: false, startTime: 0, invisible: false }
+
+    // Listen for animation completion to transition out of non-looping states
     if (typeof this.on === 'function') {
       const animCompleteEvent = Phaser?.Animations?.Events?.ANIMATION_COMPLETE || 'animationcomplete'
       this.on(animCompleteEvent, (anim) => {
@@ -108,15 +139,18 @@ export class Player extends Actor {
 
       const origHurtPlayer = scene._hurtPlayer ? scene._hurtPlayer.bind(scene) : null
       if (origHurtPlayer) {
-        scene._hurtPlayer = (amount = 10) => {
+        scene._hurtPlayer = (amount = 10, opts = {}) => {
           if (isBlendRenderer() && scene.player instanceof Player) {
             const tookDamage = this.takeDamage(
               amount,
-              typeof performance !== 'undefined' ? performance.now() : Date.now()
+              typeof performance !== 'undefined' ? performance.now() : Date.now(),
+              opts
             )
             if (!tookDamage) return false
+            const actualDamage = typeof this.lastDamageTaken === 'number' ? this.lastDamageTaken : amount
+            return origHurtPlayer(actualDamage, opts)
           }
-          return origHurtPlayer(amount)
+          return origHurtPlayer(amount, opts)
         }
       }
     }
@@ -156,13 +190,51 @@ export class Player extends Actor {
       this.playAnim('hurt', false)
     } else if (this.is(ACTOR_STATES.ATTACK)) {
       this.playAnim('attack', true)
+    } else if (this.is(ACTOR_STATES.DODGE)) {
+      this.playAnim('dodge', false)
+    } else if (this.is(ACTOR_STATES.BLOCK)) {
+      this.playAnim(this.blockState?.stage === 'hold' ? 'block_hold' : 'block_start', false)
+    } else if (this.is(ACTOR_STATES.DEAD)) {
+      this.playAnim('death', false)
     } else {
       this.playAnim('idle', false)
     }
   }
 
   /**
-   * Resolves the animation key for an animation action.
+   * Resolves sheet key for a given animation action type based on active class.
+   *
+   * @param {string} animType - 'idle' | 'walk' | 'hurt' | 'attack' | 'dodge' | 'block' | 'death' | 'vanish'
+   * @returns {string}
+   */
+  getSheetForAnim(animType) {
+    const classDef = CLASS_SHEETS[this.classId] || CLASS_SHEETS.knight
+    switch (animType) {
+      case 'walk':
+        return classDef.walkSheet
+      case 'hurt':
+        return classDef.hurtSheet
+      case 'attack':
+        return classDef.attackSheet
+      case 'dodge':
+        return classDef.dodgeSheet || classDef.defaultSheet
+      case 'block':
+      case 'block_start':
+      case 'block_hold':
+      case 'block_hit':
+        return classDef.blockSheet || classDef.defaultSheet
+      case 'death':
+        return classDef.deathSheet || classDef.defaultSheet
+      case 'vanish':
+      case 'reappear':
+        return classDef.stealthSheet || classDef.defaultSheet
+      default:
+        return classDef.defaultSheet
+    }
+  }
+
+  /**
+   * Resolves canonical animation key for a given action and direction.
    * Special case: Mage melee staff bonk is named 'attack_2' in mage_attack2.json.
    *
    * @param {string} anim
@@ -177,28 +249,9 @@ export class Player extends Actor {
   }
 
   /**
-   * Resolves the sheet key for an animation (handles multi-sheet classes).
+   * Plays the directional animation for the given action type.
    *
-   * @param {string} animName
-   * @returns {string}
-   */
-  getSheetForAnim(animName) {
-    const classDef = CLASS_SHEETS[this.classId] || CLASS_SHEETS.knight
-    if (animName === 'hurt') {
-      return classDef.hurtSheet
-    }
-    if (animName === 'attack') {
-      return classDef.attackSheet || classDef.defaultSheet
-    }
-    return classDef.walkSheet
-  }
-
-  /**
-   * Plays a player animation with 4-directional key resolution.
-   * Automatically switches texture sheets and updates feet anchor and physics footprint.
-   * Safely handles missing animation keys without locking the state machine.
-   *
-   * @param {string} animName - 'idle' | 'walk' | 'hurt' | 'attack'
+   * @param {string} animName - 'idle' | 'walk' | 'hurt' | 'attack' | 'dodge' | 'block_start' | 'death'
    * @param {boolean} [ignoreIfPlaying=true]
    * @returns {Player}
    */
@@ -210,11 +263,9 @@ export class Player extends Actor {
 
     const key = this.getAnimKey(animName)
 
-    // Missing animation key safety:
-    // If the scene animation manager exists but key is missing, never get stuck in ATTACK/HURT
     if (this.scene?.anims && typeof this.scene.anims.exists === 'function' && !this.scene.anims.exists(key)) {
       console.warn(`[Player] Animation key "${key}" not found in scene anims.`)
-      if (this.is(ACTOR_STATES.ATTACK) || this.is(ACTOR_STATES.HURT)) {
+      if (this.is(ACTOR_STATES.ATTACK) || this.is(ACTOR_STATES.HURT) || this.is(ACTOR_STATES.DODGE)) {
         if (this.scene) {
           this.scene._attacking = false
         }
@@ -227,7 +278,6 @@ export class Player extends Actor {
       this.anims.play(key, ignoreIfPlaying)
     }
 
-    // Always synchronize feet origin, collision footprint, and hurtbox with the active target sheet
     if (targetSheet) {
       this.applySheetOrigin(targetSheet)
       this.applyFootprint(targetSheet)
@@ -237,9 +287,7 @@ export class Player extends Actor {
   }
 
   /**
-   * Initiates a melee attack swing.
-   * Transitions state machine to ATTACK, plays directional attack animation,
-   * locks aim direction during swing, and clears hit tracking.
+   * Triggers an attack swing if the state machine permits.
    *
    * @param {number} [now=performance.now()]
    * @returns {boolean}
@@ -247,8 +295,6 @@ export class Player extends Actor {
   attack(now = (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
     if (this.is(ACTOR_STATES.DEAD)) return false
 
-    // StateMachine priority: ATTACK (3) can interrupt WALK (1) or IDLE (0)
-    // If currently HURT (5) or DODGE (4), cannot interrupt; buffer input!
     if (!this.stateMachine.canInterrupt(ACTOR_STATES.ATTACK)) {
       this.bufferInput(ACTOR_STATES.ATTACK, now)
       return false
@@ -270,19 +316,203 @@ export class Player extends Actor {
   }
 
   /**
-   * Receives incoming damage with 600 ms I-frame protection.
+   * Initiates a dodge roll (all 4 classes) with 600 ms cooldown.
+   *
+   * @param {number} [now=performance.now()]
+   * @returns {boolean}
+   */
+  dodge(now = (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
+    if (this.is(ACTOR_STATES.DEAD)) return false
+    if (now < this.dodgeCooldownUntil) return false
+
+    if (!this.stateMachine.canInterrupt(ACTOR_STATES.DODGE)) {
+      this.bufferInput(ACTOR_STATES.DODGE, now)
+      return false
+    }
+
+    const transitioned = this.transition(ACTOR_STATES.DODGE, { time: now })
+    if (!transitioned) return false
+
+    this.dodgeCooldownUntil = now + DODGE_COOLDOWN_MS
+    const dodgeMeta = getDodgeMeta(this.scene, this.getSheetForAnim('dodge'), this.classId)
+    this.dodgeState = {
+      active: true,
+      startTime: now,
+      meta: dodgeMeta,
+      frameIndex: 0,
+    }
+    this._lastDodgeFrame = -1
+
+    if (this.body && typeof this.body.setVelocity === 'function') {
+      this.body.setVelocity(0, 0)
+    }
+
+    return true
+  }
+
+  /**
+   * Begins shield blocking (Knight exclusive).
+   *
+   * @param {number} [now=performance.now()]
+   * @returns {boolean}
+   */
+  startBlock(now = (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
+    if (this.classId !== 'knight') return false
+    if (this.is(ACTOR_STATES.DEAD)) return false
+
+    if (this.is(ACTOR_STATES.BLOCK)) {
+      if (this.blockState) this.blockState.holding = true
+      return true
+    }
+
+    if (!this.stateMachine.canInterrupt(ACTOR_STATES.BLOCK)) {
+      this.bufferInput(ACTOR_STATES.BLOCK, now)
+      return false
+    }
+
+    const hadQaHolding = Boolean(this.blockState?.qaHolding)
+    const transitioned = this.transition(ACTOR_STATES.BLOCK, { time: now })
+    if (!transitioned) return false
+
+    this.blockState = {
+      active: true,
+      stage: 'start',
+      startTime: now,
+      holding: true,
+      qaHolding: hadQaHolding,
+    }
+
+    if (this.body && typeof this.body.setVelocity === 'function') {
+      this.body.setVelocity(0, 0)
+    }
+
+    return true
+  }
+
+  /**
+   * Releases shield block.
+   */
+  stopBlock() {
+    if (this.blockState) {
+      this.blockState.holding = false
+      this.blockState.active = false
+      this.blockState.qaHolding = false
+    }
+    if (this.is(ACTOR_STATES.BLOCK)) {
+      this.transition(ACTOR_STATES.IDLE, { force: true })
+    }
+  }
+
+  /**
+   * Checks whether the player is currently blocking.
+   *
+   * @returns {boolean}
+   */
+  isBlocking() {
+    return this.classId === 'knight' && this.is(ACTOR_STATES.BLOCK) && Boolean(this.blockState?.active)
+  }
+
+  /**
+   * Checks whether the player is currently dodging.
+   *
+   * @returns {boolean}
+   */
+  isDodging() {
+    return this.is(ACTOR_STATES.DODGE) && Boolean(this.dodgeState?.active)
+  }
+
+  /**
+   * Plays the real Blendsmith death animation and permanently halts movement.
+   */
+  die() {
+    if (this.is(ACTOR_STATES.DEAD)) return
+    this.transition(ACTOR_STATES.DEAD, { force: true })
+    if (this.body && typeof this.body.setVelocity === 'function') {
+      this.body.setVelocity(0, 0)
+    }
+    this.playAnim('death', false)
+  }
+
+  /**
+   * Triggers Thief stealth vanish animation.
+   *
+   * @param {number} [now=performance.now()]
+   * @returns {boolean}
+   */
+  vanish(now = (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
+    if (this.classId !== 'thief' || this.is(ACTOR_STATES.DEAD)) return false
+    this.vanishState = { active: true, startTime: now, invisible: false }
+    this.playAnim('vanish', false)
+    return true
+  }
+
+  /**
+   * Restores Thief visibility via reappear animation.
+   *
+   * @param {number} [now=performance.now()]
+   * @returns {boolean}
+   */
+  reappear(now = (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
+    if (this.classId !== 'thief' || this.is(ACTOR_STATES.DEAD)) return false
+    if (typeof this.setVisible === 'function') {
+      this.setVisible(true)
+    } else {
+      this.visible = true
+    }
+    this.vanishState = { active: false, startTime: now, invisible: false }
+    this.playAnim('reappear', false)
+    return true
+  }
+
+  /**
+   * Takes incoming damage with dodge I-frame, block frontal mitigation, and hurt I-frame checks.
    *
    * @param {number} [amount=10]
    * @param {number} [now=performance.now()]
    * @param {object} [options]
-   * @returns {boolean} - True if damage was taken, false if blocked by I-frames
+   * @returns {boolean} - False if blocked/dodged (0 damage), or true if damage was taken
    */
   takeDamage(amount = 10, now = (typeof performance !== 'undefined' ? performance.now() : Date.now()), options = {}) {
     if (this.is(ACTOR_STATES.DEAD)) return false
+
+    // 1. Dodge I-frames: taking 0 damage
+    if (this.is(ACTOR_STATES.DODGE) && this.dodgeState?.active) {
+      const frameIndex = getAnimationFrameIndex(this.anims?.currentFrame)
+      if (isDodgeInvulnerable(this.dodgeState, frameIndex, now)) {
+        return false // Dodged: 0 damage
+      }
+    }
+
+    // 2. Hurt I-frames
     if (isPlayerInvulnerable(this, now)) {
       return false
     }
 
+    // 3. Knight Shield Block (70% frontal reduction, 120° arc)
+    if (this.is(ACTOR_STATES.BLOCK) && this.classId === 'knight') {
+      const attackerPos = (options.fromX !== undefined && options.fromY !== undefined)
+        ? { x: options.fromX, y: options.fromY }
+        : (options.attacker ? { x: options.attacker.x, y: options.attacker.y } : null)
+
+      const blockResult = calculateBlockMitigation(this, amount, attackerPos)
+      if (blockResult.blocked && blockResult.isFrontal) {
+        const blockedDamage = blockResult.finalDamage
+        this.lastDamageTaken = blockedDamage
+        this.blockState.stage = 'hit'
+        this.playAnim('block_hit', false)
+
+        setPlayerInvulnerable(this, now, 200)
+        applyFlash(this, this.scene)
+
+        if (attackerPos) {
+          applyKnockback(this, attackerPos.x, attackerPos.y, 40, 100)
+        }
+        return true
+      }
+    }
+
+    // 4. Full Hit
+    this.lastDamageTaken = amount
     setPlayerInvulnerable(this, now, PLAYER_IFRAME_DURATION_MS)
     applyFlash(this, this.scene)
 
@@ -312,6 +542,12 @@ export class Player extends Actor {
       this.playAnim('hurt', false)
     } else if (newState === ACTOR_STATES.ATTACK) {
       this.playAnim('attack', false)
+    } else if (newState === ACTOR_STATES.DODGE) {
+      this.playAnim('dodge', false)
+    } else if (newState === ACTOR_STATES.BLOCK) {
+      this.playAnim(this.blockState?.stage === 'hold' ? 'block_hold' : 'block_start', false)
+    } else if (newState === ACTOR_STATES.DEAD) {
+      this.playAnim('death', false)
     }
   }
 
@@ -335,12 +571,49 @@ export class Player extends Actor {
       if (!consumed) {
         this.transition(ACTOR_STATES.IDLE, { force: true })
       }
+    } else if (key.includes('dodge') && this.is(ACTOR_STATES.DODGE)) {
+      this.dodgeState.active = false
+      this._lastDodgeFrame = -1
+      const consumed = this.consumeBuffer(Date.now())
+      if (!consumed) {
+        this.transition(ACTOR_STATES.IDLE, { force: true })
+      }
+    } else if (key.includes('block_start') && this.is(ACTOR_STATES.BLOCK)) {
+      if (this.blockState?.holding) {
+        this.blockState.stage = 'hold'
+        this.playAnim('block_hold', true)
+      } else {
+        this.transition(ACTOR_STATES.IDLE, { force: true })
+      }
+    } else if (key.includes('block_hit') && this.is(ACTOR_STATES.BLOCK)) {
+      if (this.blockState?.holding) {
+        this.blockState.stage = 'hold'
+        this.playAnim('block_hold', true)
+      } else {
+        this.transition(ACTOR_STATES.IDLE, { force: true })
+      }
+    } else if (key.includes('death')) {
+      if (this.anims?.pause) {
+        this.anims.pause()
+      }
+    } else if (key.includes('vanish')) {
+      if (typeof this.setVisible === 'function') {
+        this.setVisible(false)
+      } else {
+        this.visible = false
+      }
+      this.vanishState.invisible = true
+    } else if (key.includes('reappear')) {
+      const consumed = this.consumeBuffer(Date.now())
+      if (!consumed) {
+        this.transition(ACTOR_STATES.IDLE, { force: true })
+      }
     }
   }
 
   /**
    * Sets facing explicitly and refreshes the current directional animation
-   * unless in a directional locked state (e.g. ATTACK).
+   * unless in a directional locked state (e.g. ATTACK, DODGE, DEAD).
    *
    * @param {string} dir
    * @returns {string}
@@ -350,7 +623,7 @@ export class Player extends Actor {
     super.setFacing(dir)
     if (this.facing !== prev) {
       this._lastFacing = this.facing
-      if (!this.is(ACTOR_STATES.ATTACK)) {
+      if (!this.is(ACTOR_STATES.ATTACK) && !this.is(ACTOR_STATES.DODGE) && !this.is(ACTOR_STATES.DEAD)) {
         this._refreshCurrentAnim()
       }
     }
@@ -367,6 +640,12 @@ export class Player extends Actor {
       this.playAnim('hurt', false)
     } else if (this.is(ACTOR_STATES.ATTACK)) {
       this.playAnim('attack', false)
+    } else if (this.is(ACTOR_STATES.DODGE)) {
+      this.playAnim('dodge', false)
+    } else if (this.is(ACTOR_STATES.BLOCK)) {
+      this.playAnim(this.blockState?.stage === 'hold' ? 'block_hold' : 'block_start', false)
+    } else if (this.is(ACTOR_STATES.DEAD)) {
+      this.playAnim('death', false)
     } else {
       this.playAnim('idle', false)
     }
@@ -392,6 +671,34 @@ export class Player extends Actor {
   }
 
   /**
+   * Updates dodge travel displacement along facing direction.
+   */
+  _updateDodgeMotion() {
+    if (!this.is(ACTOR_STATES.DODGE) || !this.dodgeState?.active) return
+
+    const currentFrame = this.anims?.currentFrame
+    const frameIndex = getAnimationFrameIndex(currentFrame)
+    if (frameIndex >= 0 && frameIndex !== this._lastDodgeFrame) {
+      const meta = this.dodgeState.meta
+      if (Array.isArray(meta?.travelPerFrame)) {
+        const prevTravel = this._lastDodgeFrame >= 0 ? (meta.travelPerFrame[this._lastDodgeFrame] || 0) : 0
+        const curTravel = meta.travelPerFrame[frameIndex] || 0
+        const stepPx = Math.max(0, curTravel - prevTravel)
+        if (stepPx > 0) {
+          const { dx, dy } = getFacingDisplacement(this.facing, stepPx)
+          this.x += dx
+          this.y += dy
+          if (this.body) {
+            this.body.x += dx
+            this.body.y += dy
+          }
+        }
+      }
+      this._lastDodgeFrame = frameIndex
+    }
+  }
+
+  /**
    * Per-frame update step.
    *
    * @param {number} time
@@ -403,6 +710,16 @@ export class Player extends Actor {
     // Check hitFrames during active attack
     if (this.is(ACTOR_STATES.ATTACK)) {
       this._checkAttackHitFrames(time)
+    }
+
+    // Process dodge travel displacement
+    if (this.is(ACTOR_STATES.DODGE)) {
+      this._updateDodgeMotion()
+      return
+    }
+
+    if (this.is(ACTOR_STATES.BLOCK) || this.is(ACTOR_STATES.DEAD)) {
+      return
     }
 
     const vx = this.body?.velocity?.x || 0
@@ -421,10 +738,10 @@ export class Player extends Actor {
       }
     }
 
-    // Refresh animation if facing changed during update (except during attack)
+    // Refresh animation if facing changed during update (except during attack/dodge)
     if (this.facing !== this._lastFacing) {
       this._lastFacing = this.facing
-      if (!this.is(ACTOR_STATES.ATTACK)) {
+      if (!this.is(ACTOR_STATES.ATTACK) && !this.is(ACTOR_STATES.DODGE) && !this.is(ACTOR_STATES.DEAD)) {
         this._refreshCurrentAnim()
       }
     }

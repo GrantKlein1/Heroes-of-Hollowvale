@@ -255,7 +255,8 @@ export default class HollowvaleScene extends Phaser.Scene {
 
     this.keys = this.input.keyboard.addKeys({
       W: 'W', A: 'A', S: 'S', D: 'D',
-      E: 'E', K: 'K', J: 'J',
+      E: 'E', K: 'K', J: 'J', C: 'C',
+      shift: 'SHIFT',
       up: 'UP', down: 'DOWN', left: 'LEFT', right: 'RIGHT',
       space: 'SPACE',
       F2: 'F2',
@@ -421,9 +422,12 @@ export default class HollowvaleScene extends Phaser.Scene {
     const body = this.player.body
     const blocked = session.blocked || this.dead
     const vanishing = session.classId === 'thief' && now < session.thiefVanishUntil
+    const isPlayerActor = isBlendRenderer() && this.player instanceof Player
+    const isDodging = isPlayerActor && this.player.isDodging()
+    const isBlocking = isPlayerActor && this.player.isBlocking()
     let vx = 0
     let vy = 0
-    if (!blocked && !vanishing) {
+    if (!blocked && !vanishing && !isDodging && !isBlocking) {
       if (this.keys.left.isDown || this.keys.A.isDown) vx -= 1
       if (this.keys.right.isDown || this.keys.D.isDown) vx += 1
       if (this.keys.up.isDown || this.keys.W.isDown) vy -= 1
@@ -438,7 +442,9 @@ export default class HollowvaleScene extends Phaser.Scene {
     }
     let speed = (session.baseSpeed || 160) * this.unit
     if (now < session.speedBoostUntil) speed *= 1.5
-    this.player.setVelocity(vx * speed, vy * speed)
+    if (!isDodging) {
+      this.player.setVelocity(vx * speed, vy * speed)
+    }
     onPlayerMove({ moving: vx !== 0 || vy !== 0, now })
 
     if (this.sceneId === 'wilderness' && !blocked && now >= this.wildLatchUntil) {
@@ -451,7 +457,23 @@ export default class HollowvaleScene extends Phaser.Scene {
       if (this._skipRest) return
     }
 
-    if (!blocked && !vanishing && Phaser.Input.Keyboard.JustDown(this.keys.space)) {
+    // Dodge input (Shift or C for non-knight)
+    if (!blocked && !vanishing && isPlayerActor) {
+      if (Phaser.Input.Keyboard.JustDown(this.keys.shift) || (session.classId !== 'knight' && Phaser.Input.Keyboard.JustDown(this.keys.C))) {
+        this.player.dodge(now)
+      }
+    }
+
+    // Knight Shield Block (held on C or programmatic QA holding)
+    if (!blocked && !vanishing && isPlayerActor && session.classId === 'knight') {
+      if (this.keys.C.isDown || this.player.blockState?.qaHolding) {
+        this.player.startBlock(now)
+      } else if (this.player.isBlocking()) {
+        this.player.stopBlock()
+      }
+    }
+
+    if (!blocked && !vanishing && !isBlocking && Phaser.Input.Keyboard.JustDown(this.keys.space)) {
       this._tryAttack(now)
     }
 
@@ -694,6 +716,9 @@ export default class HollowvaleScene extends Phaser.Scene {
     session.thiefVanishUntil = now + 1000
     session.thiefVanishCooldownUntil = now + 10000
     this._vanishArmed = true
+    if (isBlendRenderer() && this.player instanceof Player) {
+      this.player.vanish(now)
+    }
   }
 
   _updateConsume(now, blocked) {
@@ -884,16 +909,25 @@ export default class HollowvaleScene extends Phaser.Scene {
         if (now >= (this._iframeUntil || 0)) {
           const dmg = getEnemyDamage(e.enemyType, this.wave)
           if (!invincible) {
-            this.hp = Math.max(0, this.hp - dmg)
-            onPlayerHurt()
+            let tookDamage = true
+            let actualDmg = dmg
             if (isBlendRenderer() && this.player instanceof Player) {
-              this.player.transition(ACTOR_STATES.HURT)
+              const res = this.player.takeDamage(dmg, now, { attacker: e, fromX: e.x, fromY: e.y, enemyType: e.enemyType })
+              if (!res) {
+                tookDamage = false
+              } else if (typeof this.player.lastDamageTaken === 'number') {
+                actualDmg = this.player.lastDamageTaken
+              }
+            }
+            if (tookDamage) {
+              this.hp = Math.max(0, this.hp - actualDmg)
+              onPlayerHurt()
+              this._iframeUntil = now + 900
+              this._flashUntil = now + 200
+              this._float(this.player.x, this.player.y - this.player.displayHeight / 2, `-${actualDmg}`, '#ff9f43')
+              if (this.hp <= 0) this._die(e.enemyType)
             }
           }
-          this._iframeUntil = now + 900
-          this._flashUntil = now + 200
-          this._float(this.player.x, this.player.y - this.player.displayHeight / 2, `-${dmg}`, '#ff9f43')
-          if (this.hp <= 0) this._die(e.enemyType)
         }
       }
       if (now < e.flashUntil) e.setAlpha(0.6)
@@ -1131,6 +1165,9 @@ export default class HollowvaleScene extends Phaser.Scene {
     if (this.dead) return
     this.dead = true
     this.player.setVelocity(0, 0)
+    if (isBlendRenderer() && this.player instanceof Player) {
+      this.player.die()
+    }
     this._publishVitals(true)
     eventBus.emit(GameEvents.DIED, { killer: enemyLabel(type) })
   }
@@ -1145,7 +1182,9 @@ export default class HollowvaleScene extends Phaser.Scene {
     this.hp = Math.max(0, this.hp - amount)
     onPlayerHurt()
     if (isBlendRenderer() && this.player instanceof Player) {
-      this.player.transition(ACTOR_STATES.HURT)
+      if (!this.player.isBlocking()) {
+        this.player.transition(ACTOR_STATES.HURT)
+      }
     }
     this._publishVitals(true)
   }

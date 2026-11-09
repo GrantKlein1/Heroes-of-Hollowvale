@@ -359,6 +359,38 @@ describe('Hollowvale QA and Debug API (hvApi.js)', () => {
       })
     })
 
+    describe('combat controls (Package 1-6)', () => {
+      it('delegates dodge, block, unblock, and playerState to player actor', () => {
+        mockScene.player.dodge = vi.fn().mockReturnValue(true)
+        mockScene.player.startBlock = vi.fn().mockReturnValue(true)
+        mockScene.player.stopBlock = vi.fn()
+        mockScene.player.state = 'IDLE'
+
+        expect(api.dodge(1000)).toBe(true)
+        expect(mockScene.player.dodge).toHaveBeenCalledWith(1000)
+
+        expect(api.block(1050)).toBe(true)
+        expect(mockScene.player.startBlock).toHaveBeenCalledWith(1050)
+
+        expect(api.unblock()).toBe(true)
+        expect(mockScene.player.stopBlock).toHaveBeenCalled()
+
+        expect(api.playerState()).toBe('IDLE')
+      })
+
+      it('safely handles missing player methods', () => {
+        delete mockScene.player.dodge
+        delete mockScene.player.startBlock
+        delete mockScene.player.stopBlock
+        delete mockScene.player.state
+
+        expect(api.dodge()).toBe(false)
+        expect(api.block()).toBe(false)
+        expect(api.unblock()).toBe(false)
+        expect(api.playerState()).toBe(null)
+      })
+    })
+
     describe('timeScale(n)', () => {
       it('returns current time scale when called without arguments', () => {
         expect(api.timeScale()).toBe(1)
