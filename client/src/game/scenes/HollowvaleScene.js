@@ -817,7 +817,7 @@ export default class HollowvaleScene extends Phaser.Scene {
   }
 
   _spawnEnemy(type, nx, ny, wave) {
-    if (isBlendRenderer() && type === 'goblin') {
+    if (isBlendRenderer() && (type === 'goblin' || type === 'brute' || type === 'goblin_brute')) {
       const wx = nx > 1 ? nx : nx * this.worldW
       const wy = ny > 1 ? ny : ny * this.worldH
       const enemy = new Enemy(this, wx, wy, type, { wave })
@@ -864,7 +864,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       nx = this.player.x / this.worldW
       ny = this.player.y / this.worldH
     }
-    if (isBlendRenderer() && type === 'goblin') {
+    if (isBlendRenderer() && (type === 'goblin' || type === 'brute' || type === 'goblin_brute')) {
       const wx = (x !== undefined && x > 1) ? x : nx * this.worldW
       const wy = (y !== undefined && y > 1) ? y : ny * this.worldH
       const enemy = new Enemy(this, wx, wy, type, { wave: this.wave || 1 })

@@ -39,6 +39,7 @@ import {
   getEnemyDamage,
 } from '../combat/balance.js'
 import { GoblinAI } from '../ai/goblin.js'
+import { BruteAI } from '../ai/brute.js'
 
 export const ENEMY_SHEETS = Object.freeze({
   goblin: {
@@ -50,6 +51,28 @@ export const ENEMY_SHEETS = Object.freeze({
     deathSheet: 'goblin_death',
     spawnSheet: 'goblin_spawn',
     initialFrame: 'goblin_idle_down',
+  },
+  brute: {
+    assetId: 'goblin_brute',
+    defaultSheet: 'goblin_brute',
+    walkSheet: 'goblin_brute',
+    hurtSheet: 'goblin_brute',
+    attackSheet: 'goblin_brute',
+    telegraphSheet: 'goblin_brute_telegraph',
+    deathSheet: 'goblin_brute_death',
+    spawnSheet: 'goblin_brute_spawn',
+    initialFrame: 'goblin_brute_idle_down',
+  },
+  goblin_brute: {
+    assetId: 'goblin_brute',
+    defaultSheet: 'goblin_brute',
+    walkSheet: 'goblin_brute',
+    hurtSheet: 'goblin_brute',
+    attackSheet: 'goblin_brute',
+    telegraphSheet: 'goblin_brute_telegraph',
+    deathSheet: 'goblin_brute_death',
+    spawnSheet: 'goblin_brute_spawn',
+    initialFrame: 'goblin_brute_idle_down',
   },
 })
 
@@ -72,7 +95,7 @@ export class Enemy extends Actor {
 
     super(scene, x, y, initialSheet, initialFrame, {
       ...options,
-      assetId: enemyType,
+      assetId: sheetDef.assetId || (enemyType === 'brute' ? 'goblin_brute' : enemyType),
       facing: options.facing || DEFAULT_FACING,
     })
 
@@ -100,6 +123,11 @@ export class Enemy extends Actor {
     this.animHistory = []
     this.lastAnimKey = null
 
+    this.isArmored = options.isArmored ?? (enemyType === 'brute' || enemyType === 'goblin_brute')
+    this.telegraphDuration = options.telegraphDuration ?? (this.isArmored ? 300 : 375)
+    this.baseCooldown = options.baseCooldown ?? (this.isArmored ? 1600 : 900)
+    this.knockbackImpulse = options.knockbackImpulse ?? (this.isArmored ? 260 : 100)
+
     // Configure arcade body if present
     if (this.body) {
       if (typeof this.body.setAllowGravity === 'function') {
@@ -116,6 +144,8 @@ export class Enemy extends Actor {
     // Attach archetype AI controller
     if (enemyType === 'goblin') {
       this.ai = new GoblinAI(this)
+    } else if (enemyType === 'brute' || enemyType === 'goblin_brute') {
+      this.ai = new BruteAI(this)
     }
 
     // Listen for animation completion events to chain telegraph -> attack -> idle
@@ -261,8 +291,9 @@ export class Enemy extends Actor {
       this.body.setVelocity(0, 0)
     }
 
-    // Telegraph duration: 3 frames at 8 fps (durations: [125, 125, 125] = 375 ms)
-    this.telegraphUntil = now + 375
+    // Telegraph duration: 300 ms for brute, 375 ms for standard goblin
+    const telegraphMs = this.telegraphDuration ?? (this.isArmored ? 300 : 375)
+    this.telegraphUntil = now + telegraphMs
     this.playAnim('telegraph', false)
     return true
   }
@@ -293,9 +324,10 @@ export class Enemy extends Actor {
       this.scene.attackTokenManager.release(this)
     }
 
-    // Cooldown: 900 ms base + seeded jitter (using seeded random from rng.js)
+    // Cooldown: 1600 ms base for brute, 900 ms base for goblin + seeded jitter
+    const baseCooldown = this.baseCooldown ?? (this.isArmored ? 1600 : 900)
     const jitter = random() * 300
-    this.attackCooldownUntil = now + 900 + jitter
+    this.attackCooldownUntil = now + baseCooldown + jitter
 
     if (!this.is(ACTOR_STATES.DEAD)) {
       this.transition(ACTOR_STATES.IDLE, { force: true })
@@ -354,6 +386,7 @@ export class Enemy extends Actor {
           fromX: this.x,
           fromY: this.y,
           enemyType: this.enemyType,
+          knockbackSpeed: this.knockbackImpulse ?? (this.isArmored ? 260 : 120),
         })
         if (!res) {
           tookDamage = false
@@ -393,6 +426,11 @@ export class Enemy extends Actor {
 
     if (this.hp <= 0) {
       this.die()
+      return true
+    }
+
+    // Armored enemies mid-swing ignore hurt interruption and do not drop attack token
+    if (this.isArmored && this.isAttacking) {
       return true
     }
 

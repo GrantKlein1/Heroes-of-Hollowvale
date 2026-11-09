@@ -580,7 +580,8 @@ export class Player extends Actor {
         applyFlash(this, this.scene)
 
         if (attackerPos) {
-          applyKnockback(this, attackerPos.x, attackerPos.y, 40, 100)
+          const blockKnockbackSpeed = options.knockbackSpeed ? Math.round(options.knockbackSpeed * 0.4) : 40
+          applyKnockback(this, attackerPos.x, attackerPos.y, blockKnockbackSpeed, 100)
         }
         return true
       }
@@ -592,7 +593,9 @@ export class Player extends Actor {
     applyFlash(this, this.scene)
 
     if (options.fromX !== undefined && options.fromY !== undefined) {
-      applyKnockback(this, options.fromX, options.fromY, 120, 150)
+      const knockbackSpeed = options.knockbackSpeed ?? 120
+      const knockbackDuration = options.knockbackDuration ?? 150
+      applyKnockback(this, options.fromX, options.fromY, knockbackSpeed, knockbackDuration)
     }
 
     this.transition(ACTOR_STATES.HURT)
