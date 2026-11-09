@@ -167,4 +167,61 @@ test('import_blendsmith acceptance criteria and contracts', async (t) => {
       }
     }
   });
+
+  await t.test('AS-3: registers 4 new groups and wilderness additions without touching boot or village', () => {
+    assert.deepEqual(manifest.groups.boot, ['fx_common', 'critters', 'knight']);
+    assert.deepEqual(manifest.groups.village, ['knight', 'thief', 'dwarf', 'mage', 'critters', 'fx_common', 'village_props', 'hearth']);
+    assert.deepEqual(manifest.groups.interiors, ['interior_props', 'npc_bartender', 'npc_vendor']);
+    assert.deepEqual(manifest.groups.cavern, ['dungeon_props', 'dungeon_brazier', 'treasure_chest']);
+    assert.deepEqual(manifest.groups.loot, ['loot_pickups']);
+    assert.deepEqual(manifest.groups.boss_fx_extra, ['dragon_fx_extra']);
+
+    assert.ok(manifest.groups.wilderness.includes('wild_props'));
+    assert.ok(manifest.groups.wilderness.includes('wild_props_4b'));
+    assert.ok(manifest.groups.wilderness.includes('ember_vent'));
+  });
+
+  await t.test('AS-3: registers all 23 ground tilesets in manifest.tiles', () => {
+    assert.equal(Object.keys(manifest.tiles).length, 23);
+    const as3Tiles = [
+      'interior_tavern_wall_trim',
+      'interior_market_wall_trim',
+      'dungeon_wall_trim',
+      'molten_floor',
+      'scorched_floor',
+      'ash_ground',
+      'ash_fill',
+      'forest_floor'
+    ];
+    for (const tName of as3Tiles) {
+      assert.ok(manifest.tiles[tName], `Tileset ${tName} must exist`);
+      assert.equal(manifest.tiles[tName].tileWidth, 32);
+      assert.equal(manifest.tiles[tName].tileHeight, 32);
+      assert.equal(manifest.tiles[tName].margin, 1);
+      assert.equal(manifest.tiles[tName].spacing, 2);
+    }
+  });
+
+  await t.test('AS-3: registers all new atlases with dynamic anchors from meta', () => {
+    const as3Atlases = [
+      { id: 'interior_props', kind: 'props', y: 1.0 },
+      { id: 'dungeon_props', kind: 'props', y: 1.0 },
+      { id: 'dungeon_brazier', kind: 'props', y: 1.0 },
+      { id: 'treasure_chest', kind: 'props', y: 1.0 },
+      { id: 'wild_props', kind: 'props', y: 1.0 },
+      { id: 'wild_props_4b', kind: 'props', y: 1.0 },
+      { id: 'ember_vent', kind: 'props', y: 1.0 },
+      { id: 'npc_bartender', kind: 'npc', y: 0.9271 },
+      { id: 'npc_vendor', kind: 'npc', y: 0.9271 },
+      { id: 'loot_pickups', kind: 'loot', y: 0.875 },
+      { id: 'dragon_fx_extra', kind: 'fx', y: 0.5 }
+    ];
+
+    for (const { id, kind, y } of as3Atlases) {
+      const entry = manifest.assets[id];
+      assert.ok(entry, `Asset ${id} must exist in manifest.assets`);
+      assert.equal(entry.kind, kind, `Asset ${id} kind must be ${kind}`);
+      assert.ok(Math.abs(entry.anchor.y - y) < 0.001, `Asset ${id} anchor.y (${entry.anchor.y}) must match expected (${y})`);
+    }
+  });
 });

@@ -1,0 +1,23 @@
+{
+  "meteor_marker": {
+    "frames": 7,
+    "size": [
+      96,
+      48
+    ],
+    "pivot": [
+      0.5,
+      0.5
+    ],
+    "pivotPx": [
+      48,
+      24
+    ],
+    "fps": 10,
+    "loop": true,
+    "note": "ground-aligned ellipse; never rotate; sized to impact max hit radius 32px",
+    "anchor": "ground point",
+    "rotate": false,
+    "hitRadius": 32
+  }
+}

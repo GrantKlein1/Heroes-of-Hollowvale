@@ -1,0 +1,230 @@
+{
+  "frames": {
+    "dfx_meteor_marker_0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "dfx_meteor_marker_1": {
+      "frame": {
+        "x": 96,
+        "y": 0,
+        "w": 96,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "dfx_meteor_marker_2": {
+      "frame": {
+        "x": 192,
+        "y": 0,
+        "w": 96,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "dfx_meteor_marker_3": {
+      "frame": {
+        "x": 288,
+        "y": 0,
+        "w": 96,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "dfx_meteor_marker_4": {
+      "frame": {
+        "x": 384,
+        "y": 0,
+        "w": 96,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "dfx_meteor_marker_5": {
+      "frame": {
+        "x": 480,
+        "y": 0,
+        "w": 96,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "dfx_meteor_marker_6": {
+      "frame": {
+        "x": 576,
+        "y": 0,
+        "w": 96,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "combat_b7/pack_b7.py",
+    "version": "1.0",
+    "image": "dragon_fx_extra.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 672,
+      "h": 48
+    },
+    "scale": "1",
+    "pxPerUnit": 36.923,
+    "atlas": "dragon_fx_extra",
+    "propCameraDegFromHorizontal": 12,
+    "groundCameraDegFromVertical": 12,
+    "anims": {
+      "dfx_meteor_marker": {
+        "frames": 7,
+        "fps": 10,
+        "loop": true,
+        "playback": "loop",
+        "frameNames": "dfx_meteor_marker_<i>",
+        "origin": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "cell": [
+          96,
+          48
+        ],
+        "durationMs": 700,
+        "note": "700ms telegraph; ground-aligned ellipse sized to 32px impact radius"
+      }
+    },
+    "effects": {
+      "meteor_marker": {
+        "frames": 7,
+        "size": [
+          96,
+          48
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pivotPx": [
+          48,
+          24
+        ],
+        "fps": 10,
+        "loop": true,
+        "note": "ground-aligned ellipse; never rotate; sized to impact max hit radius 32px",
+        "anchor": "ground point",
+        "rotate": false,
+        "hitRadius": 32
+      }
+    },
+    "note": "NEW atlas; never edit dragon_fx_v2. Ground camera. Pivot centre."
+  }
+}

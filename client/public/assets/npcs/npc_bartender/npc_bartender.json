@@ -1,0 +1,3618 @@
+{
+ "frames": {
+  "npc_bartender_idle_down_0": {
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_idle_down_1": {
+   "frame": {
+    "x": 64,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_idle_down_2": {
+   "frame": {
+    "x": 128,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_idle_down_3": {
+   "frame": {
+    "x": 192,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_idle_left_0": {
+   "frame": {
+    "x": 0,
+    "y": 96,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_idle_left_1": {
+   "frame": {
+    "x": 64,
+    "y": 96,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_idle_left_2": {
+   "frame": {
+    "x": 128,
+    "y": 96,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_idle_left_3": {
+   "frame": {
+    "x": 192,
+    "y": 96,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_idle_right_0": {
+   "frame": {
+    "x": 0,
+    "y": 192,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_idle_right_1": {
+   "frame": {
+    "x": 64,
+    "y": 192,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_idle_right_2": {
+   "frame": {
+    "x": 128,
+    "y": 192,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_idle_right_3": {
+   "frame": {
+    "x": 192,
+    "y": 192,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_idle_up_0": {
+   "frame": {
+    "x": 0,
+    "y": 288,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_idle_up_1": {
+   "frame": {
+    "x": 64,
+    "y": 288,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_idle_up_2": {
+   "frame": {
+    "x": 128,
+    "y": 288,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_idle_up_3": {
+   "frame": {
+    "x": 192,
+    "y": 288,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_down_0": {
+   "frame": {
+    "x": 0,
+    "y": 384,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_down_1": {
+   "frame": {
+    "x": 64,
+    "y": 384,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_down_2": {
+   "frame": {
+    "x": 128,
+    "y": 384,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_down_3": {
+   "frame": {
+    "x": 192,
+    "y": 384,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_down_4": {
+   "frame": {
+    "x": 256,
+    "y": 384,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_down_5": {
+   "frame": {
+    "x": 320,
+    "y": 384,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_left_0": {
+   "frame": {
+    "x": 0,
+    "y": 480,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_left_1": {
+   "frame": {
+    "x": 64,
+    "y": 480,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_left_2": {
+   "frame": {
+    "x": 128,
+    "y": 480,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_left_3": {
+   "frame": {
+    "x": 192,
+    "y": 480,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_left_4": {
+   "frame": {
+    "x": 256,
+    "y": 480,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_left_5": {
+   "frame": {
+    "x": 320,
+    "y": 480,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_right_0": {
+   "frame": {
+    "x": 0,
+    "y": 576,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_right_1": {
+   "frame": {
+    "x": 64,
+    "y": 576,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_right_2": {
+   "frame": {
+    "x": 128,
+    "y": 576,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_right_3": {
+   "frame": {
+    "x": 192,
+    "y": 576,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_right_4": {
+   "frame": {
+    "x": 256,
+    "y": 576,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_right_5": {
+   "frame": {
+    "x": 320,
+    "y": 576,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_up_0": {
+   "frame": {
+    "x": 0,
+    "y": 672,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_up_1": {
+   "frame": {
+    "x": 64,
+    "y": 672,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_up_2": {
+   "frame": {
+    "x": 128,
+    "y": 672,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_up_3": {
+   "frame": {
+    "x": 192,
+    "y": 672,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_up_4": {
+   "frame": {
+    "x": 256,
+    "y": 672,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_talk_up_5": {
+   "frame": {
+    "x": 320,
+    "y": 672,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_down_0": {
+   "frame": {
+    "x": 0,
+    "y": 768,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_down_1": {
+   "frame": {
+    "x": 64,
+    "y": 768,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_down_2": {
+   "frame": {
+    "x": 128,
+    "y": 768,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_down_3": {
+   "frame": {
+    "x": 192,
+    "y": 768,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_down_4": {
+   "frame": {
+    "x": 256,
+    "y": 768,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_down_5": {
+   "frame": {
+    "x": 320,
+    "y": 768,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_down_6": {
+   "frame": {
+    "x": 384,
+    "y": 768,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_down_7": {
+   "frame": {
+    "x": 448,
+    "y": 768,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_down_8": {
+   "frame": {
+    "x": 512,
+    "y": 768,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_down_9": {
+   "frame": {
+    "x": 576,
+    "y": 768,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_down_10": {
+   "frame": {
+    "x": 640,
+    "y": 768,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_down_11": {
+   "frame": {
+    "x": 704,
+    "y": 768,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_down_12": {
+   "frame": {
+    "x": 768,
+    "y": 768,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_left_0": {
+   "frame": {
+    "x": 0,
+    "y": 864,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_left_1": {
+   "frame": {
+    "x": 64,
+    "y": 864,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_left_2": {
+   "frame": {
+    "x": 128,
+    "y": 864,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_left_3": {
+   "frame": {
+    "x": 192,
+    "y": 864,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_left_4": {
+   "frame": {
+    "x": 256,
+    "y": 864,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_left_5": {
+   "frame": {
+    "x": 320,
+    "y": 864,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_left_6": {
+   "frame": {
+    "x": 384,
+    "y": 864,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_left_7": {
+   "frame": {
+    "x": 448,
+    "y": 864,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_left_8": {
+   "frame": {
+    "x": 512,
+    "y": 864,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_left_9": {
+   "frame": {
+    "x": 576,
+    "y": 864,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_left_10": {
+   "frame": {
+    "x": 640,
+    "y": 864,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_left_11": {
+   "frame": {
+    "x": 704,
+    "y": 864,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_left_12": {
+   "frame": {
+    "x": 768,
+    "y": 864,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_right_0": {
+   "frame": {
+    "x": 0,
+    "y": 960,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_right_1": {
+   "frame": {
+    "x": 64,
+    "y": 960,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_right_2": {
+   "frame": {
+    "x": 128,
+    "y": 960,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_right_3": {
+   "frame": {
+    "x": 192,
+    "y": 960,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_right_4": {
+   "frame": {
+    "x": 256,
+    "y": 960,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_right_5": {
+   "frame": {
+    "x": 320,
+    "y": 960,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_right_6": {
+   "frame": {
+    "x": 384,
+    "y": 960,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_right_7": {
+   "frame": {
+    "x": 448,
+    "y": 960,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_right_8": {
+   "frame": {
+    "x": 512,
+    "y": 960,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_right_9": {
+   "frame": {
+    "x": 576,
+    "y": 960,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_right_10": {
+   "frame": {
+    "x": 640,
+    "y": 960,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_right_11": {
+   "frame": {
+    "x": 704,
+    "y": 960,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_right_12": {
+   "frame": {
+    "x": 768,
+    "y": 960,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_up_0": {
+   "frame": {
+    "x": 0,
+    "y": 1056,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_up_1": {
+   "frame": {
+    "x": 64,
+    "y": 1056,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_up_2": {
+   "frame": {
+    "x": 128,
+    "y": 1056,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_up_3": {
+   "frame": {
+    "x": 192,
+    "y": 1056,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_up_4": {
+   "frame": {
+    "x": 256,
+    "y": 1056,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_up_5": {
+   "frame": {
+    "x": 320,
+    "y": 1056,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_up_6": {
+   "frame": {
+    "x": 384,
+    "y": 1056,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_up_7": {
+   "frame": {
+    "x": 448,
+    "y": 1056,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_up_8": {
+   "frame": {
+    "x": 512,
+    "y": 1056,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_up_9": {
+   "frame": {
+    "x": 576,
+    "y": 1056,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_up_10": {
+   "frame": {
+    "x": 640,
+    "y": 1056,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_up_11": {
+   "frame": {
+    "x": 704,
+    "y": 1056,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_bottle_clean_up_12": {
+   "frame": {
+    "x": 768,
+    "y": 1056,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_wipe_counter_down_0": {
+   "frame": {
+    "x": 0,
+    "y": 1152,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_wipe_counter_down_1": {
+   "frame": {
+    "x": 64,
+    "y": 1152,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_wipe_counter_down_2": {
+   "frame": {
+    "x": 128,
+    "y": 1152,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_wipe_counter_down_3": {
+   "frame": {
+    "x": 192,
+    "y": 1152,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_wipe_counter_down_4": {
+   "frame": {
+    "x": 256,
+    "y": 1152,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_wipe_counter_down_5": {
+   "frame": {
+    "x": 320,
+    "y": 1152,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_wipe_counter_down_6": {
+   "frame": {
+    "x": 384,
+    "y": 1152,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_wipe_counter_down_7": {
+   "frame": {
+    "x": 448,
+    "y": 1152,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_wipe_counter_down_8": {
+   "frame": {
+    "x": 512,
+    "y": 1152,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_wipe_counter_down_9": {
+   "frame": {
+    "x": 576,
+    "y": 1152,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_wipe_counter_down_10": {
+   "frame": {
+    "x": 640,
+    "y": 1152,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_wipe_counter_down_11": {
+   "frame": {
+    "x": 704,
+    "y": 1152,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_down_0": {
+   "frame": {
+    "x": 0,
+    "y": 1248,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_down_1": {
+   "frame": {
+    "x": 64,
+    "y": 1248,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_down_2": {
+   "frame": {
+    "x": 128,
+    "y": 1248,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_down_3": {
+   "frame": {
+    "x": 192,
+    "y": 1248,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_down_4": {
+   "frame": {
+    "x": 256,
+    "y": 1248,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_down_5": {
+   "frame": {
+    "x": 320,
+    "y": 1248,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_down_6": {
+   "frame": {
+    "x": 384,
+    "y": 1248,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_down_7": {
+   "frame": {
+    "x": 448,
+    "y": 1248,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_down_8": {
+   "frame": {
+    "x": 512,
+    "y": 1248,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_down_9": {
+   "frame": {
+    "x": 576,
+    "y": 1248,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_left_0": {
+   "frame": {
+    "x": 0,
+    "y": 1344,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_left_1": {
+   "frame": {
+    "x": 64,
+    "y": 1344,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_left_2": {
+   "frame": {
+    "x": 128,
+    "y": 1344,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_left_3": {
+   "frame": {
+    "x": 192,
+    "y": 1344,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_left_4": {
+   "frame": {
+    "x": 256,
+    "y": 1344,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_left_5": {
+   "frame": {
+    "x": 320,
+    "y": 1344,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_left_6": {
+   "frame": {
+    "x": 384,
+    "y": 1344,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_left_7": {
+   "frame": {
+    "x": 448,
+    "y": 1344,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_left_8": {
+   "frame": {
+    "x": 512,
+    "y": 1344,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_left_9": {
+   "frame": {
+    "x": 576,
+    "y": 1344,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_right_0": {
+   "frame": {
+    "x": 0,
+    "y": 1440,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_right_1": {
+   "frame": {
+    "x": 64,
+    "y": 1440,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_right_2": {
+   "frame": {
+    "x": 128,
+    "y": 1440,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_right_3": {
+   "frame": {
+    "x": 192,
+    "y": 1440,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_right_4": {
+   "frame": {
+    "x": 256,
+    "y": 1440,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_right_5": {
+   "frame": {
+    "x": 320,
+    "y": 1440,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_right_6": {
+   "frame": {
+    "x": 384,
+    "y": 1440,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_right_7": {
+   "frame": {
+    "x": 448,
+    "y": 1440,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_right_8": {
+   "frame": {
+    "x": 512,
+    "y": 1440,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_right_9": {
+   "frame": {
+    "x": 576,
+    "y": 1440,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_up_0": {
+   "frame": {
+    "x": 0,
+    "y": 1536,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_up_1": {
+   "frame": {
+    "x": 64,
+    "y": 1536,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_up_2": {
+   "frame": {
+    "x": 128,
+    "y": 1536,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_up_3": {
+   "frame": {
+    "x": 192,
+    "y": 1536,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_up_4": {
+   "frame": {
+    "x": 256,
+    "y": 1536,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_up_5": {
+   "frame": {
+    "x": 320,
+    "y": 1536,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_up_6": {
+   "frame": {
+    "x": 384,
+    "y": 1536,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_up_7": {
+   "frame": {
+    "x": 448,
+    "y": 1536,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_up_8": {
+   "frame": {
+    "x": 512,
+    "y": 1536,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "npc_bartender_gesture_up_9": {
+   "frame": {
+    "x": 576,
+    "y": 1536,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  }
+ },
+ "meta": {
+  "app": "Blender 4.5 Cycles (npc_b6/scripts/build_npc_bartender.py + tharos_clips.py) + npc_b6/scripts/pack_final.py",
+  "version": "1.0",
+  "image": "npc_bartender.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 832,
+   "h": 1632
+  },
+  "scale": "1",
+  "pxPerUnit": 36.923,
+  "origin": {
+   "x": 0.5,
+   "y": 0.9271
+  },
+  "originExact": "89/96 = 0.927083 (feet row 89, same as knight)",
+  "rows": [
+   "idle:down",
+   "idle:left",
+   "idle:right",
+   "idle:up",
+   "talk:down",
+   "talk:left",
+   "talk:right",
+   "talk:up",
+   "bottle_clean:down",
+   "bottle_clean:left",
+   "bottle_clean:right",
+   "bottle_clean:up",
+   "wipe_counter:down",
+   "gesture:down",
+   "gesture:left",
+   "gesture:right",
+   "gesture:up"
+  ],
+  "note": "left and right rendered separately (not mirrored); do not use flipX",
+  "footprint": {
+   "x": -13,
+   "y": -4,
+   "w": 26,
+   "h": 8,
+   "shape": "ellipse",
+   "note": "collision footprint centred on feet"
+  },
+  "hurtbox": null,
+  "hittable": false,
+  "feetPivotNote": "footprint px relative to the feet pivot (origin), +y down; x,y = top-left",
+  "anims": {
+   "idle": {
+    "frames": 4,
+    "fps": 6,
+    "loop": true,
+    "playback": "loop",
+    "durationMs": 667,
+    "directions": [
+     "down",
+     "left",
+     "right",
+     "up"
+    ],
+    "frameNames": "npc_bartender_idle_<dir>_<i>",
+    "role": "base idle (Gate D approved motion)"
+   },
+   "talk": {
+    "frames": 6,
+    "fps": 8,
+    "loop": true,
+    "playback": "loop",
+    "durationMs": 750,
+    "directions": [
+     "down",
+     "left",
+     "right",
+     "up"
+    ],
+    "frameNames": "npc_bartender_talk_<dir>_<i>",
+    "role": "play while the dialogue box is open"
+   },
+   "bottle_clean": {
+    "frames": 13,
+    "fps": 8,
+    "loop": false,
+    "playback": "oneshot",
+    "durationMs": 1625,
+    "directions": [
+     "down",
+     "left",
+     "right",
+     "up"
+    ],
+    "frameNames": "npc_bartender_bottle_clean_<dir>_<i>",
+    "role": "idle variant",
+    "startsOnIdleFrame0": true,
+    "endsOnIdleFrame0": true,
+    "returnTo": "idle",
+    "holdLast": false,
+    "note": "Dips to set the tankard down and take a bottle (prop swap on frames 2 and 10, the lowest point). Facing down behind the bar the counter hides the swap; in left/right/up the swap is visible at knee height as a quick pick-up/put-down from a low shelf."
+   },
+   "wipe_counter": {
+    "frames": 12,
+    "fps": 8,
+    "loop": false,
+    "playback": "oneshot",
+    "durationMs": 1500,
+    "directions": [
+     "down"
+    ],
+    "frameNames": "npc_bartender_wipe_counter_<dir>_<i>",
+    "role": "idle variant",
+    "startsOnIdleFrame0": true,
+    "endsOnIdleFrame0": true,
+    "returnTo": "idle",
+    "holdLast": false,
+    "downOnlyReason": "Needs the bar top in front of him: the rag is lowered to the B1 tavern_bar_counter top line, which only exists as a south-facing (camera-facing) prop. In left/right/up he would be wiping empty air at thigh height. When Tharos faces left/right/up, pick another variant."
+   },
+   "gesture": {
+    "frames": 10,
+    "fps": 8,
+    "loop": false,
+    "playback": "oneshot",
+    "durationMs": 1250,
+    "directions": [
+     "down",
+     "left",
+     "right",
+     "up"
+    ],
+    "frameNames": "npc_bartender_gesture_<dir>_<i>",
+    "role": "idle variant",
+    "startsOnIdleFrame0": true,
+    "endsOnIdleFrame0": true,
+    "returnTo": "idle",
+    "holdLast": false,
+    "note": "Facing left the wave uses its own per-facing beats (35<->75 deg forearm swing) so the far hand stays visible beside/above the head on every frame (2026-11-09 QA fix; other facings unchanged)."
+   }
+  },
+  "idleVariants": {
+   "pool": [
+    "bottle_clean",
+    "wipe_counter",
+    "gesture"
+   ],
+   "intervalSec": {
+    "min": 6,
+    "max": 14
+   },
+   "weights": {
+    "bottle_clean": 1,
+    "wipe_counter": 1,
+    "gesture": 1
+   },
+   "rule": "loop idle; after a random 6-14 s pick a variant valid for the current facing (wipe_counter: down only), play once, return to idle at frame 0, re-roll the timer. Never while talk is playing.",
+   "noRepeat": true
+  },
+  "readability": "shirt silhouette rim: shirt pixels within 4 px (manhattan) of the transparent exterior use shirt_md (#c2b090) instead of shirt (#d8cbb0); palette, design and lighting unchanged from Gate D",
+  "draft": false,
+  "gate": "final sheets after Gate D approval (Nov 9 2026); not integrated"
+ }
+}

@@ -384,18 +384,19 @@ describe('Prop and Tile Contract Validation (Phase 1 AS-2)', () => {
     expect(manifest.groups.wilderness).toContain('village_props');
   });
 
-  it('registers all 15 ground tilesets in manifest.tiles with margin 1 and spacing 2', () => {
+  it('registers all 23 ground tilesets in manifest.tiles with margin 1 and spacing 2', () => {
     const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8'));
     expect(manifest.tiles).toBeDefined();
 
     const expectedTilesets = [
-      'bridge_plank', 'cliff', 'cliff_face', 'cobble_road', 'dirt_road',
-      'dungeon_floor', 'dungeon_wall', 'grass', 'interior_market_floor',
-      'interior_market_wall', 'interior_tavern_floor', 'interior_tavern_wall',
-      'water', 'water_ford', 'water_shore'
+      'ash_fill', 'ash_ground', 'bridge_plank', 'cliff', 'cliff_face', 'cobble_road', 'dirt_road',
+      'dungeon_floor', 'dungeon_wall', 'dungeon_wall_trim', 'forest_floor', 'grass',
+      'interior_market_floor', 'interior_market_wall', 'interior_market_wall_trim',
+      'interior_tavern_floor', 'interior_tavern_wall', 'interior_tavern_wall_trim',
+      'molten_floor', 'scorched_floor', 'water', 'water_ford', 'water_shore'
     ];
 
-    expect(Object.keys(manifest.tiles).length).toBe(15);
+    expect(Object.keys(manifest.tiles).length).toBe(23);
     for (const tsName of expectedTilesets) {
       const entry = manifest.tiles[tsName];
       expect(entry, `Tileset '${tsName}' must be in manifest.tiles`).toBeDefined();
@@ -412,9 +413,10 @@ describe('Prop and Tile Contract Validation (Phase 1 AS-2)', () => {
       expect(fs.existsSync(imgPath), `Image file ${imgPath} must exist on disk`).toBe(true);
     }
 
-    // Verify animated water flags
+    // Verify animated water and molten floor flags
     expect(manifest.tiles.water.hasAnimation).toBe(true);
     expect(manifest.tiles.water_shore.hasAnimation).toBe(true);
+    expect(manifest.tiles.molten_floor.hasAnimation).toBe(true);
     expect(manifest.tiles.grass.hasAnimation).toBe(false);
   });
 
@@ -520,5 +522,44 @@ describe('Prop and Tile Contract Validation (Phase 1 AS-2)', () => {
     });
     expect(result.valid).toBe(false);
     expect(result.errors.some(e => e.includes("missing expected frame 'hearth_burn_down_1'"))).toBe(true);
+  });
+
+  it('validates AS-3 new groups, props, NPCs, loot, and dragon-fx', () => {
+    const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8'));
+
+    // 4 new groups
+    expect(manifest.groups.interiors).toEqual(['interior_props', 'npc_bartender', 'npc_vendor']);
+    expect(manifest.groups.cavern).toEqual(['dungeon_props', 'dungeon_brazier', 'treasure_chest']);
+    expect(manifest.groups.loot).toEqual(['loot_pickups']);
+    expect(manifest.groups.boss_fx_extra).toEqual(['dragon_fx_extra']);
+
+    // Wilderness additions
+    expect(manifest.groups.wilderness).toContain('wild_props');
+    expect(manifest.groups.wilderness).toContain('wild_props_4b');
+    expect(manifest.groups.wilderness).toContain('ember_vent');
+
+    // Boot and village untouched
+    expect(manifest.groups.boot).toEqual(['fx_common', 'critters', 'knight']);
+    expect(manifest.groups.village).toEqual(['knight', 'thief', 'dwarf', 'mage', 'critters', 'fx_common', 'village_props', 'hearth']);
+
+    // Validate report
+    const report = validateManifest(MANIFEST_PATH, { repoRoot: REPO_ROOT });
+    expect(report.valid).toBe(true);
+    expect(report.errors).toEqual([]);
+
+    // Check NPC properties (footprint required, hurtbox optional / null)
+    const bartenderJson = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'client', 'public', manifest.assets.npc_bartender.json), 'utf8'));
+    expect(bartenderJson.meta.footprint).toBeDefined();
+    expect(bartenderJson.meta.hurtbox).toBeNull();
+    expect(bartenderJson.meta.anims.wipe_counter.directions).toEqual(['down']);
+
+    const vendorJson = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'client', 'public', manifest.assets.npc_vendor.json), 'utf8'));
+    expect(vendorJson.meta.footprint).toBeDefined();
+    expect(vendorJson.meta.hurtbox).toBeNull();
+
+    // Check loot pickups
+    const lootJson = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'client', 'public', manifest.assets.loot_pickups.json), 'utf8'));
+    expect(lootJson.meta.anims.loot_ruby_idle.directions).toEqual(['down']);
+    expect(lootJson.meta.anims.loot_collect.directions).toEqual(['down']);
   });
 });

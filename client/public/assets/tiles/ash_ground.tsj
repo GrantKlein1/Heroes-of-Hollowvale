@@ -1,0 +1,919 @@
+{
+  "columns": 4,
+  "image": "ash_ground.png",
+  "imageheight": 136,
+  "imagewidth": 136,
+  "margin": 1,
+  "spacing": 2,
+  "name": "ash_ground",
+  "tilecount": 16,
+  "tiledversion": "1.10.2",
+  "tileheight": 32,
+  "tilewidth": 32,
+  "type": "tileset",
+  "version": "1.10",
+  "tiles": [
+    {
+      "id": 0,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 0
+        },
+        {
+          "name": "wangId",
+          "type": "int",
+          "value": 0
+        },
+        {
+          "name": "nw",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "ne",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "sw",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "se",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 1
+        },
+        {
+          "name": "wangId",
+          "type": "int",
+          "value": 1
+        },
+        {
+          "name": "nw",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "ne",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "sw",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "se",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "wangId",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "nw",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "ne",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "sw",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "se",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "wangId",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "nw",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "ne",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "sw",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "se",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 4
+        },
+        {
+          "name": "wangId",
+          "type": "int",
+          "value": 4
+        },
+        {
+          "name": "nw",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "ne",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "sw",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "se",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 5
+        },
+        {
+          "name": "wangId",
+          "type": "int",
+          "value": 5
+        },
+        {
+          "name": "nw",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "ne",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "sw",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "se",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 6
+        },
+        {
+          "name": "wangId",
+          "type": "int",
+          "value": 6
+        },
+        {
+          "name": "nw",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "ne",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "sw",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "se",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 7
+        },
+        {
+          "name": "wangId",
+          "type": "int",
+          "value": 7
+        },
+        {
+          "name": "nw",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "ne",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "sw",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "se",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 8
+        },
+        {
+          "name": "wangId",
+          "type": "int",
+          "value": 8
+        },
+        {
+          "name": "nw",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "ne",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "sw",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "se",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 9
+        },
+        {
+          "name": "wangId",
+          "type": "int",
+          "value": 9
+        },
+        {
+          "name": "nw",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "ne",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "sw",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "se",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 10
+        },
+        {
+          "name": "wangId",
+          "type": "int",
+          "value": 10
+        },
+        {
+          "name": "nw",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "ne",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "sw",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "se",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 11
+        },
+        {
+          "name": "wangId",
+          "type": "int",
+          "value": 11
+        },
+        {
+          "name": "nw",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "ne",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "sw",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "se",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 12
+        },
+        {
+          "name": "wangId",
+          "type": "int",
+          "value": 12
+        },
+        {
+          "name": "nw",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "ne",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "sw",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "se",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 13
+        },
+        {
+          "name": "wangId",
+          "type": "int",
+          "value": 13
+        },
+        {
+          "name": "nw",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "ne",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "sw",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "se",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 14
+        },
+        {
+          "name": "wangId",
+          "type": "int",
+          "value": 14
+        },
+        {
+          "name": "nw",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "ne",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "sw",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "se",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 15
+        },
+        {
+          "name": "wangId",
+          "type": "int",
+          "value": 15
+        },
+        {
+          "name": "nw",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "ne",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "sw",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "se",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    }
+  ],
+  "properties": [
+    {
+      "name": "cameraDeg",
+      "type": "float",
+      "value": 12
+    },
+    {
+      "name": "pxPerUnit",
+      "type": "float",
+      "value": 36.923
+    },
+    {
+      "name": "extrude",
+      "type": "int",
+      "value": 1
+    },
+    {
+      "name": "wangBitmask",
+      "type": "string",
+      "value": "NW=1,NE=2,SW=4,SE=8"
+    },
+    {
+      "name": "outerTerrain",
+      "type": "string",
+      "value": "tiles_as2_v5 grass"
+    },
+    {
+      "name": "draft",
+      "type": "bool",
+      "value": true
+    }
+  ],
+  "wangsets": [
+    {
+      "name": "ash_ground_blob16",
+      "type": "corner",
+      "colors": [
+        {
+          "name": "grass",
+          "color": "#4f7d2c",
+          "probability": 1,
+          "tile": 0
+        },
+        {
+          "name": "ash",
+          "color": "#4a453f",
+          "probability": 1,
+          "tile": 15
+        }
+      ],
+      "wangtiles": [
+        {
+          "tileid": 0,
+          "wangid": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "tileid": 1,
+          "wangid": [
+            2,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "tileid": 2,
+          "wangid": [
+            1,
+            0,
+            2,
+            0,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "tileid": 3,
+          "wangid": [
+            2,
+            2,
+            2,
+            0,
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "tileid": 4,
+          "wangid": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            2,
+            0
+          ]
+        },
+        {
+          "tileid": 5,
+          "wangid": [
+            2,
+            0,
+            1,
+            1,
+            1,
+            0,
+            2,
+            2
+          ]
+        },
+        {
+          "tileid": 6,
+          "wangid": [
+            1,
+            0,
+            2,
+            0,
+            1,
+            0,
+            2,
+            0
+          ]
+        },
+        {
+          "tileid": 7,
+          "wangid": [
+            2,
+            2,
+            2,
+            0,
+            1,
+            0,
+            2,
+            2
+          ]
+        },
+        {
+          "tileid": 8,
+          "wangid": [
+            1,
+            1,
+            1,
+            0,
+            2,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "tileid": 9,
+          "wangid": [
+            2,
+            0,
+            1,
+            0,
+            2,
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "tileid": 10,
+          "wangid": [
+            1,
+            0,
+            2,
+            2,
+            2,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "tileid": 11,
+          "wangid": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "tileid": 12,
+          "wangid": [
+            1,
+            1,
+            1,
+            0,
+            2,
+            2,
+            2,
+            0
+          ]
+        },
+        {
+          "tileid": 13,
+          "wangid": [
+            2,
+            0,
+            1,
+            0,
+            2,
+            2,
+            2,
+            2
+          ]
+        },
+        {
+          "tileid": 14,
+          "wangid": [
+            1,
+            0,
+            2,
+            2,
+            2,
+            2,
+            2,
+            0
+          ]
+        },
+        {
+          "tileid": 15,
+          "wangid": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ]
+        }
+      ]
+    }
+  ]
+}
