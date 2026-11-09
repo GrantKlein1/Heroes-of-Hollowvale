@@ -509,6 +509,21 @@ export class Player extends Actor {
   }
 
   /**
+   * Resets player state to IDLE upon area entrance respawn.
+   */
+  respawn() {
+    this.transition(ACTOR_STATES.IDLE, { force: true })
+    if (this.body && typeof this.body.setVelocity === 'function') {
+      this.body.setVelocity(0, 0)
+    }
+    if (this.body) {
+      this.body.enable = true
+    }
+    this.lastDamageTaken = 0
+    this.playAnim('idle', false)
+  }
+
+  /**
    * Triggers Thief stealth vanish animation.
    *
    * @param {number} [now=performance.now()]

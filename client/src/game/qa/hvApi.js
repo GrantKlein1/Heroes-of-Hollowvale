@@ -6,6 +6,7 @@
  */
 
 import { getSeed, setSeed } from '../rng.js'
+import { respawnPlayer, handlePlayerDeath } from '../combat/death.js'
 
 /**
  * Determines whether QA mode / window.__hv should be activated.
@@ -182,6 +183,41 @@ export function createHvApi(scene) {
      */
     playerState: () => {
       return scene?.player?.state || null
+    },
+
+    /**
+     * Respawns player at area entrance with full HP & mana.
+     */
+    respawn: () => {
+      return respawnPlayer(scene)
+    },
+
+    /**
+     * Triggers player death sequence.
+     */
+    killPlayer: (killer = 'goblin', options = {}) => {
+      return handlePlayerDeath(scene, killer, options)
+    },
+
+    /**
+     * Spawns an ambient critter.
+     */
+    spawnCritter: (type = 'squirrel_red', x, y) => {
+      return scene?.spawnCritter?.(type, x, y) || null
+    },
+
+    /**
+     * Returns list of active ambient critters.
+     */
+    critters: () => {
+      return (scene?.critters || []).map((c) => ({
+        type: c.critterType,
+        state: c.state,
+        facing: c.facing,
+        x: c.x,
+        y: c.y,
+        lastAnim: c.lastAnimKey,
+      }))
     },
 
     /**
