@@ -9,6 +9,7 @@ import { API_ROUTE_PREFIX } from './config/paths.js';
 import { getElevenLabsApiKey, getGroqApiKey } from './config/secrets.js';
 import { warmupReranker } from './rag/rerank.js';
 import chatRouter from './routes/chat.js';
+import chatStreamRouter from './routes/chatStream.js';
 import ttsRouter from './routes/tts.js';
 import errorHandler from './middleware/errorHandler.js';
 
@@ -44,6 +45,7 @@ app.get(`${API_ROUTE_PREFIX}/health`, (req, res) => {
 
 // Routes
 app.use(API_ROUTE_PREFIX, chatRouter);
+app.use(API_ROUTE_PREFIX, chatStreamRouter);
 app.use(API_ROUTE_PREFIX, ttsRouter);
 
 // Error handler
