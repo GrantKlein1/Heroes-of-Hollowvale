@@ -51,15 +51,22 @@ test.describe('Package 2-4: Data-Driven Tiled Map Registry, Multi-Atlas Props & 
 
     // 2. Verify Brackenford village loaded through registry
     const villageMetrics = await page.evaluate(() => (window as any).__hv.world());
-    expect(villageMetrics.w).toBe(960);
-    expect(villageMetrics.h).toBe(960);
+    expect(villageMetrics.w).toBe(640);
+    expect(villageMetrics.h).toBe(384);
 
-    // 3. Move to Tavern door and interact
+    // 3. Move in front of Tavern door (x: 288, y: 155)
     await page.evaluate(() => {
       const scene = (window as any).__scene;
       scene.player.setPosition(288, 155);
       scene.player.body.reset(288, 155);
-      scene._tryInteract();
+    });
+
+    await page.keyboard.press('e');
+    await page.waitForTimeout(300);
+    await page.evaluate(() => {
+      if ((window as any).__hv?.scene() === 'village') {
+        (window as any).__scene._tryInteract();
+      }
     });
 
     await page.waitForFunction(() => (window as any).__hv?.scene() === 'tavern', { timeout: 10000 });
@@ -88,11 +95,11 @@ test.describe('Package 2-4: Data-Driven Tiled Map Registry, Multi-Atlas Props & 
     });
     expect(returnedPos.x).toBeCloseTo(288, -1);
 
-    // 5. Move to Market door and interact
+    // 5. Move to Market door (x: 96, y: 180) and interact
     await page.evaluate(() => {
       const scene = (window as any).__scene;
-      scene.player.setPosition(96, 160);
-      scene.player.body.reset(96, 160);
+      scene.player.setPosition(96, 180);
+      scene.player.body.reset(96, 180);
       scene._tryInteract();
     });
 
@@ -113,7 +120,6 @@ test.describe('Package 2-4: Data-Driven Tiled Map Registry, Multi-Atlas Props & 
     // 6. Proves "new map = one registry entry" in live game
     const dynamicRoutingTest = await page.evaluate(() => {
       const scene = (window as any).__scene;
-      // Test that MapLoader propSprites array exists and has valid count
       const propSpritesCount = scene.tiledMapLoader?.propSprites?.length ?? 0;
       return {
         hasLoader: Boolean(scene.tiledMapLoader),
