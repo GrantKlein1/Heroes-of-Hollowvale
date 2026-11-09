@@ -204,6 +204,8 @@ export default class HollowvaleScene extends Phaser.Scene {
 
     if (isTiledMaps()) {
       this.load.tilemapTiledJSON('brackenford', 'maps/brackenford.tmj')
+      this.load.tilemapTiledJSON('tavern', 'maps/tavern.tmj')
+      this.load.tilemapTiledJSON('market', 'maps/market.tmj')
       const tiles = defaultManifest.tiles || {}
       for (const tileDef of Object.values(tiles)) {
         if (tileDef.id && tileDef.image && !this.textures.exists(tileDef.id)) {
@@ -1299,7 +1301,10 @@ export default class HollowvaleScene extends Phaser.Scene {
       this.nextWaveAt = 0
     }
     if (id === 'wilderness') this._showWilderness(spawn, slideMs)
-    else if (isTiledMaps() && id === 'village') this._showTiledMap('brackenford', spawn, slideMs)
+    else if (isTiledMaps() && (id === 'village' || id === 'tavern' || id === 'market')) {
+      const mapKey = id === 'village' ? 'brackenford' : id
+      this._showTiledMap(mapKey, spawn, slideMs)
+    }
     else this._showPainted(id, spawn, slideMs)
     this._skipRest = true
     this._activeLabel = null
@@ -1357,16 +1362,17 @@ export default class HollowvaleScene extends Phaser.Scene {
     const mounted = loader.mount(this, { key: mapKey, propAtlasKey: 'village_props' })
 
     // Wire collision layer to physics solids
+    if (!this.tiledColliders) this.tiledColliders = []
     const collisionLayer = mounted?.layers?.get('collision')
     if (collisionLayer) {
-      this.physics.add.collider(this.player, collisionLayer)
-      this.physics.add.collider(this.enemies, collisionLayer)
+      this.tiledColliders.push(this.physics.add.collider(this.player, collisionLayer))
+      this.tiledColliders.push(this.physics.add.collider(this.enemies, collisionLayer))
     }
 
     // Wire prop footprints static group
     if (mounted?.propGroup) {
-      this.physics.add.collider(this.player, mounted.propGroup)
-      this.physics.add.collider(this.enemies, mounted.propGroup)
+      this.tiledColliders.push(this.physics.add.collider(this.player, mounted.propGroup))
+      this.tiledColliders.push(this.physics.add.collider(this.enemies, mounted.propGroup))
     }
 
     // Size player
@@ -1419,14 +1425,30 @@ export default class HollowvaleScene extends Phaser.Scene {
 
       if (z.isExit || z.type === 'exit') {
         const target = z.properties?.targetMap || 'wilderness'
-        const prompt = this._pushPrompt(rect, `Press E to exit to ${target}`, 'Wilderness', 'exit', 'wilderness')
-        prompt.targetMap = target
-        prompt.targetSpawn = z.properties?.targetSpawn
-      } else if (z.isDoor || z.type === 'door' || z.name === 'door_tavern') {
-        const prompt = this._pushPrompt(rect, z.properties?.prompt || 'Press E to enter The Flagon', 'The Flagon', 'exit', 'travel')
-        prompt.to = 'tavern'
+        if (target.includes('brackenford') || target === 'village') {
+          const prompt = this._pushPrompt(rect, z.properties?.prompt || 'Press E to exit to Brackenford', 'Village', 'exit', 'travel')
+          prompt.to = 'village'
+          prompt.spawn = 'village'
+          prompt.targetMap = target
+          prompt.targetSpawn = z.properties?.targetSpawn
+        } else {
+          const prompt = this._pushPrompt(rect, `Press E to exit to ${target}`, 'Wilderness', 'exit', 'wilderness')
+          prompt.targetMap = target
+          prompt.targetSpawn = z.properties?.targetSpawn
+        }
+      } else if (z.isDoor || z.type === 'door' || z.name === 'door_tavern' || z.name === 'door_market') {
+        const target = z.properties?.to || (z.name === 'door_market' ? 'market' : 'tavern')
+        const shortName = target === 'market' ? 'Market' : 'The Flagon'
+        const defPrompt = target === 'market' ? 'Press E to enter the Market' : 'Press E to enter The Flagon'
+        const prompt = this._pushPrompt(rect, z.properties?.prompt || defPrompt, shortName, 'exit', 'travel')
+        prompt.to = target
         prompt.spawn = { nx: 0.5, ny: 0.82 }
         prompt.save = 'village'
+      } else if (z.isNpc || z.type === 'npc') {
+        const action = z.properties?.action || (z.name?.toLowerCase().includes('hest') ? 'vendor' : 'bartender')
+        const shortLabel = action === 'vendor' ? 'Vendor' : 'Tharos'
+        const defPrompt = action === 'vendor' ? 'Press E to trade with Hest Mallow' : 'Press E to talk to Tharos'
+        this._pushPrompt(rect, z.properties?.prompt || defPrompt, shortLabel, 'talk', action)
       } else if (z.type === 'landmark' || z.name === 'The Flagon') {
         const label = z.properties?.label || z.properties?.prompt || 'The Flagon notice board'
         this._pushPrompt(rect, `Press E to inspect: ${label}`, 'Notice', 'talk', 'bartender')
@@ -1808,6 +1830,13 @@ export default class HollowvaleScene extends Phaser.Scene {
   }
 
   _clearVisuals() {
+    if (this.tiledColliders) {
+      for (let i = 0; i < this.tiledColliders.length; i++) {
+        const c = this.tiledColliders[i]
+        if (c && typeof c.destroy === 'function') c.destroy()
+      }
+      this.tiledColliders.length = 0
+    }
     if (this.tiledMapLoader) {
       this.tiledMapLoader.destroy()
       this.tiledMapLoader = null

@@ -11,7 +11,7 @@
   "version": "1.10",
   "tiledversion": "1.10.2",
   "nextlayerid": 8,
-  "nextobjectid": 21,
+  "nextobjectid": 22,
   "properties": [
     {
       "name": "placeName",
@@ -7398,6 +7398,33 @@
             }
           ],
           "id": 20
+        },
+        {
+          "name": "door_market",
+          "type": "door",
+          "x": 64,
+          "y": 96,
+          "width": 64,
+          "height": 128,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "door"
+            },
+            {
+              "name": "prompt",
+              "type": "string",
+              "value": "Press E to enter the Market"
+            },
+            {
+              "name": "to",
+              "type": "string",
+              "value": "market"
+            }
+          ],
+          "id": 21
         }
       ]
     },
