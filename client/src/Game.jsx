@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react'
-import { sendChat as apiSendChat } from './lib/api'
+import { sendChat as apiSendChat, sendChatWithFallback } from './lib/api'
 import { PATHS, CLASS_SPRITES, ITEM_ICONS, DEFAULT_ITEM_ICON, COMPOSITE_SPRITES, ANIMATED_SWORD_FRAMES } from './config/paths'
 import AnimatedSprite from './components/AnimatedSprite'
 import PhaserGame from './components/PhaserGame'
@@ -1479,9 +1479,37 @@ export default function Game() {
         ? ragHintOverride
         : (chatTopic ? TOPIC_RAG_HINTS[chatTopic] : undefined)
       const payload = { npc: 'bartender', message: text, context, ragHints }
-      const res = await apiSendChat(payload)
+
+      let hasInsertedBubble = false
+      const res = await sendChatWithFallback({
+        ...payload,
+        onDelta: (_chunk, accumulated) => {
+          setChatMessages(msgs => {
+            if (!hasInsertedBubble) {
+              hasInsertedBubble = true
+              return [...msgs, { role: 'assistant', content: accumulated }]
+            }
+            const last = msgs[msgs.length - 1]
+            if (last && last.role === 'assistant') {
+              return [...msgs.slice(0, -1), { ...last, content: accumulated }]
+            }
+            return [...msgs, { role: 'assistant', content: accumulated }]
+          })
+        },
+      })
+
       const reply = res?.reply || ''
-      setChatMessages(msgs => [...msgs, { role: 'assistant', content: reply }])
+      setChatMessages(msgs => {
+        if (!hasInsertedBubble) {
+          return [...msgs, { role: 'assistant', content: reply }]
+        }
+        const last = msgs[msgs.length - 1]
+        if (last && last.role === 'assistant') {
+          return [...msgs.slice(0, -1), { ...last, content: reply }]
+        }
+        return [...msgs, { role: 'assistant', content: reply }]
+      })
+
       // Stream bartender reply over EventBus → Web Audio TTS player
       if (ttsEnabled && reply) {
         eventBus.emit(GameEvents.NPC_SPEAK, { npc: 'bartender', text: reply })
