@@ -170,18 +170,20 @@ router.post('/chat/stream', async (req, res, next) => {
     res.write(`event: meta\ndata: ${JSON.stringify({ npc, sessionId, caps, turnId })}\n\n`);
 
     // Handle client connection disconnect
-    res.on('close', () => {
-      if (!res.writableEnded && !isAborted && !isTimedOut) {
-        isAborted = true;
-        try {
-          abortController.abort(new Error('Client disconnected'));
-        } catch {
-          /* ignore */
+    if (res && typeof res.on === 'function') {
+      res.on('close', () => {
+        if (!res.writableEnded && !isAborted && !isTimedOut) {
+          isAborted = true;
+          try {
+            abortController.abort(new Error('Client disconnected'));
+          } catch {
+            /* ignore */
+          }
+          abortTurn(turnId, 'client_disconnect');
+          finishMetrics({ aborted: true });
         }
-        abortTurn(turnId, 'client_disconnect');
-        finishMetrics({ aborted: true });
-      }
-    });
+      });
+    }
 
     // Check if turn was aborted during initial setup
     if (isAborted || isTimedOut) {

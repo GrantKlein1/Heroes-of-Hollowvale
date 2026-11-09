@@ -43,12 +43,17 @@ test('TTS_MODE unset: Option B unchanged and ws attachment disabled (Acceptance 
 
     // Option B HTTP endpoint continues to function unchanged
     const turn = createTurn({ turnId: 'opt-b-turn' });
+    finishTurn('opt-b-turn');
     const res = await fetch(`http://127.0.0.1:${port}/api/tts/turn/opt-b-turn`);
     // 501 without key or 200 with key; verifies HTTP handler works as in L-6
     assert.ok(res.status === 501 || res.status === 200);
+    try { await res.body?.cancel(); } catch { /* ignore */ }
 
+    server.closeAllConnections?.();
     server.close();
   } finally {
+    try { server?.closeAllConnections?.(); } catch { /* ignore */ }
+    try { server?.close?.(); } catch { /* ignore */ }
     if (originalMode !== undefined) {
       process.env.TTS_MODE = originalMode;
     } else {
