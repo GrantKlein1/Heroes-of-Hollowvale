@@ -206,6 +206,48 @@ function createMockScene() {
       },
       frameDef: { w: 96, h: 104, pivot: { x: 0.5, y: 0.8846 } },
     },
+    knight_run: {
+      meta: {
+        origin: { x: 0.5, y: 0.9271 },
+        footprint: { x: -12, y: -4, w: 23, h: 7, shape: 'ellipse' },
+      },
+      frameDef: { w: 64, h: 96, pivot: { x: 0.5, y: 0.9271 } },
+    },
+    knight_attack2: {
+      meta: {
+        origin: { x: 0.5, y: 0.9271 },
+        footprint: { x: -12, y: -4, w: 23, h: 7, shape: 'ellipse' },
+        anims: {
+          attack_2: {
+            hitFrames: [3],
+            hitbox: {
+              '3': { down: { x: -28, y: -24, w: 56, h: 28 } },
+            },
+          },
+        },
+      },
+      frameDef: { w: 96, h: 96, pivot: { x: 0.5, y: 0.9271 } },
+    },
+    knight_charged: {
+      meta: {
+        origin: { x: 0.5, y: 0.9271 },
+        footprint: { x: -12, y: -4, w: 23, h: 7, shape: 'ellipse' },
+        anims: {
+          charge_hold: {
+            fps: 10,
+            loop: true,
+          },
+          charged_release: {
+            hitFrames: [4, 5],
+            hitbox: {
+              '4': { down: { x: -32, y: -26, w: 64, h: 32 } },
+              '5': { down: { x: -32, y: -26, w: 64, h: 32 } },
+            },
+          },
+        },
+      },
+      frameDef: { w: 96, h: 96, pivot: { x: 0.5, y: 0.9271 } },
+    },
   }
 
   return {
@@ -623,6 +665,131 @@ describe('Player Actor — Package 1-3', () => {
       expect(thief.reappear(2000)).toBe(true)
       expect(thief.visible).toBe(true)
       expect(thief.anims.play).toHaveBeenCalledWith('thief_reappear_down', false)
+    })
+  })
+
+  describe('P2 Hero Animation & Combat (Package 4-1)', () => {
+    it.each(['knight', 'thief', 'dwarf', 'mage'])('configures run, attack2, and charged sheets for %s', (classId) => {
+      const player = new Player(mockScene, 100, 100, classId)
+      expect(CLASS_SHEETS[classId].runSheet).toBe(`${classId}_run`)
+      expect(CLASS_SHEETS[classId].attack2Sheet).toBe(`${classId}_attack2`)
+      expect(CLASS_SHEETS[classId].chargedSheet).toBe(`${classId}_charged`)
+      expect(player.getSheetForAnim('run')).toBe(`${classId}_run`)
+      expect(player.getSheetForAnim('attack_2')).toBe(`${classId}_attack2`)
+      expect(player.getSheetForAnim('charge_hold')).toBe(`${classId}_charged`)
+      expect(player.getSheetForAnim('charged_release')).toBe(`${classId}_charged`)
+    })
+
+    it('generates canonical P2 anim keys for all 4 classes', () => {
+      const knight = new Player(mockScene, 100, 100, 'knight')
+      expect(knight.getAnimKey('run', 'down')).toBe('knight_run_down')
+      expect(knight.getAnimKey('attack_2', 'left')).toBe('knight_attack_2_left')
+      expect(knight.getAnimKey('charge_hold', 'up')).toBe('knight_charge_hold_up')
+      expect(knight.getAnimKey('charged_release', 'right')).toBe('knight_charged_release_right')
+
+      const thief = new Player(mockScene, 100, 100, 'thief')
+      expect(thief.getAnimKey('run', 'right')).toBe('thief_run_right')
+      expect(thief.getAnimKey('attack_2', 'up')).toBe('thief_attack_2_up')
+
+      const mage = new Player(mockScene, 100, 100, 'mage')
+      expect(mage.getAnimKey('run', 'down')).toBe('mage_run_down')
+      expect(mage.getAnimKey('attack_2', 'down')).toBe('mage_attack_2_down')
+    })
+
+    it('plays run animation when moving at run speed', () => {
+      const knight = new Player(mockScene, 100, 100, 'knight')
+      knight.body.velocity = { x: 200, y: 0 } // Moving at 200 > 160 * 1.2 = 192 px/s
+      knight.update(1000, 16)
+
+      expect(knight.is(ACTOR_STATES.WALK)).toBe(true)
+      expect(knight.anims.play).toHaveBeenCalledWith('knight_run_right', true)
+
+      // Slow down to walk speed
+      knight.body.velocity = { x: 100, y: 0 }
+      knight.update(1016, 16)
+      expect(knight.anims.play).toHaveBeenCalledWith('knight_walk_right', true)
+    })
+
+    it('chains attack_2 combo on second attack press inside combo window', () => {
+      const knight = new Player(mockScene, 100, 100, 'knight')
+      const now = 1000
+
+      // Initial swing
+      knight.attack(now)
+      expect(knight.is(ACTOR_STATES.ATTACK)).toBe(true)
+      expect(knight.currentAttackType).toBe('attack')
+      expect(knight.anims.play).toHaveBeenCalledWith('knight_attack_down', false)
+
+      // Simulate advance to frame 3 (combo window open)
+      knight.anims.currentFrame = { frame: { name: 'knight_attack_down_3' } }
+
+      // Second attack press inside combo window
+      const chained = knight.attack(now + 200)
+      expect(chained).toBe(true)
+      expect(knight.currentAttackType).toBe('attack_2')
+      expect(knight.anims.play).toHaveBeenCalledWith('knight_attack_2_down', false)
+
+      // Advance to attack_2 hit frame (frame 3)
+      knight.anims.currentFrame = { frame: { name: 'knight_attack_2_down_3' } }
+      knight.update(now + 300, 16)
+      expect(knight._hitFramesProcessed.has(3)).toBe(true)
+    })
+
+    it('queues attack_2 combo if second press occurs before combo window and triggers at frame 3', () => {
+      const knight = new Player(mockScene, 100, 100, 'knight')
+      knight.attack(1000)
+
+      // At frame 1 (before combo window)
+      knight.anims.currentFrame = { frame: { name: 'knight_attack_down_1' } }
+      knight.attack(1050)
+      expect(knight.comboQueued).toBe(true)
+      expect(knight.currentAttackType).toBe('attack')
+
+      // Advance to frame 3
+      knight.anims.currentFrame = { frame: { name: 'knight_attack_down_3' } }
+      knight.update(1200, 16)
+      expect(knight.comboQueued).toBe(false)
+      expect(knight.currentAttackType).toBe('attack_2')
+      expect(knight.anims.play).toHaveBeenCalledWith('knight_attack_2_down', false)
+    })
+
+    it('supports charged attack hold and release on hold >= 600 ms', () => {
+      const knight = new Player(mockScene, 100, 100, 'knight')
+      const startTime = 1000
+
+      // Start charge
+      expect(knight.startCharge(startTime)).toBe(true)
+      expect(knight.is(ACTOR_STATES.ATTACK)).toBe(true)
+      expect(knight.currentAttackType).toBe('charge_hold')
+      expect(knight.anims.play).toHaveBeenCalledWith('knight_charge_hold_down', false)
+
+      // Update at 300 ms (not yet fully charged)
+      knight.update(startTime + 300, 16)
+      expect(knight.chargeState.charged).toBe(false)
+
+      // Update at 600 ms (fully charged)
+      knight.update(startTime + 600, 16)
+      expect(knight.chargeState.charged).toBe(true)
+
+      // Release charge
+      expect(knight.releaseCharge(startTime + 650)).toBe(true)
+      expect(knight.currentAttackType).toBe('charged_release')
+      expect(knight.anims.play).toHaveBeenCalledWith('knight_charged_release_down', false)
+
+      // Advance to frame 4 (hitFrame of charged_release)
+      knight.anims.currentFrame = { frame: { name: 'knight_charged_release_down_4' } }
+      knight.update(startTime + 800, 16)
+      expect(knight._hitFramesProcessed.has(4)).toBe(true)
+    })
+
+    it('falls back to regular attack if charge released before 600 ms', () => {
+      const knight = new Player(mockScene, 100, 100, 'knight')
+      knight.startCharge(1000)
+      knight.update(1000 + 200, 16) // only 200 ms held
+
+      expect(knight.releaseCharge(1000 + 250)).toBe(true)
+      expect(knight.currentAttackType).toBe('attack')
+      expect(knight.anims.play).toHaveBeenCalledWith('knight_attack_down', false)
     })
   })
 })
