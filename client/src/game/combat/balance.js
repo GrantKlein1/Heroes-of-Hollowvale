@@ -124,3 +124,30 @@ export function getEnemyDamage(type, wave = 1) {
   const base = ENEMY_BASE_DAMAGE[type] ?? 8
   return Math.round(base * (1 + WAVE_SCALING.damagePerWave * Math.max(0, wave - 1)))
 }
+
+// ---------------------------------------------------------------------------
+// DRAGON (Boss encounter balance constants — untested default, tune in 4-2)
+// ---------------------------------------------------------------------------
+export const DRAGON_BASE_HP = 1200
+
+export const DRAGON_DAMAGE = Object.freeze({
+  claw: 20,
+  tail: 25,
+  firebreath: 30,
+  breath: 25,
+  volley: 15,
+  gust: 10,
+  dive: 35,
+  meteor: 40,
+  molten: 30,
+})
+
+export const DRAGON_PHASE_THRESHOLDS = Object.freeze({
+  p1ToP2: 0.66,
+  p2ToP3: 0.33,
+})
+
+export const DRAGON_LANDING_DURATION_MS = 3000
+export const DRAGON_METEOR_MARKER_DELAY_MS = 700
+export const METEOR_MARKER_KEY = 'dfx_meteor_0'
+

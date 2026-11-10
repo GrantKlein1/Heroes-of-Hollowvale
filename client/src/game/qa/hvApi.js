@@ -7,6 +7,7 @@
 
 import { getSeed, setSeed } from '../rng.js'
 import { respawnPlayer, handlePlayerDeath } from '../combat/death.js'
+import { Dragon, DRAGON_PHASE_SHEETS } from '../actors/Dragon.js'
 
 /**
  * Determines whether QA mode / window.__hv should be activated.
@@ -197,6 +198,79 @@ export function createHvApi(scene) {
      */
     killPlayer: (killer = 'goblin', options = {}) => {
       return handlePlayerDeath(scene, killer, options)
+    },
+
+    /**
+     * Spawns Red Dragon boss actor for testing.
+     *
+     * @param {object} [options]
+     * @param {number} [options.x=300]
+     * @param {number} [options.y=250]
+     * @param {number} [options.phase=1]
+     * @returns {Dragon|null}
+     */
+    spawnDragon: (options = {}) => {
+      const x = options.x ?? 300
+      const y = options.y ?? 250
+      const phase = Number(options.phase) || 1
+
+      if (scene?.assetRegistry && typeof scene.assetRegistry.loadDragonPhase === 'function') {
+        scene.assetRegistry.loadDragonPhase(phase)
+      }
+
+      const initialSheet = DRAGON_PHASE_SHEETS[phase] || 'red_dragon_p1_a'
+      const dragon = new Dragon(scene, x, y, initialSheet, '', { phase, ...options })
+
+      if (scene?.enemies && typeof scene.enemies.add === 'function') {
+        scene.enemies.add(dragon)
+      }
+
+      scene._dragon = dragon
+      return dragon
+    },
+
+    /**
+     * Sets dragon HP to a specific percentage of max HP.
+     *
+     * @param {number} pct - Percentage (0.0 to 1.0)
+     * @returns {number|null}
+     */
+    setDragonHp: (pct) => {
+      const dragon = scene?._dragon
+      if (!dragon) return null
+      const targetHp = Math.round((dragon.hpMax || 1200) * pct)
+      return dragon.setHp(targetHp, true)
+    },
+
+    /**
+     * Returns the current dragon encounter state.
+     *
+     * @returns {{ phase: number, invulnerable: boolean, airborne: boolean, landed: boolean, hp: number, hpMax: number, state: string|null }|null}
+     */
+    dragonState: () => {
+      const dragon = scene?._dragon
+      if (!dragon) return null
+      return {
+        phase: dragon.phase,
+        invulnerable: Boolean(dragon.invulnerable),
+        airborne: Boolean(dragon.airborne),
+        landed: Boolean(dragon.isLanding || !dragon.airborne),
+        hp: dragon.hp,
+        hpMax: dragon.hpMax,
+        state: dragon.ai?.state || null,
+      }
+    },
+
+    /**
+     * Resets dragon boss encounter to Phase 1 full HP.
+     *
+     * @returns {boolean}
+     */
+    resetDragon: () => {
+      const dragon = scene?._dragon
+      if (!dragon) return false
+      dragon.resetEncounter()
+      return true
     },
 
     /**

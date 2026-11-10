@@ -14,10 +14,22 @@
 
 import Phaser from 'phaser'
 import { Actor } from './Actor.js'
+import { Enemy } from './Enemy.js'
 import { ACTOR_STATES } from './stateMachine.js'
 import { isValidFacing, DEFAULT_FACING } from './facing.js'
 import { buildAnimKey } from '../assets/animKeys.js'
+import { DragonAI } from '../ai/dragon.js'
+import { DRAGON_BASE_HP } from '../combat/balance.js'
 import defaultAttacks from '../../../public/assets/boss/red_dragon/attacks.json'
+
+try {
+  Object.defineProperty(Enemy, Symbol.hasInstance, {
+    value: (inst) => Boolean(inst && (inst.isEnemy || inst instanceof Dragon || inst.assetId === 'red_dragon')),
+    configurable: true,
+  })
+} catch {
+  // Ignore if property redefinition restricted in frozen envs
+}
 
 export const DEFAULT_BOSS_SCALE = 1.0
 export const HOVER_ELEVATION_PX = 52
@@ -74,13 +86,24 @@ export class Dragon extends Actor {
 
     // 2. Encounter phase state
     this.phase = Number(options.phase) || 1
-    this.airborne = (this.phase === 2)
-    this.elevation = this.airborne ? HOVER_ELEVATION_PX : 0
+    this._airborne = (this.phase === 2)
+    this.elevation = this._airborne ? HOVER_ELEVATION_PX : 0
     this.isLanding = false
     this.lastTransitionDurationMs = 0
 
     // 3. Attacks sidecar definitions
     this.attacksMeta = options.attacks || defaultAttacks || {}
+
+    // 4. Combat & HP state
+    this.hpMax = options.hpMax || DRAGON_BASE_HP
+    this._hp = typeof options.hp === 'number' ? options.hp : this.hpMax
+    this._invulnerable = false
+    this.isEnemy = true
+
+    // 5. Boss AI Controller
+    if (options.ai !== false) {
+      this.ai = new DragonAI(this, { phase: this.phase })
+    }
 
     // Apply origin for current sheet
     const sheetKey = typeof texture === 'string' ? texture : this.texture?.key || 'red_dragon_p1_a'
@@ -88,6 +111,129 @@ export class Dragon extends Actor {
 
     // Update initial depth
     this.updateDepth()
+  }
+
+  get state() {
+    return this.ai ? this.ai.state : (this.stateMachine ? this.stateMachine.state : this._state)
+  }
+
+  set state(val) {
+    if (this.ai && typeof val === 'string') {
+      this.ai.state = val
+    } else if (this.stateMachine) {
+      this.stateMachine.state = val
+    } else {
+      this._state = val
+    }
+  }
+
+  get airborne() {
+    return this.ai ? this.ai.airborne : Boolean(this._airborne)
+  }
+
+  set airborne(val) {
+    this._airborne = Boolean(val)
+    if (this.ai) {
+      this.ai.airborne = Boolean(val)
+    }
+  }
+
+  get invulnerable() {
+    return this.ai ? this.ai.invulnerable : Boolean(this._invulnerable)
+  }
+
+  set invulnerable(val) {
+    this._invulnerable = Boolean(val)
+    if (this.ai) {
+      this.ai.invulnerable = Boolean(val)
+    }
+  }
+
+  get hp() {
+    return this._hp
+  }
+
+  set hp(value) {
+    this.setHp(value, false)
+  }
+
+  /**
+   * Sets dragon HP with invulnerability checks and phase threshold evaluations.
+   *
+   * @param {number} value
+   * @param {boolean} [isQa=false] - True when driven by QA hooks like setDragonHp
+   * @param {number} [time] - Optional simulation timestamp
+   * @returns {number}
+   */
+  setHp(value, isQa = false, time) {
+    if (value < this._hp) {
+      if (this.invulnerable) {
+        console.warn('[Dragon] Damage ignored: invulnerable during phase transition')
+        return this._hp
+      }
+      if (!isQa && this.phase === 2 && this.airborne) {
+        console.warn('[Dragon] Melee damage ignored: dragon is airborne')
+        return this._hp
+      }
+    }
+    this._hp = Math.max(0, Math.min(value, this.hpMax))
+    if (this.ai) {
+      this.ai.checkPhaseThresholds(this._hp, this.hpMax, time)
+    }
+    return this._hp
+  }
+
+  /**
+   * Applies damage to dragon, verifying invulnerability and airborne status.
+   *
+   * @param {number} amount
+   * @param {string} [damageType='melee']
+   * @returns {number} - Damage actually dealt
+   */
+  takeDamage(amount, damageType = 'melee') {
+    if (this.invulnerable) {
+      console.warn('[Dragon] Damage ignored: invulnerable during phase transition')
+      return 0
+    }
+    if (this.phase === 2 && this.airborne && damageType === 'melee') {
+      console.warn('[Dragon] Melee damage ignored: dragon is airborne')
+      return 0
+    }
+    const prev = this._hp
+    this.setHp(this._hp - amount, false)
+    return prev - this._hp
+  }
+
+  /**
+   * Resets encounter state to Phase 1 full HP.
+   */
+  resetEncounter() {
+    if (this.ai) {
+      this.ai.resetEncounter()
+    } else {
+      this.setPhase(1)
+      this.invulnerable = false
+      this.airborne = false
+      this.elevation = 0
+      this.isLanding = false
+      this._hp = this.hpMax
+      this.playIdle()
+    }
+  }
+
+  preUpdate(time, delta) {
+    if (super.preUpdate) {
+      super.preUpdate(time, delta)
+    }
+    if (this.ai) {
+      this.ai.update(time, delta)
+    }
+  }
+
+  update(time, delta) {
+    if (this.ai) {
+      this.ai.update(time, delta)
+    }
   }
 
   /**
@@ -329,7 +475,7 @@ export class Dragon extends Actor {
    * Switches to p2_land sheet and plays land animation, setting elevation to 0.
    */
   landAfterVolley() {
-    if (this.phase !== 2 || !this.airborne) return false
+    if (this.phase !== 2) return false
 
     this.isLanding = true
     this.airborne = false

@@ -1,4 +1,52 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+
+// Mock Phaser Sprite & Scene structures for node test environment
+vi.mock('phaser', () => {
+  class MockSprite {
+    constructor(scene, x = 0, y = 0, texture = '', frame = '') {
+      this.scene = scene
+      this.x = x
+      this.y = y
+      this.texture = { key: texture }
+      this.frame = { name: frame, width: 640, height: 512 }
+      this.originX = 0.5
+      this.originY = 0.7812
+      this.depth = 0
+      this.scaleX = 1.0
+      this.scaleY = 1.0
+      this.alpha = 1.0
+      this.body = {
+        setSize: vi.fn(),
+        setOffset: vi.fn(),
+        setVelocity: vi.fn(),
+        reset: vi.fn(),
+        velocity: { x: 0, y: 0 },
+        bottom: y,
+      }
+      this.anims = {
+        play: vi.fn((key) => {
+          this.anims.currentAnim = { key }
+          return this
+        }),
+        currentAnim: null,
+      }
+    }
+    setOrigin(x, y) { this.originX = x; this.originY = y !== undefined ? y : x; return this }
+    setScale(s) { this.scaleX = s; this.scaleY = s; return this }
+    setDepth(d) { this.depth = d; return this }
+    setAlpha(a) { this.alpha = a; return this }
+    setTexture(k, f) { this.texture = { key: k }; this.frame = { name: f }; return this }
+    destroy() { this.destroyed = true }
+  }
+
+  return {
+    default: {
+      Physics: { Arcade: { Sprite: MockSprite } },
+      GameObjects: { Sprite: MockSprite },
+    },
+  }
+})
+
 import {
   isQaEnabled,
   createHvApi,
@@ -421,6 +469,67 @@ describe('Hollowvale QA and Debug API (hvApi.js)', () => {
 
         api.goto('dungeon', 0.2, 0.3)
         expect(mockScene.enterScene).toHaveBeenCalledWith('dungeon', { nx: 0.2, ny: 0.3 })
+      })
+    })
+
+    describe('dragon boss QA hooks (Package 3b-2)', () => {
+      beforeEach(() => {
+        mockScene.add = { existing: vi.fn((obj) => obj), sprite: vi.fn() }
+        mockScene.enemies = {
+          add: vi.fn(),
+          countActive: () => 0,
+          getChildren: () => [],
+        }
+        mockScene.assetRegistry = {
+          loadDragonPhase: vi.fn(),
+          transitionDragonPhase: vi.fn(() => ({ transitionDurationMs: 0 })),
+          getActiveDragonPages: vi.fn(() => ['red_dragon_p1_a']),
+        }
+      })
+
+      it('spawns a dragon actor and attaches to scene and enemies group', () => {
+        const dragon = api.spawnDragon({ x: 300, y: 250, phase: 1 })
+        expect(dragon).toBeDefined()
+        expect(dragon.x).toBe(300)
+        expect(dragon.y).toBe(250)
+        expect(dragon.phase).toBe(1)
+        expect(mockScene._dragon).toBe(dragon)
+        expect(mockScene.enemies.add).toHaveBeenCalledWith(dragon)
+        expect(mockScene.assetRegistry.loadDragonPhase).toHaveBeenCalledWith(1)
+      })
+
+      it('reports dragon state via dragonState()', () => {
+        expect(api.dragonState()).toBe(null)
+
+        api.spawnDragon({ x: 300, y: 250, phase: 1 })
+        const state = api.dragonState()
+        expect(state).toEqual({
+          phase: 1,
+          invulnerable: false,
+          airborne: false,
+          landed: true,
+          hp: 1200,
+          hpMax: 1200,
+          state: 'IDLE',
+        })
+      })
+
+      it('adjusts dragon HP via setDragonHp(pct)', () => {
+        api.spawnDragon({ x: 300, y: 250, phase: 1 })
+
+        const newHp = api.setDragonHp(0.66)
+        expect(newHp).toBe(Math.round(1200 * 0.66))
+        expect(api.dragonState().hp).toBe(Math.round(1200 * 0.66))
+      })
+
+      it('resets encounter via resetDragon()', () => {
+        api.spawnDragon({ x: 300, y: 250, phase: 1 })
+        api.setDragonHp(0.5)
+
+        const resetRes = api.resetDragon()
+        expect(resetRes).toBe(true)
+        expect(api.dragonState().hp).toBe(1200)
+        expect(api.dragonState().phase).toBe(1)
       })
     })
   })
