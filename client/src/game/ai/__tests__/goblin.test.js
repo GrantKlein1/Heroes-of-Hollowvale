@@ -72,32 +72,50 @@ function createMockScene() {
   }
 }
 
-describe('Goblin AI — Package 1b-1', () => {
+describe('Goblin AI — Package 1b-1 & 4-1', () => {
   let mockScene
 
   beforeEach(() => {
     mockScene = createMockScene()
   })
 
+  it('plays spawn animation on spawn and holds position during spawn', () => {
+    const enemy = new Enemy(mockScene, 400, 400, 'goblin')
+    expect(enemy.animHistory).toContain('goblin_spawn_down')
+    expect(enemy.ai.mode).toBe(GOBLIN_AI_MODES.SPAWN)
+
+    // During spawn duration (time 200 ms < spawnUntil 400 ms)
+    enemy.ai.spawnUntil = 500
+    enemy.ai.update(200, 16)
+    expect(enemy.ai.mode).toBe(GOBLIN_AI_MODES.SPAWN)
+  })
+
   it('patrols when player is beyond aggro radius (> 160 px)', () => {
     // Enemy at (400, 400), player at (100, 100) -> distance ~424 px
     const enemy = new Enemy(mockScene, 400, 400, 'goblin')
     const ai = enemy.ai
+    ai.hasSpawned = true
     expect(ai).toBeInstanceOf(GoblinAI)
 
     ai.update(1000, 16)
     expect(ai.mode).toBe(GOBLIN_AI_MODES.PATROL)
   })
 
-  it('enters chase mode and moves toward player when within 160 px', () => {
-    // Enemy at (180, 100), player at (100, 100) -> distance 80 px (<= 160 px, > 36 px)
+  it('triggers alert on first aggro before entering chase', () => {
+    // Enemy at (180, 100), player at (100, 100) -> distance 80 px (<= 160 px)
     const enemy = new Enemy(mockScene, 180, 100, 'goblin')
     const ai = enemy.ai
+    ai.hasSpawned = true
 
     ai.update(1000, 16)
+    expect(ai.mode).toBe(GOBLIN_AI_MODES.ALERT)
+    expect(enemy.animHistory).toContain('goblin_alert_left')
+    expect(ai.hasAlerted).toBe(true)
+
+    // After alert window (250 ms), enters chase mode
+    ai.update(1300, 16)
     expect(ai.mode).toBe(GOBLIN_AI_MODES.CHASE)
-    // Velocity must be directed towards player (-x direction)
-    const [vx] = enemy.body.setVelocity.mock.calls[0]
+    const [vx] = enemy.body.setVelocity.mock.calls.at(-1)
     expect(vx).toBeLessThan(0)
     expect(enemy.facing).toBe('left')
   })
@@ -106,6 +124,8 @@ describe('Goblin AI — Package 1b-1', () => {
     // Enemy at (125, 100), player at (100, 100) -> distance 25 px (<= 36 px)
     const enemy = new Enemy(mockScene, 125, 100, 'goblin')
     const ai = enemy.ai
+    ai.hasSpawned = true
+    ai.hasAlerted = true
 
     ai.update(1000, 16)
     expect(ai.mode).toBe(GOBLIN_AI_MODES.ATTACK)
@@ -125,6 +145,8 @@ describe('Goblin AI — Package 1b-1', () => {
     // 3rd goblin within 36 px range
     const enemy3 = new Enemy(mockScene, 125, 100, 'goblin')
     const ai3 = enemy3.ai
+    ai3.hasSpawned = true
+    ai3.hasAlerted = true
 
     ai3.update(1000, 16)
     expect(ai3.mode).toBe(GOBLIN_AI_MODES.ATTACK)
@@ -140,11 +162,12 @@ describe('Goblin AI — Package 1b-1', () => {
     const enemy = new Enemy(mockScene, 125, 100, 'goblin')
     enemy.hp = 3 // 3 / 15 = 20% < 25%
     const ai = enemy.ai
+    ai.hasSpawned = true
 
     ai.update(1000, 16)
     expect(ai.mode).toBe(GOBLIN_AI_MODES.RETREAT)
     // Velocity must flee away from player (positive x direction, player is at x=100)
-    const [vx] = enemy.body.setVelocity.mock.calls[0]
+    const [vx] = enemy.body.setVelocity.mock.calls.at(-1)
     expect(vx).toBeGreaterThan(0)
     expect(enemy.facing).toBe('right')
     expect(enemy.lastAnimKey).toBe('goblin_walk_right')

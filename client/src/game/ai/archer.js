@@ -24,9 +24,12 @@ import { random } from '../rng.js'
 import { ACTOR_STATES } from '../actors/stateMachine.js'
 import { resolveFacing, DEFAULT_FACING } from '../actors/facing.js'
 import { Projectile } from '../actors/Projectile.js'
+import { resolveAnimWithFallback, applyGenericAlert } from '../combat/fallbacks.js'
 
 export const ARCHER_AI_MODES = Object.freeze({
+  SPAWN: 'SPAWN',
   PATROL: 'PATROL',
+  ALERT: 'ALERT',
   ADVANCE: 'ADVANCE',
   RETREAT: 'RETREAT',
   AIM: 'AIM',
@@ -173,7 +176,8 @@ export class ArcherAI {
    */
   constructor(enemy, options = {}) {
     this.enemy = enemy
-    this.mode = ARCHER_AI_MODES.PATROL
+    this.hasSpawned = options.hasSpawned ?? false
+    this.mode = this.hasSpawned ? ARCHER_AI_MODES.PATROL : ARCHER_AI_MODES.SPAWN
 
     this.minDistance = options.minDistance ?? MIN_DISTANCE_PX
     this.maxDistance = options.maxDistance ?? MAX_DISTANCE_PX
@@ -187,6 +191,14 @@ export class ArcherAI {
     this.isAttacking = false
     this.attackStartTime = 0
     this._arrowSpawned = false
+
+    this.spawnUntil = 0
+    this.hasAlerted = options.hasAlerted ?? false
+    this.alertUntil = 0
+
+    if (this.enemy && !this.hasSpawned) {
+      this.enemy.playAnim?.('spawn')
+    }
 
     // Patrol wandering state
     this.patrolDirX = 0
@@ -210,6 +222,34 @@ export class ArcherAI {
     const enemy = this.enemy
     if (!enemy || enemy.is?.(ACTOR_STATES.DEAD) || (typeof enemy.hp === 'number' && enemy.hp <= 0)) {
       return
+    }
+
+    // 0. Spawn phase
+    if (!this.hasSpawned) {
+      if (this.spawnUntil === 0) {
+        this.spawnUntil = time + 400
+        enemy.playAnim?.('spawn')
+      }
+      if (time < this.spawnUntil) {
+        this.mode = ARCHER_AI_MODES.SPAWN
+        if (enemy.body && typeof enemy.body.setVelocity === 'function') {
+          enemy.body.setVelocity(0, 0)
+        }
+        return
+      }
+      this.hasSpawned = true
+      this.mode = ARCHER_AI_MODES.PATROL
+    }
+
+    // 0.5. Alert holding phase
+    if (this.mode === ARCHER_AI_MODES.ALERT) {
+      if (time < this.alertUntil) {
+        if (enemy.body && typeof enemy.body.setVelocity === 'function') {
+          enemy.body.setVelocity(0, 0)
+        }
+        return
+      }
+      // Alert window elapsed, proceed to kiting or attack
     }
 
     // 1. If currently in attack animation sequence, manage timing and arrow release
@@ -243,6 +283,31 @@ export class ArcherAI {
     // Facing follows target with dominant axis
     const facing = resolveFacing(dx, dy, enemy.facing || DEFAULT_FACING)
     enemy.facing = facing
+
+    // Play alert before first telegraph / shot
+    if (!this.hasAlerted) {
+      this.hasAlerted = true
+      this.mode = ARCHER_AI_MODES.ALERT
+      this.alertUntil = time + 250
+      if (enemy.body && typeof enemy.body.setVelocity === 'function') {
+        enemy.body.setVelocity(0, 0)
+      }
+      const asset = enemy.assetId || enemy.texture?.key || 'goblin_archer'
+      const alertKey = enemy.getAnimKey?.('alert') || `${asset}_alert_${facing}`
+      if (enemy.animHistory) {
+        enemy.animHistory.push(alertKey)
+      }
+      enemy.lastAnimKey = alertKey
+      console.log(`[Enemy anim] ${alertKey}`)
+      const clipToPlay = resolveAnimWithFallback(scene, alertKey, enemy.getAnimKey?.('telegraph') || `${asset}_attack_${facing}`)
+      if (clipToPlay && scene?.anims?.exists(clipToPlay)) {
+        try {
+          enemy.anims?.play?.(clipToPlay, true)
+        } catch (_e) {}
+      }
+      applyGenericAlert(enemy, 250)
+      return
+    }
 
     // 3. Line of sight check
     const solids = scene?._solidRects || []
