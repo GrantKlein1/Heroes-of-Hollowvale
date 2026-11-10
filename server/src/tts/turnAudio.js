@@ -5,6 +5,12 @@ import { getElevenLabsApiKey, getElevenLabsVoiceId } from '../config/secrets.js'
 const DEFAULT_TTL_MS = 30_000; // 30 seconds TTL
 const DEFAULT_VOICE_ID = getElevenLabsVoiceId() || 'N2lVS1w4EtoT3dr4eOWO'; // Callum
 
+export function getTtsTimeoutMs() {
+  const envVal = process.env.ELEVENLABS_TIMEOUT_MS || process.env.TTS_TIMEOUT_MS;
+  const parsed = parseInt(envVal, 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 15_000;
+}
+
 const turns = new Map();
 
 /**
@@ -17,6 +23,8 @@ async function defaultTtsFetcher({
   modelId = 'eleven_flash_v2_5',
   voiceSettings,
   apiKey,
+  signal,
+  timeout = getTtsTimeoutMs(),
 }) {
   const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream`;
   const response = await axios.post(
@@ -40,7 +48,8 @@ async function defaultTtsFetcher({
         'Content-Type': 'application/json',
         Accept: 'audio/mpeg',
       },
-      timeout: 60000,
+      timeout,
+      signal,
       validateStatus: (s) => s >= 200 && s < 300,
     }
   );
@@ -78,9 +87,14 @@ export function createTurn({
     sentenceQueue: Promise.resolve(), // ensures sentences are synthesized in order
     inFlightCount: 0,
     isFinished: false,
+    aborted: false,
+    abortReason: null,
+    firstAudioTime: null,
     audioChunks: [],
     listeners: new Set(),
     doneListeners: new Set(),
+    abortListeners: new Set(),
+    activeJobAbortController: null,
     error: null,
   };
 
@@ -104,11 +118,46 @@ export function getTurn(turnId) {
 }
 
 /**
+ * Aborts an active turn, cancelling in-flight synthesis and notifying listeners.
+ */
+export function abortTurn(turnId, reason = 'aborted') {
+  const turn = turns.get(turnId);
+  if (!turn || turn.aborted) return false;
+
+  turn.aborted = true;
+  turn.abortReason = reason;
+
+  // Cancel any running Axios synthesis request
+  if (turn.activeJobAbortController) {
+    try {
+      turn.activeJobAbortController.abort(new Error(`Turn aborted: ${reason}`));
+    } catch {
+      /* ignore */
+    }
+    turn.activeJobAbortController = null;
+  }
+
+  // Notify abort listeners (e.g., SSE / WebSocket / pipe response)
+  for (const listener of turn.abortListeners) {
+    try {
+      listener(reason);
+    } catch {
+      /* ignore */
+    }
+  }
+  turn.abortListeners.clear();
+  turn.listeners.clear();
+  turn.doneListeners.clear();
+
+  return true;
+}
+
+/**
  * Enqueues a sentence to be synthesized and broadcast to listeners.
  */
 export function addSentence(turnId, sentence) {
   const turn = getTurn(turnId);
-  if (!turn) return false;
+  if (!turn || turn.aborted) return false;
   const text = String(sentence || '').trim();
   if (!text) return false;
 
@@ -118,6 +167,8 @@ export function addSentence(turnId, sentence) {
   // Queue synthesis so sentences are processed and emitted in sequential order
   turn.sentenceQueue = turn.sentenceQueue
     .then(async () => {
+      if (turn.aborted) return;
+
       const apiKey = getElevenLabsApiKey();
       if (!apiKey) {
         const err = new Error(
@@ -128,6 +179,9 @@ export function addSentence(turnId, sentence) {
         return;
       }
 
+      const jobAbortController = new AbortController();
+      turn.activeJobAbortController = jobAbortController;
+
       try {
         const audioStream = await turn.ttsFetcher({
           text,
@@ -135,10 +189,28 @@ export function addSentence(turnId, sentence) {
           modelId: turn.modelId,
           voiceSettings: turn.voiceSettings,
           apiKey,
+          signal: jobAbortController.signal,
+          timeout: getTtsTimeoutMs(),
         });
 
+        if (turn.aborted) {
+          if (audioStream && typeof audioStream.destroy === 'function') {
+            audioStream.destroy();
+          }
+          return;
+        }
+
         await new Promise((resolve, reject) => {
-          audioStream.on('data', (chunk) => {
+          const onData = (chunk) => {
+            if (turn.aborted) {
+              if (audioStream && typeof audioStream.destroy === 'function') {
+                audioStream.destroy();
+              }
+              return resolve();
+            }
+            if (turn.firstAudioTime === null) {
+              turn.firstAudioTime = Date.now() - turn.createdAt;
+            }
             const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
             turn.audioChunks.push(buf);
             for (const listener of turn.listeners) {
@@ -148,18 +220,31 @@ export function addSentence(turnId, sentence) {
                 /* ignore write error */
               }
             }
+          };
+
+          audioStream.on('data', onData);
+          audioStream.once('end', resolve);
+          audioStream.once('error', (err) => {
+            if (turn.aborted || jobAbortController.signal.aborted) {
+              return resolve();
+            }
+            reject(err);
           });
-          audioStream.on('end', resolve);
-          audioStream.on('error', reject);
         });
       } catch (err) {
-        console.warn(`[TurnAudio] TTS synthesis failed for turn "${turnId}":`, err?.message || err);
-        turn.error = err;
+        if (!turn.aborted && !jobAbortController.signal.aborted) {
+          console.warn(`[TurnAudio] TTS synthesis failed for turn "${turnId}":`, err?.message || err);
+          turn.error = err;
+        }
+      } finally {
+        if (turn.activeJobAbortController === jobAbortController) {
+          turn.activeJobAbortController = null;
+        }
       }
     })
     .finally(() => {
       turn.inFlightCount--;
-      if (turn.isFinished && turn.inFlightCount === 0) {
+      if (!turn.aborted && turn.isFinished && turn.inFlightCount === 0) {
         for (const done of turn.doneListeners) {
           try {
             done();
@@ -181,7 +266,7 @@ export function finishTurn(turnId) {
   if (!turn) return false;
 
   turn.isFinished = true;
-  if (turn.inFlightCount === 0) {
+  if (!turn.aborted && turn.inFlightCount === 0) {
     for (const done of turn.doneListeners) {
       try {
         done();
@@ -200,6 +285,10 @@ export function pipeTurnAudio(turnId, res, req) {
   const turn = getTurn(turnId);
   if (!turn) {
     return { status: 404, error: 'Turn not found or expired' };
+  }
+
+  if (turn.aborted) {
+    return { status: 410, error: 'Turn was aborted' };
   }
 
   // If no API key is available, report 501 immediately
@@ -256,13 +345,24 @@ export function pipeTurnAudio(turnId, res, req) {
     cleanup();
   };
 
+  const onAbort = () => {
+    try {
+      res.end();
+    } catch {
+      /* ignore */
+    }
+    cleanup();
+  };
+
   const cleanup = () => {
     turn.listeners.delete(onChunk);
     turn.doneListeners.delete(onDone);
+    turn.abortListeners.delete(onAbort);
   };
 
   turn.listeners.add(onChunk);
   turn.doneListeners.add(onDone);
+  turn.abortListeners.add(onAbort);
 
   if (req && typeof req.on === 'function') {
     req.on('close', cleanup);

@@ -7,7 +7,24 @@ import { buildMessages, resolveNpcChatMaxTokens } from '../buildMessages.js';
 import { retrieveLoreWithShadow } from '../rag/store.js';
 import { getGroqApiKey } from '../config/secrets.js';
 import { SentenceSplitter } from '../tts/sentenceSplitter.js';
-import { createTurn, addSentence, finishTurn } from '../tts/turnAudio.js';
+import { createTurn, addSentence, finishTurn, abortTurn, getTurn } from '../tts/turnAudio.js';
+
+export function getLlmTimeoutMs() {
+  const envVal = process.env.GROQ_TIMEOUT_MS || process.env.LLM_TIMEOUT_MS;
+  const parsed = parseInt(envVal, 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 20_000;
+}
+
+// In-flight active turns keyed by `${sessionId}:${npc}`
+const activeTurns = new Map();
+
+export function resetActiveTurns() {
+  activeTurns.clear();
+}
+
+export function getActiveTurnCount() {
+  return activeTurns.size;
+}
 
 function classifyRequest(message, priorUserCount) {
   const m = String(message || '').toLowerCase();
@@ -25,6 +42,58 @@ const router = Router();
 // POST /api/chat/stream
 // Body: { npc: 'bartender'|'wizard'|'rogue', message: string, context?: Array<{role:'user'|'assistant', content:string}>, sessionId?: string, ragHints?: string }
 router.post('/chat/stream', async (req, res, next) => {
+  const startTime = Date.now();
+  let ttfb = null;
+  let turnId = null;
+  let turnKey = null;
+  let sentenceCount = 0;
+  let hasLoggedMetrics = false;
+  let timeoutTimer = null;
+  let isAborted = false;
+  let isTimedOut = false;
+  const abortController = new AbortController();
+
+  const markFirstByte = () => {
+    if (ttfb === null) {
+      ttfb = Date.now() - startTime;
+    }
+  };
+
+  const finishMetrics = ({ aborted = false, timeout = false } = {}) => {
+    if (hasLoggedMetrics || !turnId) return;
+    hasLoggedMetrics = true;
+
+    if (timeoutTimer) {
+      clearTimeout(timeoutTimer);
+      timeoutTimer = null;
+    }
+
+    if (turnKey && activeTurns.get(turnKey)?.turnId === turnId) {
+      activeTurns.delete(turnKey);
+    }
+
+    const total = Date.now() - startTime;
+    const turnObj = turnId ? getTurn(turnId) : null;
+    const firstAudio = turnObj?.firstAudioTime ?? null;
+
+    console.info(
+      `[TurnMetrics] ${JSON.stringify({
+        turnId,
+        npc: req.body?.npc || null,
+        sessionId: reqSessionIdClean || null,
+        ttfb,
+        'first-audio': firstAudio,
+        firstAudio,
+        total,
+        sentences: sentenceCount,
+        aborted,
+        timeout,
+      })}`
+    );
+  };
+
+  let reqSessionIdClean = null;
+
   try {
     const { npc, message, context, ragHints, sessionId: reqSessionId } = req.body || {};
     if (!npc || !message) {
@@ -44,14 +113,92 @@ router.post('/chat/stream', async (req, res, next) => {
         : null);
 
     const sessionId = rawSessionId || (crypto.randomUUID ? `anon_${crypto.randomUUID()}` : `anon_${Date.now()}_${Math.random().toString(36).slice(2)}`);
+    reqSessionIdClean = sessionId;
+    turnKey = `${sessionId}:${npc}`;
+
+    // 1. Check for prior in-flight turn for this session+npc and abort it
+    const priorTurn = activeTurns.get(turnKey);
+    if (priorTurn) {
+      priorTurn.isAborted = true;
+      try {
+        priorTurn.abortController.abort(new Error('Turn superseded by newer request'));
+      } catch {
+        /* ignore */
+      }
+      abortTurn(priorTurn.turnId, 'superseded');
+
+      try {
+        if (!priorTurn.res.writableEnded) {
+          priorTurn.res.write(`event: aborted\ndata: ${JSON.stringify({ aborted: true, reason: 'superseded', turnId: priorTurn.turnId })}\n\n`);
+          priorTurn.res.end();
+        }
+      } catch {
+        /* ignore write error */
+      }
+      priorTurn.finishMetrics({ aborted: true });
+    }
+
+    // 2. Set up SSE headers and flush them immediately
+    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+    if (typeof res.flushHeaders === 'function') {
+      res.flushHeaders();
+    }
+    markFirstByte();
+
+    // 3. Allocate audio turn for streaming TTS
+    const turn = createTurn();
+    turnId = turn.turnId;
 
     const history = memory.getHistory(sessionId, npc);
+    const priorUserCount = history.filter(m => m && m.role === 'user').length;
+    const caps = classifyRequest(message, priorUserCount);
+
+    // 4. Register current turn as active
+    activeTurns.set(turnKey, {
+      turnId,
+      res,
+      abortController,
+      finishMetrics,
+      startTime,
+      isAborted: false,
+    });
+
+    // 5. Emit meta event
+    res.write(`event: meta\ndata: ${JSON.stringify({ npc, sessionId, caps, turnId })}\n\n`);
+
+    // Handle client connection disconnect
+    if (res && typeof res.on === 'function') {
+      res.on('close', () => {
+        if (!res.writableEnded && !isAborted && !isTimedOut) {
+          isAborted = true;
+          try {
+            abortController.abort(new Error('Client disconnected'));
+          } catch {
+            /* ignore */
+          }
+          abortTurn(turnId, 'client_disconnect');
+          finishMetrics({ aborted: true });
+        }
+      });
+    }
+
+    // Check if turn was aborted during initial setup
+    if (isAborted || isTimedOut) {
+      return;
+    }
+
+    const splitter = new SentenceSplitter({
+      onSentence: (sentence) => {
+        sentenceCount++;
+        addSentence(turnId, sentence);
+      },
+    });
 
     // Normalize optional context from client (take last 5 entries, valid roles only)
     let extraContext = Array.isArray(context) ? context.filter(m => m && (m.role === 'user' || m.role === 'assistant') && m.content).slice(-5) : [];
-
-    const priorUserCount = history.filter(m => m && m.role === 'user').length;
-    const caps = classifyRequest(message, priorUserCount);
 
     const systemPrompt = [
       npcDef.systemPrompt,
@@ -104,6 +251,10 @@ router.post('/chat/stream', async (req, res, next) => {
       console.warn('[RAG] retrieval failed, continuing without lore:', e.message);
     }
 
+    if (isAborted || isTimedOut) {
+      return;
+    }
+
     const loreSystem = loreChunks.length
       ? {
           role: 'system',
@@ -121,35 +272,69 @@ router.post('/chat/stream', async (req, res, next) => {
       userMessage: message,
     });
 
-    // Set up SSE headers
-    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
-    res.setHeader('Cache-Control', 'no-cache, no-transform');
-    res.setHeader('Connection', 'keep-alive');
-    res.setHeader('X-Accel-Buffering', 'no');
-    if (typeof res.flushHeaders === 'function') {
-      res.flushHeaders();
+    // 6. Upstream LLM timeout timer: governs the upstream generation call
+    if (typeof res._onLlmStart === 'function') {
+      try {
+        res._onLlmStart();
+      } catch {
+        /* ignore */
+      }
     }
 
-    // Allocate an audio turn for streaming TTS
-    const turn = createTurn();
-    const turnId = turn.turnId;
-    const splitter = new SentenceSplitter({
-      onSentence: (sentence) => {
-        addSentence(turnId, sentence);
-      },
-    });
+    const llmTimeoutMs = getLlmTimeoutMs();
+    if (llmTimeoutMs > 0 && Number.isFinite(llmTimeoutMs)) {
+      timeoutTimer = setTimeout(() => {
+        isTimedOut = true;
+        try {
+          abortController.abort(new Error('Upstream LLM timeout'));
+        } catch {
+          /* ignore */
+        }
+        abortTurn(turnId, 'timeout');
 
-    // Emit meta event including turnId
-    res.write(`event: meta\ndata: ${JSON.stringify({ npc, sessionId, caps, turnId })}\n\n`);
+        try {
+          if (!res.writableEnded) {
+            res.write(`event: error\ndata: ${JSON.stringify({ error: 'Upstream LLM timeout', code: 'TIMEOUT', turnId })}\n\n`);
+            res.end();
+          }
+        } catch {
+          /* ignore */
+        }
+        finishMetrics({ timeout: true });
+      }, llmTimeoutMs);
+    }
 
     const hasKey = !!getGroqApiKey();
     let finalReply = '';
 
     if (!hasKey && process.env.NODE_ENV !== 'production') {
+      // Stub chat path
+      if (process.env.FORCE_LLM_TIMEOUT) {
+        // Intentional delay for timeout verification
+        await new Promise((resolve) => {
+          const t = setTimeout(resolve, parseInt(process.env.FORCE_LLM_TIMEOUT, 10) || 5000);
+          abortController.signal.addEventListener('abort', () => {
+            clearTimeout(t);
+            resolve();
+          });
+        });
+      }
+
+      if (isAborted || isTimedOut) {
+        return;
+      }
+
       const style = npcDef.name;
       finalReply = `[Stubbed reply from ${style}] I hear you say: "${message}". Alas, my magic is limited without a GROQ_API_KEY.`;
       const tokens = finalReply.match(/\S+\s*/g) || [finalReply];
+      const delayMs = parseInt(process.env.STUB_STREAM_DELAY_MS, 10) || 0;
+
       for (const token of tokens) {
+        if (isAborted || isTimedOut) break;
+        if (delayMs > 0) {
+          await new Promise(resolve => setTimeout(resolve, delayMs));
+        }
+        if (isAborted || isTimedOut) break;
         res.write(`event: delta\ndata: ${JSON.stringify({ text: token })}\n\n`);
         splitter.feed(token);
       }
@@ -159,7 +344,9 @@ router.post('/chat/stream', async (req, res, next) => {
         messages: promptMessages,
         model: 'llama-3.1-8b-instant',
         maxTokens: resolveNpcChatMaxTokens(process.env.GROQ_MAX_TOKENS),
+        signal: abortController.signal,
         onDelta: (deltaText) => {
+          if (isAborted || isTimedOut) return;
           res.write(`event: delta\ndata: ${JSON.stringify({ text: deltaText })}\n\n`);
           splitter.feed(deltaText);
         },
@@ -167,9 +354,14 @@ router.post('/chat/stream', async (req, res, next) => {
       finalReply = String(result.text || '').trim();
     }
 
+    if (isAborted || isTimedOut) {
+      return;
+    }
+
     // Flush any remaining partial sentence
     const finalSentence = splitter.flush();
     if (finalSentence) {
+      sentenceCount++;
       addSentence(turnId, finalSentence);
     }
     finishTurn(turnId);
@@ -180,12 +372,43 @@ router.post('/chat/stream', async (req, res, next) => {
     // Emit done event
     res.write(`event: done\ndata: ${JSON.stringify({ reply: finalReply, npc, sessionId, turnId })}\n\n`);
     res.end();
+
+    finishMetrics({ aborted: false, timeout: false });
   } catch (err) {
+    if (timeoutTimer) {
+      clearTimeout(timeoutTimer);
+      timeoutTimer = null;
+    }
+
+    if (isTimedOut) {
+      finishMetrics({ timeout: true });
+      return;
+    }
+
+    if (isAborted || abortController.signal.aborted) {
+      finishMetrics({ aborted: true });
+      return;
+    }
+
     if (res.headersSent) {
-      res.write(`event: error\ndata: ${JSON.stringify({ error: err.message || 'Stream error' })}\n\n`);
-      res.end();
+      try {
+        res.write(`event: error\ndata: ${JSON.stringify({ error: err.message || 'Stream error' })}\n\n`);
+        res.end();
+      } catch {
+        /* ignore */
+      }
+      finishMetrics({ aborted: false, timeout: false });
     } else {
+      finishMetrics({ aborted: false, timeout: false });
       next(err);
+    }
+  } finally {
+    if (typeof res._onComplete === 'function') {
+      try {
+        res._onComplete();
+      } catch {
+        /* ignore */
+      }
     }
   }
 });

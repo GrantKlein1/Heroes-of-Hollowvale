@@ -45,6 +45,13 @@ export function subscribeClientToTurn(ws, turnId) {
     return null;
   }
 
+  if (turn.aborted) {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'aborted', turnId: turn.turnId }));
+    }
+    return null;
+  }
+
   // Check for API key; return 501 error event if missing
   const apiKey = getElevenLabsApiKey();
   if (!apiKey) {
@@ -105,13 +112,26 @@ export function subscribeClientToTurn(ws, turnId) {
     cleanup();
   };
 
+  const onAbort = (reason) => {
+    if (ws.readyState === WebSocket.OPEN) {
+      try {
+        ws.send(JSON.stringify({ type: 'aborted', turnId: turn.turnId, reason }));
+      } catch {
+        /* ignore */
+      }
+    }
+    cleanup();
+  };
+
   const cleanup = () => {
     turn.listeners.delete(onChunk);
     turn.doneListeners.delete(onDone);
+    turn.abortListeners.delete(onAbort);
   };
 
   turn.listeners.add(onChunk);
   turn.doneListeners.add(onDone);
+  turn.abortListeners.add(onAbort);
 
   ws.on('close', cleanup);
   ws.on('error', cleanup);

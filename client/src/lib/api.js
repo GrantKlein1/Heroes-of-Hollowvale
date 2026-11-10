@@ -1,8 +1,15 @@
 import { API_BASE } from '../config/paths'
 import { eventBus } from './eventBus'
+import { cancelNpcSpeech } from './dialogueAudio'
 
 if (typeof window !== 'undefined') {
   window.__chatEventBus = eventBus
+}
+
+const activeStreams = new Map()
+
+export function resetActiveStreams() {
+  activeStreams.clear()
 }
 
 export function getSessionId() {
@@ -54,19 +61,59 @@ export async function sendChatStream({
   signal,
 } = {}) {
   const effectiveSessionId = sessionId || getSessionId()
-  const res = await fetch(`${API_BASE}/chat/stream`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ npc, message, context, ragHints, sessionId: effectiveSessionId }),
-    signal,
-  })
+  const streamKey = `${effectiveSessionId}:${npc}`
+
+  // Abort any prior in-flight client stream for the same NPC and session
+  const priorController = activeStreams.get(streamKey)
+  if (priorController) {
+    try {
+      priorController.abort(new Error('Superseded by new user message'))
+    } catch {
+      /* ignore */
+    }
+    cancelNpcSpeech()
+  }
+
+  const internalController = new AbortController()
+  activeStreams.set(streamKey, internalController)
+
+  if (signal) {
+    if (signal.aborted) {
+      internalController.abort(signal.reason)
+    } else {
+      signal.addEventListener('abort', () => {
+        internalController.abort(signal.reason)
+      })
+    }
+  }
+
+  let res = null
+  try {
+    res = await fetch(`${API_BASE}/chat/stream`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ npc, message, context, ragHints, sessionId: effectiveSessionId }),
+      signal: internalController.signal,
+    })
+  } catch (fetchErr) {
+    if (activeStreams.get(streamKey) === internalController) {
+      activeStreams.delete(streamKey)
+    }
+    throw fetchErr
+  }
 
   if (!res.ok) {
+    if (activeStreams.get(streamKey) === internalController) {
+      activeStreams.delete(streamKey)
+    }
     const textErr = await res.text().catch(() => '')
     throw new Error(`Chat stream error: ${res.status} ${textErr}`)
   }
 
   if (!res.body) {
+    if (activeStreams.get(streamKey) === internalController) {
+      activeStreams.delete(streamKey)
+    }
     throw new Error('Streaming not supported: no response body stream')
   }
 
@@ -76,6 +123,7 @@ export async function sendChatStream({
   let meta = null
   let accumulated = ''
   let donePayload = null
+  let isAborted = false
 
   try {
     while (true) {
@@ -112,6 +160,10 @@ export async function sendChatStream({
             const deltaText = parsed.text || ''
             accumulated += deltaText
             if (typeof onDelta === 'function') onDelta(deltaText, accumulated)
+          } else if (currentEvent === 'aborted') {
+            isAborted = true
+            cancelNpcSpeech()
+            break
           } else if (currentEvent === 'done') {
             donePayload = parsed
           } else if (currentEvent === 'error') {
@@ -119,9 +171,23 @@ export async function sendChatStream({
           }
         }
       }
+      if (isAborted) break
     }
   } finally {
     reader.releaseLock?.()
+    if (activeStreams.get(streamKey) === internalController) {
+      activeStreams.delete(streamKey)
+    }
+  }
+
+  if (isAborted) {
+    return {
+      aborted: true,
+      reply: accumulated,
+      npc: donePayload?.npc || npc,
+      sessionId: donePayload?.sessionId || effectiveSessionId,
+      meta,
+    }
   }
 
   const finalReply = donePayload?.reply ?? accumulated
@@ -159,6 +225,10 @@ export async function sendChatWithFallback({
       signal,
     })
   } catch (streamErr) {
+    // If the stream was aborted intentionally (e.g. superseded by newer message), do NOT fall back to /api/chat
+    if (streamErr?.name === 'AbortError' || /abort/i.test(String(streamErr?.name || streamErr?.message || ''))) {
+      throw streamErr
+    }
     console.warn('[ChatStream] streaming failed, falling back to /api/chat:', streamErr?.message || streamErr)
     const result = await sendChat({ npc, message, context, ragHints, sessionId })
     if (typeof onDelta === 'function' && result?.reply) {
