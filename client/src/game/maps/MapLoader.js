@@ -56,14 +56,14 @@ export function resolvePropAtlasKeys(options = {}, mapProperties = {}) {
     } else if (typeof options.propAtlasKeys === 'string') {
       keys = options.propAtlasKeys.split(',').map((s) => s.trim()).filter(Boolean)
     }
-  } else if (typeof options === 'object' && options?.propAtlasKey && typeof options.propAtlasKey === 'string') {
-    keys = [options.propAtlasKey.trim()]
   } else if (mapProperties?.propAtlases) {
     if (typeof mapProperties.propAtlases === 'string') {
       keys = mapProperties.propAtlases.split(',').map((s) => s.trim()).filter(Boolean)
     } else if (Array.isArray(mapProperties.propAtlases)) {
       keys = mapProperties.propAtlases
     }
+  } else if (typeof options === 'object' && options?.propAtlasKey && typeof options.propAtlasKey === 'string') {
+    keys = [options.propAtlasKey.trim()]
   }
   if (!keys || keys.length === 0) {
     keys = ['village_props']
