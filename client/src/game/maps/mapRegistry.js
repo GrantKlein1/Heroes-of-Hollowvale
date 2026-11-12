@@ -22,9 +22,46 @@ export const DEFAULT_MAPS = Object.freeze([
     sceneIds: ['market'],
     assetGroups: ['village'],
   },
+  {
+    key: 'cavern_mouth',
+    file: 'maps/cavern_mouth.tmj',
+    sceneIds: ['dungeon', 'cavern_mouth'],
+    assetGroups: ['cavern'],
+    propAtlases: ['dungeon_props', 'dungeon_brazier', 'treasure_chest'],
+  },
+  {
+    key: 'cavern_halls',
+    file: 'maps/cavern_halls.tmj',
+    sceneIds: ['dungeonInterior', 'cavern_halls'],
+    assetGroups: ['cavern'],
+    propAtlases: ['dungeon_props', 'dungeon_brazier', 'treasure_chest'],
+  },
+  {
+    key: 'cavern_treasure',
+    file: 'maps/cavern_treasure.tmj',
+    sceneIds: ['treasureRoom', 'cavern_treasure'],
+    assetGroups: ['cavern'],
+    propAtlases: ['dungeon_props', 'dungeon_brazier', 'treasure_chest'],
+  },
+  {
+    key: 'cavern_lair',
+    file: 'maps/cavern_lair.tmj',
+    sceneIds: ['cavernLair', 'cavern_lair'],
+    assetGroups: ['cavern', 'boss'],
+    propAtlases: ['dungeon_props', 'dungeon_brazier', 'treasure_chest'],
+  },
 ])
 
-let registry = DEFAULT_MAPS.map((m) => ({ ...m, sceneIds: [...m.sceneIds], assetGroups: [...m.assetGroups] }))
+function cloneEntry(m) {
+  return {
+    ...m,
+    sceneIds: [...m.sceneIds],
+    assetGroups: [...m.assetGroups],
+    propAtlases: m.propAtlases ? [...m.propAtlases] : undefined,
+  }
+}
+
+let registry = DEFAULT_MAPS.map(cloneEntry)
 
 /**
  * Normalizes a file or key identifier for lookup.
@@ -50,6 +87,7 @@ export function registerMap(entry) {
     file: String(entry.file),
     sceneIds: Array.isArray(entry.sceneIds) ? [...entry.sceneIds] : [String(entry.key)],
     assetGroups: Array.isArray(entry.assetGroups) ? [...entry.assetGroups] : ['village'],
+    propAtlases: Array.isArray(entry.propAtlases) ? [...entry.propAtlases] : undefined,
   }
 
   const existingIndex = registry.findIndex((m) => m.key === normalized.key)
@@ -79,15 +117,15 @@ export function unregisterMap(key) {
  * Resets map registry to default entries.
  */
 export function resetRegistry() {
-  registry = DEFAULT_MAPS.map((m) => ({ ...m, sceneIds: [...m.sceneIds], assetGroups: [...m.assetGroups] }))
+  registry = DEFAULT_MAPS.map(cloneEntry)
 }
 
 /**
  * Returns all currently registered map entries.
- * @returns {Array<{ key: string, file: string, sceneIds: string[], assetGroups: string[] }>}
+ * @returns {Array<{ key: string, file: string, sceneIds: string[], assetGroups: string[], propAtlases?: string[] }>}
  */
 export function getAllMaps() {
-  return registry.map((m) => ({ ...m, sceneIds: [...m.sceneIds], assetGroups: [...m.assetGroups] }))
+  return registry.map(cloneEntry)
 }
 
 /**
