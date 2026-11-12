@@ -328,4 +328,69 @@ describe('Package 2-2: Tiled Map Validator & CI Test Suite', () => {
       expect(marketResult.valid).toBe(true);
     });
   });
+
+  // =========================================================================
+  // Package 3-2: Cavern Maps Validation (mouth, halls, treasure, lair)
+  // =========================================================================
+  describe('Package 3-2: Cavern Maps Validation', () => {
+    const mapsDir = path.resolve(repoRoot, 'client/public/maps');
+    const mouthPath = path.join(mapsDir, 'cavern_mouth.tmj');
+    const hallsPath = path.join(mapsDir, 'cavern_halls.tmj');
+    const treasurePath = path.join(mapsDir, 'cavern_treasure.tmj');
+    const lairPath = path.join(mapsDir, 'cavern_lair.tmj');
+
+    it('passes validateMap with 0 errors on cavern_mouth.tmj', () => {
+      const result = validateMap(mouthPath, { lorePath });
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+      expect(result.stats.mapWidth).toBe(24);
+      expect(result.stats.mapHeight).toBe(16);
+      expect(result.stats.spawnCount).toBeGreaterThanOrEqual(1);
+      expect(result.stats.exitCount).toBeGreaterThanOrEqual(1);
+    });
+
+    it('passes validateMap with 0 errors on cavern_halls.tmj', () => {
+      const result = validateMap(hallsPath, { lorePath });
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+      expect(result.stats.mapWidth).toBe(28);
+      expect(result.stats.mapHeight).toBe(16);
+      expect(result.stats.spawnCount).toBeGreaterThanOrEqual(1);
+      expect(result.stats.exitCount).toBeGreaterThanOrEqual(2);
+    });
+
+    it('passes validateMap with 0 errors on cavern_treasure.tmj', () => {
+      const result = validateMap(treasurePath, { lorePath });
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+      expect(result.stats.mapWidth).toBe(20);
+      expect(result.stats.mapHeight).toBe(12);
+      expect(result.stats.spawnCount).toBeGreaterThanOrEqual(1);
+      expect(result.stats.exitCount).toBeGreaterThanOrEqual(1);
+    });
+
+    it('passes validateMap with 0 errors on cavern_lair.tmj', () => {
+      const result = validateMap(lairPath, { lorePath });
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+      expect(result.stats.mapWidth).toBe(32);
+      expect(result.stats.mapHeight).toBe(24);
+      expect(result.stats.spawnCount).toBeGreaterThanOrEqual(1);
+      expect(result.stats.exitCount).toBeGreaterThanOrEqual(1);
+    });
+
+    it('verifies cavern network exit connectivity', () => {
+      const availableMaps = new Set([
+        'wilderness.tmj',
+        'cavern_mouth.tmj',
+        'cavern_halls.tmj',
+        'cavern_treasure.tmj',
+        'cavern_lair.tmj',
+      ]);
+      expect(validateMap(mouthPath, { lorePath, availableMaps }).valid).toBe(true);
+      expect(validateMap(hallsPath, { lorePath, availableMaps }).valid).toBe(true);
+      expect(validateMap(treasurePath, { lorePath, availableMaps }).valid).toBe(true);
+      expect(validateMap(lairPath, { lorePath, availableMaps }).valid).toBe(true);
+    });
+  });
 });

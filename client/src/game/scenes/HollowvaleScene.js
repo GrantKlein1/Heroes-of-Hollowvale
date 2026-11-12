@@ -51,6 +51,7 @@ import {
 } from '../ai/critter.js'
 import { MapLoader } from '../maps/MapLoader.js'
 import { getAllMaps, resolveMap } from '../maps/mapRegistry.js'
+import { Dragon, DRAGON_PHASE_SHEETS } from '../actors/Dragon.js'
 import {
   PAINTED_WORLD_W,
   PAINTED_WORLD_H,
@@ -201,11 +202,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       this.assetRegistry.loadGroup('boot')
       this.assetRegistry.loadGroup('village')
       this.assetRegistry.loadGroup('wilderness')
-      for (const map of getAllMaps()) {
-        for (const grp of map.assetGroups || []) {
-          this.assetRegistry.loadGroup(grp)
-        }
-      }
+      this.assetRegistry.loadGroup('cavern')
     }
 
     if (isTiledMaps()) {
@@ -233,13 +230,14 @@ export default class HollowvaleScene extends Phaser.Scene {
       this.assetRegistry.createAnims('boot')
       this.assetRegistry.createAnims('village')
       this.assetRegistry.createAnims('wilderness')
-      for (const map of getAllMaps()) {
-        for (const grp of map.assetGroups || []) {
-          this.assetRegistry.createAnims(grp)
-        }
-      }
+      this.assetRegistry.createAnims('cavern')
       ensureSpellAnimations(this)
     }
+    eventBus.on(GameEvents.DIED, () => {
+      if (this._dragon && typeof this._dragon.resetEncounter === 'function') {
+        this._dragon.resetEncounter()
+      }
+    })
     if (!this.attackTokenManager) {
       this.attackTokenManager = new AttackTokenManager(2)
     }
@@ -817,12 +815,12 @@ export default class HollowvaleScene extends Phaser.Scene {
     if (session.classId === 'mage' && this.manaMax > 0 && !this.dead) {
       this.mana = Math.min(this.manaMax, this.mana + 5 * dt)
     }
-    if (this.sceneId === 'dungeonInterior' && this.nextWaveAt && now >= this.nextWaveAt && this.enemies.countActive() === 0) {
+    if ((this.sceneId === 'dungeonInterior' || this.sceneId === 'cavern_halls') && this.nextWaveAt && now >= this.nextWaveAt && this.enemies.countActive() === 0) {
       this.wave += 1
       this.enemiesSpawned = false
       this.nextWaveAt = 0
     }
-    if (this.sceneId === 'dungeonInterior' && !this.enemiesSpawned && (this.nextWaveAt === 0 || now >= this.nextWaveAt)) {
+    if ((this.sceneId === 'dungeonInterior' || this.sceneId === 'cavern_halls') && !this.enemiesSpawned && (this.nextWaveAt === 0 || now >= this.nextWaveAt)) {
       this._spawnWave()
     }
     this._publishVitals(false)
@@ -927,6 +925,10 @@ export default class HollowvaleScene extends Phaser.Scene {
     const invincible = session.classId === 'thief' && now < session.thiefSmokeUntil
     for (let i = 0; i < kids.length; i++) {
       const e = kids[i]
+      if (e instanceof Dragon) {
+        e.update?.(now, dt)
+        continue
+      }
       if (e instanceof Enemy) {
         e.update(now, dt)
         if (now < (e.flashUntil || 0)) e.setAlpha(0.6)
@@ -1019,7 +1021,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       if (e.hpText) e.hpText.destroy()
       e.destroy()
     }
-    if (this.sceneId === 'dungeonInterior' && this.enemiesSpawned && this.enemies.countActive() === 0 && this.nextWaveAt === 0) {
+    if ((this.sceneId === 'dungeonInterior' || this.sceneId === 'cavern_halls') && this.enemiesSpawned && this.enemies.countActive() === 0 && this.nextWaveAt === 0) {
       this.nextWaveAt = now + 2500
     }
     void dt
@@ -1234,6 +1236,9 @@ export default class HollowvaleScene extends Phaser.Scene {
 
   _die(type) {
     if (this.dead) return
+    if (this._dragon && typeof this._dragon.resetEncounter === 'function') {
+      this._dragon.resetEncounter()
+    }
     handlePlayerDeath(this, type)
   }
 
@@ -1381,7 +1386,8 @@ export default class HollowvaleScene extends Phaser.Scene {
     this._setPlayfield(0, 0, worldW, worldH, slideMs)
 
     // Mount tile layers, props, and physics colliders
-    const mounted = loader.mount(this, { key: mapKey, propAtlasKey: 'village_props' })
+    const propAtlasKeys = mapEntry?.propAtlases || ['village_props']
+    const mounted = loader.mount(this, { key: mapKey, propAtlasKeys })
 
     // Wire collision layer to physics solids
     if (!this.tiledColliders) this.tiledColliders = []
@@ -1430,6 +1436,22 @@ export default class HollowvaleScene extends Phaser.Scene {
 
     // Build interaction and exit prompts from zones
     this._buildTiledPrompts(loader)
+
+    if (mapKey === 'cavern_lair' || mapKey === 'maps/cavern_lair.tmj' || mapEntry?.key === 'cavern_lair') {
+      const dragonSpawnZone = loader.getZone('dragon_spawn') || loader.getSpawns().find((s) => s.name === 'dragon_spawn')
+      const dsx = dragonSpawnZone ? (dragonSpawnZone.x + dragonSpawnZone.width / 2) : (worldW / 2)
+      const dsy = dragonSpawnZone ? (dragonSpawnZone.y + dragonSpawnZone.height / 2) : (worldH * 0.45)
+
+      if (this.assetRegistry && typeof this.assetRegistry.loadDragonPhase === 'function') {
+        this.assetRegistry.loadDragonPhase(1)
+      }
+      const initialSheet = DRAGON_PHASE_SHEETS?.[1] || 'red_dragon_p1_a'
+      const dragon = new Dragon(this, dsx, dsy, initialSheet, '', { phase: 1 })
+      if (this.enemies && typeof this.enemies.add === 'function') {
+        this.enemies.add(dragon)
+      }
+      this._dragon = dragon
+    }
 
     if (isBlendRenderer() && this.player instanceof Player) {
       this.player.updateDepth()
@@ -1922,6 +1944,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       if (kids[i].hpText) kids[i].hpText.destroy()
     }
     this.enemies.clear(true, true)
+    this._dragon = null
   }
 
   spawnCritter(type = 'squirrel_red', x, y) {

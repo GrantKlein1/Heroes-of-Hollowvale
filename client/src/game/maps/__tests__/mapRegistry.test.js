@@ -16,9 +16,9 @@ describe('Data-driven Tiled Map Registry (mapRegistry.js)', () => {
     resetRegistry()
   })
 
-  it('initializes with the 3 canonical maps: brackenford, tavern, and market', () => {
+  it('initializes with the 7 canonical maps: brackenford, tavern, market, and 4 cavern maps', () => {
     const maps = getAllMaps()
-    expect(maps).toHaveLength(3)
+    expect(maps).toHaveLength(7)
 
     const brackenford = maps.find((m) => m.key === 'brackenford')
     expect(brackenford).toBeDefined()
@@ -36,6 +36,28 @@ describe('Data-driven Tiled Map Registry (mapRegistry.js)', () => {
     expect(market).toBeDefined()
     expect(market.file).toBe('maps/market.tmj')
     expect(market.sceneIds).toContain('market')
+
+    const cavernMouth = maps.find((m) => m.key === 'cavern_mouth')
+    expect(cavernMouth).toBeDefined()
+    expect(cavernMouth.file).toBe('maps/cavern_mouth.tmj')
+    expect(cavernMouth.sceneIds).toContain('dungeon')
+
+    const cavernHalls = maps.find((m) => m.key === 'cavern_halls')
+    expect(cavernHalls).toBeDefined()
+    expect(cavernHalls.file).toBe('maps/cavern_halls.tmj')
+    expect(cavernHalls.sceneIds).toContain('dungeonInterior')
+
+    const cavernTreasure = maps.find((m) => m.key === 'cavern_treasure')
+    expect(cavernTreasure).toBeDefined()
+    expect(cavernTreasure.file).toBe('maps/cavern_treasure.tmj')
+    expect(cavernTreasure.sceneIds).toContain('treasureRoom')
+
+    const cavernLair = maps.find((m) => m.key === 'cavern_lair')
+    expect(cavernLair).toBeDefined()
+    expect(cavernLair.file).toBe('maps/cavern_lair.tmj')
+    expect(cavernLair.sceneIds).toContain('cavernLair')
+    expect(cavernLair.assetGroups).toContain('cavern')
+    expect(cavernLair.assetGroups).toContain('boss')
   })
 
   it('resolves maps by key, sceneId, and filename', () => {
@@ -50,11 +72,16 @@ describe('Data-driven Tiled Map Registry (mapRegistry.js)', () => {
 
     expect(resolveMap('market')?.key).toBe('market')
     expect(resolveMap('maps/market.tmj')?.key).toBe('market')
+
+    expect(resolveMap('dungeon')?.key).toBe('cavern_mouth')
+    expect(resolveMap('dungeonInterior')?.key).toBe('cavern_halls')
+    expect(resolveMap('treasureRoom')?.key).toBe('cavern_treasure')
+    expect(resolveMap('cavernLair')?.key).toBe('cavern_lair')
   })
 
   it('returns undefined for unregistered maps or external targets', () => {
     expect(resolveMap('wilderness')).toBeUndefined()
-    expect(resolveMap('dungeonInterior')).toBeUndefined()
+    expect(resolveMap('unknown_dungeon')).toBeUndefined()
     expect(resolveMap('nonexistent_map')).toBeUndefined()
   })
 
@@ -77,21 +104,21 @@ describe('Data-driven Tiled Map Registry (mapRegistry.js)', () => {
     expect(resolveMap('maps/crypt.tmj')?.key).toBe('crypt')
     expect(resolveMap('crypt.tmj')?.key).toBe('crypt')
 
-    // getAllMaps includes crypt
-    expect(getAllMaps()).toHaveLength(4)
+    // getAllMaps includes crypt (7 defaults + 1 = 8)
+    expect(getAllMaps()).toHaveLength(8)
   })
 
   it('unregisters a map and resets to default cleanly', () => {
     registerMap({ key: 'custom', file: 'maps/custom.tmj' })
-    expect(getAllMaps()).toHaveLength(4)
+    expect(getAllMaps()).toHaveLength(8)
 
     unregisterMap('custom')
-    expect(getAllMaps()).toHaveLength(3)
+    expect(getAllMaps()).toHaveLength(7)
     expect(resolveMap('custom')).toBeUndefined()
 
     registerMap({ key: 'custom2', file: 'maps/custom2.tmj' })
     resetRegistry()
-    expect(getAllMaps()).toHaveLength(3)
+    expect(getAllMaps()).toHaveLength(7)
     expect(resolveMap('custom2')).toBeUndefined()
   })
 
