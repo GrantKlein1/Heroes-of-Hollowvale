@@ -201,6 +201,11 @@ export default class HollowvaleScene extends Phaser.Scene {
       this.assetRegistry.loadGroup('boot')
       this.assetRegistry.loadGroup('village')
       this.assetRegistry.loadGroup('wilderness')
+      for (const map of getAllMaps()) {
+        for (const grp of map.assetGroups || []) {
+          this.assetRegistry.loadGroup(grp)
+        }
+      }
     }
 
     if (isTiledMaps()) {
@@ -228,6 +233,11 @@ export default class HollowvaleScene extends Phaser.Scene {
       this.assetRegistry.createAnims('boot')
       this.assetRegistry.createAnims('village')
       this.assetRegistry.createAnims('wilderness')
+      for (const map of getAllMaps()) {
+        for (const grp of map.assetGroups || []) {
+          this.assetRegistry.createAnims(grp)
+        }
+      }
       ensureSpellAnimations(this)
     }
     if (!this.attackTokenManager) {
