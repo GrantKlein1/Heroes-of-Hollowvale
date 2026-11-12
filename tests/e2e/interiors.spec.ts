@@ -94,8 +94,8 @@ test.describe('Package 3-1: Interior Maps (Tavern & Market) Integration (?maps=t
     // 4. Approach Tharos and verify dialogue trigger
     await page.evaluate(() => {
       const scene = (window as any).__scene;
-      scene.player.setPosition(320, 150);
-      scene.player.body.reset(320, 150);
+      scene.player.setPosition(340, 175);
+      scene.player.body.reset(340, 175);
       scene._tryInteract();
     });
 
@@ -218,8 +218,8 @@ test.describe('Package 3-1: Interior Maps (Tavern & Market) Integration (?maps=t
     // 4. Approach Hest Mallow and verify vendor interaction
     await page.evaluate(() => {
       const scene = (window as any).__scene;
-      scene.player.setPosition(320, 180);
-      scene.player.body.reset(320, 180);
+      scene.player.setPosition(216, 190);
+      scene.player.body.reset(216, 190);
       scene._tryInteract();
     });
 

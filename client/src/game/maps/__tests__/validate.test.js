@@ -303,7 +303,7 @@ describe('Package 2-2: Tiled Map Validator & CI Test Suite', () => {
       expect(result.errors).toEqual([]);
       expect(result.stats.mapWidth).toBe(20);
       expect(result.stats.mapHeight).toBe(12);
-      expect(result.stats.tilesetCount).toBe(2);
+      expect(result.stats.tilesetCount).toBe(3);
       expect(result.stats.spawnCount).toBeGreaterThanOrEqual(1);
       expect(result.stats.exitCount).toBeGreaterThanOrEqual(1);
     });
@@ -314,7 +314,7 @@ describe('Package 2-2: Tiled Map Validator & CI Test Suite', () => {
       expect(result.errors).toEqual([]);
       expect(result.stats.mapWidth).toBe(20);
       expect(result.stats.mapHeight).toBe(12);
-      expect(result.stats.tilesetCount).toBe(2);
+      expect(result.stats.tilesetCount).toBe(3);
       expect(result.stats.spawnCount).toBeGreaterThanOrEqual(1);
       expect(result.stats.exitCount).toBeGreaterThanOrEqual(1);
     });

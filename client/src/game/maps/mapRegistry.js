@@ -14,13 +14,13 @@ export const DEFAULT_MAPS = Object.freeze([
     key: 'tavern',
     file: 'maps/tavern.tmj',
     sceneIds: ['tavern'],
-    assetGroups: ['village'],
+    assetGroups: ['interiors'],
   },
   {
     key: 'market',
     file: 'maps/market.tmj',
     sceneIds: ['market'],
-    assetGroups: ['village'],
+    assetGroups: ['interiors'],
   },
   {
     key: 'cavern_mouth',
