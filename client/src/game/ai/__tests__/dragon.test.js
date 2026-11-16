@@ -54,13 +54,15 @@ import {
   DRAGON_PHASE_ATTACKS,
   TRANSITION_DURATION_MS,
   TAKEOFF_DURATION_MS,
+  DRAGON_METEOR_MARKER_ATLAS,
+  DRAGON_METEOR_MARKER_FRAME,
+  DRAGON_METEOR_HIT_RADIUS,
 } from '../dragon.js'
 import {
   DRAGON_BASE_HP,
   DRAGON_PHASE_THRESHOLDS,
   DRAGON_LANDING_DURATION_MS,
   DRAGON_METEOR_MARKER_DELAY_MS,
-  METEOR_MARKER_KEY,
 } from '../../combat/balance.js'
 import { setSeed } from '../../rng.js'
 
@@ -83,11 +85,22 @@ function createMockDragonScene() {
           frame: { name: frame },
           alpha: 1,
           scale: 1,
+          scaleX: 1,
+          depth: 0,
+          rotation: 0,
+          originX: 0.5,
+          originY: 0.5,
           destroyed: false,
           setAlpha: vi.fn(function(a) { this.alpha = a; return this }),
-          setScale: vi.fn(function(s) { this.scale = s; return this }),
+          setScale: vi.fn(function(s) { this.scale = s; this.scaleX = s; return this }),
+          setOrigin: vi.fn(function(ox, oy) { this.originX = ox; this.originY = oy; return this }),
+          setDepth: vi.fn(function(d) { this.depth = d; return this }),
+          setRotation: vi.fn(function(r) { this.rotation = r; return this }),
           destroy: vi.fn(function() { this.destroyed = true }),
-          anims: { play: vi.fn() },
+          anims: {
+            play: vi.fn(function(key) { this.currentAnim = { key }; return this }),
+            currentAnim: null,
+          },
         }
         return sprite
       }),
@@ -309,7 +322,7 @@ describe('DragonAI Controller — Package 3b-2', () => {
   })
 
   describe('Phase 3 Meteors Ground Marker Delay', () => {
-    it('spawns ground markers with 700 ms impact delay and METEOR_MARKER_KEY', () => {
+    it('spawns dfx_meteor_marker for 700 ms on the ground, sized to the 32 px impact radius', () => {
       dragon.setPhase(3)
       ai.phase = 3
       ai.airborne = false
@@ -321,12 +334,22 @@ describe('DragonAI Controller — Package 3b-2', () => {
       expect(ai.activeAttack).toBe('meteor')
       expect(ai.activeMarkers.length).toBeGreaterThan(0)
       expect(ai.activeMarkers[0].impactTime - ai.activeMarkers[0].spawnTime).toBe(DRAGON_METEOR_MARKER_DELAY_MS)
+      expect(ai.activeMarkers[0].hitRadius).toBe(DRAGON_METEOR_HIT_RADIUS)
+      expect(ai.activeMarkers[0].atlas).toBe(DRAGON_METEOR_MARKER_ATLAS)
       expect(mockScene.add.sprite).toHaveBeenCalledWith(
         expect.any(Number),
         expect.any(Number),
-        'dragon_fx_v2',
-        METEOR_MARKER_KEY
+        DRAGON_METEOR_MARKER_ATLAS,
+        DRAGON_METEOR_MARKER_FRAME
       )
+
+      const markerSprite = mockScene.add.sprite.mock.results[0].value
+      expect(markerSprite.anims.currentAnim.key).toBe('dragon_fx_extra_dfx_meteor_marker')
+      expect(markerSprite.depth).toBe(11)
+      expect(markerSprite.scaleX).toBe(1)
+      expect(markerSprite.rotation).toBe(0)
+      expect(markerSprite.originX).toBe(0.5)
+      expect(markerSprite.originY).toBe(0.5)
 
       // Before impact time, markers still active
       ai.update(spawnTime + 500)

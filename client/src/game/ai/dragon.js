@@ -12,14 +12,30 @@
  */
 
 import { random } from '../rng.js'
+import { buildAnimKey } from '../assets/animKeys.js'
+import { LAYER_DEPTHS } from '../maps/depth.js'
 import {
   DRAGON_BASE_HP,
   DRAGON_DAMAGE,
   DRAGON_PHASE_THRESHOLDS,
   DRAGON_LANDING_DURATION_MS,
   DRAGON_METEOR_MARKER_DELAY_MS,
-  METEOR_MARKER_KEY,
 } from '../combat/balance.js'
+
+/**
+ * Batch 7 warning marker (boss_fx_extra / dragon_fx_extra).
+ * 7 frames @ 10 fps = 700 ms, matching DRAGON_METEOR_MARKER_DELAY_MS.
+ * The packed ellipse is authored to a 32 px impact radius; display it at scale 1.
+ * Timing stays on 3b-2's DRAGON_METEOR_MARKER_DELAY_MS. balance.js METEOR_MARKER_KEY
+ * still names the old fx_v2 frame and is not the warning clip.
+ */
+export const DRAGON_METEOR_MARKER_ATLAS = 'dragon_fx_extra'
+export const DRAGON_METEOR_MARKER_ANIM = 'dfx_meteor_marker'
+export const DRAGON_METEOR_MARKER_FRAME = 'dfx_meteor_marker_0'
+export const DRAGON_METEOR_HIT_RADIUS = 32
+
+/** Above ground_detail, below walls, so the telegraph sits on the ground. */
+const METEOR_GROUND_DEPTH = LAYER_DEPTHS.ground_detail + 1
 
 export const HOVER_ELEVATION_PX = 52
 
@@ -262,7 +278,49 @@ export class DragonAI {
   }
 
   /**
+   * Makes sure the phase-3 extra atlas is queued and its clips exist.
+   * AssetRegistry also pulls boss_fx_extra when boss_p3 loads.
+   *
+   * @param {object} scene
+   */
+  ensureMeteorMarkerAssets(scene) {
+    const registry = scene?.assetRegistry
+    if (!registry) return
+    if (typeof registry.isGroupLoaded === 'function' && !registry.isGroupLoaded('boss_fx_extra')) {
+      registry.loadGroup?.('boss_fx_extra')
+    } else if (typeof registry.isGroupLoaded !== 'function') {
+      registry.loadGroup?.('boss_fx_extra')
+    }
+    registry.createAnims?.('boss_fx_extra')
+  }
+
+  /**
+   * Pivot and hit radius from dragon_fx_extra meta. Fallbacks match the atlas contract.
+   *
+   * @param {object} scene
+   * @returns {{ origin: { x: number, y: number }, hitRadius: number }}
+   */
+  readMeteorMarkerMetrics(scene) {
+    const meta = scene?.textures?.get?.(DRAGON_METEOR_MARKER_ATLAS)?.customData?.meta
+    const animOrigin = meta?.anims?.[DRAGON_METEOR_MARKER_ANIM]?.origin
+    const sheetOrigin = meta?.origin
+    const anchor = scene?.assetRegistry?.getAnchor?.(DRAGON_METEOR_MARKER_ATLAS)
+    let origin = { x: 0.5, y: 0.5 }
+    if (typeof animOrigin?.x === 'number' && typeof animOrigin?.y === 'number') {
+      origin = { x: animOrigin.x, y: animOrigin.y }
+    } else if (typeof sheetOrigin?.x === 'number' && typeof sheetOrigin?.y === 'number') {
+      origin = { x: sheetOrigin.x, y: sheetOrigin.y }
+    } else if (typeof anchor?.x === 'number' && typeof anchor?.y === 'number') {
+      origin = { x: anchor.x, y: anchor.y }
+    }
+    const fromMeta = meta?.effects?.meteor_marker?.hitRadius
+    const hitRadius = typeof fromMeta === 'number' && fromMeta > 0 ? fromMeta : DRAGON_METEOR_HIT_RADIUS
+    return { origin, hitRadius }
+  }
+
+  /**
    * Spawns ground markers for the meteor attack (700 ms before impact).
+   * The marker loops dfx_meteor_marker for DRAGON_METEOR_MARKER_DELAY_MS.
    *
    * @param {number} now
    */
@@ -270,6 +328,10 @@ export class DragonAI {
     const scene = this.dragon?.scene
     const targetX = scene?.player?.x ?? (this.dragon?.x || 300)
     const targetY = scene?.player?.y ?? (this.dragon?.y || 250)
+
+    this.ensureMeteorMarkerAssets(scene)
+    const { origin, hitRadius } = this.readMeteorMarkerMetrics(scene)
+    const animKey = buildAnimKey(DRAGON_METEOR_MARKER_ATLAS, DRAGON_METEOR_MARKER_ANIM)
 
     // Spawn 1 to 3 markers using seeded RNG offsets
     const count = 2
@@ -281,9 +343,14 @@ export class DragonAI {
 
       let markerSprite = null
       if (scene?.add?.sprite) {
-        markerSprite = scene.add.sprite(markerX, markerY, 'dragon_fx_v2', METEOR_MARKER_KEY)
-        if (markerSprite.setAlpha) markerSprite.setAlpha(0.7)
-        if (markerSprite.setScale) markerSprite.setScale(1.0)
+        markerSprite = scene.add.sprite(markerX, markerY, DRAGON_METEOR_MARKER_ATLAS, DRAGON_METEOR_MARKER_FRAME)
+        if (typeof markerSprite.setOrigin === 'function') markerSprite.setOrigin(origin.x, origin.y)
+        if (typeof markerSprite.setScale === 'function') markerSprite.setScale(1)
+        if (typeof markerSprite.setDepth === 'function') markerSprite.setDepth(METEOR_GROUND_DEPTH)
+        if (typeof markerSprite.setRotation === 'function') markerSprite.setRotation(0)
+        const canPlay = typeof markerSprite.anims?.play === 'function'
+          && (typeof scene?.anims?.exists !== 'function' || scene.anims.exists(animKey))
+        if (canPlay) markerSprite.anims.play(animKey, true)
       }
 
       this.activeMarkers.push({
@@ -291,6 +358,9 @@ export class DragonAI {
         y: markerY,
         spawnTime: now,
         impactTime: now + DRAGON_METEOR_MARKER_DELAY_MS,
+        hitRadius,
+        atlas: DRAGON_METEOR_MARKER_ATLAS,
+        anim: animKey,
         sprite: markerSprite,
       })
     }
@@ -528,6 +598,11 @@ export class DragonAI {
    * @param {number} [delta=0]
    */
   update(time = (typeof performance !== 'undefined' ? performance.now() : Date.now()), delta = 0) {
+    // Scene.update passes performance.now(); Phaser preUpdate passes the game
+    // loop clock. Ignore a backwards sample so the 700 ms marker is not cut short.
+    if (typeof time === 'number' && this.lastTime > 0 && time < this.lastTime) {
+      time = this.lastTime
+    }
     this.lastTime = time
 
     // 1. Process active meteor markers
