@@ -30,20 +30,23 @@ All assets are packaged as **Phaser 3 JSON-hash texture atlases** (`.png` sheet 
 | **`critters/critters`** | $192 \times 1408$ | $16\times 16, 32\times 32$ | 308 | `0.5, 0.8750` | Center-feet |
 | **`dwarf/dwarf`** | $896 \times 320$ | $64\times 80$ | 56 | `0.5, 0.9125` | $(32, 73)$ |
 | **`dwarf/dwarf_attack`** | $672 \times 384$ | $96\times 96$ | 28 | `0.5, 0.9271` | $(48, 89)$ |
-| **`dwarf/dwarf_attack2`** | $448 \times 320$ | $64\times 80$ | 28 | `0.5, 0.9125` | $(32, 73)$ |
-| **`dwarf/dwarf_charged`** | $768 \times 320$ | $64\times 80$ | 48 | `0.5, 0.9125` | $(32, 73)$ |
+| **`dwarf/dwarf_attack2`** | $490 \times 320$ | $70\times 80$ | 28 | `0.5, 0.9125` | $(35, 73)$ |
+| **`dwarf/dwarf_charged`** | $864 \times 320$ | $72\times 80$ | 48 | `0.5, 0.9125` | $(36, 73)$ |
 | **`dwarf/dwarf_death`** | $800 \times 320$ | $80\times 80$ | 40 | `0.5, 0.9125` | $(40, 73)$ |
 | **`dwarf/dwarf_dodge`** | $384 \times 320$ | $64\times 80$ | 24 | `0.5, 0.9125` | $(32, 73)$ |
 | **`dwarf/dwarf_run`** | $512 \times 320$ | $64\times 80$ | 32 | `0.5, 0.9125` | $(32, 73)$ |
 | **`fx_common/fx_common`** | $368 \times 32$ | $32\times 32, 48\times 32$ | 9 | `0.5, 0.5000` | Center $(16, 16)$ |
 | **`goblin/goblin`** | $1344 \times 256$ | $64\times 64$ | 84 | `0.5, 0.9375` | $(32, 60)$ |
+| **`goblin/goblin_alert`** | $256 \times 256$ | $64\times 64$ | 16 | `0.5, 0.9375` | $(32, 60)$ |
 | **`goblin/goblin_death`** | $640 \times 288$ | $80\times 72$ | 32 | `0.5, 0.8333` | $(40, 60)$ |
 | **`goblin/goblin_spawn`** | $384 \times 288$ | $64\times 72$ | 24 | `0.5, 0.8889` | $(32, 64)$ |
 | **`goblin/goblin_telegraph`**| $192 \times 256$ | $64\times 64$ | 12 | `0.5, 0.9375` | $(32, 60)$ |
 | **`goblin_archer/goblin_archer`** | $1408 \times 280$ | $64\times 64$ | 97 | `0.5, 0.9375` | $(32, 60)$ |
+| **`goblin_archer/goblin_archer_alert`** | $256 \times 256$ | $64\times 64$ | 16 | `0.5, 0.9375` | $(32, 60)$ |
 | **`goblin_archer/goblin_archer_death`** | $640 \times 288$ | $80\times 72$ | 32 | `0.5, 0.8333` | $(40, 60)$ |
 | **`goblin_archer/goblin_archer_spawn`** | $384 \times 288$ | $64\times 72$ | 24 | `0.5, 0.8750` | $(32, 63)$ |
 | **`goblin_brute/goblin_brute`** | $2016 \times 384$ | $96\times 96$ | 84 | `0.5, 0.9271` | $(48, 89)$ |
+| **`goblin_brute/goblin_brute_alert`** | $384 \times 384$ | $96\times 96$ | 16 | `0.5, 0.9271` | $(48, 89)$ |
 | **`goblin_brute/goblin_brute_death`** | $896 \times 384$ | $112\times 96$ | 32 | `0.5, 0.9271` | $(56, 89)$ |
 | **`goblin_brute/goblin_brute_spawn`** | $576 \times 384$ | $96\times 96$ | 24 | `0.5, 0.9271` | $(48, 89)$ |
 | **`goblin_brute/goblin_brute_telegraph`** | $288 \times 384$ | $96\times 96$ | 12 | `0.5, 0.9271` | $(48, 89)$ |

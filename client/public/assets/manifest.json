@@ -846,6 +846,15 @@
             "y": 0.9375
           }
         },
+        "goblin_alert": {
+          "key": "goblin_alert",
+          "image": "assets/enemies/goblin/goblin_alert.png",
+          "json": "assets/enemies/goblin/goblin_alert.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9375
+          }
+        },
         "goblin_death": {
           "key": "goblin_death",
           "image": "assets/enemies/goblin/goblin_death.png",
@@ -895,6 +904,15 @@
             "y": 0.9375
           }
         },
+        "goblin_archer_alert": {
+          "key": "goblin_archer_alert",
+          "image": "assets/enemies/goblin_archer/goblin_archer_alert.png",
+          "json": "assets/enemies/goblin_archer/goblin_archer_alert.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9375
+          }
+        },
         "goblin_archer_death": {
           "key": "goblin_archer_death",
           "image": "assets/enemies/goblin_archer/goblin_archer_death.png",
@@ -930,6 +948,15 @@
           "key": "goblin_brute",
           "image": "assets/enemies/goblin_brute/goblin_brute.png",
           "json": "assets/enemies/goblin_brute/goblin_brute.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "goblin_brute_alert": {
+          "key": "goblin_brute_alert",
+          "image": "assets/enemies/goblin_brute/goblin_brute_alert.png",
+          "json": "assets/enemies/goblin_brute/goblin_brute_alert.json",
           "anchor": {
             "x": 0.5,
             "y": 0.9271

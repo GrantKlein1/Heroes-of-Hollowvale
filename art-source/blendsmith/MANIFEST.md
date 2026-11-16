@@ -32,7 +32,7 @@ Generated from the atlas JSONs by a script (numbers not hand-typed).
 
 ## `dwarf/dwarf_attack`
 
-- PNG: `dwarf/dwarf_attack.png` — 672×384 px; PNG+JSON 38.2 KiB; 28 frames
+- PNG: `dwarf/dwarf_attack.png` — 672×384 px; PNG+JSON 38.8 KiB; 28 frames
 - Cell size(s): 96×96
 - Anchor/origin: `{"x": 0.5, "y": 0.9271}`
 - footprint: `{"x": -13, "y": -4, "w": 26, "h": 8, "shape": "ellipse", "note": "collision footprint centred on feet"}`
@@ -44,8 +44,8 @@ Generated from the atlas JSONs by a script (numbers not hand-typed).
 
 ## `dwarf/dwarf_attack2`
 
-- PNG: `dwarf/dwarf_attack2.png` — 448×320 px; PNG+JSON 33.5 KiB; 28 frames
-- Cell size(s): 64×80
+- PNG: `dwarf/dwarf_attack2.png` — 490×320 px; PNG+JSON 33.9 KiB; 28 frames
+- Cell size(s): 70×80
 - Anchor/origin: `{"x": 0.5, "y": 0.9125}`
 - footprint: `{"x": -13, "y": -4, "w": 26, "h": 8, "shape": "ellipse", "note": "collision footprint centred on feet"}`
 - hurtbox: `{"x": -16, "y": -29, "w": 31, "h": 29, "note": "body hurtbox, bottom on feet"}`
@@ -56,8 +56,8 @@ Generated from the atlas JSONs by a script (numbers not hand-typed).
 
 ## `dwarf/dwarf_charged`
 
-- PNG: `dwarf/dwarf_charged.png` — 768×320 px; PNG+JSON 54.1 KiB; 48 frames
-- Cell size(s): 64×80
+- PNG: `dwarf/dwarf_charged.png` — 864×320 px; PNG+JSON 56.3 KiB; 48 frames
+- Cell size(s): 72×80
 - Anchor/origin: `{"x": 0.5, "y": 0.9125}`
 - footprint: `{"x": -13, "y": -4, "w": 26, "h": 8, "shape": "ellipse", "note": "collision footprint centred on feet"}`
 - hurtbox: `{"x": -16, "y": -29, "w": 31, "h": 29, "note": "body hurtbox, bottom on feet"}`
@@ -129,6 +129,18 @@ Generated from the atlas JSONs by a script (numbers not hand-typed).
 | hurt | 5@12 | — |
 | attack | 7@8 | — |
 
+## `goblin/goblin_alert`
+
+- PNG: `goblin/goblin_alert.png` — 256×256 px; PNG+JSON 17.8 KiB; 16 frames
+- Cell size(s): 64×64
+- Anchor/origin: `{"x": 0.5, "y": 0.9375}`
+- footprint: `{"x": -13, "y": -4, "w": 26, "h": 8, "shape": "ellipse", "note": "collision footprint centred on feet"}`
+- hurtbox: `{"x": -16, "y": -23, "w": 31, "h": 23, "note": "body hurtbox, bottom on feet"}`
+
+| anim | frames@fps | loop/holdLast |
+|---|---|---|
+| alert | 4@16 | — |
+
 ## `goblin/goblin_death`
 
 - PNG: `goblin/goblin_death.png` — 640×288 px; PNG+JSON 35.2 KiB; 32 frames
@@ -182,6 +194,18 @@ Generated from the atlas JSONs by a script (numbers not hand-typed).
 | arrow | 1@? | — |
 | arrow_impact | 5@16 | — |
 
+## `goblin_archer/goblin_archer_alert`
+
+- PNG: `goblin_archer/goblin_archer_alert.png` — 256×256 px; PNG+JSON 19.0 KiB; 16 frames
+- Cell size(s): 64×64
+- Anchor/origin: `{"x": 0.5, "y": 0.9375}`
+- footprint: `{"x": -13, "y": -4, "w": 25, "h": 8, "shape": "ellipse", "note": "collision footprint centred on feet"}`
+- hurtbox: `{"x": -15, "y": -24, "w": 30, "h": 24, "note": "body hurtbox, bottom on feet"}`
+
+| anim | frames@fps | loop/holdLast |
+|---|---|---|
+| alert | 4@16 | — |
+
 ## `goblin_archer/goblin_archer_death`
 
 - PNG: `goblin_archer/goblin_archer_death.png` — 640×288 px; PNG+JSON 38.2 KiB; 32 frames
@@ -220,6 +244,18 @@ Generated from the atlas JSONs by a script (numbers not hand-typed).
 | walk | 8@8 | loop |
 | hurt | 5@12 | — |
 | attack | 7@8 | — |
+
+## `goblin_brute/goblin_brute_alert`
+
+- PNG: `goblin_brute/goblin_brute_alert.png` — 384×384 px; PNG+JSON 24.8 KiB; 16 frames
+- Cell size(s): 96×96
+- Anchor/origin: `{"x": 0.5, "y": 0.9271}`
+- footprint: `{"x": -20, "y": -6, "w": 40, "h": 12, "shape": "ellipse", "note": "collision footprint centred on feet"}`
+- hurtbox: `{"x": -24, "y": -31, "w": 48, "h": 31, "note": "body hurtbox, bottom on feet"}`
+
+| anim | frames@fps | loop/holdLast |
+|---|---|---|
+| alert | 4@16 | — |
 
 ## `goblin_brute/goblin_brute_death`
 
@@ -734,7 +770,7 @@ Generated from the atlas JSONs by a script (numbers not hand-typed).
 - `red_dragon/fx_v2/spawns.json` (8621 B)
 - `thief/hitbox.json` (1345 B)
 
-**Total atlas PNG+JSON size:** 9.29 MiB
+**Total atlas PNG+JSON size:** 9.35 MiB
 
 ## AS-3 (2026-11-09)
 
