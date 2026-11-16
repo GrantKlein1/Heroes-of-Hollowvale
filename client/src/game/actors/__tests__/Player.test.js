@@ -103,6 +103,8 @@ vi.mock('phaser', () => {
 import { Player, CLASS_SHEETS } from '../Player.js'
 import { FACING } from '../facing.js'
 import { ACTOR_STATES } from '../stateMachine.js'
+import { session } from '../../session.js'
+import mageSpellsV2Atlas from '../../../../public/assets/characters/mage/spells_v2/mage_spells_v2.json'
 
 function createMockScene() {
   const metadataMap = {
@@ -799,6 +801,72 @@ describe('Player Actor — Package 1-3', () => {
       expect(knight.isAtRunSpeed()).toBe(true)
       knight.setRunning(false)
       expect(knight.isAtRunSpeed()).toBe(false)
+    })
+  })
+
+  describe('Mage cast v2 release (MS-1)', () => {
+    beforeEach(() => {
+      mockScene.projectiles = []
+      mockScene.mana = 100
+      session.mana = 100
+      session.lifeLeechCooldownUntil = 0
+    })
+
+    it('plays the lightning v2 clip and withholds the bolt until 312.5 ms', () => {
+      const mage = new Player(mockScene, 200, 350, 'mage', { facing: 'down' })
+      expect(mage.cast('lightning', 1000)).toBe(true)
+      expect(mockScene.projectiles).toHaveLength(0)
+      expect(mage.anims.currentAnim.key).toBe('mage_cast_lightning_v2_down')
+      expect(mage.anims.play).not.toHaveBeenCalledWith('mage_cast_down', expect.anything())
+      expect(mage.flipX).toBe(false)
+
+      const pivot = mageSpellsV2Atlas.frames.mage_cast_lightning_v2_down_0.pivot
+      expect(mage.originX).toBe(pivot.x)
+      expect(mage.originY).toBe(pivot.y)
+
+      mage.update(1000 + 312.5 - 62.5, 16)
+      expect(mockScene.projectiles).toHaveLength(0)
+
+      mage.update(1000 + 312.5, 16)
+      expect(mockScene.projectiles).toHaveLength(1)
+      const proj = mockScene.projectiles[0]
+      const offset = mageSpellsV2Atlas.meta.spawnOffset.lightning.down
+      expect(proj.texture.key).toBe('spell_fx_v2')
+      expect(proj.flyAnim).toBe('lightning_bolt_v2')
+      expect(proj.hitAnim).toBe('lightning_impact_v2')
+      expect(Math.abs(proj.x - (mage.x + offset.x))).toBeLessThanOrEqual(2)
+      expect(Math.abs(proj.y - (mage.y + offset.y))).toBeLessThanOrEqual(2)
+      expect(mage._v2Cast.spawnedAt - mage._v2Cast.startedAt).toBe(312.5)
+    })
+
+    it('plays the leech v2 clip for another facing and spawns the orb on release', () => {
+      const mage = new Player(mockScene, 80, 120, 'mage', { facing: 'right' })
+      expect(mage.cast('leech', 4000)).toBe(true)
+      expect(mage.anims.currentAnim.key).toBe('mage_cast_leech_v2_right')
+      expect(mage.anims.play).not.toHaveBeenCalledWith('mage_cast_right', expect.anything())
+      expect(mockScene.projectiles).toHaveLength(0)
+
+      mage.update(4000 + 250, 16)
+      expect(mockScene.projectiles).toHaveLength(0)
+      mage.update(4000 + 312.5, 16)
+
+      const proj = mockScene.projectiles[0]
+      const offset = mageSpellsV2Atlas.meta.spawnOffset.leech.right
+      expect(proj.flyAnim).toBe('leech_orb_v2')
+      expect(proj.hitAnim).toBe('leech_impact_v2')
+      expect(proj.returnAnim).toBe('leech_return_v2')
+      expect(proj.absorbAnim).toBe('leech_absorb_v2')
+      expect(Math.abs(proj.x - (mage.x + offset.x))).toBeLessThanOrEqual(2)
+      expect(Math.abs(proj.y - (mage.y + offset.y))).toBeLessThanOrEqual(2)
+    })
+
+    it('still fires fireball immediately on the generic cast clip', () => {
+      const mage = new Player(mockScene, 200, 350, 'mage', { facing: 'down' })
+      expect(mage.cast('fireball', 1000)).toBe(true)
+      expect(mage.anims.currentAnim.key).toBe('mage_cast_down')
+      expect(mockScene.projectiles).toHaveLength(1)
+      expect(mockScene.projectiles[0].texture.key).toBe('fireball')
+      expect(mockScene.mana).toBe(85)
     })
   })
 })

@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   CARDINAL_DIRECTIONS,
   buildAnimKey,
+  buildV2CastAnimKey,
   parseAnimKey,
   buildFrameName,
   formatFrameDurations,
@@ -20,6 +21,17 @@ describe('animKeys — Key building and parsing', () => {
     expect(buildAnimKey('fx_common', 'hit_spark')).toBe('fx_common_hit_spark')
     expect(buildAnimKey('fx_common', 'dust_puff')).toBe('fx_common_dust_puff')
     expect(buildAnimKey('dragon_fx_v2', 'breath_burst')).toBe('dragon_fx_v2_breath_burst')
+  })
+
+  it('builds mage v2 cast keys for lightning and leech on all four facings', () => {
+    expect(buildV2CastAnimKey('lightning', 'down')).toBe('mage_cast_lightning_v2_down')
+    expect(buildV2CastAnimKey('lightning', 'left')).toBe('mage_cast_lightning_v2_left')
+    expect(buildV2CastAnimKey('lightning', 'right')).toBe('mage_cast_lightning_v2_right')
+    expect(buildV2CastAnimKey('lightning', 'up')).toBe('mage_cast_lightning_v2_up')
+    expect(buildV2CastAnimKey('leech', 'down')).toBe('mage_cast_leech_v2_down')
+    expect(buildV2CastAnimKey('leech', 'right')).toBe('mage_cast_leech_v2_right')
+    expect(() => buildV2CastAnimKey('fireball', 'down')).toThrow()
+    expect(() => buildV2CastAnimKey('lightning', 'flip')).toThrow()
   })
 
   it('throws an error if asset or anim is missing', () => {

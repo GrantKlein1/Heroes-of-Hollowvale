@@ -28,6 +28,26 @@ export function buildAnimKey(asset, anim, dir = '') {
   return `${asset}_${anim}`
 }
 
+const V2_CAST_SPELLS = new Set(['lightning', 'leech'])
+
+/**
+ * Body clip for a mage Lightning or Leech cast.
+ * Matches atlas keys `mage_cast_<spell>_v2_<dir>` (four rendered facings, no flipX).
+ *
+ * @param {string} spellId - 'lightning' | 'leech'
+ * @param {string} dir - 'down' | 'left' | 'right' | 'up'
+ * @returns {string}
+ */
+export function buildV2CastAnimKey(spellId, dir) {
+  if (!V2_CAST_SPELLS.has(spellId)) {
+    throw new Error(`buildV2CastAnimKey only supports lightning and leech (got "${spellId}")`)
+  }
+  if (!DIRECTION_SET.has(dir)) {
+    throw new Error(`buildV2CastAnimKey requires a cardinal facing (got "${dir}")`)
+  }
+  return buildAnimKey('mage', `cast_${spellId}_v2`, dir)
+}
+
 /**
  * Parses an animation key into its constituent parts: asset, anim, and dir.
  *

@@ -42,6 +42,11 @@ import {
   castShield,
   castBlink,
   throwPoisonVial,
+  armMageV2Cast,
+  tickMageV2Cast,
+  ensureMageSpellsGroup,
+  getV2CastFramePivot,
+  getV2CastBodyLayout,
 } from '../combat/spells.js'
 import {
   DODGE_COOLDOWN_MS,
@@ -204,6 +209,10 @@ export class Player extends Actor {
       }
     }
 
+    if (this.classId === 'mage') {
+      ensureMageSpellsGroup(this.scene)
+    }
+
     // Start with idle animation if scene anims are available
     this.playAnim('idle')
   }
@@ -217,6 +226,9 @@ export class Player extends Actor {
     if (!(classId in CLASS_SHEETS)) return
     this.classId = classId
     this.assetId = classId
+    if (this.classId === 'mage') {
+      ensureMageSpellsGroup(this.scene)
+    }
 
     const classDef = CLASS_SHEETS[classId]
 
@@ -501,6 +513,20 @@ export class Player extends Actor {
     if (!this.stateMachine.canInterrupt(ACTOR_STATES.ATTACK)) {
       this.bufferInput(ACTOR_STATES.ATTACK, now)
       return false
+    }
+
+    const v2MageCast = this.classId === 'mage' && (spellId === 'lightning' || spellId === 'leech')
+    if (v2MageCast) {
+      const pending = armMageV2Cast(this.scene, this, spellId, now)
+      if (!pending) return false
+      this.currentAttackType = `cast_${spellId}`
+      const transitioned = this.transition(ACTOR_STATES.ATTACK, { time: now })
+      if (!transitioned) {
+        this._v2Cast = null
+        this.currentAttackType = null
+        return false
+      }
+      return true
     }
 
     let success = false
@@ -794,6 +820,8 @@ export class Player extends Actor {
         this.playAnim('charged_release', false)
       } else if (this.currentAttackType === 'attack_2') {
         this.playAnim('attack_2', false)
+      } else if (typeof this.currentAttackType === 'string' && this.currentAttackType.startsWith('cast_')) {
+        this._playV2CastBody()
       } else {
         this.playAnim(this.anims?.currentAnim?.key?.includes('cast') ? 'cast' : 'attack', false)
       }
@@ -821,6 +849,9 @@ export class Player extends Actor {
     } else if ((key.includes('attack') || key.includes('cast') || key.includes('charged_release')) && this.is(ACTOR_STATES.ATTACK)) {
       if (this.currentAttackType === 'charge_hold') {
         return // Loop while held
+      }
+      if (typeof this.currentAttackType === 'string' && this.currentAttackType.startsWith('cast_')) {
+        this._v2Cast = null
       }
       if (this.currentAttackType === 'attack' && this.comboQueued) {
         this.comboQueued = false
@@ -916,6 +947,8 @@ export class Player extends Actor {
         this.playAnim('charged_release', false)
       } else if (this.currentAttackType === 'attack_2') {
         this.playAnim('attack_2', false)
+      } else if (typeof this.currentAttackType === 'string' && this.currentAttackType.startsWith('cast_')) {
+        this._playV2CastBody()
       } else {
         this.playAnim(this.anims?.currentAnim?.key?.includes('cast') ? 'cast' : 'attack', false)
       }
@@ -1004,6 +1037,53 @@ export class Player extends Actor {
   }
 
   /**
+   * Plays the facing's v2 body clip. Does not use the generic mage_cast key and does not flipX.
+   */
+  _playV2CastBody() {
+    const pending = this._v2Cast
+    if (!pending?.animKey) return
+    if (this.anims?.currentAnim?.key === pending.animKey) {
+      this._syncV2CastPivot()
+      return
+    }
+
+    ensureMageSpellsGroup(this.scene)
+    const layout = getV2CastBodyLayout()
+    const frameName = `${pending.animKey}_0`
+    if (typeof this.setTexture === 'function') {
+      this.setTexture(layout.sheet, frameName)
+    }
+    const pivot = getV2CastFramePivot(frameName)
+    if (pivot && typeof this.setOrigin === 'function') {
+      this.setOrigin(pivot.x, pivot.y)
+    }
+    if (typeof this.setFlipX === 'function') this.setFlipX(false)
+    this.flipX = false
+    if (layout.hurtbox) this.hurtbox = { ...layout.hurtbox }
+    if (layout.footprint) this.applyFootprint(layout.sheet, layout.footprint)
+    if (this.anims && typeof this.anims.play === 'function') {
+      this.anims.play(pending.animKey, false)
+    }
+  }
+
+  /**
+   * Keeps the sprite origin on the current cast frame's pivot.
+   */
+  _syncV2CastPivot() {
+    const pending = this._v2Cast
+    if (!pending?.animKey) return
+    const frameName = this.anims?.currentFrame?.frame?.name
+      || this.anims?.currentFrame?.textureFrame
+      || this.frame?.name
+    if (!frameName || !String(frameName).startsWith(`${pending.animKey}_`)) return
+    const pivot = getV2CastFramePivot(frameName)
+    if (!pivot || typeof this.setOrigin !== 'function') return
+    if (this.originX !== pivot.x || this.originY !== pivot.y) {
+      this.setOrigin(pivot.x, pivot.y)
+    }
+  }
+
+  /**
    * Per-frame update step.
    *
    * @param {number} time
@@ -1012,32 +1092,45 @@ export class Player extends Actor {
   update(time = Date.now(), delta = 0) {
     super.update(time, delta)
 
-    // Check hitFrames during active attack
+    const v2Casting = typeof this.currentAttackType === 'string' && this.currentAttackType.startsWith('cast_')
+    if (this._v2Cast && !this._v2Cast.released && !this.is(ACTOR_STATES.ATTACK)) {
+      this._v2Cast = null
+      if (v2Casting) this.currentAttackType = null
+    }
+
+    // Check hitFrames during active attack. v2 casts release a projectile instead of melee.
     if (this.is(ACTOR_STATES.ATTACK)) {
-      this._checkAttackHitFrames(time)
-
-      // Combo queue check: if combo queued, trigger when frame >= 3 reached
-      if (this.comboQueued && (!this.currentAttackType || this.currentAttackType === 'attack')) {
-        const frameIndex = getAnimationFrameIndex(this.anims?.currentFrame)
-        if (frameIndex >= 3) {
-          this.comboQueued = false
-          this.currentAttackType = 'attack_2'
-          this.currentSwingId = (this.currentSwingId || 0) + 1
-          this._hitFramesProcessed = new Set()
-          this.playAnim('attack_2', false)
-          try {
-            onMeleeSwing()
-          } catch (_e) {}
+      if (v2Casting) {
+        this._syncV2CastPivot()
+        if (this._v2Cast && !this._v2Cast.released) {
+          tickMageV2Cast(this, time)
         }
-      }
+      } else {
+        this._checkAttackHitFrames(time)
 
-      // Charge hold check: mark charged after 600 ms hold
-      if (this.chargeState?.active) {
-        if (time - this.chargeState.startTime >= 600) {
-          this.chargeState.charged = true
+        // Combo queue check: if combo queued, trigger when frame >= 3 reached
+        if (this.comboQueued && (!this.currentAttackType || this.currentAttackType === 'attack')) {
+          const frameIndex = getAnimationFrameIndex(this.anims?.currentFrame)
+          if (frameIndex >= 3) {
+            this.comboQueued = false
+            this.currentAttackType = 'attack_2'
+            this.currentSwingId = (this.currentSwingId || 0) + 1
+            this._hitFramesProcessed = new Set()
+            this.playAnim('attack_2', false)
+            try {
+              onMeleeSwing()
+            } catch (_e) {}
+          }
         }
-        if (this.body && typeof this.body.setVelocity === 'function') {
-          this.body.setVelocity(0, 0)
+
+        // Charge hold check: mark charged after 600 ms hold
+        if (this.chargeState?.active) {
+          if (time - this.chargeState.startTime >= 600) {
+            this.chargeState.charged = true
+          }
+          if (this.body && typeof this.body.setVelocity === 'function') {
+            this.body.setVelocity(0, 0)
+          }
         }
       }
     }
