@@ -134,6 +134,16 @@ export class Projectile extends SpriteBase {
     this.flyAnim = config.flyAnim || ''
     this.hitAnim = config.hitAnim || ''
     this.lingerAnim = config.lingerAnim || ''
+    this.returnAnim = config.returnAnim || ''
+    this.absorbAnim = config.absorbAnim || ''
+    this.hitOrigin = config.hitOrigin || null
+    this.returnOrigin = config.returnOrigin || null
+    this.absorbOrigin = config.absorbOrigin || null
+    this.caster = config.caster || null
+    this.returnOffset = config.returnOffset || null
+    this.aimImpactAtCaster = Boolean(config.aimImpactAtCaster)
+    this.isReturning = false
+    this.isAbsorbing = false
 
     // Hazard lingering
     this.lingerMs = config.lingerMs ?? 0
@@ -153,6 +163,7 @@ export class Projectile extends SpriteBase {
     if (!this.bakedSpin && (this.vx !== 0 || this.vy !== 0)) {
       this.rotation = Math.atan2(this.vy, this.vx)
     }
+    this._returnSpeed = Math.hypot(this.vx, this.vy) || (420 * this.unit)
 
     // Start flying animation if provided
     if (this.flyAnim && this.anims && typeof this.anims.play === 'function') {
@@ -183,6 +194,13 @@ export class Projectile extends SpriteBase {
    */
   update(now, dt) {
     if (!this.active) return false
+
+    if (this.isAbsorbing) return true
+
+    if (this.isReturning) {
+      this._stepLeechReturn(now, dt)
+      return true
+    }
 
     // Handle lingering ground hazard zone
     if (this.isLingering) {
@@ -287,9 +305,19 @@ export class Projectile extends SpriteBase {
       this.onImpactCallback(this.x, this.y, this)
     }
 
+    if (this.hitOrigin && typeof this.setOrigin === 'function') {
+      this.setOrigin(this.hitOrigin.x, this.hitOrigin.y)
+    }
+
     // Play impact animation if available
     if (this.hitAnim && this.anims && typeof this.anims.play === 'function') {
-      if (typeof this.setRotation === 'function') {
+      if (this.aimImpactAtCaster && this.caster) {
+        const aimX = this.caster.x + (this.returnOffset?.x || 0)
+        const aimY = this.caster.y + (this.returnOffset?.y || 0)
+        const aim = Math.atan2(aimY - this.y, aimX - this.x)
+        if (typeof this.setRotation === 'function') this.setRotation(aim)
+        else this.rotation = aim
+      } else if (typeof this.setRotation === 'function') {
         this.setRotation(0)
       } else {
         this.rotation = 0
@@ -315,6 +343,10 @@ export class Projectile extends SpriteBase {
    * @private
    */
   _afterImpact(now) {
+    if (this.returnAnim && !this.isReturning && !this.isAbsorbing) {
+      this._beginLeechReturn(now)
+      return
+    }
     if (this.lingerMs > 0) {
       this.isLingering = true
       this.isImpacted = false
@@ -325,6 +357,82 @@ export class Projectile extends SpriteBase {
     } else {
       this.destroy()
     }
+  }
+
+  /**
+   * Starts the leech return stream at the impact, aimed at the caster's staff tip.
+   *
+   * @param {number} now
+   * @private
+   */
+  _beginLeechReturn(_now) {
+    this.isReturning = true
+    this.isImpacted = false
+    const ox = this.returnOffset?.x || 0
+    const oy = this.returnOffset?.y || 0
+    this._returnTargetX = (this.caster?.x ?? this.x) + ox
+    this._returnTargetY = (this.caster?.y ?? this.y) + oy
+    if (this.returnOrigin && typeof this.setOrigin === 'function') {
+      this.setOrigin(this.returnOrigin.x, this.returnOrigin.y)
+    }
+    this.vx = 0
+    this.vy = 0
+    if (this.returnAnim && this.anims && typeof this.anims.play === 'function') {
+      this.anims.play(this.returnAnim, true)
+    }
+  }
+
+  /**
+   * Moves the return stream toward the staff tip, then plays absorb on arrival.
+   *
+   * @param {number} now
+   * @param {number} dt
+   * @private
+   */
+  _stepLeechReturn(now, dt) {
+    const dx = this._returnTargetX - this.x
+    const dy = this._returnTargetY - this.y
+    const dist = Math.hypot(dx, dy)
+    const step = this._returnSpeed * dt
+    if (dist <= Math.max(2, step)) {
+      this.x = this._returnTargetX
+      this.y = this._returnTargetY
+      this._beginLeechAbsorb(now)
+      return
+    }
+    this.x += (dx / dist) * step
+    this.y += (dy / dist) * step
+    this.rotation = Math.atan2(dy, dx)
+  }
+
+  /**
+   * Plays leech absorb on the caster's feet, then removes the sprite.
+   *
+   * @param {number} now
+   * @private
+   */
+  _beginLeechAbsorb(_now) {
+    this.isReturning = false
+    this.isAbsorbing = true
+    this.isImpacted = true
+    if (this.caster) {
+      this.x = this.caster.x
+      this.y = this.caster.y
+    }
+    if (this.absorbOrigin && typeof this.setOrigin === 'function') {
+      this.setOrigin(this.absorbOrigin.x, this.absorbOrigin.y)
+    }
+    if (this.absorbAnim && this.anims && typeof this.anims.play === 'function') {
+      this.anims.play(this.absorbAnim, true)
+      if (typeof this.once === 'function') {
+        const animComplete = Phaser?.Animations?.Events?.ANIMATION_COMPLETE || 'animationcomplete'
+        this.once(animComplete, () => {
+          if (this.active) this.destroy()
+        })
+        return
+      }
+    }
+    this.destroy()
   }
 
   /**
