@@ -183,7 +183,7 @@ export class Player extends Actor {
             const tookDamage = this.takeDamage(
               amount,
               typeof performance !== 'undefined' ? performance.now() : Date.now(),
-              opts
+              { ...opts, fromSceneHurt: true }
             )
             if (!tookDamage) return false
             const actualDamage = typeof this.lastDamageTaken === 'number' ? this.lastDamageTaken : amount
@@ -257,7 +257,8 @@ export class Player extends Actor {
     const vx = this.body?.velocity?.x || 0
     const vy = this.body?.velocity?.y || 0
     const currentSpeed = Math.hypot(vx, vy)
-    const baseSpeed = session?.baseSpeed || 160
+    const unit = this.scene?.unit || 1
+    const baseSpeed = (session?.baseSpeed || 160) * unit
     return currentSpeed >= baseSpeed * 1.2
   }
 
@@ -738,6 +739,12 @@ export class Player extends Actor {
           const blockKnockbackSpeed = options.knockbackSpeed ? Math.round(options.knockbackSpeed * 0.4) : 40
           applyKnockback(this, attackerPos.x, attackerPos.y, blockKnockbackSpeed, 100)
         }
+        if (!options.fromSceneHurt && this.scene && typeof this.scene.hp === 'number') {
+          this.scene.hp = Math.max(0, this.scene.hp - this.lastDamageTaken)
+          if (typeof this.scene._publishVitals === 'function') {
+            this.scene._publishVitals(true)
+          }
+        }
         return true
       }
     }
@@ -751,6 +758,13 @@ export class Player extends Actor {
       const knockbackSpeed = options.knockbackSpeed ?? 120
       const knockbackDuration = options.knockbackDuration ?? 150
       applyKnockback(this, options.fromX, options.fromY, knockbackSpeed, knockbackDuration)
+    }
+
+    if (!options.fromSceneHurt && this.scene && typeof this.scene.hp === 'number') {
+      this.scene.hp = Math.max(0, this.scene.hp - this.lastDamageTaken)
+      if (typeof this.scene._publishVitals === 'function') {
+        this.scene._publishVitals(true)
+      }
     }
 
     this.transition(ACTOR_STATES.HURT)
@@ -913,6 +927,18 @@ export class Player extends Actor {
       this.playAnim('death', false)
     } else {
       this.playAnim('idle', false)
+    }
+  }
+
+  /**
+   * Sets whether the player is running.
+   *
+   * @param {boolean} running
+   */
+  setRunning(running = true) {
+    this.isRunning = Boolean(running)
+    if (this.is(ACTOR_STATES.WALK)) {
+      this.playAnim(this.isRunning ? 'run' : 'walk', true)
     }
   }
 

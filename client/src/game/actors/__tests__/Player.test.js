@@ -791,6 +791,15 @@ describe('Player Actor — Package 1-3', () => {
       expect(knight.currentAttackType).toBe('attack')
       expect(knight.anims.play).toHaveBeenCalledWith('knight_attack_down', false)
     })
+
+    it('supports setRunning and isAtRunSpeed checks', () => {
+      const knight = new Player(mockScene, 100, 100, 'knight')
+      expect(knight.isAtRunSpeed()).toBe(false)
+      knight.setRunning(true)
+      expect(knight.isAtRunSpeed()).toBe(true)
+      knight.setRunning(false)
+      expect(knight.isAtRunSpeed()).toBe(false)
+    })
   })
 })
 
