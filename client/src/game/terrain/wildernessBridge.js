@@ -11,7 +11,7 @@ import {
 } from './worldGraph.js'
 import { getLayout, preloadNeighbors, evictBeyond } from './screenCache.js'
 
-/** Virtual wilderness frame (matches render.js asset sizing convention). */
+/** Virtual wilderness frame (2:3, the historical canvas frame size). */
 export const WILDERNESS_FRAME_W = 1024
 export const WILDERNESS_FRAME_H = 1536
 
@@ -191,6 +191,22 @@ export function wildernessExitPrompts(layout, nodeId) {
  */
 export function collidersWithExitGaps(layout) {
   return layout?.colliders || []
+}
+
+/**
+ * Convert layout colliders to pixel-space AABBs for a frame.
+ * @param {import('./generate.js').TerrainLayout} layout
+ * @param {{ dx: number, dy: number, dw: number, dh: number }} frame
+ * @returns {Array<{ x:number, y:number, w:number, h:number }>}
+ */
+export function wildernessCollidersPx(layout, frame) {
+  if (!layout?.colliders || !frame) return []
+  return layout.colliders.map((rect) => ({
+    x: frame.dx + rect.x * frame.dw,
+    y: frame.dy + rect.y * frame.dh,
+    w: rect.w * frame.dw,
+    h: rect.h * frame.dh,
+  }))
 }
 
 /**
