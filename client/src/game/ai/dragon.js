@@ -20,18 +20,18 @@ import {
   DRAGON_PHASE_THRESHOLDS,
   DRAGON_LANDING_DURATION_MS,
   DRAGON_METEOR_MARKER_DELAY_MS,
+  METEOR_MARKER_KEY,
 } from '../combat/balance.js'
 
 /**
  * Batch 7 warning marker (boss_fx_extra / dragon_fx_extra).
  * 7 frames @ 10 fps = 700 ms, matching DRAGON_METEOR_MARKER_DELAY_MS.
  * The packed ellipse is authored to a 32 px impact radius; display it at scale 1.
- * Timing stays on 3b-2's DRAGON_METEOR_MARKER_DELAY_MS. balance.js METEOR_MARKER_KEY
- * still names the old fx_v2 frame and is not the warning clip.
+ * Clip name is balance.js METEOR_MARKER_KEY. Timing stays on DRAGON_METEOR_MARKER_DELAY_MS.
  */
 export const DRAGON_METEOR_MARKER_ATLAS = 'dragon_fx_extra'
-export const DRAGON_METEOR_MARKER_ANIM = 'dfx_meteor_marker'
-export const DRAGON_METEOR_MARKER_FRAME = 'dfx_meteor_marker_0'
+export const DRAGON_METEOR_MARKER_ANIM = METEOR_MARKER_KEY
+export const DRAGON_METEOR_MARKER_FRAME = `${METEOR_MARKER_KEY}_0`
 export const DRAGON_METEOR_HIT_RADIUS = 32
 
 /** Above ground_detail, below walls, so the telegraph sits on the ground. */

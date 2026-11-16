@@ -27,11 +27,13 @@ describe('Runtime URL Feature Flags (flags.js)', () => {
   })
 
   describe('renderer flag', () => {
-    it('defaults to "legacy" when no search parameters are given', () => {
+    it('defaults to "blend" when no search parameters are given', () => {
       const flags = parseFlags('')
-      expect(flags.renderer).toBe('legacy')
-      expect(getRenderer('')).toBe('legacy')
-      expect(isBlendRenderer('')).toBe(false)
+      expect(flags.renderer).toBe('blend')
+      expect(flags.maps).toBe('tiled')
+      expect(getRenderer('')).toBe('blend')
+      expect(isBlendRenderer('')).toBe(true)
+      expect(isTiledMaps('')).toBe(true)
     })
 
     it('reads "?renderer=blend" and returns "blend"', () => {
@@ -74,21 +76,30 @@ describe('Runtime URL Feature Flags (flags.js)', () => {
       expect(isBlendRenderer()).toBe(false)
 
       globalThis.window = { location: { search: '' } }
-      expect(getRenderer()).toBe('legacy')
-      expect(isBlendRenderer()).toBe(false)
+      expect(getRenderer()).toBe('blend')
+      expect(isBlendRenderer()).toBe(true)
+      expect(getMaps()).toBe('tiled')
+      expect(isTiledMaps()).toBe(true)
     })
 
     it('falls back gracefully when window is undefined', () => {
       delete globalThis.window
-      expect(getRenderer()).toBe('legacy')
-      expect(isBlendRenderer()).toBe(false)
+      expect(getRenderer()).toBe('blend')
+      expect(isBlendRenderer()).toBe(true)
+      expect(getMaps()).toBe('tiled')
+      expect(isTiledMaps()).toBe(true)
     })
   })
 
   describe('maps flag', () => {
-    it('returns null when ?maps is not provided', () => {
-      expect(getMaps('')).toBeNull()
-      expect(isTiledMaps('')).toBe(false)
+    it('defaults to "tiled" when ?maps is not provided', () => {
+      expect(getMaps('')).toBe('tiled')
+      expect(isTiledMaps('')).toBe(true)
+    })
+
+    it('returns "legacy" and disables tiled maps when ?maps=legacy', () => {
+      expect(getMaps('?maps=legacy')).toBe('legacy')
+      expect(isTiledMaps('?maps=legacy')).toBe(false)
     })
 
     it('reads ?maps=tiled correctly', () => {

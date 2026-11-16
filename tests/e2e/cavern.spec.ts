@@ -236,9 +236,8 @@ test.describe('Package 3-2: Cavern of Embers Tiled Maps & Dragon Lair Encounter'
     expect(await page.evaluate(() => (window as any).__hv.scene())).toBe('dungeonInterior');
   });
 
-  test('legacy/painted mode (without maps=tiled) preserves painted dungeon scenes', async ({ page }) => {
-    // Boot without ?maps=tiled
-    await page.goto('/?renderer=blend&seed=1&qa=1');
+  test('legacy/painted mode (?maps=legacy) preserves painted dungeon scenes', async ({ page }) => {
+    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
 
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await expect(startButton).toBeVisible();
