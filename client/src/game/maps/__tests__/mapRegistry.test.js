@@ -41,6 +41,7 @@ describe('Data-driven Tiled Map Registry (mapRegistry.js)', () => {
     expect(cavernMouth).toBeDefined()
     expect(cavernMouth.file).toBe('maps/cavern_mouth.tmj')
     expect(cavernMouth.sceneIds).toContain('dungeon')
+    expect(cavernMouth.propAtlases).toContain('mountain_mouth_props')
 
     const cavernHalls = maps.find((m) => m.key === 'cavern_halls')
     expect(cavernHalls).toBeDefined()

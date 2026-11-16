@@ -752,7 +752,7 @@ export function importBlendsmith() {
 
   // 13. Register AS-3 Manifest Groups
   manifest.groups.interiors = ['interior_props', 'npc_bartender', 'npc_vendor'];
-  manifest.groups.cavern = ['dungeon_props', 'dungeon_brazier', 'treasure_chest'];
+  manifest.groups.cavern = ['dungeon_props', 'dungeon_brazier', 'treasure_chest', 'mountain_mouth_props'];
   manifest.groups.loot = ['loot_pickups'];
   manifest.groups.boss_fx_extra = ['dragon_fx_extra'];
 

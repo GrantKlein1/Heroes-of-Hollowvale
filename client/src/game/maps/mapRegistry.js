@@ -27,7 +27,7 @@ export const DEFAULT_MAPS = Object.freeze([
     file: 'maps/cavern_mouth.tmj',
     sceneIds: ['dungeon', 'cavern_mouth'],
     assetGroups: ['cavern'],
-    propAtlases: ['dungeon_props', 'dungeon_brazier', 'treasure_chest'],
+    propAtlases: ['dungeon_props', 'dungeon_brazier', 'treasure_chest', 'mountain_mouth_props'],
   },
   {
     key: 'cavern_halls',
