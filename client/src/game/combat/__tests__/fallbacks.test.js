@@ -8,14 +8,12 @@ import {
 } from '../fallbacks.js'
 
 describe('Combat Fallbacks — Package 4-1', () => {
-  it('registers goblin family alert clips as proven missing', () => {
-    expect(KNOWN_MISSING_CLIPS).toContain('goblin_alert')
-    expect(KNOWN_MISSING_CLIPS).toContain('goblin_archer_alert')
-    expect(KNOWN_MISSING_CLIPS).toContain('goblin_brute_alert')
+  it('does not list goblin family alert clips as proven missing', () => {
+    expect(KNOWN_MISSING_CLIPS).toEqual([])
 
-    expect(isProvenMissingClip('goblin_alert_down')).toBe(true)
-    expect(isProvenMissingClip('goblin_archer_alert_right')).toBe(true)
-    expect(isProvenMissingClip('goblin_brute_alert_up')).toBe(true)
+    expect(isProvenMissingClip('goblin_alert_down')).toBe(false)
+    expect(isProvenMissingClip('goblin_archer_alert_right')).toBe(false)
+    expect(isProvenMissingClip('goblin_brute_alert_up')).toBe(false)
 
     // Delivered clips must NOT be registered as missing
     expect(isProvenMissingClip('knight_run_down')).toBe(false)
