@@ -214,7 +214,7 @@ export function validateAtlas(atlasInput, options = {}) {
     }
   }
 
-  const requiresCombatBoxes = !isFx && !isCritter && !isProp && !isNpc && !isLoot && (kind === 'characters' || kind === 'enemies' || kind === 'boss');
+  const requiresCombatBoxes = !isFx && !isCritter && !isProp && !isNpc && !isLoot && (kind === 'characters' || kind === 'enemies' || kind === 'boss' || kind === 'hero');
   if (requiresCombatBoxes) {
     const fp = meta.footprint;
     if (!fp || typeof fp.x !== 'number' || typeof fp.y !== 'number' || typeof fp.w !== 'number' || typeof fp.h !== 'number') {

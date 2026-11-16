@@ -366,6 +366,71 @@ describe('Broken Fixture Testing (Asset QA Failure Detection)', () => {
   });
 });
 
+describe('Mage cast v2 import (AS-M)', () => {
+  it('registers mage_spells_v2 and spell_fx_v2 apart from v1 load groups', () => {
+    const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8'));
+
+    expect(manifest.assets.mage_spells_v2?.kind).toBe('hero');
+    expect(manifest.assets.spell_fx_v2?.kind).toBe('fx');
+    expect(manifest.assets.mage_spells_v2.sheets.mage_spells_v2.image).toBe(
+      'assets/characters/mage/spells_v2/mage_spells_v2.png'
+    );
+    expect(manifest.assets.spell_fx_v2.sheets.spell_fx_v2.json).toBe(
+      'assets/characters/mage/spells_v2/spell_fx_v2.json'
+    );
+    expect(manifest.groups.mage_spells).toEqual(['mage_spells_v2', 'spell_fx_v2']);
+
+    expect(manifest.assets.mage.sheets.mage_spells.image).toBe('assets/characters/mage/mage_spells.png');
+    expect(manifest.assets.mage.sheets.spell_fx.image).toBe('assets/characters/mage/spell_fx.png');
+    for (const group of ['boot', 'village', 'wilderness', 'boss']) {
+      expect(manifest.groups[group]).not.toContain('mage_spells_v2');
+      expect(manifest.groups[group]).not.toContain('spell_fx_v2');
+    }
+  });
+
+  it('keeps locked cast timing in the copied atlas meta', () => {
+    const bodyPath = path.join(REPO_ROOT, 'client/public/assets/characters/mage/spells_v2/mage_spells_v2.json');
+    const body = JSON.parse(fs.readFileSync(bodyPath, 'utf8'));
+    expect(body.meta.release).toEqual({ lightning: 5, leech: 5 });
+    expect(body.meta.origin).toEqual({ x: 0.5, y: 0.9274 });
+    expect(body.meta.frameSize).toEqual([96, 96]);
+    for (const dir of ['down', 'left', 'right', 'up']) {
+      for (const spell of ['lightning', 'leech']) {
+        const clip = body.meta.anims[`mage_cast_${spell}_v2_${dir}`];
+        expect(clip.frames).toHaveLength(10);
+        expect(clip.frameRate).toBe(16);
+        expect(clip.releaseFrame).toBe(5);
+        expect(clip.releaseMs).toBe(312.5);
+        expect(clip.spawnOffsetFromFeet).toEqual([
+          body.meta.spawnOffset[spell][dir].x,
+          body.meta.spawnOffset[spell][dir].y
+        ]);
+      }
+    }
+  });
+
+  it('validates both v2 sheets, including hero footprint and hurtbox', () => {
+    const report = validateManifest(MANIFEST_PATH, { repoRoot: REPO_ROOT });
+    expect(report.results.mage_spells_v2?.valid).toBe(true);
+    expect(report.results.mage_spells_v2?.errors).toEqual([]);
+    expect(report.results.spell_fx_v2?.valid).toBe(true);
+    expect(report.results.spell_fx_v2?.errors).toEqual([]);
+    expect(report.results.mage_spells_v2.info.anchor).toEqual({ x: 0.5, y: 0.9274, source: 'meta.origin' });
+    expect(report.results.spell_fx_v2.info.anchor).toEqual({ x: 0, y: 0.5, source: 'frame.pivot' });
+
+    const body = JSON.parse(fs.readFileSync(
+      path.join(REPO_ROOT, 'client/public/assets/characters/mage/spells_v2/mage_spells_v2.json'),
+      'utf8'
+    ));
+    expect(body.meta.footprint).toEqual({
+      x: -14, y: -4, w: 28, h: 8, shape: 'ellipse', note: 'collision footprint centred on feet'
+    });
+    expect(body.meta.hurtbox).toEqual({
+      x: -17, y: -36, w: 34, h: 36, note: 'body hurtbox, bottom on feet'
+    });
+  });
+});
+
 describe('Prop and Tile Contract Validation (Phase 1 AS-2)', () => {
   it('registers village_props and hearth in manifest assets under kind props', () => {
     const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8'));
