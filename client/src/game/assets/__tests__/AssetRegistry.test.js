@@ -524,6 +524,30 @@ describe('AssetRegistry — AS-3 Groups Loading (Interiors, Cavern, Loot, Boss F
     )
   })
 
+  it('loads the mage_spells group without attaching v2 sheets to village', () => {
+    const loadedKeys = registry.loadGroup('mage_spells')
+    expect(registry.isGroupLoaded('mage_spells')).toBe(true)
+    expect(loadedKeys).toEqual(['mage_spells_v2', 'spell_fx_v2'])
+    expect(mockScene.load.atlas).toHaveBeenCalledWith(
+      'mage_spells_v2',
+      'assets/characters/mage/spells_v2/mage_spells_v2.png',
+      'assets/characters/mage/spells_v2/mage_spells_v2.json'
+    )
+    expect(mockScene.load.atlas).toHaveBeenCalledWith(
+      'spell_fx_v2',
+      'assets/characters/mage/spells_v2/spell_fx_v2.png',
+      'assets/characters/mage/spells_v2/spell_fx_v2.json'
+    )
+    expect(registry.getAnchor('mage_spells_v2')).toEqual({ x: 0.5, y: 0.9274 })
+    expect(registry.getAnchor('spell_fx_v2')).toEqual({ x: 0, y: 0.5 })
+
+    const villageKeys = registry.loadGroup('village')
+    expect(villageKeys).not.toContain('mage_spells_v2')
+    expect(villageKeys).not.toContain('spell_fx_v2')
+    expect(villageKeys).toContain('mage_spells')
+    expect(villageKeys).toContain('spell_fx')
+  })
+
   it('resolves dynamic anchors for AS-3 assets from manifest', () => {
     registry.loadGroup('interiors')
     registry.loadGroup('cavern')

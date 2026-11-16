@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generatedAt": "2026-11-09T20:50:18.740Z",
+  "generatedAt": "2026-11-16T20:02:37.707Z",
   "groups": {
     "boot": [
       "fx_common",
@@ -52,6 +52,10 @@
     "boss_p3": [
       "red_dragon_p3_a",
       "red_dragon_p3_b"
+    ],
+    "mage_spells": [
+      "mage_spells_v2",
+      "spell_fx_v2"
     ],
     "interiors": [
       "interior_props",
@@ -447,6 +451,383 @@
         "cast_tips.json",
         "anchors.json"
       ]
+    },
+    "mage_spells_v2": {
+      "id": "mage_spells_v2",
+      "kind": "hero",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9274
+      },
+      "image": "assets/characters/mage/spells_v2/mage_spells_v2.png",
+      "json": "assets/characters/mage/spells_v2/mage_spells_v2.json",
+      "sheets": {
+        "mage_spells_v2": {
+          "key": "mage_spells_v2",
+          "image": "assets/characters/mage/spells_v2/mage_spells_v2.png",
+          "json": "assets/characters/mage/spells_v2/mage_spells_v2.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9274
+          }
+        }
+      },
+      "sidecars": [
+        "anchors_v2.json"
+      ],
+      "anims": {
+        "mage_cast_lightning_v2_down": {
+          "frames": [
+            "mage_cast_lightning_v2_down_0",
+            "mage_cast_lightning_v2_down_1",
+            "mage_cast_lightning_v2_down_2",
+            "mage_cast_lightning_v2_down_3",
+            "mage_cast_lightning_v2_down_4",
+            "mage_cast_lightning_v2_down_5",
+            "mage_cast_lightning_v2_down_6",
+            "mage_cast_lightning_v2_down_7",
+            "mage_cast_lightning_v2_down_8",
+            "mage_cast_lightning_v2_down_9"
+          ],
+          "frameRate": 16,
+          "repeat": 0,
+          "releaseFrame": 5,
+          "releaseMs": 312.5,
+          "durationMs": 625,
+          "spawnOffsetFromFeet": [
+            -37,
+            -36
+          ]
+        },
+        "mage_cast_lightning_v2_left": {
+          "frames": [
+            "mage_cast_lightning_v2_left_0",
+            "mage_cast_lightning_v2_left_1",
+            "mage_cast_lightning_v2_left_2",
+            "mage_cast_lightning_v2_left_3",
+            "mage_cast_lightning_v2_left_4",
+            "mage_cast_lightning_v2_left_5",
+            "mage_cast_lightning_v2_left_6",
+            "mage_cast_lightning_v2_left_7",
+            "mage_cast_lightning_v2_left_8",
+            "mage_cast_lightning_v2_left_9"
+          ],
+          "frameRate": 16,
+          "repeat": 0,
+          "releaseFrame": 5,
+          "releaseMs": 312.5,
+          "durationMs": 625,
+          "spawnOffsetFromFeet": [
+            -33,
+            -73
+          ]
+        },
+        "mage_cast_lightning_v2_right": {
+          "frames": [
+            "mage_cast_lightning_v2_right_0",
+            "mage_cast_lightning_v2_right_1",
+            "mage_cast_lightning_v2_right_2",
+            "mage_cast_lightning_v2_right_3",
+            "mage_cast_lightning_v2_right_4",
+            "mage_cast_lightning_v2_right_5",
+            "mage_cast_lightning_v2_right_6",
+            "mage_cast_lightning_v2_right_7",
+            "mage_cast_lightning_v2_right_8",
+            "mage_cast_lightning_v2_right_9"
+          ],
+          "frameRate": 16,
+          "repeat": 0,
+          "releaseFrame": 5,
+          "releaseMs": 312.5,
+          "durationMs": 625,
+          "spawnOffsetFromFeet": [
+            33,
+            -59
+          ]
+        },
+        "mage_cast_lightning_v2_up": {
+          "frames": [
+            "mage_cast_lightning_v2_up_0",
+            "mage_cast_lightning_v2_up_1",
+            "mage_cast_lightning_v2_up_2",
+            "mage_cast_lightning_v2_up_3",
+            "mage_cast_lightning_v2_up_4",
+            "mage_cast_lightning_v2_up_5",
+            "mage_cast_lightning_v2_up_6",
+            "mage_cast_lightning_v2_up_7",
+            "mage_cast_lightning_v2_up_8",
+            "mage_cast_lightning_v2_up_9"
+          ],
+          "frameRate": 16,
+          "repeat": 0,
+          "releaseFrame": 5,
+          "releaseMs": 312.5,
+          "durationMs": 625,
+          "spawnOffsetFromFeet": [
+            37,
+            -56
+          ]
+        },
+        "mage_cast_leech_v2_down": {
+          "frames": [
+            "mage_cast_leech_v2_down_0",
+            "mage_cast_leech_v2_down_1",
+            "mage_cast_leech_v2_down_2",
+            "mage_cast_leech_v2_down_3",
+            "mage_cast_leech_v2_down_4",
+            "mage_cast_leech_v2_down_5",
+            "mage_cast_leech_v2_down_6",
+            "mage_cast_leech_v2_down_7",
+            "mage_cast_leech_v2_down_8",
+            "mage_cast_leech_v2_down_9"
+          ],
+          "frameRate": 16,
+          "repeat": 0,
+          "releaseFrame": 5,
+          "releaseMs": 312.5,
+          "durationMs": 625,
+          "spawnOffsetFromFeet": [
+            -26,
+            -52
+          ]
+        },
+        "mage_cast_leech_v2_left": {
+          "frames": [
+            "mage_cast_leech_v2_left_0",
+            "mage_cast_leech_v2_left_1",
+            "mage_cast_leech_v2_left_2",
+            "mage_cast_leech_v2_left_3",
+            "mage_cast_leech_v2_left_4",
+            "mage_cast_leech_v2_left_5",
+            "mage_cast_leech_v2_left_6",
+            "mage_cast_leech_v2_left_7",
+            "mage_cast_leech_v2_left_8",
+            "mage_cast_leech_v2_left_9"
+          ],
+          "frameRate": 16,
+          "repeat": 0,
+          "releaseFrame": 5,
+          "releaseMs": 312.5,
+          "durationMs": 625,
+          "spawnOffsetFromFeet": [
+            -36,
+            -81
+          ]
+        },
+        "mage_cast_leech_v2_right": {
+          "frames": [
+            "mage_cast_leech_v2_right_0",
+            "mage_cast_leech_v2_right_1",
+            "mage_cast_leech_v2_right_2",
+            "mage_cast_leech_v2_right_3",
+            "mage_cast_leech_v2_right_4",
+            "mage_cast_leech_v2_right_5",
+            "mage_cast_leech_v2_right_6",
+            "mage_cast_leech_v2_right_7",
+            "mage_cast_leech_v2_right_8",
+            "mage_cast_leech_v2_right_9"
+          ],
+          "frameRate": 16,
+          "repeat": 0,
+          "releaseFrame": 5,
+          "releaseMs": 312.5,
+          "durationMs": 625,
+          "spawnOffsetFromFeet": [
+            36,
+            -71
+          ]
+        },
+        "mage_cast_leech_v2_up": {
+          "frames": [
+            "mage_cast_leech_v2_up_0",
+            "mage_cast_leech_v2_up_1",
+            "mage_cast_leech_v2_up_2",
+            "mage_cast_leech_v2_up_3",
+            "mage_cast_leech_v2_up_4",
+            "mage_cast_leech_v2_up_5",
+            "mage_cast_leech_v2_up_6",
+            "mage_cast_leech_v2_up_7",
+            "mage_cast_leech_v2_up_8",
+            "mage_cast_leech_v2_up_9"
+          ],
+          "frameRate": 16,
+          "repeat": 0,
+          "releaseFrame": 5,
+          "releaseMs": 312.5,
+          "durationMs": 625,
+          "spawnOffsetFromFeet": [
+            26,
+            -73
+          ]
+        }
+      },
+      "release": {
+        "lightning": 5,
+        "leech": 5
+      },
+      "spawnOffset": {
+        "lightning": {
+          "down": {
+            "x": -37,
+            "y": -36
+          },
+          "left": {
+            "x": -33,
+            "y": -73
+          },
+          "right": {
+            "x": 33,
+            "y": -59
+          },
+          "up": {
+            "x": 37,
+            "y": -56
+          }
+        },
+        "leech": {
+          "down": {
+            "x": -26,
+            "y": -52
+          },
+          "left": {
+            "x": -36,
+            "y": -81
+          },
+          "right": {
+            "x": 36,
+            "y": -71
+          },
+          "up": {
+            "x": 26,
+            "y": -73
+          }
+        }
+      },
+      "returnOffset": {
+        "leech": {
+          "down": {
+            "x": -16,
+            "y": -72
+          },
+          "left": {
+            "x": -4,
+            "y": -76
+          },
+          "right": {
+            "x": 4,
+            "y": -70
+          },
+          "up": {
+            "x": 16,
+            "y": -74
+          }
+        }
+      }
+    },
+    "spell_fx_v2": {
+      "id": "spell_fx_v2",
+      "kind": "fx",
+      "anchor": {
+        "x": 0,
+        "y": 0.5
+      },
+      "image": "assets/characters/mage/spells_v2/spell_fx_v2.png",
+      "json": "assets/characters/mage/spells_v2/spell_fx_v2.json",
+      "sheets": {
+        "spell_fx_v2": {
+          "key": "spell_fx_v2",
+          "image": "assets/characters/mage/spells_v2/spell_fx_v2.png",
+          "json": "assets/characters/mage/spells_v2/spell_fx_v2.json",
+          "anchor": {
+            "x": 0,
+            "y": 0.5
+          }
+        }
+      },
+      "sidecars": [],
+      "anims": {
+        "lightning_bolt_v2": {
+          "frames": [
+            "lightning_bolt_v2_0",
+            "lightning_bolt_v2_1",
+            "lightning_bolt_v2_2",
+            "lightning_bolt_v2_3"
+          ],
+          "frameRate": 16,
+          "repeat": -1,
+          "durationMs": 250
+        },
+        "lightning_impact_v2": {
+          "frames": [
+            "lightning_impact_v2_0",
+            "lightning_impact_v2_1",
+            "lightning_impact_v2_2",
+            "lightning_impact_v2_3",
+            "lightning_impact_v2_4",
+            "lightning_impact_v2_5",
+            "lightning_impact_v2_6"
+          ],
+          "frameRate": 16,
+          "repeat": 0,
+          "durationMs": 437.5
+        },
+        "leech_orb_v2": {
+          "frames": [
+            "leech_orb_v2_0",
+            "leech_orb_v2_1",
+            "leech_orb_v2_2",
+            "leech_orb_v2_3",
+            "leech_orb_v2_4",
+            "leech_orb_v2_5"
+          ],
+          "frameRate": 16,
+          "repeat": -1,
+          "durationMs": 375
+        },
+        "leech_impact_v2": {
+          "frames": [
+            "leech_impact_v2_0",
+            "leech_impact_v2_1",
+            "leech_impact_v2_2",
+            "leech_impact_v2_3",
+            "leech_impact_v2_4",
+            "leech_impact_v2_5",
+            "leech_impact_v2_6",
+            "leech_impact_v2_7"
+          ],
+          "frameRate": 16,
+          "repeat": 0,
+          "durationMs": 500
+        },
+        "leech_return_v2": {
+          "frames": [
+            "leech_return_v2_0",
+            "leech_return_v2_1",
+            "leech_return_v2_2",
+            "leech_return_v2_3",
+            "leech_return_v2_4",
+            "leech_return_v2_5"
+          ],
+          "frameRate": 16,
+          "repeat": -1,
+          "durationMs": 375
+        },
+        "leech_absorb_v2": {
+          "frames": [
+            "leech_absorb_v2_0",
+            "leech_absorb_v2_1",
+            "leech_absorb_v2_2",
+            "leech_absorb_v2_3",
+            "leech_absorb_v2_4",
+            "leech_absorb_v2_5",
+            "leech_absorb_v2_6",
+            "leech_absorb_v2_7"
+          ],
+          "frameRate": 16,
+          "repeat": 0,
+          "durationMs": 500
+        }
+      }
     },
     "goblin": {
       "id": "goblin",
