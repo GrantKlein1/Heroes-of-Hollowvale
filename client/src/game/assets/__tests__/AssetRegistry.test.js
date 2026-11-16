@@ -495,12 +495,18 @@ describe('AssetRegistry — AS-3 Groups Loading (Interiors, Cavern, Loot, Boss F
     )
   })
 
-  it('loads cavern group (dungeon_props, dungeon_brazier, treasure_chest)', () => {
+  it('loads cavern group (dungeon_props, dungeon_brazier, treasure_chest, mountain_mouth_props)', () => {
     const loadedKeys = registry.loadGroup('cavern')
     expect(registry.isGroupLoaded('cavern')).toBe(true)
     expect(loadedKeys).toContain('dungeon_props')
     expect(loadedKeys).toContain('dungeon_brazier')
     expect(loadedKeys).toContain('treasure_chest')
+    expect(loadedKeys).toContain('mountain_mouth_props')
+    expect(mockScene.load.atlas).toHaveBeenCalledWith(
+      'mountain_mouth_props',
+      'assets/env/mountain_mouth_props/mountain_mouth_props.png',
+      'assets/env/mountain_mouth_props/mountain_mouth_props.json'
+    )
   })
 
   it('loads loot group (loot_pickups)', () => {

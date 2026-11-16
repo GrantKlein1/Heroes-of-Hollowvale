@@ -74,10 +74,10 @@ See `runtime/props/pairing.json` + PAIRING.md
 `frozen_baseline` NOT updated for B3 (per densify brief).
 
 
-## Mountain mouth (NEW, unfrozen) `runtime/props_mouth_mtn/`
-| ID | Canvas | Footprint | Notes |
-|----|--------|-----------|-------|
-| `mountain_mouth_base` | 384×448 | (-120,-56,240,56) rect | mountain mass + composited frozen opening/ember |
-| `mountain_mouth_arch` | 384×448 | none | overhead rim + composited frozen stalactites |
+## Mountain mouth (LOCKED v4 finish) `env/mountain_mouth_props/`
+| ID | Canvas | Footprint | Layer | Notes |
+|----|--------|-----------|-------|-------|
+| `mountain_mouth_base` | 512×640 | (-160,-64,320,64) rect | props | rocky mass; frozen 256×224 mouth composited unscaled, feet-aligned |
+| `mountain_mouth_arch` | 512×640 | none | overhead | rim; same feet as the base |
 
-Does **not** modify `dungeon_props` / frozen cavern_mouth pair. Layout: `layouts/mouth_mtn_sample.json`. Gate: `previews/mouth_mtn_gate_sheet.png`.
+Pivot (0.5, 1.0) on both frames. Atlas `mountain_mouth_props.png` + `.json` + `pairing.json` (sha256 locked). Does **not** modify `dungeon_props` / frozen cavern_mouth pair. Sample layout (reference only, not shipped): `mouth_mtn_sample.json`.

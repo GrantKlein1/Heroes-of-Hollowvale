@@ -173,7 +173,7 @@ test('import_blendsmith acceptance criteria and contracts', async (t) => {
     assert.deepEqual(manifest.groups.boot, ['fx_common', 'critters', 'knight']);
     assert.deepEqual(manifest.groups.village, ['knight', 'thief', 'dwarf', 'mage', 'critters', 'fx_common', 'village_props', 'hearth']);
     assert.deepEqual(manifest.groups.interiors, ['interior_props', 'npc_bartender', 'npc_vendor']);
-    assert.deepEqual(manifest.groups.cavern, ['dungeon_props', 'dungeon_brazier', 'treasure_chest']);
+    assert.deepEqual(manifest.groups.cavern, ['dungeon_props', 'dungeon_brazier', 'treasure_chest', 'mountain_mouth_props']);
     assert.deepEqual(manifest.groups.loot, ['loot_pickups']);
     assert.deepEqual(manifest.groups.boss_fx_extra, ['dragon_fx_extra']);
 
@@ -207,6 +207,7 @@ test('import_blendsmith acceptance criteria and contracts', async (t) => {
     const as3Atlases = [
       { id: 'interior_props', kind: 'props', y: 1.0 },
       { id: 'dungeon_props', kind: 'props', y: 1.0 },
+      { id: 'mountain_mouth_props', kind: 'props', y: 1.0 },
       { id: 'dungeon_brazier', kind: 'props', y: 1.0 },
       { id: 'treasure_chest', kind: 'props', y: 1.0 },
       { id: 'wild_props', kind: 'props', y: 1.0 },

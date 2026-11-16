@@ -1,0 +1,14 @@
+{
+  "pairs": [
+    {
+      "base": "mountain_mouth_base",
+      "name": "mountain_mouth_arch",
+      "canvas": {
+        "w": 512,
+        "h": 640
+      },
+      "sameFeet": true,
+      "method": "shared camera; frozen mouth composited unscaled; v4-finish talus on base"
+    }
+  ]
+}

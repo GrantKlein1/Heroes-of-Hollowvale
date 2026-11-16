@@ -83,6 +83,49 @@ test.describe('Package 3-2: Cavern of Embers Tiled Maps & Dragon Lair Encounter'
     expect(mouthValidation.overheadLayerExists).toBe(true);
     expect(mouthValidation.propSpritesCount).toBeGreaterThanOrEqual(1);
 
+    const mountainProps = await page.evaluate(() => {
+      const loader = (window as any).__scene?.tiledMapLoader;
+      return (loader?.propObjects || [])
+        .filter((p: { name: string }) => p.name === 'mountain_mouth_base' || p.name === 'mountain_mouth_arch')
+        .map((p: { name: string; x: number; y: number; width: number; height: number }) => ({
+          name: p.name,
+          feetX: p.x + p.width / 2,
+          feetY: p.y + p.height,
+        }));
+    });
+    expect(mountainProps).toEqual([
+      { name: 'mountain_mouth_base', feetX: 384, feetY: 224 },
+      { name: 'mountain_mouth_arch', feetX: 384, feetY: 224 },
+    ]);
+
+    // Walk the knight north into the cave mouth until the body overlaps door_halls.
+    await page.evaluate(() => {
+      const scene = (window as any).__scene;
+      scene.player.setPosition(384, 400);
+      scene.player.body.reset(384, 400);
+    });
+    await page.evaluate(() => {
+      const scene = (window as any).__scene;
+      scene.keys.W.isDown = true;
+      scene.keys.up.isDown = true;
+    });
+    // Foot collision stops the 23×7 body on the south edge of door_halls.
+    await page.waitForFunction(() => {
+      const scene = (window as any).__scene;
+      const body = scene.player.body;
+      const door = scene.tiledMapLoader.getZone('door_halls');
+      if (!door) return false;
+      return body.x < door.x + door.width
+        && body.x + body.width > door.x
+        && body.y <= door.y + door.height
+        && body.y + body.height >= door.y;
+    }, null, { timeout: 8000 });
+    await page.evaluate(() => {
+      const scene = (window as any).__scene;
+      scene.keys.W.isDown = false;
+      scene.keys.up.isDown = false;
+      scene.player.setVelocity(0, 0);
+    });
     await page.waitForTimeout(300);
     await page.screenshot({ path: path.join(screenshotsDir, 'cavern-mouth.png') });
 

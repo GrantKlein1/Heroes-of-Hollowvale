@@ -1,0 +1,91 @@
+{
+  "frames": {
+    "mountain_mouth_base": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 512,
+        "h": 640
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 512,
+        "h": 640
+      },
+      "sourceSize": {
+        "w": 512,
+        "h": 640
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    },
+    "mountain_mouth_arch": {
+      "frame": {
+        "x": 0,
+        "y": 642,
+        "w": 512,
+        "h": 640
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 512,
+        "h": 640
+      },
+      "sourceSize": {
+        "w": 512,
+        "h": 640
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    }
+  },
+  "meta": {
+    "image": "mountain_mouth_props.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 512,
+      "h": 1282
+    },
+    "scale": "1",
+    "pxPerUnit": 36.923,
+    "origin": {
+      "x": 0.5,
+      "y": 1.0
+    },
+    "propCameraDegFromHorizontal": 12,
+    "groundCameraDegFromVertical": 12,
+    "props": {
+      "mountain_mouth_base": {
+        "footprint": {
+          "x": -160,
+          "y": -64,
+          "w": 320,
+          "h": 64,
+          "shape": "rect"
+        }
+      },
+      "mountain_mouth_arch": {
+        "footprint": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "shape": "none"
+        }
+      }
+    },
+    "app": "hollowvale-blendsmith",
+    "version": "b3-mouth-mtn-v4-finish",
+    "note": "v4 finish: grounded talus at the grass cut, floater/1px silhouette cleanup; frozen mouth 256x224 UNSCALED."
+  }
+}

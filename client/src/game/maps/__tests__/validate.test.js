@@ -339,6 +339,33 @@ describe('Package 2-2: Tiled Map Validator & CI Test Suite', () => {
     const treasurePath = path.join(mapsDir, 'cavern_treasure.tmj');
     const lairPath = path.join(mapsDir, 'cavern_lair.tmj');
 
+    it('places the locked mountain on the old cavern mouth and keeps door_halls inside it', () => {
+      const map = JSON.parse(fs.readFileSync(mouthPath, 'utf8'));
+      const backdrop = map.properties.find((p) => p.name === 'backdrop');
+      const atlases = map.properties.find((p) => p.name === 'propAtlases');
+      expect(backdrop.value).toBe('mountain_mouth');
+      expect(atlases.value.split(',')).toContain('mountain_mouth_props');
+
+      const props = map.layers.find((l) => l.name === 'props').objects;
+      const base = props.find((o) => o.name === 'mountain_mouth_base');
+      const arch = props.find((o) => o.name === 'mountain_mouth_arch');
+      expect(props.some((o) => o.name === 'cavern_mouth_base' || o.name === 'cavern_mouth_arch')).toBe(false);
+      const feetX = base.x + base.width / 2;
+      const feetY = base.y + base.height;
+      expect(feetX).toBe(384);
+      expect(feetY).toBe(224);
+      expect(arch.x + arch.width / 2).toBe(feetX);
+      expect(arch.y + arch.height).toBe(feetY);
+
+      // Frozen 256x224 mouth is unscaled at the bottom-center of the 512x640 sprite.
+      const mouth = { x: feetX - 128, y: feetY - 224, w: 256, h: 224 };
+      const door = map.layers.find((l) => l.name === 'zones').objects.find((o) => o.name === 'door_halls');
+      expect(door.x).toBeGreaterThanOrEqual(mouth.x);
+      expect(door.y).toBeGreaterThanOrEqual(mouth.y);
+      expect(door.x + door.width).toBeLessThanOrEqual(mouth.x + mouth.w);
+      expect(door.y + door.height).toBeLessThanOrEqual(mouth.y + mouth.h);
+    });
+
     it('passes validateMap with 0 errors on cavern_mouth.tmj', () => {
       const result = validateMap(mouthPath, { lorePath });
       expect(result.valid).toBe(true);
