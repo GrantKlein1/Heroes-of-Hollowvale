@@ -149,5 +149,6 @@ export const DRAGON_PHASE_THRESHOLDS = Object.freeze({
 
 export const DRAGON_LANDING_DURATION_MS = 3000
 export const DRAGON_METEOR_MARKER_DELAY_MS = 700
-export const METEOR_MARKER_KEY = 'dfx_meteor_0'
+/** Warning clip on `dragon_fx_extra` (7 frames @ 10 fps). Single marker key. */
+export const METEOR_MARKER_KEY = 'dfx_meteor_marker'
 
