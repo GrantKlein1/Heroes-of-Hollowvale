@@ -44,6 +44,7 @@ import {
   respawnPlayer,
   onEnemyDeathComplete,
   generateSeededLoot,
+  presentLootDrop,
 } from '../combat/death.js'
 import {
   Critter,
@@ -1096,7 +1097,15 @@ export default class HollowvaleScene extends Phaser.Scene {
   _dropLoot(e) {
     const { gems, items } = generateSeededLoot(e?.enemyType)
     const had = gems.ruby || gems.sapphire || gems.emerald || items.length
-    if (had) eventBus.emit(GameEvents.LOOT, { gems, items })
+    if (!had) return
+    // Painted sprites (legacy renderer) still grant immediately. The default
+    // blend path always leaves a world pickup; presentLootDrop grants only
+    // ids that have no loot_pickups clip.
+    if (!isBlendRenderer()) {
+      eventBus.emit(GameEvents.LOOT, { gems, items })
+      return
+    }
+    presentLootDrop(this, e.x, e.y, gems, items)
   }
 
   _updateProjectiles(now, dt) {
