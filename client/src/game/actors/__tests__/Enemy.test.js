@@ -236,6 +236,14 @@ describe('Enemy Actor — Package 1b-1', () => {
     expect(enemy.getSheetForAnim('walk')).toBe('goblin')
   })
 
+  it('resolves the alert sheet for goblin, archer, and brute', () => {
+    expect(new Enemy(mockScene, 0, 0, 'goblin').getSheetForAnim('alert')).toBe('goblin_alert')
+    expect(new Enemy(mockScene, 0, 0, 'archer').getSheetForAnim('alert')).toBe('goblin_archer_alert')
+    expect(new Enemy(mockScene, 0, 0, 'goblin_archer').getSheetForAnim('alert')).toBe('goblin_archer_alert')
+    expect(new Enemy(mockScene, 0, 0, 'brute').getSheetForAnim('alert')).toBe('goblin_brute_alert')
+    expect(new Enemy(mockScene, 0, 0, 'goblin_brute').getSheetForAnim('alert')).toBe('goblin_brute_alert')
+  })
+
   it('records and logs animation keys on playAnim', () => {
     const enemy = new Enemy(mockScene, 200, 200, 'goblin')
     enemy.playAnim('telegraph')

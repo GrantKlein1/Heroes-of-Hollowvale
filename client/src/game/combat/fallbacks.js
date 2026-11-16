@@ -6,18 +6,14 @@
  * goblin spawn, and critter 4-way vertical facings have been removed because
  * those clips are now delivered in the atlas manifests.
  *
- * Fallbacks are retained strictly for clips proven absent from the atlas sheets:
- * - Goblin family alert (goblin, goblin_archer, goblin_brute)
+ * Goblin family alert clips shipped in AV-1, so the proven-missing list is empty.
+ * resolveAnimWithFallback still covers a key the scene has not created.
  */
 
 /**
  * Registry of clips proven missing from Blendsmith atlas metadata.
  */
-export const KNOWN_MISSING_CLIPS = Object.freeze([
-  'goblin_alert',
-  'goblin_archer_alert',
-  'goblin_brute_alert',
-])
+export const KNOWN_MISSING_CLIPS = Object.freeze([])
 
 const MISSING_CLIPS_SET = new Set(KNOWN_MISSING_CLIPS)
 
