@@ -56,10 +56,10 @@ test.describe('Package 3-2: Cavern of Embers Tiled Maps & Dragon Lair Encounter'
     await page.waitForFunction(() => (window as any).__hv?.scene() === 'dungeon', { timeout: 10000 });
     expect(await page.evaluate(() => (window as any).__hv.scene())).toBe('dungeon');
 
-    // Verify Cavern Mouth metrics: 24x16 @ 32px -> 768x512
+    // Verify Cavern Mouth metrics: 24x29 @ 32px -> 768x928
     const mouthMetrics = await page.evaluate(() => (window as any).__hv.world());
     expect(mouthMetrics.w).toBe(768);
-    expect(mouthMetrics.h).toBe(512);
+    expect(mouthMetrics.h).toBe(928);
 
     const mouthValidation = await page.evaluate(() => {
       const scene = (window as any).__scene;
@@ -94,15 +94,16 @@ test.describe('Package 3-2: Cavern of Embers Tiled Maps & Dragon Lair Encounter'
         }));
     });
     expect(mountainProps).toEqual([
-      { name: 'mountain_mouth_base', feetX: 384, feetY: 224 },
-      { name: 'mountain_mouth_arch', feetX: 384, feetY: 224 },
+      { name: 'mountain_mouth_base', feetX: 384, feetY: 640 },
+      { name: 'mountain_mouth_arch', feetX: 384, feetY: 640 },
     ]);
 
     // Walk the knight north into the cave mouth until the body overlaps door_halls.
+    // Start on the grass south of the shifted mouth (384, 816).
     await page.evaluate(() => {
       const scene = (window as any).__scene;
-      scene.player.setPosition(384, 400);
-      scene.player.body.reset(384, 400);
+      scene.player.setPosition(384, 816);
+      scene.player.body.reset(384, 816);
     });
     await page.evaluate(() => {
       const scene = (window as any).__scene;
@@ -129,11 +130,11 @@ test.describe('Package 3-2: Cavern of Embers Tiled Maps & Dragon Lair Encounter'
     await page.waitForTimeout(300);
     await page.screenshot({ path: path.join(screenshotsDir, 'cavern-mouth.png') });
 
-    // 3. Move player in front of door_halls (center: 384, 224) and interact -> Molten Halls
+    // 3. Move player in front of door_halls (interact at 384, 676) and interact -> Molten Halls
     await page.evaluate(() => {
       const scene = (window as any).__scene;
-      scene.player.setPosition(384, 260);
-      scene.player.body.reset(384, 260);
+      scene.player.setPosition(384, 676);
+      scene.player.body.reset(384, 676);
       scene._tryInteract();
     });
 

@@ -569,7 +569,7 @@ export default class HollowvaleScene extends Phaser.Scene {
     const result = resolveEdgeTransition(this.wildNodeId, edge)
     if (result?.type === 'hub') {
       onDoorOpen()
-      this.enterScene('dungeon', { nx: HUB_RETURN_SPAWN.nx, ny: HUB_RETURN_SPAWN.ny })
+      this.enterScene('dungeon', { nx: HUB_RETURN_SPAWN.nx, ny: HUB_RETURN_SPAWN.ny, targetSpawn: 'spawn_wilderness' })
     } else if (result?.type === 'neighbor') {
       const next = loadWildernessScreen(result.nodeId)
       this.wildNodeId = result.nodeId
