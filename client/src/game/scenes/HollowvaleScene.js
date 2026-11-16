@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 import { PATHS, CLASS_SPRITES, CLASS_ATTACK_SPRITES, COMPOSITE_SPRITES, ENEMY_SPRITES } from '../../config/paths.js'
-import { TERRAIN_ASSETS, getAsset } from '../../config/terrainAssets.js'
+import { TERRAIN_ASSETS } from '../../config/terrainAssets.js'
 import { eventBus, GameEvents } from '../../lib/eventBus.js'
 import {
   onDoorOpen,
@@ -55,13 +55,11 @@ import { Dragon, DRAGON_PHASE_SHEETS } from '../actors/Dragon.js'
 import {
   PAINTED_WORLD_W,
   PAINTED_WORLD_H,
-  WILDERNESS_CELL,
-  WILDERNESS_COLS,
-  WILDERNESS_ROWS,
   WILDERNESS_WORLD_W,
   WILDERNESS_WORLD_H,
   scaleFromReference,
 } from '../worldMetrics.js'
+import { TILESET_CATALOG } from '../terrain/generate.js'
 import {
   CLASS_SPEED,
   ATTACK_MS,
@@ -113,8 +111,32 @@ function enemyLabel(type) {
 
 function placeholderColor(id) {
   if (id === 'bush') return 0x2f5c2c
-  if (id === 'tree') return 0x3a2b1e
+  if (id === 'tree' || id === 'tree_dead_base' || id === 'tree_dead_canopy') return 0x3a2b1e
+  if (id === 'stump_mossy' || id === 'stump_charred' || id === 'log_fallen') return 0x5c4030
+  if (typeof id === 'string' && id.startsWith('ash_drift')) return 0x6b6560
   return 0x76746e
+}
+
+const TILE_FILL = {
+  path: 0x8c6e46,
+  grass: 0x4a6b2f,
+  forest: 0x2f6b32,
+  ash: 0x4a433c,
+  ash_fill: 0x3a342e,
+}
+
+/** Feet origin from the loaded atlas meta, then the generated object. */
+function propAnchor(scene, obj) {
+  const atlas = obj?.atlas
+  if (atlas && scene.textures.exists(atlas)) {
+    const texture = scene.textures.get(atlas)
+    const fromProp = texture.customData?.meta?.props?.[obj.frame]?.anchor
+    if (fromProp && typeof fromProp.x === 'number' && typeof fromProp.y === 'number') return fromProp
+    const frame = typeof texture.get === 'function' ? texture.get(obj.frame) : null
+    const pivot = frame?.customData?.pivot
+    if (pivot && typeof pivot.x === 'number' && typeof pivot.y === 'number') return pivot
+  }
+  return obj?.anchor || { x: 0.5, y: 1 }
 }
 
 export default class HollowvaleScene extends Phaser.Scene {
@@ -221,6 +243,14 @@ export default class HollowvaleScene extends Phaser.Scene {
           'assets/props/village_props/village_props.png',
           'assets/props/village_props/village_props.json'
         )
+      }
+    } else {
+      const tiles = defaultManifest.tiles || {}
+      for (const name of TILESET_CATALOG) {
+        const tileDef = tiles[name.name]
+        if (tileDef?.id && tileDef.image && !this.textures.exists(tileDef.id)) {
+          this.load.image(tileDef.id, tileDef.image)
+        }
       }
     }
   }
@@ -1555,8 +1585,13 @@ export default class HollowvaleScene extends Phaser.Scene {
     this._drawWilderness(layout)
     this._buildSolids(collidersWithExitGaps(layout))
     this._sizePlayer(0.11)
-    this._placePlayer(spawn.nx, spawn.ny)
-    this._areaEntrance = { x: this.player.x, y: this.player.y, nx: spawn.nx, ny: spawn.ny }
+    const placed = spawn && Number.isFinite(spawn.nx) && Number.isFinite(spawn.ny) ? spawn : spawnFromHub(layout)
+    this._placePlayer(placed.nx, placed.ny)
+    const cam = this.cameras.main
+    if (!Number.isFinite(cam.scrollX) || !Number.isFinite(cam.scrollY)) {
+      this.screenCamera.follow(this.player)
+    }
+    this._areaEntrance = { x: this.player.x, y: this.player.y, nx: placed.nx, ny: placed.ny }
     this._buildPrompts()
     this.wildLatchUntil = performance.now() + 600
   }
@@ -1564,54 +1599,78 @@ export default class HollowvaleScene extends Phaser.Scene {
   _drawWilderness(layout) {
     const worldW = WILDERNESS_WORLD_W
     const worldH = WILDERNESS_WORLD_H
-    const tw = WILDERNESS_CELL
-    const th = WILDERNESS_CELL
     const cells = layout?.tiles?.cells || []
-    const cols = layout?.tiles?.cols || WILDERNESS_COLS
+    const cols = layout?.tiles?.cols || 1
+    const rows = layout?.tiles?.rows || 1
+    const tw = worldW / cols
+    const th = worldH / rows
     this.props = this.props || []
-    for (let i = 0; i < cells.length; i++) {
-      const cell = cells[i]
-      if (!cell) continue
-      const col = i % cols
-      const row = (i - col) / cols
-      const asset = getAsset(cell.assetId)
-      const key = asset?.src && this.textures.exists(cell.assetId) ? cell.assetId : null
-      if (key) {
-        const img = this.add.image(col * tw + tw / 2, row * th + th / 2, key)
-        img.setDisplaySize(tw, th)
-        if (cell.rotation) img.setAngle(cell.rotation)
-        img.setDepth(0)
-        this.props.push(img)
-      } else {
-        const fill = cell.kind === 'path' ? 0x8c6e46 : 0x4a6b2f
-        const rect = this.add.rectangle(col * tw + tw / 2, row * th + th / 2, tw, th, fill, 1)
+
+    const catalog = layout?.tilesets?.length ? layout.tilesets : TILESET_CATALOG
+    const tilesReady = catalog.every((ts) => this.textures.exists(ts.name))
+    let paintedTiles = false
+    if (tilesReady && cells.length) {
+      const map = this.make.tilemap({ tileWidth: 32, tileHeight: 32, width: cols, height: rows })
+      const tilesets = []
+      for (const ts of catalog) {
+        const added = map.addTilesetImage(ts.name, ts.name, 32, 32, ts.margin, ts.spacing, ts.firstgid)
+        if (added) tilesets.push(added)
+      }
+      const layer = tilesets.length
+        ? map.createBlankLayer('wild-ground', tilesets, 0, 0, cols, rows, 32, 32)
+        : null
+      if (layer) {
+        for (let i = 0; i < cells.length; i++) {
+          const cell = cells[i]
+          if (!cell || !(cell.gid > 0)) continue
+          const col = i % cols
+          const row = (i - col) / cols
+          layer.putTileAt(cell.gid, col, row, false)
+        }
+        layer.setScale(worldW / (cols * 32), worldH / (rows * 32))
+        layer.setDepth(0)
+        this.props.push(layer)
+        paintedTiles = true
+      }
+    }
+    if (!paintedTiles) {
+      for (let i = 0; i < cells.length; i++) {
+        const cell = cells[i]
+        if (!cell) continue
+        const col = i % cols
+        const row = (i - col) / cols
+        const fill = TILE_FILL[cell.kind] ?? TILE_FILL.grass
+        const rect = this.add.rectangle(col * tw + tw / 2, row * th + th / 2, tw + 0.5, th + 0.5, fill, 1)
         rect.setDepth(0)
         this.props.push(rect)
       }
     }
+
     const objects = layout?.objects || []
     for (let i = 0; i < objects.length; i++) {
       const o = objects[i]
-      const asset = getAsset(o.assetId)
+      const anchor = propAnchor(this, o)
       const scale = Number(o.scale) || 1
-      const nw = asset ? (asset.w / 1024) * scale : 0.06
-      const nh = asset ? (asset.h / 1536) * scale : 0.08
-      const pw = nw * worldW
-      const ph = nh * worldH
       const px = o.nx * worldW
       const py = o.ny * worldH
-      const originY = asset?.anchor === 'center' ? 0.5 : 1
-      if (asset?.src && this.textures.exists(o.assetId)) {
-        const img = this.add.image(px, py, o.assetId)
-        img.setOrigin(0.5, originY)
-        img.setDisplaySize(pw, ph)
-        img.setDepth(py)
-        this.props.push(img)
+      let depth = py
+      if (o.layer === 'overhead') depth = 50000 + py
+      else if (o.layer === 'decal') depth = 2
+      if (o.atlas && o.frame && this.textures.exists(o.atlas)) {
+        const sprite = this.add.sprite(px, py, o.atlas, o.frame)
+        sprite.setOrigin(anchor.x, anchor.y)
+        sprite.setScale(scale)
+        if (o.flipX) sprite.setFlipX(true)
+        sprite.setDepth(depth)
+        if (o.anim && this.anims.exists(o.anim)) sprite.play(o.anim)
+        this.props.push(sprite)
       } else {
+        const pw = Math.max(8, (o.w || 32) * scale)
+        const ph = Math.max(8, (o.h || 32) * scale)
         const rect = this.add.rectangle(px, py, pw, ph, placeholderColor(o.assetId), 0.95)
-        rect.setOrigin(0.5, originY)
+        rect.setOrigin(anchor.x, anchor.y)
         rect.setStrokeStyle(1, 0x000000, 0.45)
-        rect.setDepth(py)
+        rect.setDepth(depth)
         this.props.push(rect)
       }
     }

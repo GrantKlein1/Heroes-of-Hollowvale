@@ -11,13 +11,13 @@ import {
   oppositeEdge,
 } from '../worldGraph.js'
 import { getLayout, preloadNeighbors, evictBeyond, clearCache } from '../screenCache.js'
-import { drawWilderness, wildernessCollidersPx } from '../render.js'
 import {
   detectCrossedEdge,
   spawnAtEdge,
   HUB_RETURN_SPAWN,
   wildernessExitPrompts,
   wildernessFrame,
+  wildernessCollidersPx,
 } from '../wildernessBridge.js'
 import { FIXTURE_MANIFEST } from '../__fixtures__/fixtureManifest.js'
 import fixtureLayout from '../__fixtures__/fixtureLayout.js'
@@ -82,8 +82,8 @@ describe('Terrain Contract Tests', () => {
       expect(fixtureLayout.objects.length).toBeGreaterThan(0)
     })
 
-    it('maps every tile cell to a valid asset and mixes path with grass', () => {
-      expect(layoutA.tiles.cells.every((c) => !!getAsset(c.assetId))).toBe(true)
+    it('maps every plains cell to grass or dirt_road and mixes path with grass', () => {
+      expect(layoutA.tiles.cells.every((c) => c.gid > 0 && (c.tileset === 'grass' || c.tileset === 'dirt_road'))).toBe(true)
       expect(layoutA.tiles.cells.some((c) => c.kind === 'path')).toBe(true)
       expect(layoutA.tiles.cells.some((c) => c.kind === 'grass')).toBe(true)
     })
@@ -183,8 +183,7 @@ describe('Terrain Contract Tests', () => {
   })
 
   describe('Rendering & Viewport Frame', () => {
-    it('exports drawWilderness and wildernessCollidersPx', () => {
-      expect(typeof drawWilderness).toBe('function')
+    it('exports wildernessCollidersPx', () => {
       expect(typeof wildernessCollidersPx).toBe('function')
     })
 

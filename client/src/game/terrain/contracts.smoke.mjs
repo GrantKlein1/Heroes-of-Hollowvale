@@ -16,13 +16,13 @@ import {
   oppositeEdge,
 } from './worldGraph.js'
 import { getLayout, preloadNeighbors, evictBeyond, clearCache } from './screenCache.js'
-import { drawWilderness, wildernessCollidersPx } from './render.js'
 import {
   detectCrossedEdge,
   spawnAtEdge,
   HUB_RETURN_SPAWN,
   wildernessExitPrompts,
   wildernessFrame,
+  wildernessCollidersPx,
 } from './wildernessBridge.js'
 import { FIXTURE_MANIFEST } from './__fixtures__/fixtureManifest.js'
 import fixtureLayout from './__fixtures__/fixtureLayout.js'
@@ -59,10 +59,10 @@ assert(JSON.stringify(layoutA.tiles) === JSON.stringify(layoutB.tiles), 'generat
 assert(Array.isArray(layoutA.colliders) && layoutA.colliders.length >= 4, 'generateScreen has border colliders')
 assert(fixtureLayout.objects.length > 0, 'fixtureLayout has objects')
 
-// Every tile must resolve to a real manifest asset or nothing renders.
+// Plains cells are AS-2 grass or dirt_road gids.
 assert(
-  layoutA.tiles.cells.every((c) => !!getAsset(c.assetId)),
-  'every tile cell maps to a real terrain asset'
+  layoutA.tiles.cells.every((c) => c.gid > 0 && (c.tileset === 'grass' || c.tileset === 'dirt_road')),
+  'every plains cell is a grass or dirt_road gid'
 )
 assert(
   layoutA.tiles.cells.some((c) => c.kind === 'path') && layoutA.tiles.cells.some((c) => c.kind === 'grass'),
@@ -133,7 +133,6 @@ assert(
 )
 assert(HUB_RETURN_SPAWN.scene === 'dungeon', 'hub return targets the dungeon entrance')
 
-assert(typeof drawWilderness === 'function', 'drawWilderness export')
 assert(typeof wildernessCollidersPx === 'function', 'wildernessCollidersPx export')
 const px = wildernessCollidersPx(layoutA, { dx: 0, dy: 0, dw: 1000, dh: 1500 })
 assert(px.length === layoutA.colliders.length, 'wildernessCollidersPx length')

@@ -22,7 +22,7 @@ Contracts below are **engine-agnostic pure data** so Tracks A–C never import P
 | A — Art + real manifest | `cursor/terrain-assets-d431` | `client/public/images/terrain/*`, body of `client/src/config/terrainAssets.js` |
 | B — Generator | `cursor/terrain-generator-d431` | `rng.js`, `biomes.js`, `generate.js`, `generate.check.mjs` |
 | C — World graph + cache | `cursor/terrain-worldgraph-d431` | `worldGraph.js`, `screenCache.js` |
-| D — Render + Phaser wiring | `cursor/terrain-render-integration-d431` | `render.js`, `client/src/game/scenes/MainGameScene.js`, `PhaserGame.jsx` if needed |
+| D — Phaser wiring | `cursor/terrain-render-integration-d431` | wilderness draw in the Phaser scene, `PhaserGame.jsx` if needed |
 
 Tracks A–C **must not** edit Phaser / `Game.jsx`. Track D is the sole scene owner.
 
@@ -94,18 +94,42 @@ Initial biome ids: `emberwood_forest`, `ashen_wastes`, `plains`.
 
 ```js
 /** @typedef {{
+ *   kind: 'grass'|'path'|'forest'|'ash'|'ash_fill',
+ *   tileset: string,
+ *   frame: number,
+ *   gid: number,
+ *   ashMask: number,
+ *   roadMask: number,
+ *   corners: { nw:boolean, ne:boolean, sw:boolean, se:boolean }
+ * }} TerrainTileCell */
+
+/** @typedef {{
  *   biome: string,
  *   groundTileId: string,
- *   objects: Array<{ assetId:string, nx:number, ny:number, scale:number, collide:boolean }>,
+ *   objects: Array<{
+ *     assetId:string, atlas:string, frame:string,
+ *     nx:number, ny:number, scale:number, flipX:boolean,
+ *     collide:boolean, layer:'props'|'overhead'|'decal',
+ *     anchor:{x:number,y:number},
+ *     footprint:{x:number,y:number,w:number,h:number},
+ *     w:number, h:number, anim:string|null
+ *   }>,
  *   colliders: Array<{ x:number, y:number, w:number, h:number }>,
- *   exits: { north?:boolean, south?:boolean, east?:boolean, west?:boolean }
+ *   exits: { north?:boolean, south?:boolean, east?:boolean, west?:boolean },
+ *   exitBands: { north?:{start:number,end:number}, south?:{start:number,end:number}, east?:{start:number,end:number}, west?:{start:number,end:number} },
+ *   tiles: { cols:number, rows:number, cells: TerrainTileCell[] },
+ *   tilesets: Array<{ name:string, firstgid:number, count:number, margin:number, spacing:number }>
  * }} TerrainLayout */
 
 export function generateScreen({ nodeId, seed, biome, exits }) // → TerrainLayout
 ```
 
-Must carve walkable corridors connecting every active exit to a central hub so
-the player can always cross. Same `(nodeId, seed)` → identical layout.
+Each cell is a manifest tileset gid (`grass`, `dirt_road`, `forest_floor`,
+`ash_ground`, `ash_fill`). Ash uses Wang corner bits NW=1 NE=2 SW=4 SE=8.
+Mask 0 is the biome base, masks 1–14 are `ash_ground`, mask 15 is `ash_fill`.
+Ground gids depend on world coordinates, not the visit seed, so neighbouring
+screens share edge corners and exit mouths. Same `(nodeId, seed, biome)` →
+identical layout. Corridors connect every active exit to a central hub.
 
 ### `client/src/game/terrain/worldGraph.js`
 
@@ -135,22 +159,20 @@ export function clearCache()               // test helper
 Regeneration: keep current + adjacent layouts; evict when player moves ≥2 nodes
 away so returning yields a fresh seed.
 
-### `client/src/game/terrain/render.js`
+### Wilderness draw
+
+`HollowvaleScene._drawWilderness` paints `layout.tiles` with Phaser tilemap
+layers (margin 1, spacing 2, 32px) and atlas props. Feet origin, footprint,
+and layer come from each atlas `meta.props` entry. Overhead props (dead-tree
+canopies) draw above the player. Decals do not collide. If a tileset or atlas
+is missing, the scene draws a tinted color box so a screen still appears.
 
 ```js
-/** @typedef {{ dx:number, dy:number, dw:number, dh:number }} Frame */
-
-export function drawWilderness(ctx, layout, imagesById, frame)
-// Canvas2D helper. If a sprite is missing from imagesById, draw a tinted
-// color-box by category (ground=greenish, object=brown). This is the Track D
-// fallback so integration never blocks on Track A art.
-
 export function wildernessCollidersPx(layout, frame)
 // → Array<{ x,y,w,h }> in pixel space for AABB collision
 ```
 
-Phaser Track D may wrap these (or reimplement with Phaser sprites) but must
-honor the same layout + color-box fallback semantics.
+`wildernessCollidersPx` lives in `wildernessBridge.js`.
 
 ## Fixtures
 
@@ -180,7 +202,7 @@ ONLY create/edit: client/public/images/terrain/* and the body of client/src/conf
 
 Produce transparent PNGs named type_WxH.png: grass_64x64, dirt_64x64 (seamless), rock_64x64, bush_48x48, tree_128x160 (+ one variant). Fill TERRAIN_ASSETS with real entries matching the TerrainAsset typedef.
 
-Do NOT edit Game.jsx, Phaser scenes, generate.js, worldGraph.js, render.js, or screenCache.js.
+Do NOT edit Game.jsx, Phaser scenes, generate.js, worldGraph.js, or screenCache.js.
 Do NOT call Groq or ElevenLabs. Open a PR into main.
 ```
 
@@ -194,7 +216,7 @@ ONLY create/edit: client/src/game/terrain/rng.js, biomes.js, generate.js, and ad
 Replace the Phase 0 stubs with: mulberry32 RNG; real biome recipes; generateScreen that tiles ground, carves exit→hub corridors, seeded footprint-rejection scatter, emits objects+colliders+exits. Develop against __fixtures__/fixtureManifest.js only.
 
 Assert in generate.check.mjs: exit reachability, no overlapping colliders, same seed → identical layout.
-Do NOT edit Game.jsx, Phaser scenes, terrainAssets.js, worldGraph.js, screenCache.js, render.js.
+Do NOT edit Game.jsx, Phaser scenes, terrainAssets.js, worldGraph.js, or screenCache.js.
 Do NOT call Groq or ElevenLabs. Open a PR into main.
 ```
 
@@ -207,7 +229,7 @@ ONLY create/edit: client/src/game/terrain/worldGraph.js and screenCache.js.
 
 Replace stubs with a solid node table (biomes + N/S/E/W neighbors), getLayout memoization, idle-time preloadNeighbors, and evictBeyond(distance=2) regeneration policy. Depend only on the generateScreen signature / fixtures.
 
-Do NOT edit Game.jsx, Phaser scenes, terrainAssets.js, generate.js, biomes.js, rng.js, render.js.
+Do NOT edit Game.jsx, Phaser scenes, terrainAssets.js, generate.js, biomes.js, or rng.js.
 Do NOT call Groq or ElevenLabs. Open a PR into main.
 ```
 
@@ -216,12 +238,12 @@ Do NOT call Groq or ElevenLabs. Open a PR into main.
 Implement Track D of the Procedural Terrain plan. Read client/src/game/terrain/CONTRACTS.md first and obey the frozen contracts.
 
 Branch: cursor/terrain-render-integration-d431
-You are the SOLE editor of client/src/game/scenes/MainGameScene.js (and PhaserGame.jsx if needed). Also own client/src/game/terrain/render.js.
+You are the SOLE editor of client/src/game/scenes/MainGameScene.js (and PhaserGame.jsx if needed).
 
-Wire wilderness into the Phaser scene: drawWilderness (or Phaser equivalent) with color-box fallback when sprites are missing, wildernessCollidersPx / arcade colliders from layout, edge-exit transitions via worldGraph + oppositeEdge spawn, entrance from a hub into WILDERNESS_ENTRANCE_ID, screenCache getLayout/preloadNeighbors/evictBeyond.
+Wire wilderness into the Phaser scene: draw the generator's tile gids, with a color-box fallback when sprites are missing, wildernessCollidersPx / arcade colliders from layout, edge-exit transitions via worldGraph + oppositeEdge spawn, entrance from a hub into WILDERNESS_ENTRANCE_ID, screenCache getLayout/preloadNeighbors/evictBeyond.
 
 Test with fixtures + placeholder color boxes. Do NOT exercise innkeeper chat or TTS (leave Groq/ElevenLabs unset).
-Do NOT edit Track A–C files except render.js. Open a PR into main.
+Do NOT edit Track A–C files. Open a PR into main.
 ```
 
 ## Phase 2 integration checklist

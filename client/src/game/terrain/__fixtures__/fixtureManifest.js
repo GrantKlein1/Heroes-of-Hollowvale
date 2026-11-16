@@ -2,8 +2,8 @@
  * Fixture terrain manifest — no real PNGs required.
  * Tracks B/C/D develop against these ids until Track A lands real art.
  *
- * src paths point at the eventual /images/terrain/ location; render.js
- * color-box fallback covers missing files.
+ * src paths point at the eventual /images/terrain/ location. Missing files
+ * are covered by a color-box fallback at draw time.
  */
 
 /** @type {import('../../../config/terrainAssets.js').TerrainAsset[]} */
