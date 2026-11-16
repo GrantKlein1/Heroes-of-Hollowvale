@@ -10,6 +10,28 @@ import { buildAnimKey, buildFrameConfigs } from './animKeys.js'
 
 export { defaultManifest }
 
+/**
+ * Groups that must travel with another group so world drops and the phase-3
+ * meteor telegraph are resident. Scene code keeps calling the parent group;
+ * AssetRegistry pulls the dependency.
+ *
+ * Combat areas (village, wilderness, cavern) can drop loot.
+ * Phase 3 is the only phase that telegraphs meteors.
+ */
+export const GROUP_DEPENDENCIES = Object.freeze({
+  village: Object.freeze(['loot']),
+  wilderness: Object.freeze(['loot']),
+  cavern: Object.freeze(['loot']),
+  boss_p3: Object.freeze(['boss_fx_extra']),
+})
+
+/**
+ * Groups whose clips are built when the atlas finishes loading.
+ * Dragon phase sheets are not in this set: their meta lists frames that live
+ * on a sibling page, and creating those clips makes play() throw.
+ */
+const ANIM_ON_COMPLETE_GROUPS = new Set(['loot', 'boss_fx_extra'])
+
 export class AssetRegistry {
   /**
    * @param {import('phaser').Scene} scene - Active Phaser scene
@@ -25,6 +47,9 @@ export class AssetRegistry {
     this.loadedSheets = new Map() // sheetKey -> sheetDef
     this.createdAnims = new Map() // groupOrAssetKey -> Set<animKey>
     this.sheetToGroups = new Map() // sheetKey -> Set<groupName>
+    this.explicitGroups = new Set()
+    this.dependencyOwners = new Map() // dep group -> Set<parent group>
+    this._sheetWatchers = new Set()
   }
 
   /**
@@ -73,11 +98,16 @@ export class AssetRegistry {
    * @param {string} groupName - Group key (e.g. 'boot', 'village', 'wilderness', 'boss_p1')
    * @returns {Array<string>} - Array of loaded sheet keys
    */
-  loadGroup(groupName) {
+  loadGroup(groupName, options = {}) {
     const groupAssets = this.manifest.groups?.[groupName]
     if (!Array.isArray(groupAssets)) {
       console.warn(`[AssetRegistry] Group "${groupName}" not found in manifest`)
       return []
+    }
+
+    const asDependency = options?.asDependency === true
+    if (!asDependency) {
+      this.explicitGroups.add(groupName)
     }
 
     const queuedKeys = []
@@ -107,12 +137,26 @@ export class AssetRegistry {
         const exists = typeof this.scene?.textures?.exists === 'function' && this.scene.textures.exists(sheet.key)
         if (!exists && this.scene?.load?.atlas) {
           this.scene.load.atlas(sheet.key, sheet.image, sheet.json)
+          if (ANIM_ON_COMPLETE_GROUPS.has(groupName)) {
+            this._watchSheetForAnims(groupName, sheet.key)
+          }
         }
         queuedKeys.push(sheet.key)
       }
     }
 
     this.loadedGroups.add(groupName)
+
+    const deps = GROUP_DEPENDENCIES[groupName] || []
+    for (const dep of deps) {
+      if (!this.dependencyOwners.has(dep)) {
+        this.dependencyOwners.set(dep, new Set())
+      }
+      this.dependencyOwners.get(dep).add(groupName)
+      if (!this.loadedGroups.has(dep)) {
+        queuedKeys.push(...this.loadGroup(dep, { asDependency: true }))
+      }
+    }
 
     // If loader is idle after scene preload, start it dynamically
     if (
@@ -189,10 +233,12 @@ export class AssetRegistry {
               continue
             }
 
-            const frameConfigs = animDef.frames.map((frameName) => ({
-              key: sheet.key,
-              frame: frameName,
-            }))
+            const frameConfigs = animDef.frames
+              .filter((frameName) => this._textureHasFrame(texture, frameName))
+              .map((frameName) => ({
+                key: sheet.key,
+                frame: frameName,
+              }))
 
             if (frameConfigs.length > 0 && typeof this.scene?.anims?.create === 'function') {
               this.scene.anims.create({
@@ -230,7 +276,7 @@ export class AssetRegistry {
               frameCount: animDef.frames,
               dir,
               frameDurationsMs: animDef.frameDurationsMs,
-            })
+            }).filter((frame) => this._textureHasFrame(texture, frame?.frame))
 
             if (frameConfigs.length > 0 && typeof this.scene?.anims?.create === 'function') {
               this.scene.anims.create({
@@ -252,7 +298,58 @@ export class AssetRegistry {
       }
     }
 
+    const deps = GROUP_DEPENDENCIES[groupOrAssetId] || []
+    for (const dep of deps) {
+      createdKeys.push(...this.createAnims(dep))
+    }
+
     return createdKeys
+  }
+
+  /**
+   * When a queued atlas finishes, build its animations. Listens for the
+   * atlas multifile (`atlasjson`) so the texture meta is already parsed.
+   * Scene preload still calls createAnims in create(); this covers groups
+   * loaded mid-encounter (phase 3 meteor marker).
+   *
+   * @param {string} groupName
+   * @param {string} sheetKey
+   */
+  _watchSheetForAnims(groupName, sheetKey) {
+    const loader = this.scene?.load
+    if (typeof loader?.on !== 'function') return
+    const token = `${groupName}:${sheetKey}`
+    if (this._sheetWatchers.has(token)) return
+    this._sheetWatchers.add(token)
+
+    const handler = (key, type) => {
+      if (key !== sheetKey) return
+      if (type && type !== 'atlasjson') return
+      try {
+        this.createAnims(groupName)
+      } catch (err) {
+        console.warn(`[AssetRegistry] createAnims failed for "${groupName}"`, err)
+      }
+      if (typeof loader.off === 'function') {
+        loader.off('filecomplete', handler)
+      }
+      this._sheetWatchers.delete(token)
+    }
+    loader.on('filecomplete', handler)
+  }
+
+  /**
+   * True when the frame can be played. Textures without a `has` check
+   * (unit-test doubles) keep every authored frame.
+   *
+   * @param {object} texture
+   * @param {string} frameName
+   * @returns {boolean}
+   */
+  _textureHasFrame(texture, frameName) {
+    if (!frameName) return false
+    if (typeof texture?.has !== 'function') return true
+    return texture.has(frameName)
   }
 
   /**
@@ -364,6 +461,15 @@ export class AssetRegistry {
     }
 
     this.loadedGroups.delete(groupName)
+
+    for (const [dep, owners] of this.dependencyOwners) {
+      if (!owners.has(groupName)) continue
+      owners.delete(groupName)
+      if (owners.size === 0 && !this.explicitGroups.has(dep)) {
+        this.unloadGroup(dep)
+      }
+    }
+
     return true
   }
 
