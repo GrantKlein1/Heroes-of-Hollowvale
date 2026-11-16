@@ -208,4 +208,57 @@ test.describe('Heroes of Hollowvale — Player Actor (Package 1-3)', () => {
     await page.waitForTimeout(300);
     await expect(page).toHaveScreenshot('player-knight-1080p.png', { timeout: 30000 });
   });
+
+  test('Package 4-1: Hero plays run animation when moving at run speed', async ({ page }) => {
+    await page.goto('/?renderer=blend&seed=1&qa=1');
+
+    const startButton = page.getByRole('button', { name: 'Start Game' });
+    await startButton.click();
+
+    // Select Knight class
+    await page.getByRole('button', { name: 'Choose' }).nth(0).click();
+
+    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village');
+
+    // Set player running mode
+    await page.evaluate(() => {
+      const p = (window as any).__scene.player;
+      p.setRunning(true);
+    });
+
+    // Move right
+    await page.keyboard.down('KeyD');
+    await page.waitForFunction(() => (window as any).__hv.anim() === 'knight_run_right', null, { timeout: 3000 });
+    const currentAnim = await page.evaluate(() => (window as any).__hv.anim());
+    expect(currentAnim).toBe('knight_run_right');
+
+    await page.keyboard.up('KeyD');
+    await page.screenshot({ path: 'tests/e2e/__screenshots__/hero-run-speed.png' });
+  });
+
+  test('Package 4-1: Critters use rendered up/down facings without fallback', async ({ page }) => {
+    await page.goto('/?renderer=blend&seed=1&qa=1');
+
+    const startButton = page.getByRole('button', { name: 'Start Game' });
+    await startButton.click();
+
+    // Select Knight class
+    await page.getByRole('button', { name: 'Choose' }).nth(0).click();
+
+    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village');
+
+    // Spawn squirrel_red and verify rendered up facing clip plays
+    const critterAnim = await page.evaluate(() => {
+      const scene = (window as any).__scene;
+      const critter = scene.spawnCritter('squirrel_red', 200, 200);
+      if (critter) {
+        critter.facing = 'up';
+        critter.playAnim('run', 'up');
+      }
+      return critter?.sprite?.anims?.currentAnim?.key;
+    });
+
+    expect(critterAnim).toBe('squirrel_red_run_up');
+    await page.screenshot({ path: 'tests/e2e/__screenshots__/critter-up-facing.png' });
+  });
 });

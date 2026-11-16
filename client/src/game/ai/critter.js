@@ -159,6 +159,10 @@ export function ensureCritterAnimations(scene, animsData) {
     { key: 'bird_sparrow_fly_left', n: 6, fps: 14 },
     { key: 'bird_sparrow_fly_down', n: 6, fps: 14 },
     { key: 'bird_sparrow_fly_up', n: 6, fps: 14 },
+    { key: 'bird_sparrow_takeoff_right', n: 5, fps: 13, repeat: 0 },
+    { key: 'bird_sparrow_takeoff_left', n: 5, fps: 13, repeat: 0 },
+    { key: 'bird_sparrow_takeoff_down', n: 5, fps: 13, repeat: 0 },
+    { key: 'bird_sparrow_takeoff_up', n: 5, fps: 13, repeat: 0 },
 
     // Finch
     { key: 'bird_finch_idle_right', n: 6, fps: 7 },
@@ -167,6 +171,10 @@ export function ensureCritterAnimations(scene, animsData) {
     { key: 'bird_finch_fly_left', n: 6, fps: 14 },
     { key: 'bird_finch_fly_down', n: 6, fps: 14 },
     { key: 'bird_finch_fly_up', n: 6, fps: 14 },
+    { key: 'bird_finch_takeoff_right', n: 5, fps: 13, repeat: 0 },
+    { key: 'bird_finch_takeoff_left', n: 5, fps: 13, repeat: 0 },
+    { key: 'bird_finch_takeoff_down', n: 5, fps: 13, repeat: 0 },
+    { key: 'bird_finch_takeoff_up', n: 5, fps: 13, repeat: 0 },
 
     // Grey Rat
     { key: 'rat_grey_idle_right', n: 6, fps: 7 },

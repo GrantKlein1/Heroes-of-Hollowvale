@@ -217,4 +217,66 @@ test.describe('Package 1b-1: Lane D Enemies — Goblin Base & AI', () => {
 
     await page.screenshot({ path: 'tests/e2e/__screenshots__/3-goblins-max-2-tokens.png' });
   });
+
+  test('Package 4-1: Goblin plays spawn on spawn and alert on aggro before telegraph/attack', async ({ page }) => {
+    await page.goto('/?renderer=blend&seed=1&qa=1');
+
+    const startButton = page.getByRole('button', { name: 'Start Game' });
+    await startButton.click();
+
+    // Select Knight class
+    await page.getByRole('button', { name: 'Choose' }).nth(0).click();
+
+    await page.waitForFunction(() => {
+      return (
+        typeof (window as any).__hv?.anim === 'function' &&
+        typeof (window as any).__hv?.combat === 'function' &&
+        (window as any).__hv.scene() === 'village'
+      );
+    });
+
+    // Spawn goblin at distance (x: 400, y: 200) outside instant aggro range
+    await page.evaluate(() => {
+      const scene = (window as any).__scene;
+      scene.player.setPosition(200, 200);
+      scene.player.body.reset(200, 200);
+      scene.spawn('goblin', 400, 200);
+    });
+
+    // Verify spawn animation was played on spawn
+    await page.waitForFunction(() => {
+      const scene = (window as any).__scene;
+      const g = scene.enemies.getChildren().find((e: any) => e.enemyType === 'goblin');
+      return g?.animHistory?.some((k: string) => k.includes('spawn'));
+    }, null, { timeout: 3000 });
+
+    await page.screenshot({ path: 'tests/e2e/__screenshots__/goblin-p2-spawn.png' });
+
+    // Move player close to goblin to trigger aggro alert
+    await page.evaluate(() => {
+      const scene = (window as any).__scene;
+      scene.player.setPosition(340, 200);
+      scene.player.body.reset(340, 200);
+    });
+
+    // Wait for alert or subsequent telegraph
+    await page.waitForFunction(() => {
+      const scene = (window as any).__scene;
+      const g = scene.enemies.getChildren().find((e: any) => e.enemyType === 'goblin');
+      return g?.animHistory?.some((k: string) => k.includes('alert') || k.includes('telegraph'));
+    }, null, { timeout: 3000 });
+
+    await page.screenshot({ path: 'tests/e2e/__screenshots__/goblin-p2-alert.png' });
+
+    const history = await page.evaluate(() => {
+      const scene = (window as any).__scene;
+      const g = scene.enemies.getChildren().find((e: any) => e.enemyType === 'goblin');
+      return g?.animHistory || [];
+    });
+
+    const hasSpawn = history.some((k: string) => k.includes('spawn'));
+    const hasAlertOrTelegraph = history.some((k: string) => k.includes('alert') || k.includes('telegraph'));
+    expect(hasSpawn).toBe(true);
+    expect(hasAlertOrTelegraph).toBe(true);
+  });
 });

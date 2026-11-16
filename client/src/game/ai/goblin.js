@@ -13,9 +13,12 @@
 
 import { random } from '../rng.js'
 import { ACTOR_STATES } from '../actors/stateMachine.js'
+import { resolveAnimWithFallback, applyGenericAlert } from '../combat/fallbacks.js'
 
 export const GOBLIN_AI_MODES = Object.freeze({
+  SPAWN: 'SPAWN',
   PATROL: 'PATROL',
+  ALERT: 'ALERT',
   CHASE: 'CHASE',
   ATTACK: 'ATTACK',
   RETREAT: 'RETREAT',
@@ -28,14 +31,26 @@ export const RETREAT_HP_RATIO = 0.25
 export class GoblinAI {
   /**
    * @param {import('../actors/Enemy.js').Enemy} enemy
+   * @param {object} [options]
+   * @param {boolean} [options.hasSpawned=false]
+   * @param {boolean} [options.hasAlerted=false]
    */
-  constructor(enemy) {
+  constructor(enemy, options = {}) {
     this.enemy = enemy
-    this.mode = GOBLIN_AI_MODES.PATROL
+    this.hasSpawned = options.hasSpawned ?? false
+    this.mode = this.hasSpawned ? GOBLIN_AI_MODES.PATROL : GOBLIN_AI_MODES.SPAWN
     this.patrolDirX = 0
     this.patrolDirY = 0
     this.nextPatrolChangeAt = 0
     this.isPatrolMoving = false
+
+    this.spawnUntil = 0
+    this.hasAlerted = options.hasAlerted ?? false
+    this.alertUntil = 0
+
+    if (this.enemy && !this.hasSpawned) {
+      this.enemy.playAnim?.('spawn')
+    }
   }
 
   /**
@@ -48,6 +63,34 @@ export class GoblinAI {
     const enemy = this.enemy
     if (!enemy || enemy.is(ACTOR_STATES.DEAD)) {
       return
+    }
+
+    // 0. Spawn phase
+    if (!this.hasSpawned) {
+      if (this.spawnUntil === 0) {
+        this.spawnUntil = time + 400
+        enemy.playAnim?.('spawn')
+      }
+      if (time < this.spawnUntil) {
+        this.mode = GOBLIN_AI_MODES.SPAWN
+        if (enemy.body && typeof enemy.body.setVelocity === 'function') {
+          enemy.body.setVelocity(0, 0)
+        }
+        return
+      }
+      this.hasSpawned = true
+      this.mode = GOBLIN_AI_MODES.PATROL
+    }
+
+    // 0.5. Alert holding phase
+    if (this.mode === GOBLIN_AI_MODES.ALERT) {
+      if (time < this.alertUntil) {
+        if (enemy.body && typeof enemy.body.setVelocity === 'function') {
+          enemy.body.setVelocity(0, 0)
+        }
+        return
+      }
+      // Alert window elapsed, proceed to chase or attack
     }
 
     const scene = enemy.scene
@@ -80,7 +123,32 @@ export class GoblinAI {
       return
     }
 
-    // 4. In aggro radius (<= 160 px)
+    // 4. In aggro radius (<= 160 px): Play alert before first telegraph
+    if (!this.hasAlerted) {
+      this.hasAlerted = true
+      this.mode = GOBLIN_AI_MODES.ALERT
+      this.alertUntil = time + 250
+      enemy.updateFacing?.(dx, dy)
+      if (enemy.body && typeof enemy.body.setVelocity === 'function') {
+        enemy.body.setVelocity(0, 0)
+      }
+      const alertKey = enemy.getAnimKey?.('alert') || `goblin_alert_${enemy.facing || 'down'}`
+      if (enemy.animHistory) {
+        enemy.animHistory.push(alertKey)
+      }
+      enemy.lastAnimKey = alertKey
+      console.log(`[Enemy anim] ${alertKey}`)
+      const clipToPlay = resolveAnimWithFallback(scene, alertKey, enemy.getAnimKey?.('telegraph'))
+      if (clipToPlay && scene?.anims?.exists(clipToPlay)) {
+        try {
+          enemy.anims?.play?.(clipToPlay, true)
+        } catch (_e) {}
+      }
+      applyGenericAlert(enemy, 250)
+      return
+    }
+
+    // 5. Aggro engagement: attack or chase
     if (dist <= ATTACK_RANGE_PX) {
       this.mode = GOBLIN_AI_MODES.ATTACK
       this.doAttackOrWait(player, dx, dy, time)

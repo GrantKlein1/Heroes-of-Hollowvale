@@ -36,8 +36,16 @@ describe('Ambient Critters AI — Package 1b-4', () => {
       // Run / Fly / Scurry DO have up and down
       expect(buildCritterAnimKey('squirrel_red', 'run', 'up')).toBe('squirrel_red_run_up')
       expect(buildCritterAnimKey('squirrel_red', 'run', 'down')).toBe('squirrel_red_run_down')
+      expect(buildCritterAnimKey('squirrel_grey', 'run', 'up')).toBe('squirrel_grey_run_up')
+      expect(buildCritterAnimKey('squirrel_grey', 'run', 'down')).toBe('squirrel_grey_run_down')
       expect(buildCritterAnimKey('bird_sparrow', 'fly', 'up')).toBe('bird_sparrow_fly_up')
+      expect(buildCritterAnimKey('bird_sparrow', 'fly', 'down')).toBe('bird_sparrow_fly_down')
+      expect(buildCritterAnimKey('bird_finch', 'fly', 'up')).toBe('bird_finch_fly_up')
+      expect(buildCritterAnimKey('bird_finch', 'fly', 'down')).toBe('bird_finch_fly_down')
+      expect(buildCritterAnimKey('rat_grey', 'scurry', 'up')).toBe('rat_grey_scurry_up')
       expect(buildCritterAnimKey('rat_grey', 'scurry', 'down')).toBe('rat_grey_scurry_down')
+      expect(buildCritterAnimKey('rat_brown', 'scurry', 'up')).toBe('rat_brown_scurry_up')
+      expect(buildCritterAnimKey('rat_brown', 'scurry', 'down')).toBe('rat_brown_scurry_down')
     })
   })
 
