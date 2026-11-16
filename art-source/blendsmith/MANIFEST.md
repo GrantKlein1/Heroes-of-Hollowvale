@@ -769,3 +769,37 @@ The following atlases and tilesets are art-locked Blendsmith deliverables added 
 - `tiles/ground/ash_fill` (.png + .tsj)
 - `tiles/ground/forest_floor` (.png + .tsj)
 
+## AS-M (2026-11-11)
+
+Art-locked Lightning and Leech cast sheets. EEVEE toon, 96×96 cast cells, 10 frames @ 16 fps, release frame 5 = 312.5 ms. Keys are `mage_spells_v2` and `spell_fx_v2`. Do not replace v1 `mage/spells/mage_spells` or `mage/spells/spell_fx`. The importer mirrors this folder to `client/public/assets/characters/mage/spells_v2/` (the existing mage mirror, in a new folder) and registers a `mage_spells` load group. It does not add these keys to boot, village, wilderness, or boss. Read anchors, anims, `release`, and `spawnOffset` from each sheet's meta; do not hard-code frame lists.
+
+### `mage/spells_v2/mage_spells_v2`
+
+- PNG: `mage/spells_v2/mage_spells_v2.png` — 960×768 px; PNG+JSON 106.1 KiB; 80 frames
+- Cell size: 96×96
+- Anchor/origin: `{"x": 0.5, "y": 0.9274}` (from `meta.origin`)
+- footprint: `{"x": -14, "y": -4, "w": 28, "h": 8, "shape": "ellipse", "note": "collision footprint centred on feet"}`
+- hurtbox: `{"x": -17, "y": -36, "w": 34, "h": 36, "note": "body hurtbox, bottom on feet"}`
+- `meta.release`: lightning 5, leech 5. Per-facing `meta.spawnOffset` and `meta.returnOffset` are tip-at-release / staff-tip-at-rest, pixels from the feet origin.
+- Sidecar: `mage/spells_v2/anchors_v2.json` (17739 B) — per-frame tip, hands, chest, head, and feet.
+
+| anim | frames@fps | release |
+|---|---|---|
+| mage_cast_lightning_v2_{down,left,right,up} | 10@16 | frame 5 (312.5 ms) |
+| mage_cast_leech_v2_{down,left,right,up} | 10@16 | frame 5 (312.5 ms) |
+
+### `mage/spells_v2/spell_fx_v2`
+
+- PNG: `mage/spells_v2/spell_fx_v2.png` — 768×320 px; PNG+JSON 29.1 KiB; 39 frames
+- Cell sizes: 96×32, 64×64, 32×32, 96×96
+- No single `meta.origin`. Each clip's pivot is on its frames (importer sheet anchor is the first frame pivot, lightning bolt `{"x": 0, "y": 0.5}`).
+
+| anim | frames@fps | loop | pivot | cell |
+|---|---|---|---|---|
+| lightning_bolt_v2 | 4@16 | loop | 0, 0.5 | 96×32 |
+| lightning_impact_v2 | 7@16 | — | 0.5, 0.5 | 64×64 |
+| leech_orb_v2 | 6@16 | loop | 0.5, 0.5 | 32×32 |
+| leech_impact_v2 | 8@16 | — | 0.5, 0.5 | 64×64 |
+| leech_return_v2 | 6@16 | loop | 0, 0.5 | 96×32 |
+| leech_absorb_v2 | 8@16 | — | 0.5, 0.9274 | 96×96 |
+
