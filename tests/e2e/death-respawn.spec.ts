@@ -160,6 +160,94 @@ test.describe('Package 1b-4: Death & Respawn, Seeded Loot & Critter Flee AI', ()
     expect(postDeathCount).toBe(0);
   });
 
+  test('LM-1: seed=1 goblin drops an idling emerald that collects on walk-over', async ({ page }) => {
+    await page.goto('/?renderer=blend&seed=1&qa=1');
+
+    const startButton = page.getByRole('button', { name: 'Start Game' });
+    await expect(startButton).toBeVisible();
+    await startButton.click();
+    await page.getByRole('button', { name: 'Choose' }).nth(0).click();
+
+    await page.waitForFunction(() => {
+      return (
+        typeof (window as any).__hv?.spawn === 'function' &&
+        typeof (window as any).__hv?.missingAssets === 'function' &&
+        (window as any).__hv.scene() === 'village'
+      );
+    }, null, { timeout: 15000 });
+
+    const playerPos = await page.evaluate(() => (window as any).__hv.player());
+
+    const drop = await page.evaluate(({ x, y }) => {
+      const scene = (window as any).__scene;
+      const hv = (window as any).__hv;
+      const enemy = scene.spawn('goblin', x + 180, y);
+      hv.seed(1);
+      enemy.takeDamage(500, performance.now());
+      enemy.onAnimationComplete({ key: 'goblin_death_down' });
+      const pickup = (scene.lootPickups || []).find((s: any) => s.lootPickup && !s.lootCollected);
+      return pickup
+        ? {
+            id: pickup.lootId,
+            x: pickup.x,
+            y: pickup.y,
+            anim: pickup.anims?.currentAnim?.key || '',
+            texture: pickup.texture?.key || '',
+            originX: pickup.originX,
+            originY: pickup.originY,
+          }
+        : null;
+    }, { x: playerPos.x, y: playerPos.y });
+
+    expect(drop).not.toBeNull();
+    expect(drop?.id).toBe('emerald');
+    expect(drop?.texture).toBe('loot_pickups');
+    expect(drop?.anim).toContain('loot_emerald_idle');
+    expect(drop?.originX).toBeCloseTo(0.5, 2);
+    expect(drop?.originY).toBeCloseTo(0.875, 2);
+
+    const missing = await page.evaluate(() => (window as any).__hv.missingAssets() as string[]);
+    expect(missing.filter((key) => /loot|meteor/i.test(String(key)))).toEqual([]);
+
+    await page.screenshot({
+      path: 'tests/e2e/__screenshots__/lm1-loot-idle.png',
+      fullPage: false,
+    });
+
+    await page.locator('canvas').click();
+    await page.keyboard.down('ArrowRight');
+    await page.waitForFunction(() => {
+      const scene = (window as any).__scene;
+      const pickup = (scene.lootPickups || []).find((s: any) => s.lootId === 'emerald');
+      const anim = pickup?.anims?.currentAnim?.key || '';
+      return Boolean(pickup?.lootCollected) || anim.includes('loot_collect') || Boolean(scene._lastLootCollect);
+    }, null, { timeout: 8000 });
+    await page.keyboard.up('ArrowRight');
+
+    const collected = await page.evaluate(() => {
+      const scene = (window as any).__scene;
+      const pickup = (scene.lootPickups || []).find((s: any) => s.lootId === 'emerald');
+      const snap = scene._lastLootCollect || {};
+      return {
+        collected: Boolean(pickup?.lootCollected) || snap.id === 'emerald',
+        anim: pickup?.anims?.currentAnim?.key || snap.anim || '',
+        originX: pickup?.lootCollected ? pickup.originX : snap.originX,
+        originY: pickup?.lootCollected ? pickup.originY : snap.originY,
+      };
+    });
+    expect(collected.collected).toBe(true);
+    expect(collected.anim).toContain('loot_collect');
+    expect(collected.originX).toBeCloseTo(0.5, 2);
+    expect(collected.originY).toBeCloseTo(0.5, 2);
+
+    await expect(page.getByText('Loot: 1 Emerald')).toBeVisible({ timeout: 3000 });
+
+    await page.screenshot({
+      path: 'tests/e2e/__screenshots__/lm1-loot-collect.png',
+      fullPage: false,
+    });
+  });
+
   test('Acceptance Criterion 4: Ambient critters flee from player with directional clips', async ({ page }) => {
     await page.goto('/?renderer=blend&seed=1&qa=1');
 
