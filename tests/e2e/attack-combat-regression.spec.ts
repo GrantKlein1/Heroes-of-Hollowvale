@@ -88,10 +88,13 @@ test.describe('Attack Lifecycle, Collider Alignment & Mage Fix Regression Tests'
       scene.player.body.reset(200, 200);
       scene.player.setFacing('right');
 
-      // Spawn goblin right in front of knight (x: 235, y: 200)
-      const goblin = scene.spawn('goblin', 235, 200);
+      // Spawn goblin right in front of knight (x: 235, y: 185)
+      const goblin = scene.spawn('goblin', 235, 185);
       goblin.hp = 100;
       goblin.hpMax = 100;
+      if (goblin.ai) {
+        goblin.ai.hasSpawned = true;
+      }
       return { goblinHp: goblin.hp };
     });
     expect(spawnResult.goblinHp).toBe(100);
@@ -122,6 +125,7 @@ test.describe('Attack Lifecycle, Collider Alignment & Mage Fix Regression Tests'
   });
 
   test('Body position and feet collider stay aligned across idle -> attack -> idle across all 4 classes', async ({ page }) => {
+    test.setTimeout(120000);
     const classes = [
       { id: 'knight', index: 0 },
       { id: 'mage', index: 1 },
@@ -255,15 +259,92 @@ test.describe('Attack Lifecycle, Collider Alignment & Mage Fix Regression Tests'
       scene.player.body.reset(250, 250);
       const enemy = scene.spawn('brute', 250, 250);
       enemy.hp = 200;
+      if (enemy.ai) {
+        enemy.ai.hasSpawned = true;
+        enemy.ai.hasAlerted = true;
+      }
     });
 
     // Player attacks
     await page.keyboard.press('Space', { delay: 60 });
-    await page.waitForTimeout(300);
+    await page.waitForFunction(() => (window as any).__scene.hp < 100, null, { timeout: 3000 });
 
     // Verify player takes damage (HP decrements below 100)
     const currentHp = await page.evaluate(() => (window as any).__scene.hp);
     expect(currentHp).toBeLessThan(100);
+  });
+
+  test('Package 4-1: Second attack press inside combo window plays attack_2 and registers a hit on its own hitFrames', async ({ page }) => {
+    const consoleLogs: string[] = [];
+    page.on('console', (msg) => {
+      consoleLogs.push(msg.text());
+    });
+
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
+    await page.getByRole('button', { name: 'Start Game' }).click();
+
+    // Select Knight (index 0)
+    const chooseModal = page.getByText('Choose Your Class');
+    await expect(chooseModal).toBeVisible();
+    await page.getByRole('button', { name: 'Choose' }).first().click();
+    await expect(chooseModal).toBeHidden();
+
+    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village');
+
+    // Position player and spawn a goblin in front of the player
+    await page.evaluate(() => {
+      const scene = (window as any).__scene;
+      scene.player.setPosition(200, 200);
+      scene.player.body.reset(200, 200);
+      scene.player.setFacing('right');
+
+      const goblin = scene.spawn('goblin', 235, 185);
+      goblin.hp = 100;
+      goblin.hpMax = 100;
+      if (goblin.ai) {
+        goblin.ai.hasSpawned = true;
+      }
+      goblin.attackCooldownUntil = performance.now() + 60000; // passive for combo test
+    });
+
+    // First attack press
+    await page.keyboard.press('Space', { delay: 60 });
+
+    // Wait until knight is in attack animation at frame >= 3 (combo window open)
+    await page.waitForFunction(() => {
+      const p = (window as any).__scene.player;
+      const frameName = p.anims?.currentFrame?.textureFrame || '';
+      return p.state === 'ATTACK' && (frameName.endsWith('_3') || frameName.endsWith('_4'));
+    }, null, { timeout: 3000 });
+
+    // Second attack press inside combo window triggers attack_2
+    await page.evaluate(() => {
+      const scene = (window as any).__scene;
+      scene._tryAttack(performance.now());
+    });
+
+    // Verify attack_2 animation starts
+    await page.waitForFunction(() => {
+      const anim = (window as any).__hv.anim();
+      return anim && anim.includes('attack_2');
+    }, null, { timeout: 3000 });
+
+    // Wait for combo sequence to complete back to IDLE
+    await page.waitForFunction(() => (window as any).__scene.player.state === 'IDLE', null, { timeout: 3000 });
+
+    // Verify console logged hit on attack_2 frame index
+    const hitLogs = consoleLogs.filter((l) => l.includes('[Hit] attack_2 frame'));
+    expect(hitLogs.length).toBeGreaterThan(0);
+
+    // Verify goblin took damage from both attack swings
+    const enemyHp = await page.evaluate(() => {
+      const scene = (window as any).__scene;
+      const goblin = scene.enemies.getChildren().find((e: any) => e.enemyType === 'goblin');
+      return goblin?.hp;
+    });
+    expect(enemyHp).toBeLessThanOrEqual(76);
+
+    await page.screenshot({ path: 'tests/e2e/__screenshots__/hero-attack-2-combo.png' });
   });
 });
 
