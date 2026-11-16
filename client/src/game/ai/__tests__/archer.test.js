@@ -206,6 +206,19 @@ describe('Archer AI Controller (Package 1b-3)', () => {
       ai.update(1300, 16)
       expect(ai.mode).not.toBe(ARCHER_AI_MODES.ALERT)
     })
+
+    it('plays the alert clip when entering ALERT and never tints', () => {
+      mockScene.anims = { exists: () => true }
+      const enemy = createMockEnemy(mockScene, 280, 100)
+      enemy.setTint = vi.fn()
+      const ai = new ArcherAI(enemy, { hasSpawned: true })
+
+      ai.update(1000, 16)
+
+      expect(ai.mode).toBe(ARCHER_AI_MODES.ALERT)
+      expect(enemy.anims.play).toHaveBeenCalledWith('goblin_archer_alert_left', true)
+      expect(enemy.setTint).not.toHaveBeenCalled()
+    })
   })
 
   describe('Criterion 2: Archer does not shoot through walls/colliders (Line of Sight)', () => {

@@ -3,8 +3,6 @@ import {
   KNOWN_MISSING_CLIPS,
   isProvenMissingClip,
   resolveAnimWithFallback,
-  applyGenericTelegraph,
-  applyGenericAlert,
 } from '../fallbacks.js'
 
 describe('Combat Fallbacks — Package 4-1', () => {
@@ -53,27 +51,4 @@ describe('Combat Fallbacks — Package 4-1', () => {
     expect(resolved).toBeNull()
   })
 
-  it('applies procedural alert tint and cleans up via delayedCall', () => {
-    let delayedCb = null
-    const mockActor = {
-      active: true,
-      setTint: vi.fn(),
-      clearTint: vi.fn(),
-      scene: {
-        time: {
-          delayedCall: vi.fn((ms, cb) => {
-            delayedCb = cb
-          }),
-        },
-      },
-    }
-
-    applyGenericAlert(mockActor, 250, 0xffee66)
-    expect(mockActor.setTint).toHaveBeenCalledWith(0xffee66)
-    expect(mockActor.scene.time.delayedCall).toHaveBeenCalledWith(250, expect.any(Function))
-
-    // Invoke delayed callback
-    delayedCb()
-    expect(mockActor.clearTint).toHaveBeenCalled()
-  })
 })
