@@ -7,6 +7,11 @@ import {
   respawnPlayer,
   handlePlayerDeath,
   enemyLabel,
+  presentLootDrop,
+  seededLootIdsWithoutSprites,
+  lootIdleAnimKey,
+  lootCollectAnimKey,
+  LOOT_PICKUP_ATLAS,
 } from '../death.js'
 import { createRng } from '../../terrain/rng.js'
 import { setSeed, getSeed } from '../../rng.js'
@@ -221,6 +226,160 @@ describe('Combat Death & Respawn — Package 1b-4', () => {
       expect(mockScene.mana).toBe(100)
       expect(mockPlayerRespawn).toHaveBeenCalled()
       expect(respawnEvents.length).toBe(1)
+    })
+  })
+
+  describe('Batch 7 loot pickups (LM-1)', () => {
+    it('maps every seeded table id onto a loot_pickups clip', () => {
+      expect(seededLootIdsWithoutSprites()).toEqual([])
+    })
+
+    it('spawns an idling pickup and grants only when the player walks over it', () => {
+      const lootEvents = []
+      eventBus.on(GameEvents.LOOT, (payload) => lootEvents.push(payload))
+
+      const listeners = []
+      let completed = null
+      const scene = {
+        dead: false,
+        player: { x: 0, y: 0 },
+        lootPickups: null,
+        anims: {
+          exists: (key) => key.startsWith('loot_pickups_'),
+        },
+        events: {
+          on: (_ev, fn) => listeners.push(fn),
+          off: (_ev, fn) => {
+            const idx = listeners.indexOf(fn)
+            if (idx >= 0) listeners.splice(idx, 1)
+          },
+        },
+        add: {
+          sprite: vi.fn((x, y, tex, frame) => {
+            const sprite = {
+              x,
+              y,
+              texture: { key: tex },
+              frame: { name: frame },
+              originX: 0,
+              originY: 0,
+              depth: 0,
+              destroyed: false,
+              setOrigin(ox, oy) { this.originX = ox; this.originY = oy; return this },
+              setDepth(d) { this.depth = d; return this },
+              anims: {
+                currentAnim: null,
+                play(key) { this.currentAnim = { key }; return this },
+              },
+              once(_ev, fn) { completed = fn },
+              destroy() { this.destroyed = true },
+            }
+            return sprite
+          }),
+        },
+      }
+
+      const result = presentLootDrop(scene, 100, 200, { ruby: 1, sapphire: 0, emerald: 0 }, [
+        { id: 'healing_potion', count: 1 },
+      ])
+
+      expect(lootEvents).toEqual([])
+      expect(result.pickups).toHaveLength(2)
+      expect(result.legacyIds).toEqual([])
+      expect(scene.add.sprite).toHaveBeenCalledWith(82, 200, LOOT_PICKUP_ATLAS, 'loot_ruby_idle_down_0')
+      expect(scene.add.sprite).toHaveBeenCalledWith(118, 200, LOOT_PICKUP_ATLAS, 'loot_healing_potion_idle_down_0')
+
+      const ruby = result.pickups[0]
+      const potion = result.pickups[1]
+      expect(ruby.lootId).toBe('ruby')
+      expect(ruby.originX).toBe(0.5)
+      expect(ruby.originY).toBe(0.875)
+      expect(ruby.anims.currentAnim.key).toBe(lootIdleAnimKey('ruby'))
+      expect(potion.anims.currentAnim.key).toBe(lootIdleAnimKey('healing_potion'))
+
+      scene.player.x = 10
+      scene.player.y = 10
+      listeners.forEach((fn) => fn())
+      expect(lootEvents).toEqual([])
+      expect(ruby.lootCollected).toBe(false)
+
+      scene.player.x = ruby.x
+      scene.player.y = ruby.y
+      listeners.forEach((fn) => fn())
+
+      expect(ruby.lootCollected).toBe(true)
+      expect(ruby.originX).toBe(0.5)
+      expect(ruby.originY).toBe(0.5)
+      expect(ruby.anims.currentAnim.key).toBe(lootCollectAnimKey())
+      expect(lootEvents).toEqual([
+        { gems: { ruby: 1, sapphire: 0, emerald: 0 }, items: [] },
+      ])
+
+      completed()
+      expect(ruby.destroyed).toBe(true)
+      expect(listeners).toHaveLength(1)
+    })
+
+    it('grants ids with no sprite immediately and leaves them off the atlas', () => {
+      const lootEvents = []
+      eventBus.on(GameEvents.LOOT, (payload) => lootEvents.push(payload))
+
+      const scene = {
+        player: { x: 0, y: 0 },
+        anims: { exists: () => true },
+        events: { on: vi.fn(), off: vi.fn() },
+        add: { sprite: vi.fn() },
+      }
+
+      const result = presentLootDrop(scene, 0, 0, { ruby: 0, sapphire: 0, emerald: 0 }, [
+        { id: 'lockpicks', count: 1 },
+      ])
+
+      expect(result.pickups).toEqual([])
+      expect(result.legacyIds).toEqual(['lockpicks'])
+      expect(scene.add.sprite).not.toHaveBeenCalled()
+      expect(lootEvents).toEqual([
+        { gems: { ruby: 0, sapphire: 0, emerald: 0 }, items: [{ id: 'lockpicks', count: 1 }] },
+      ])
+    })
+
+    it('reads idle and collect origins from atlas meta when the texture is loaded', () => {
+      const scene = {
+        player: { x: 500, y: 500 },
+        anims: { exists: () => true },
+        events: { on: vi.fn(), off: vi.fn() },
+        textures: {
+          get: () => ({
+            customData: {
+              meta: {
+                origin: { x: 0.5, y: 0.875 },
+                anims: {
+                  loot_emerald_idle: { origin: { x: 0.5, y: 0.875 } },
+                  loot_collect: { origin: { x: 0.5, y: 0.5 } },
+                },
+              },
+            },
+          }),
+        },
+        add: {
+          sprite: vi.fn((x, y) => ({
+            x,
+            y,
+            originX: 0,
+            originY: 0,
+            setOrigin(ox, oy) { this.originX = ox; this.originY = oy; return this },
+            setDepth() { return this },
+            anims: { play() {}, currentAnim: null },
+            once() {},
+            destroy() {},
+          })),
+        },
+      }
+
+      const result = presentLootDrop(scene, 40, 40, { ruby: 0, sapphire: 0, emerald: 1 }, [])
+      expect(result.pickups[0].originX).toBe(0.5)
+      expect(result.pickups[0].originY).toBe(0.875)
+      expect(result.pickups[0].lootId).toBe('emerald')
     })
   })
 })
