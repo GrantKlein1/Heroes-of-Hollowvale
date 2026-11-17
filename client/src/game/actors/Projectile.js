@@ -166,9 +166,27 @@ export class Projectile extends SpriteBase {
     this._returnSpeed = Math.hypot(this.vx, this.vy) || (420 * this.unit)
 
     // Start flying animation if provided
-    if (this.flyAnim && this.anims && typeof this.anims.play === 'function') {
-      this.anims.play(this.flyAnim, true)
+    if (this.flyAnim) {
+      this._playAnim(this.flyAnim, true)
     }
+  }
+
+  /**
+   * Plays a clip only if it exists and has at least one frame.
+   *
+   * @param {string} key
+   * @param {boolean} [ignoreIfPlaying=true]
+   * @returns {boolean}
+   * @private
+   */
+  _playAnim(key, ignoreIfPlaying = true) {
+    if (!key || !this.anims || typeof this.anims.play !== 'function') return false
+    if (typeof this.scene?.anims?.get === 'function') {
+      const clip = this.scene.anims.get(key)
+      if (!clip?.frames?.length) return false
+    }
+    this.anims.play(key, ignoreIfPlaying)
+    return true
   }
 
   /**
@@ -310,7 +328,7 @@ export class Projectile extends SpriteBase {
     }
 
     // Play impact animation if available
-    if (this.hitAnim && this.anims && typeof this.anims.play === 'function') {
+    if (this.hitAnim) {
       if (this.aimImpactAtCaster && this.caster) {
         const aimX = this.caster.x + (this.returnOffset?.x || 0)
         const aimY = this.caster.y + (this.returnOffset?.y || 0)
@@ -322,8 +340,8 @@ export class Projectile extends SpriteBase {
       } else {
         this.rotation = 0
       }
-      this.anims.play(this.hitAnim, true)
-      if (typeof this.once === 'function') {
+      const playedHit = this._playAnim(this.hitAnim, true)
+      if (playedHit && typeof this.once === 'function') {
         const animComplete = Phaser?.Animations?.Events?.ANIMATION_COMPLETE || 'animationcomplete'
         this.once(animComplete, () => {
           this._afterImpact(now)
@@ -351,8 +369,8 @@ export class Projectile extends SpriteBase {
       this.isLingering = true
       this.isImpacted = false
       this.lingerUntil = now + this.lingerMs
-      if (this.lingerAnim && this.anims && typeof this.anims.play === 'function') {
-        this.anims.play(this.lingerAnim, true)
+      if (this.lingerAnim) {
+        this._playAnim(this.lingerAnim, true)
       }
     } else {
       this.destroy()
@@ -377,8 +395,8 @@ export class Projectile extends SpriteBase {
     }
     this.vx = 0
     this.vy = 0
-    if (this.returnAnim && this.anims && typeof this.anims.play === 'function') {
-      this.anims.play(this.returnAnim, true)
+    if (this.returnAnim) {
+      this._playAnim(this.returnAnim, true)
     }
   }
 
@@ -422,9 +440,9 @@ export class Projectile extends SpriteBase {
     if (this.absorbOrigin && typeof this.setOrigin === 'function') {
       this.setOrigin(this.absorbOrigin.x, this.absorbOrigin.y)
     }
-    if (this.absorbAnim && this.anims && typeof this.anims.play === 'function') {
-      this.anims.play(this.absorbAnim, true)
-      if (typeof this.once === 'function') {
+    if (this.absorbAnim) {
+      const playedAbsorb = this._playAnim(this.absorbAnim, true)
+      if (playedAbsorb && typeof this.once === 'function') {
         const animComplete = Phaser?.Animations?.Events?.ANIMATION_COMPLETE || 'animationcomplete'
         this.once(animComplete, () => {
           if (this.active) this.destroy()

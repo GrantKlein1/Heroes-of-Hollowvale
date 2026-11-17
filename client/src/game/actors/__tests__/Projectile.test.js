@@ -14,6 +14,12 @@ vi.mock('phaser', () => {
       this.active = true
       this.visible = true
       this.rotation = 0
+      this.anims = {
+        play: vi.fn((k) => {
+          this.currentAnimKey = k
+          return this
+        }),
+      }
     }
     setOrigin(x, y) {
       this.originX = x
@@ -257,5 +263,30 @@ describe('Projectile Class (Package 1-5)', () => {
     expect(rectIntersects({ x: 0, y: 0, w: 10, h: 10 }, { x: 5, y: 5, w: 10, h: 10 })).toBe(true)
     expect(rectIntersects({ x: 0, y: 0, w: 10, h: 10 }, { x: 20, y: 20, w: 10, h: 10 })).toBe(false)
     expect(rectIntersects(null, { x: 0, y: 0, w: 10, h: 10 })).toBe(false)
+  })
+
+  it('a projectile whose flyAnim has 0 frames constructs without throwing', () => {
+    mockScene.anims = {
+      get: vi.fn((key) => {
+        if (key === 'empty_fly_anim') {
+          return { key, frames: [] }
+        }
+        return { key, frames: [{}] }
+      }),
+    }
+
+    let proj
+    expect(() => {
+      proj = new Projectile(mockScene, 100, 100, 'spell_fx_v2', 'spell_fx_v2_0', {
+        dirX: 1,
+        dirY: 0,
+        speed: 600,
+        flyAnim: 'empty_fly_anim',
+      })
+    }).not.toThrow()
+
+    expect(proj).toBeDefined()
+    expect(proj.anims.play).not.toHaveBeenCalled()
+    expect(proj.frame.name).toBe('spell_fx_v2_0')
   })
 })

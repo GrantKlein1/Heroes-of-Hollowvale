@@ -263,8 +263,10 @@ function createMockScene() {
     },
     anims: {
       exists: vi.fn(() => true),
+      get: vi.fn((key) => ({ key, frames: [{}] })),
     },
     textures: {
+      exists: vi.fn(() => true),
       get: vi.fn((key) => {
         const entry = metadataMap[key] || null
         if (!entry) return null
@@ -867,6 +869,48 @@ describe('Player Actor — Package 1-3', () => {
       expect(mockScene.projectiles).toHaveLength(1)
       expect(mockScene.projectiles[0].texture.key).toBe('fireball')
       expect(mockScene.mana).toBe(85)
+    })
+  })
+
+  describe('Package BF-1: Defense in depth for empty v2 cast clips', () => {
+    it('casting Lightning and Leech with an empty clip does not throw and plays the cast fallback', () => {
+      mockScene.anims.get = vi.fn((key) => {
+        if (key && key.startsWith('mage_cast_') && key.includes('_v2_')) {
+          return { key, frames: [] }
+        }
+        return { key, frames: [{}] }
+      })
+      mockScene.anims.exists = vi.fn(() => true)
+      mockScene.textures = { exists: vi.fn(() => true) }
+
+      const mage = new Player(mockScene, 200, 350, 'mage', { facing: 'down' })
+      expect(() => {
+        mage._v2Cast = {
+          animKey: 'mage_cast_lightning_v2_down',
+          spellId: 'lightning',
+          facing: 'down',
+          releaseFrame: 5,
+          releaseMs: 312.5,
+          startedAt: 1000,
+        }
+        mage._playV2CastBody()
+      }).not.toThrow()
+
+      expect(mage.anims.play).toHaveBeenCalledWith('mage_cast_down', false)
+
+      mage.facing = 'right'
+      mage._v2Cast = {
+        animKey: 'mage_cast_leech_v2_right',
+        spellId: 'leech',
+        facing: 'right',
+        releaseFrame: 5,
+        releaseMs: 312.5,
+        startedAt: 2000,
+      }
+      expect(() => {
+        mage._playV2CastBody()
+      }).not.toThrow()
+      expect(mage.anims.play).toHaveBeenCalledWith('mage_cast_right', false)
     })
   })
 })

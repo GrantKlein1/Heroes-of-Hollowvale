@@ -466,4 +466,103 @@ describe('Spells & Projectile Mechanics (Package 1-5)', () => {
       expectSpawnAt(proj, 'lightning', 'up')
     })
   })
+
+  describe('Package BF-1: Mage v2 Animation Registration & Readiness', () => {
+    it('(a) with textures.exists("mage_spells_v2") === false, ensureSpellAnimations creates no mage_cast_*_v2_* clips', () => {
+      const scene = {
+        textures: {
+          exists: vi.fn((key) => key !== 'mage_spells_v2'),
+        },
+        anims: {
+          exists: vi.fn(() => false),
+          create: vi.fn(),
+          get: vi.fn(() => null),
+          remove: vi.fn(),
+        },
+      }
+
+      ensureSpellAnimations(scene)
+
+      const createdKeys = scene.anims.create.mock.calls.map((call) => call[0].key)
+      const v2BodyClips = createdKeys.filter((k) => k.startsWith('mage_cast_'))
+      expect(v2BodyClips).toHaveLength(0)
+    })
+
+    it('(b) after textures load, calling ensureSpellAnimations creates v2 clips with frames', () => {
+      const scene = {
+        textures: {
+          exists: vi.fn(() => true),
+        },
+        anims: {
+          exists: vi.fn(() => false),
+          create: vi.fn(),
+          get: vi.fn(() => null),
+          remove: vi.fn(),
+        },
+      }
+
+      ensureSpellAnimations(scene)
+
+      const createdClips = scene.anims.create.mock.calls.map((call) => call[0])
+      const lightningDown = createdClips.find((c) => c.key === 'mage_cast_lightning_v2_down')
+      expect(lightningDown).toBeDefined()
+      expect(lightningDown.frames.length).toBeGreaterThan(0)
+      expect(lightningDown.frames[0].key).toBe('mage_spells_v2')
+    })
+
+    it('(c) a pre-existing 0-frame clip gets removed and replaced once texture exists', () => {
+      const scene = {
+        textures: {
+          exists: vi.fn(() => true),
+        },
+        anims: {
+          exists: vi.fn((key) => key === 'mage_cast_lightning_v2_down'),
+          create: vi.fn(),
+          get: vi.fn((key) => (key === 'mage_cast_lightning_v2_down' ? { key, frames: [] } : null)),
+          remove: vi.fn(),
+        },
+      }
+
+      ensureSpellAnimations(scene)
+
+      expect(scene.anims.remove).toHaveBeenCalledWith('mage_cast_lightning_v2_down')
+      const createdClips = scene.anims.create.mock.calls.map((call) => call[0])
+      const lightningDown = createdClips.find((c) => c.key === 'mage_cast_lightning_v2_down')
+      expect(lightningDown).toBeDefined()
+      expect(lightningDown.frames.length).toBeGreaterThan(0)
+    })
+
+    it('(d) armMageV2Cast returns null while textures are missing and leaves lifeLeechCooldownUntil unchanged', () => {
+      const scene = {
+        textures: {
+          exists: vi.fn((key) => key !== 'mage_spells_v2'),
+        },
+        anims: {
+          exists: vi.fn(() => false),
+          create: vi.fn(),
+          get: vi.fn(() => null),
+          remove: vi.fn(),
+        },
+        _notices: [],
+        _notice(msg) {
+          this._notices.push(msg)
+        },
+      }
+
+      const player = {
+        classId: 'mage',
+        facing: 'down',
+      }
+
+      session.lifeLeechCooldownUntil = 0
+
+      const lightningArm = armMageV2Cast(scene, player, 'lightning', 1000)
+      expect(lightningArm).toBeNull()
+      expect(scene._notices).toContain('Spells are still loading')
+
+      const leechArm = armMageV2Cast(scene, player, 'leech', 1000)
+      expect(leechArm).toBeNull()
+      expect(session.lifeLeechCooldownUntil).toBe(0)
+    })
+  })
 })

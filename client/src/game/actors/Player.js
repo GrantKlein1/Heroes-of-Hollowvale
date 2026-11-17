@@ -1047,6 +1047,12 @@ export class Player extends Actor {
       return
     }
 
+    const clip = typeof this.scene?.anims?.get === 'function' ? this.scene.anims.get(pending.animKey) : null
+    if (!clip?.frames?.length) {
+      this.playAnim('cast', false)
+      return
+    }
+
     ensureMageSpellsGroup(this.scene)
     const layout = getV2CastBodyLayout()
     const frameName = `${pending.animKey}_0`
