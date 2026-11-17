@@ -32,7 +32,7 @@ Generated from the atlas JSONs by a script (numbers not hand-typed).
 
 ## `dwarf/dwarf_attack`
 
-- PNG: `dwarf/dwarf_attack.png` — 672×384 px; PNG+JSON 38.2 KiB; 28 frames
+- PNG: `dwarf/dwarf_attack.png` — 672×384 px; PNG+JSON 38.8 KiB; 28 frames
 - Cell size(s): 96×96
 - Anchor/origin: `{"x": 0.5, "y": 0.9271}`
 - footprint: `{"x": -13, "y": -4, "w": 26, "h": 8, "shape": "ellipse", "note": "collision footprint centred on feet"}`
@@ -44,8 +44,8 @@ Generated from the atlas JSONs by a script (numbers not hand-typed).
 
 ## `dwarf/dwarf_attack2`
 
-- PNG: `dwarf/dwarf_attack2.png` — 448×320 px; PNG+JSON 33.5 KiB; 28 frames
-- Cell size(s): 64×80
+- PNG: `dwarf/dwarf_attack2.png` — 490×320 px; PNG+JSON 33.9 KiB; 28 frames
+- Cell size(s): 70×80
 - Anchor/origin: `{"x": 0.5, "y": 0.9125}`
 - footprint: `{"x": -13, "y": -4, "w": 26, "h": 8, "shape": "ellipse", "note": "collision footprint centred on feet"}`
 - hurtbox: `{"x": -16, "y": -29, "w": 31, "h": 29, "note": "body hurtbox, bottom on feet"}`
@@ -56,8 +56,8 @@ Generated from the atlas JSONs by a script (numbers not hand-typed).
 
 ## `dwarf/dwarf_charged`
 
-- PNG: `dwarf/dwarf_charged.png` — 768×320 px; PNG+JSON 54.1 KiB; 48 frames
-- Cell size(s): 64×80
+- PNG: `dwarf/dwarf_charged.png` — 864×320 px; PNG+JSON 56.3 KiB; 48 frames
+- Cell size(s): 72×80
 - Anchor/origin: `{"x": 0.5, "y": 0.9125}`
 - footprint: `{"x": -13, "y": -4, "w": 26, "h": 8, "shape": "ellipse", "note": "collision footprint centred on feet"}`
 - hurtbox: `{"x": -16, "y": -29, "w": 31, "h": 29, "note": "body hurtbox, bottom on feet"}`
@@ -129,6 +129,18 @@ Generated from the atlas JSONs by a script (numbers not hand-typed).
 | hurt | 5@12 | — |
 | attack | 7@8 | — |
 
+## `goblin/goblin_alert`
+
+- PNG: `goblin/goblin_alert.png` — 256×256 px; PNG+JSON 17.8 KiB; 16 frames
+- Cell size(s): 64×64
+- Anchor/origin: `{"x": 0.5, "y": 0.9375}`
+- footprint: `{"x": -13, "y": -4, "w": 26, "h": 8, "shape": "ellipse", "note": "collision footprint centred on feet"}`
+- hurtbox: `{"x": -16, "y": -23, "w": 31, "h": 23, "note": "body hurtbox, bottom on feet"}`
+
+| anim | frames@fps | loop/holdLast |
+|---|---|---|
+| alert | 4@16 | — |
+
 ## `goblin/goblin_death`
 
 - PNG: `goblin/goblin_death.png` — 640×288 px; PNG+JSON 35.2 KiB; 32 frames
@@ -182,6 +194,18 @@ Generated from the atlas JSONs by a script (numbers not hand-typed).
 | arrow | 1@? | — |
 | arrow_impact | 5@16 | — |
 
+## `goblin_archer/goblin_archer_alert`
+
+- PNG: `goblin_archer/goblin_archer_alert.png` — 256×256 px; PNG+JSON 19.0 KiB; 16 frames
+- Cell size(s): 64×64
+- Anchor/origin: `{"x": 0.5, "y": 0.9375}`
+- footprint: `{"x": -13, "y": -4, "w": 25, "h": 8, "shape": "ellipse", "note": "collision footprint centred on feet"}`
+- hurtbox: `{"x": -15, "y": -24, "w": 30, "h": 24, "note": "body hurtbox, bottom on feet"}`
+
+| anim | frames@fps | loop/holdLast |
+|---|---|---|
+| alert | 4@16 | — |
+
 ## `goblin_archer/goblin_archer_death`
 
 - PNG: `goblin_archer/goblin_archer_death.png` — 640×288 px; PNG+JSON 38.2 KiB; 32 frames
@@ -220,6 +244,18 @@ Generated from the atlas JSONs by a script (numbers not hand-typed).
 | walk | 8@8 | loop |
 | hurt | 5@12 | — |
 | attack | 7@8 | — |
+
+## `goblin_brute/goblin_brute_alert`
+
+- PNG: `goblin_brute/goblin_brute_alert.png` — 384×384 px; PNG+JSON 24.8 KiB; 16 frames
+- Cell size(s): 96×96
+- Anchor/origin: `{"x": 0.5, "y": 0.9271}`
+- footprint: `{"x": -20, "y": -6, "w": 40, "h": 12, "shape": "ellipse", "note": "collision footprint centred on feet"}`
+- hurtbox: `{"x": -24, "y": -31, "w": 48, "h": 31, "note": "body hurtbox, bottom on feet"}`
+
+| anim | frames@fps | loop/holdLast |
+|---|---|---|
+| alert | 4@16 | — |
 
 ## `goblin_brute/goblin_brute_death`
 
@@ -734,7 +770,7 @@ Generated from the atlas JSONs by a script (numbers not hand-typed).
 - `red_dragon/fx_v2/spawns.json` (8621 B)
 - `thief/hitbox.json` (1345 B)
 
-**Total atlas PNG+JSON size:** 9.29 MiB
+**Total atlas PNG+JSON size:** 9.35 MiB
 
 ## AS-3 (2026-11-09)
 
@@ -768,4 +804,38 @@ The following atlases and tilesets are art-locked Blendsmith deliverables added 
 - `tiles/ground/ash_ground` (.png + .tsj)
 - `tiles/ground/ash_fill` (.png + .tsj)
 - `tiles/ground/forest_floor` (.png + .tsj)
+
+## AS-M (2026-11-11)
+
+Art-locked Lightning and Leech cast sheets. EEVEE toon, 96×96 cast cells, 10 frames @ 16 fps, release frame 5 = 312.5 ms. Keys are `mage_spells_v2` and `spell_fx_v2`. Do not replace v1 `mage/spells/mage_spells` or `mage/spells/spell_fx`. The importer mirrors this folder to `client/public/assets/characters/mage/spells_v2/` (the existing mage mirror, in a new folder) and registers a `mage_spells` load group. It does not add these keys to boot, village, wilderness, or boss. Read anchors, anims, `release`, and `spawnOffset` from each sheet's meta; do not hard-code frame lists.
+
+### `mage/spells_v2/mage_spells_v2`
+
+- PNG: `mage/spells_v2/mage_spells_v2.png` — 960×768 px; PNG+JSON 106.1 KiB; 80 frames
+- Cell size: 96×96
+- Anchor/origin: `{"x": 0.5, "y": 0.9274}` (from `meta.origin`)
+- footprint: `{"x": -14, "y": -4, "w": 28, "h": 8, "shape": "ellipse", "note": "collision footprint centred on feet"}`
+- hurtbox: `{"x": -17, "y": -36, "w": 34, "h": 36, "note": "body hurtbox, bottom on feet"}`
+- `meta.release`: lightning 5, leech 5. Per-facing `meta.spawnOffset` and `meta.returnOffset` are tip-at-release / staff-tip-at-rest, pixels from the feet origin.
+- Sidecar: `mage/spells_v2/anchors_v2.json` (17739 B) — per-frame tip, hands, chest, head, and feet.
+
+| anim | frames@fps | release |
+|---|---|---|
+| mage_cast_lightning_v2_{down,left,right,up} | 10@16 | frame 5 (312.5 ms) |
+| mage_cast_leech_v2_{down,left,right,up} | 10@16 | frame 5 (312.5 ms) |
+
+### `mage/spells_v2/spell_fx_v2`
+
+- PNG: `mage/spells_v2/spell_fx_v2.png` — 768×320 px; PNG+JSON 29.1 KiB; 39 frames
+- Cell sizes: 96×32, 64×64, 32×32, 96×96
+- No single `meta.origin`. Each clip's pivot is on its frames (importer sheet anchor is the first frame pivot, lightning bolt `{"x": 0, "y": 0.5}`).
+
+| anim | frames@fps | loop | pivot | cell |
+|---|---|---|---|---|
+| lightning_bolt_v2 | 4@16 | loop | 0, 0.5 | 96×32 |
+| lightning_impact_v2 | 7@16 | — | 0.5, 0.5 | 64×64 |
+| leech_orb_v2 | 6@16 | loop | 0.5, 0.5 | 32×32 |
+| leech_impact_v2 | 8@16 | — | 0.5, 0.5 | 64×64 |
+| leech_return_v2 | 6@16 | loop | 0, 0.5 | 96×32 |
+| leech_absorb_v2 | 8@16 | — | 0.5, 0.9274 | 96×96 |
 

@@ -4,7 +4,7 @@
    "frame": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -12,11 +12,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -26,9 +26,9 @@
   },
   "dwarf_charge_hold_down_1": {
    "frame": {
-    "x": 64,
+    "x": 72,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -36,11 +36,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -50,9 +50,9 @@
   },
   "dwarf_charge_hold_down_2": {
    "frame": {
-    "x": 128,
+    "x": 144,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -60,11 +60,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -74,9 +74,9 @@
   },
   "dwarf_charge_hold_down_3": {
    "frame": {
-    "x": 192,
+    "x": 216,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -84,11 +84,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -98,9 +98,9 @@
   },
   "dwarf_charged_release_down_0": {
    "frame": {
-    "x": 256,
+    "x": 288,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -108,11 +108,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -122,9 +122,9 @@
   },
   "dwarf_charged_release_down_1": {
    "frame": {
-    "x": 320,
+    "x": 360,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -132,11 +132,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -146,9 +146,9 @@
   },
   "dwarf_charged_release_down_2": {
    "frame": {
-    "x": 384,
+    "x": 432,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -156,11 +156,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -170,9 +170,9 @@
   },
   "dwarf_charged_release_down_3": {
    "frame": {
-    "x": 448,
+    "x": 504,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -180,11 +180,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -194,9 +194,9 @@
   },
   "dwarf_charged_release_down_4": {
    "frame": {
-    "x": 512,
+    "x": 576,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -204,11 +204,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -218,9 +218,9 @@
   },
   "dwarf_charged_release_down_5": {
    "frame": {
-    "x": 576,
+    "x": 648,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -228,11 +228,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -242,9 +242,9 @@
   },
   "dwarf_charged_release_down_6": {
    "frame": {
-    "x": 640,
+    "x": 720,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -252,11 +252,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -266,9 +266,9 @@
   },
   "dwarf_charged_release_down_7": {
    "frame": {
-    "x": 704,
+    "x": 792,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -276,11 +276,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -292,7 +292,7 @@
    "frame": {
     "x": 0,
     "y": 80,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -300,11 +300,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -314,9 +314,9 @@
   },
   "dwarf_charge_hold_left_1": {
    "frame": {
-    "x": 64,
+    "x": 72,
     "y": 80,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -324,11 +324,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -338,9 +338,9 @@
   },
   "dwarf_charge_hold_left_2": {
    "frame": {
-    "x": 128,
+    "x": 144,
     "y": 80,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -348,11 +348,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -362,9 +362,9 @@
   },
   "dwarf_charge_hold_left_3": {
    "frame": {
-    "x": 192,
+    "x": 216,
     "y": 80,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -372,11 +372,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -386,9 +386,9 @@
   },
   "dwarf_charged_release_left_0": {
    "frame": {
-    "x": 256,
+    "x": 288,
     "y": 80,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -396,11 +396,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -410,9 +410,9 @@
   },
   "dwarf_charged_release_left_1": {
    "frame": {
-    "x": 320,
+    "x": 360,
     "y": 80,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -420,11 +420,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -434,9 +434,9 @@
   },
   "dwarf_charged_release_left_2": {
    "frame": {
-    "x": 384,
+    "x": 432,
     "y": 80,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -444,11 +444,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -458,9 +458,9 @@
   },
   "dwarf_charged_release_left_3": {
    "frame": {
-    "x": 448,
+    "x": 504,
     "y": 80,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -468,11 +468,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -482,9 +482,9 @@
   },
   "dwarf_charged_release_left_4": {
    "frame": {
-    "x": 512,
+    "x": 576,
     "y": 80,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -492,11 +492,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -506,9 +506,9 @@
   },
   "dwarf_charged_release_left_5": {
    "frame": {
-    "x": 576,
+    "x": 648,
     "y": 80,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -516,11 +516,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -530,9 +530,9 @@
   },
   "dwarf_charged_release_left_6": {
    "frame": {
-    "x": 640,
+    "x": 720,
     "y": 80,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -540,11 +540,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -554,9 +554,9 @@
   },
   "dwarf_charged_release_left_7": {
    "frame": {
-    "x": 704,
+    "x": 792,
     "y": 80,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -564,11 +564,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -580,7 +580,7 @@
    "frame": {
     "x": 0,
     "y": 160,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -588,11 +588,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -602,9 +602,9 @@
   },
   "dwarf_charge_hold_right_1": {
    "frame": {
-    "x": 64,
+    "x": 72,
     "y": 160,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -612,11 +612,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -626,9 +626,9 @@
   },
   "dwarf_charge_hold_right_2": {
    "frame": {
-    "x": 128,
+    "x": 144,
     "y": 160,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -636,11 +636,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -650,9 +650,9 @@
   },
   "dwarf_charge_hold_right_3": {
    "frame": {
-    "x": 192,
+    "x": 216,
     "y": 160,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -660,11 +660,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -674,9 +674,9 @@
   },
   "dwarf_charged_release_right_0": {
    "frame": {
-    "x": 256,
+    "x": 288,
     "y": 160,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -684,11 +684,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -698,9 +698,9 @@
   },
   "dwarf_charged_release_right_1": {
    "frame": {
-    "x": 320,
+    "x": 360,
     "y": 160,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -708,11 +708,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -722,9 +722,9 @@
   },
   "dwarf_charged_release_right_2": {
    "frame": {
-    "x": 384,
+    "x": 432,
     "y": 160,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -732,11 +732,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -746,9 +746,9 @@
   },
   "dwarf_charged_release_right_3": {
    "frame": {
-    "x": 448,
+    "x": 504,
     "y": 160,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -756,11 +756,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -770,9 +770,9 @@
   },
   "dwarf_charged_release_right_4": {
    "frame": {
-    "x": 512,
+    "x": 576,
     "y": 160,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -780,11 +780,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -794,9 +794,9 @@
   },
   "dwarf_charged_release_right_5": {
    "frame": {
-    "x": 576,
+    "x": 648,
     "y": 160,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -804,11 +804,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -818,9 +818,9 @@
   },
   "dwarf_charged_release_right_6": {
    "frame": {
-    "x": 640,
+    "x": 720,
     "y": 160,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -828,11 +828,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -842,9 +842,9 @@
   },
   "dwarf_charged_release_right_7": {
    "frame": {
-    "x": 704,
+    "x": 792,
     "y": 160,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -852,11 +852,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -868,7 +868,7 @@
    "frame": {
     "x": 0,
     "y": 240,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -876,11 +876,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -890,9 +890,9 @@
   },
   "dwarf_charge_hold_up_1": {
    "frame": {
-    "x": 64,
+    "x": 72,
     "y": 240,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -900,11 +900,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -914,9 +914,9 @@
   },
   "dwarf_charge_hold_up_2": {
    "frame": {
-    "x": 128,
+    "x": 144,
     "y": 240,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -924,11 +924,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -938,9 +938,9 @@
   },
   "dwarf_charge_hold_up_3": {
    "frame": {
-    "x": 192,
+    "x": 216,
     "y": 240,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -948,11 +948,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -962,9 +962,9 @@
   },
   "dwarf_charged_release_up_0": {
    "frame": {
-    "x": 256,
+    "x": 288,
     "y": 240,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -972,11 +972,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -986,9 +986,9 @@
   },
   "dwarf_charged_release_up_1": {
    "frame": {
-    "x": 320,
+    "x": 360,
     "y": 240,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -996,11 +996,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -1010,9 +1010,9 @@
   },
   "dwarf_charged_release_up_2": {
    "frame": {
-    "x": 384,
+    "x": 432,
     "y": 240,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -1020,11 +1020,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -1034,9 +1034,9 @@
   },
   "dwarf_charged_release_up_3": {
    "frame": {
-    "x": 448,
+    "x": 504,
     "y": 240,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -1044,11 +1044,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -1058,9 +1058,9 @@
   },
   "dwarf_charged_release_up_4": {
    "frame": {
-    "x": 512,
+    "x": 576,
     "y": 240,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -1068,11 +1068,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -1082,9 +1082,9 @@
   },
   "dwarf_charged_release_up_5": {
    "frame": {
-    "x": 576,
+    "x": 648,
     "y": 240,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -1092,11 +1092,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -1106,9 +1106,9 @@
   },
   "dwarf_charged_release_up_6": {
    "frame": {
-    "x": 640,
+    "x": 720,
     "y": 240,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -1116,11 +1116,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -1130,9 +1130,9 @@
   },
   "dwarf_charged_release_up_7": {
    "frame": {
-    "x": 704,
+    "x": 792,
     "y": 240,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "rotated": false,
@@ -1140,11 +1140,11 @@
    "spriteSourceSize": {
     "x": 0,
     "y": 0,
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "sourceSize": {
-    "w": 64,
+    "w": 72,
     "h": 80
    },
    "pivot": {
@@ -1159,7 +1159,7 @@
   "image": "dwarf_charged.png",
   "format": "RGBA8888",
   "size": {
-   "w": 768,
+   "w": 864,
    "h": 320
   },
   "scale": "1",
@@ -1168,7 +1168,7 @@
    "y": 0.9125
   },
   "cell": {
-   "w": 64,
+   "w": 72,
    "h": 80
   },
   "pivotRowPx": 73,
@@ -1200,7 +1200,7 @@
      100
     ],
     "cell": [
-     64,
+     72,
      80
     ],
     "origin": [
@@ -1225,52 +1225,52 @@
     "hitbox": {
      "3": {
       "down": {
-       "x": -57,
-       "y": -66,
+       "x": -45,
+       "y": -75,
        "w": 72,
-       "h": 74
+       "h": 83
       },
       "left": {
-       "x": -91,
-       "y": -59,
-       "w": 102,
+       "x": -89,
+       "y": -58,
+       "w": 100,
        "h": 66
       },
       "right": {
        "x": -11,
        "y": -58,
-       "w": 102,
+       "w": 100,
        "h": 66
       },
       "up": {
-       "x": -15,
-       "y": -85,
+       "x": -27,
+       "y": -75,
        "w": 72,
        "h": 66
       }
      },
      "4": {
       "down": {
-       "x": -57,
-       "y": -71,
+       "x": -45,
+       "y": -79,
        "w": 72,
-       "h": 79
+       "h": 87
       },
       "left": {
-       "x": -90,
+       "x": -86,
        "y": -58,
-       "w": 102,
+       "w": 98,
        "h": 66
       },
       "right": {
        "x": -12,
        "y": -58,
-       "w": 102,
+       "w": 98,
        "h": 66
       },
       "up": {
-       "x": -15,
-       "y": -82,
+       "x": -27,
+       "y": -72,
        "w": 72,
        "h": 66
       }
@@ -1279,38 +1279,38 @@
     "weaponTipOffsetFromFeet": {
      "3": {
       "down": {
-       "x": -20.9,
-       "y": -15.5
+       "x": -8.9,
+       "y": -6.4
       },
       "left": {
-       "x": -27.4,
-       "y": -25.6
+       "x": -24.8,
+       "y": -13.4
       },
       "right": {
-       "x": 27.4,
-       "y": -16.9
+       "x": 24.8,
+       "y": -9.7
       },
       "up": {
-       "x": 20.9,
-       "y": -26.9
+       "x": 8.9,
+       "y": -16.7
       }
      },
      "4": {
       "down": {
-       "x": -20.9,
-       "y": -12.9
+       "x": -8.9,
+       "y": -4.5
       },
       "left": {
-       "x": -25.8,
-       "y": -22.6
+       "x": -21.8,
+       "y": -10.9
       },
       "right": {
-       "x": 25.8,
-       "y": -13.9
+       "x": 21.8,
+       "y": -7.2
       },
       "up": {
-       "x": 20.9,
-       "y": -23.6
+       "x": 8.9,
+       "y": -13.6
       }
      }
     },
@@ -1334,7 +1334,7 @@
      83
     ],
     "cell": [
-     64,
+     72,
      80
     ],
     "origin": [

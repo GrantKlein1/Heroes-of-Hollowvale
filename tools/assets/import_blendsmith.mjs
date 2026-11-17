@@ -273,6 +273,77 @@ export function importBlendsmith() {
   }
   manifest.assets.mage = mageEntry;
 
+  // 2b. Mage cast v2 (AS-M). New spells_v2 folder under the existing mage mirror.
+  // v1 mage/spells stays flattened on the mage asset and is not overwritten.
+  // These keys are not added to boot/village/wilderness/boss (no load change).
+  const spellsV2Src = path.join(SOURCE_DIR, 'mage', 'spells_v2');
+  if (fs.existsSync(spellsV2Src)) {
+    console.log(`[Blendsmith Importer] Processing mage spells v2 from: ${spellsV2Src}`);
+    const spellsV2Dest = path.join(DEST_DIR, 'characters', 'mage', 'spells_v2');
+    ensureDir(spellsV2Dest);
+
+    const fileNames = fs.readdirSync(spellsV2Src).sort();
+    const copiedJson = [];
+    for (const name of fileNames) {
+      if (isForbidden(name)) {
+        console.log(`  [Excluded] ${name}`);
+        continue;
+      }
+      const fullSrc = path.join(spellsV2Src, name);
+      if (!fs.statSync(fullSrc).isFile()) continue;
+      const ext = path.extname(name).toLowerCase();
+      if (ext !== '.png' && ext !== '.json') {
+        console.log(`  [Skipped non-png/json] ${name}`);
+        continue;
+      }
+      fs.copyFileSync(fullSrc, path.join(spellsV2Dest, name));
+      if (ext === '.json') copiedJson.push(name);
+    }
+
+    const publicPrefix = 'assets/characters/mage/spells_v2';
+    const atlasIds = ['mage_spells_v2', 'spell_fx_v2'];
+
+    function registerV2Atlas(id, kind, sidecars) {
+      const jsonName = `${id}.json`;
+      const destJson = path.join(spellsV2Dest, jsonName);
+      if (!fs.existsSync(destJson)) {
+        console.warn(`  [Warning] mage spells v2 atlas missing: ${jsonName}`);
+        return;
+      }
+      const data = JSON.parse(fs.readFileSync(destJson, 'utf8'));
+      if (!data.frames) {
+        console.warn(`  [Warning] ${jsonName} has no frames; recorded as sidecar only`);
+        return;
+      }
+      const anchor = extractAnchor(data);
+      const image = `${publicPrefix}/${id}.png`;
+      const json = `${publicPrefix}/${jsonName}`;
+      const entry = {
+        id,
+        kind,
+        anchor,
+        image,
+        json,
+        sheets: {
+          [id]: { key: id, image, json, anchor }
+        },
+        sidecars
+      };
+      if (data.meta?.anims && typeof data.meta.anims === 'object') {
+        entry.anims = data.meta.anims;
+      }
+      if (data.meta?.release) entry.release = data.meta.release;
+      if (data.meta?.spawnOffset) entry.spawnOffset = data.meta.spawnOffset;
+      if (data.meta?.returnOffset) entry.returnOffset = data.meta.returnOffset;
+      manifest.assets[id] = entry;
+    }
+
+    const sidecars = copiedJson.filter((name) => !atlasIds.includes(path.basename(name, '.json')));
+    registerV2Atlas('mage_spells_v2', 'hero', sidecars);
+    registerV2Atlas('spell_fx_v2', 'fx', []);
+    manifest.groups.mage_spells = ['mage_spells_v2', 'spell_fx_v2'];
+  }
+
   // 3. Process enemies
   const enemies = ['goblin', 'goblin_archer', 'goblin_brute'];
   for (const enemyName of enemies) {
@@ -494,6 +565,9 @@ export function importBlendsmith() {
         }
       }
 
+      // readdir order is not stable across checkouts; keep the locked pairing.json, PAIRING.md order.
+      sidecars.sort((a, b) => a.localeCompare(b, 'en', { sensitivity: 'base' }) || a.localeCompare(b));
+
       if (atlasData) {
         const anchor = extractAnchor(atlasData);
         const assetObj = {
@@ -678,7 +752,7 @@ export function importBlendsmith() {
 
   // 13. Register AS-3 Manifest Groups
   manifest.groups.interiors = ['interior_props', 'npc_bartender', 'npc_vendor'];
-  manifest.groups.cavern = ['dungeon_props', 'dungeon_brazier', 'treasure_chest'];
+  manifest.groups.cavern = ['dungeon_props', 'dungeon_brazier', 'treasure_chest', 'mountain_mouth_props'];
   manifest.groups.loot = ['loot_pickups'];
   manifest.groups.boss_fx_extra = ['dragon_fx_extra'];
 

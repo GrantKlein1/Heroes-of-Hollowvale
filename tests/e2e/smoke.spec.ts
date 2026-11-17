@@ -30,8 +30,9 @@ test.describe('Heroes of Hollowvale — E2E Smoke & Visual Regression', () => {
       window.HTMLMediaElement.prototype.play = () => Promise.resolve();
     });
 
-    // 1. Boot with deterministic seed and QA mode enabled
-    await page.goto('/?seed=1&qa=1');
+    // Painted-scene baselines. Blend + Tiled are the defaults, so this
+    // regression pins the legacy escape explicitly.
+    await page.goto('/?renderer=legacy&maps=legacy&seed=1&qa=1');
 
     // Wait for the game canvas and start button
     const canvas = page.locator('canvas');

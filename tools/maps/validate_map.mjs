@@ -90,8 +90,21 @@ export function parsePropFootprint(propObj) {
   }
 
   if (rawFootprint && typeof rawFootprint === 'object') {
-    const w = Number(rawFootprint.w ?? rawFootprint.width) || fp.w;
-    const h = Number(rawFootprint.h ?? rawFootprint.height) || fp.h;
+    const shape = String(rawFootprint.shape || 'rect').toLowerCase();
+    if (shape === 'none') {
+      return {
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+        shape: 'none',
+      };
+    }
+
+    const rawW = rawFootprint.w ?? rawFootprint.width;
+    const rawH = rawFootprint.h ?? rawFootprint.height;
+    const w = Number.isFinite(Number(rawW)) ? Number(rawW) : fp.w;
+    const h = Number.isFinite(Number(rawH)) ? Number(rawH) : fp.h;
     const relX = Number(rawFootprint.x) || 0;
     const relY = Number(rawFootprint.y) || 0;
 
@@ -113,7 +126,7 @@ export function parsePropFootprint(propObj) {
       y: worldY,
       width: w,
       height: h,
-      shape: String(rawFootprint.shape || 'rect').toLowerCase(),
+      shape,
     };
   }
 
@@ -248,12 +261,20 @@ export function extractPlaceNames(mapData) {
           Boolean(objProps.targetMap);
 
         if (isExit && typeof objProps.targetMap === 'string') {
-          const base = path.basename(objProps.targetMap, path.extname(objProps.targetMap)).trim();
-          if (base && !['map', 'test', 'fixture'].includes(base.toLowerCase())) {
+          const explicitPlace = objProps.targetPlace || objProps.canonName || objProps.placeName;
+          if (explicitPlace) {
             extracted.push({
-              name: base,
-              source: `exit "${obj.name || obj.id}" targetMap`,
+              name: String(explicitPlace).trim(),
+              source: `exit "${obj.name || obj.id}" targetPlace`,
             });
+          } else {
+            const base = path.basename(objProps.targetMap, path.extname(objProps.targetMap)).trim();
+            if (base && !['map', 'test', 'fixture'].includes(base.toLowerCase())) {
+              extracted.push({
+                name: base,
+                source: `exit "${obj.name || obj.id}" targetMap`,
+              });
+            }
           }
         }
       }

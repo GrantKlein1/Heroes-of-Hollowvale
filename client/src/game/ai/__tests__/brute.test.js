@@ -140,9 +140,52 @@ describe('Brute AI & Enemy Integration — Package 1b-2', () => {
     expect(enemy.getSheetForAnim('death')).toBe('goblin_brute_death')
   })
 
+  it('plays spawn animation on spawn and holds position during spawn', () => {
+    const enemy = new Enemy(mockScene, 400, 400, 'brute')
+    expect(enemy.animHistory).toContain('goblin_brute_spawn_down')
+    expect(enemy.ai.mode).toBe(BRUTE_AI_MODES.SPAWN)
+
+    // During spawn duration (time 200 ms < spawnUntil)
+    enemy.ai.spawnUntil = 500
+    enemy.ai.update(200, 16)
+    expect(enemy.ai.mode).toBe(BRUTE_AI_MODES.SPAWN)
+  })
+
+  it('triggers alert on first aggro before entering chase', () => {
+    // Enemy at (200, 100), player at (100, 100) -> distance 100 px (<= 180 px)
+    const enemy = new Enemy(mockScene, 200, 100, 'brute')
+    const ai = enemy.ai
+    ai.hasSpawned = true
+
+    ai.update(1000, 16)
+    expect(ai.mode).toBe(BRUTE_AI_MODES.ALERT)
+    expect(enemy.animHistory).toContain('goblin_brute_alert_left')
+    expect(ai.hasAlerted).toBe(true)
+
+    // After alert window (250 ms), enters chase mode
+    ai.update(1300, 16)
+    expect(ai.mode).toBe(BRUTE_AI_MODES.CHASE)
+    const [vx] = enemy.body.setVelocity.mock.calls.at(-1)
+    expect(vx).toBeCloseTo(-BRUTE_BASE_SPEED)
+  })
+
+  it('plays the alert clip when entering ALERT and never tints', () => {
+    const enemy = new Enemy(mockScene, 200, 100, 'brute')
+    enemy.setTint = vi.fn()
+    const ai = enemy.ai
+    ai.hasSpawned = true
+
+    ai.update(1000, 16)
+
+    expect(ai.mode).toBe(BRUTE_AI_MODES.ALERT)
+    expect(enemy.anims.play).toHaveBeenCalledWith('goblin_brute_alert_left', true)
+    expect(enemy.setTint).not.toHaveBeenCalled()
+  })
+
   it('patrols when player is beyond aggro radius (> 180 px)', () => {
     const enemy = new Enemy(mockScene, 400, 400, 'brute')
     const ai = enemy.ai
+    ai.hasSpawned = true
     ai.update(1000, 16)
     expect(ai.mode).toBe(BRUTE_AI_MODES.PATROL)
   })
@@ -151,10 +194,12 @@ describe('Brute AI & Enemy Integration — Package 1b-2', () => {
     // Enemy at (200, 100), player at (100, 100) -> distance 100 px (<= 180 px, > 44 px)
     const enemy = new Enemy(mockScene, 200, 100, 'brute')
     const ai = enemy.ai
+    ai.hasSpawned = true
+    ai.hasAlerted = true
     ai.update(1000, 16)
     expect(ai.mode).toBe(BRUTE_AI_MODES.CHASE)
     expect(enemy.body.setVelocity).toHaveBeenCalled()
-    const [vx] = enemy.body.setVelocity.mock.calls[0]
+    const [vx] = enemy.body.setVelocity.mock.calls.at(-1)
     expect(vx).toBeCloseTo(-BRUTE_BASE_SPEED)
   })
 
@@ -162,6 +207,8 @@ describe('Brute AI & Enemy Integration — Package 1b-2', () => {
     // Enemy at (130, 100), player at (100, 100) -> distance 30 px (<= 44 px)
     const enemy = new Enemy(mockScene, 130, 100, 'brute')
     const ai = enemy.ai
+    ai.hasSpawned = true
+    ai.hasAlerted = true
     ai.update(1000, 16)
     expect(ai.mode).toBe(BRUTE_AI_MODES.ATTACK)
     expect(enemy.isAttacking).toBe(true)

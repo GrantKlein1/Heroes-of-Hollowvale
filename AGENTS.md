@@ -25,7 +25,7 @@ Drop this file at the repo root as `AGENTS.md` (it replaces the old Cursor-orien
 ## Game rules
 - Lore canon is `newLore_expanded.txt` on `main`. Don't edit it or `lore.txt` unless the package says so. Don't invent place names, characters, or factions; every map/zone/NPC name must appear in `newLore_expanded.txt`. PR #20 (`newLore_expanded.txt`) is canon.
 - No third-party art packs. All character/enemy/FX/tile art comes from Blendsmith via `art-source/blendsmith/` and the importer (`tools/assets/import_blendsmith.mjs`).
-- Keep `?renderer=legacy` working until package 3-4 removes it. New rendering goes behind `?renderer=blend`; Tiled maps behind `?maps=tiled`.
+- Blendsmith rendering and Tiled maps are the defaults (no URL params). Keep `?renderer=legacy` and `?maps=legacy` working until package 3-4 removes the old path.
 - Use the seeded RNG (`client/src/game/rng.js`, after T-3) — no new `Math.random` in `client/src/game`.
 - Combat decisions are final (DECIDED 2026-11-04): dodge roll for all classes on cooldown (no stamina), block for the knight only, aim follows movement, no death penalty (respawn at area entrance), no touch/contact damage, 12° camera, 32 px tiles, 4 facings (down/left/right/up, no flipX), desktop only. Flying dragon lands after each volley.
 

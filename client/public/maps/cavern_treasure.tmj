@@ -1,0 +1,2313 @@
+{
+  "compressionlevel": -1,
+  "width": 20,
+  "height": 12,
+  "tilewidth": 32,
+  "tileheight": 32,
+  "infinite": false,
+  "orientation": "orthogonal",
+  "renderorder": "right-down",
+  "type": "map",
+  "version": "1.10",
+  "tiledversion": "1.10.2",
+  "nextlayerid": 8,
+  "nextobjectid": 20,
+  "properties": [
+    {
+      "name": "canonName",
+      "type": "string",
+      "value": "Cavern of Embers"
+    },
+    {
+      "name": "placeName",
+      "type": "string",
+      "value": "Cavern of Embers"
+    },
+    {
+      "name": "propAtlases",
+      "type": "string",
+      "value": "dungeon_props,dungeon_brazier,treasure_chest"
+    },
+    {
+      "name": "leagueX",
+      "type": "int",
+      "value": 0
+    },
+    {
+      "name": "leagueY",
+      "type": "int",
+      "value": 0
+    }
+  ],
+  "tilesets": [
+    {
+      "columns": 3,
+      "image": "../assets/tiles/dungeon_floor.png",
+      "imageheight": 68,
+      "imagewidth": 102,
+      "margin": 1,
+      "spacing": 2,
+      "name": "dungeon_floor",
+      "tilecount": 6,
+      "tiledversion": "1.10.2",
+      "tileheight": 32,
+      "tilewidth": 32,
+      "type": "tileset",
+      "version": "1.10",
+      "tiles": [
+        {
+          "id": 0,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        }
+      ],
+      "properties": [
+        {
+          "name": "hollowvale",
+          "type": "string",
+          "value": "as2-v4-local"
+        },
+        {
+          "name": "draft",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "groundCamera",
+          "type": "string",
+          "value": "12deg_from_vertical"
+        },
+        {
+          "name": "propCamera",
+          "type": "string",
+          "value": "12deg_from_horizontal"
+        },
+        {
+          "name": "pxPerUnit",
+          "type": "float",
+          "value": 36.923
+        },
+        {
+          "name": "extrude",
+          "type": "int",
+          "value": 1
+        },
+        {
+          "name": "cameraNote",
+          "type": "string",
+          "value": "Local design: ground-only 12° from vertical; props/characters 12° from horizontal. Shared palette/light. Selected for local generation via coordinating Grok Bot; game integration is NOT approved."
+        }
+      ],
+      "firstgid": 1,
+      "_baseGid": 1
+    },
+    {
+      "columns": 4,
+      "image": "../assets/tiles/dungeon_wall.png",
+      "imageheight": 34,
+      "imagewidth": 136,
+      "margin": 1,
+      "spacing": 2,
+      "name": "dungeon_wall",
+      "tilecount": 4,
+      "tiledversion": "1.10.2",
+      "tileheight": 32,
+      "tilewidth": 32,
+      "type": "tileset",
+      "version": "1.10",
+      "tiles": [
+        {
+          "id": 0,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        }
+      ],
+      "properties": [
+        {
+          "name": "hollowvale",
+          "type": "string",
+          "value": "as2-v4-local"
+        },
+        {
+          "name": "draft",
+          "type": "bool",
+          "value": true
+        },
+        {
+          "name": "groundCamera",
+          "type": "string",
+          "value": "12deg_from_vertical"
+        },
+        {
+          "name": "propCamera",
+          "type": "string",
+          "value": "12deg_from_horizontal"
+        },
+        {
+          "name": "pxPerUnit",
+          "type": "float",
+          "value": 36.923
+        },
+        {
+          "name": "extrude",
+          "type": "int",
+          "value": 1
+        },
+        {
+          "name": "cameraNote",
+          "type": "string",
+          "value": "Local design: ground-only 12° from vertical; props/characters 12° from horizontal. Shared palette/light. Selected for local generation via coordinating Grok Bot; game integration is NOT approved."
+        }
+      ],
+      "firstgid": 7,
+      "_baseGid": 7
+    },
+    {
+      "columns": 4,
+      "image": "../assets/tiles/dungeon_wall_trim.png",
+      "imageheight": 136,
+      "imagewidth": 136,
+      "margin": 1,
+      "spacing": 2,
+      "name": "dungeon_wall_trim",
+      "tilecount": 16,
+      "tiledversion": "1.10.2",
+      "tileheight": 32,
+      "tilewidth": 32,
+      "type": "tileset",
+      "version": "1.10",
+      "tiles": [
+        {
+          "id": 0,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "face"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "face_var"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "cap_top"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "cap_top_var"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "corner_NW"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "corner_NE"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "corner_SW"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "corner_SE"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 8
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "doorway"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 9
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "doorway_var"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "cap_bot"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 11
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "cap_bot_var"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "face_2"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 13
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "face_3"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 14,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 14
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "face_4"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 15,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 15
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "face_5"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        }
+      ],
+      "properties": [
+        {
+          "name": "hollowvale",
+          "type": "string",
+          "value": "as2-b3"
+        },
+        {
+          "name": "groundCamera",
+          "type": "string",
+          "value": "12deg_from_vertical"
+        },
+        {
+          "name": "pxPerUnit",
+          "type": "float",
+          "value": 36.923
+        },
+        {
+          "name": "extrude",
+          "type": "int",
+          "value": 1
+        }
+      ],
+      "firstgid": 11,
+      "_baseGid": 11
+    }
+  ],
+  "layers": [
+    {
+      "id": 1,
+      "name": "ground",
+      "type": "tilelayer",
+      "visible": true,
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "width": 20,
+      "height": 12,
+      "data": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        0,
+        0,
+        0,
+        0,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        0,
+        0,
+        0,
+        0,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        0,
+        0,
+        0,
+        0,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        0,
+        0,
+        0,
+        0,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        0,
+        0,
+        0,
+        0,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        0,
+        0,
+        0,
+        0,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 2,
+      "name": "ground_detail",
+      "type": "tilelayer",
+      "visible": true,
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "width": 20,
+      "height": 12,
+      "data": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 3,
+      "name": "walls",
+      "type": "tilelayer",
+      "visible": true,
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "width": 20,
+      "height": 12,
+      "data": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        9,
+        10,
+        7,
+        8,
+        9,
+        10,
+        7,
+        8,
+        9,
+        10,
+        7,
+        8,
+        9,
+        10,
+        7,
+        8,
+        0,
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        0,
+        0,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 4,
+      "name": "props",
+      "type": "objectgroup",
+      "visible": true,
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "objects": [
+        {
+          "id": 1,
+          "name": "chest_wood_open_down_0",
+          "type": "prop",
+          "x": 136,
+          "y": 80,
+          "width": 48,
+          "height": 48,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-16,\"y\":-12,\"w\":32,\"h\":12,\"shape\":\"rect\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "name": "chest_iron_open_down_0",
+          "type": "prop",
+          "x": 456,
+          "y": 80,
+          "width": 48,
+          "height": 48,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-16,\"y\":-12,\"w\":32,\"h\":12,\"shape\":\"rect\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "name": "gold_pile_small",
+          "type": "prop",
+          "x": 200,
+          "y": 88,
+          "width": 48,
+          "height": 40,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-16,\"y\":-12,\"w\":32,\"h\":12,\"shape\":\"ellipse\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "scale",
+              "type": "float",
+              "value": 1.05
+            },
+            {
+              "name": "tint",
+              "type": "string",
+              "value": "#fff4c0"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "name": "gold_pile_small",
+          "type": "prop",
+          "x": 392,
+          "y": 88,
+          "width": 48,
+          "height": 40,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-16,\"y\":-12,\"w\":32,\"h\":12,\"shape\":\"ellipse\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "tint",
+              "type": "string",
+              "value": "#ffe8a0"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "name": "dungeon_debris",
+          "type": "prop",
+          "x": 108,
+          "y": 160,
+          "width": 40,
+          "height": 32,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-12,\"y\":-8,\"w\":24,\"h\":8,\"shape\":\"ellipse\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "name": "dungeon_brazier_burn_down_0",
+          "type": "prop",
+          "x": 96,
+          "y": 16,
+          "width": 64,
+          "height": 96,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-14,\"y\":-12,\"w\":28,\"h\":12,\"shape\":\"rect\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "name": "dungeon_brazier_burn_down_0",
+          "type": "prop",
+          "x": 480,
+          "y": 16,
+          "width": 64,
+          "height": 96,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-14,\"y\":-12,\"w\":28,\"h\":12,\"shape\":\"rect\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "collision",
+      "type": "tilelayer",
+      "visible": false,
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "width": 20,
+      "height": 12,
+      "data": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        0,
+        0,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ]
+    },
+    {
+      "id": 6,
+      "name": "zones",
+      "type": "objectgroup",
+      "visible": true,
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "objects": [
+        {
+          "id": 8,
+          "name": "spawn_default",
+          "type": "spawn",
+          "x": 304,
+          "y": 288,
+          "width": 32,
+          "height": 32,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "spawn"
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "name": "door_halls",
+          "type": "door",
+          "x": 256,
+          "y": 288,
+          "width": 128,
+          "height": 64,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "exit"
+            },
+            {
+              "name": "type",
+              "type": "door"
+            },
+            {
+              "name": "targetMap",
+              "type": "string",
+              "value": "cavern_halls.tmj"
+            },
+            {
+              "name": "targetPlace",
+              "type": "string",
+              "value": "Molten Halls"
+            },
+            {
+              "name": "targetSpawn",
+              "type": "string",
+              "value": "door_treasure"
+            },
+            {
+              "name": "prompt",
+              "type": "string",
+              "value": "Press E to return to Molten Halls"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "overhead",
+      "type": "tilelayer",
+      "visible": true,
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "width": 20,
+      "height": 12,
+      "data": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

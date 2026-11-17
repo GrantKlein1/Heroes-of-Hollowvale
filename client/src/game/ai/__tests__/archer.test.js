@@ -71,7 +71,7 @@ import {
 import { AttackTokenManager } from '../tokens.js'
 
 function createMockEnemy(scene, x = 300, y = 100) {
-  return {
+  const enemy = {
     scene,
     x,
     y,
@@ -81,6 +81,8 @@ function createMockEnemy(scene, x = 300, y = 100) {
     damage: 8,
     facing: 'left',
     texture: { key: 'goblin_archer' },
+    animHistory: [],
+    lastAnimKey: null,
     body: {
       setVelocity: vi.fn(),
       velocity: { x: 0, y: 0 },
@@ -89,10 +91,15 @@ function createMockEnemy(scene, x = 300, y = 100) {
       play: vi.fn(),
       currentFrame: { index: 0 },
     },
-    playAnim: vi.fn(),
+    playAnim: vi.fn((anim) => {
+      const key = `goblin_archer_${anim}_${enemy.facing || 'down'}`
+      enemy.animHistory.push(key)
+      enemy.lastAnimKey = key
+    }),
     transition: vi.fn(),
     is: vi.fn((st) => false),
   }
+  return enemy
 }
 
 function createMockScene() {
@@ -153,7 +160,7 @@ describe('Archer AI Controller (Package 1b-3)', () => {
     it('spawns Projectile at meta offset when release frame is reached', () => {
       const enemy = createMockEnemy(mockScene, 300, 100)
       enemy.facing = 'left'
-      const ai = new ArcherAI(enemy)
+      const ai = new ArcherAI(enemy, { hasSpawned: true, hasAlerted: true })
 
       // Start attack at t = 1000
       ai.startAttack(1000)
@@ -170,6 +177,47 @@ describe('Archer AI Controller (Package 1b-3)', () => {
       expect(proj.y).toBeCloseTo(100 + expectedOffset.y)
       expect(Math.abs(proj.x - (300 + expectedOffset.x))).toBeLessThanOrEqual(2)
       expect(Math.abs(proj.y - (100 + expectedOffset.y))).toBeLessThanOrEqual(2)
+    })
+  })
+
+  describe('Spawn and Alert (Package 4-1)', () => {
+    it('plays spawn animation on spawn and holds position during spawn', () => {
+      const enemy = createMockEnemy(mockScene, 300, 100)
+      const ai = new ArcherAI(enemy)
+      expect(enemy.animHistory).toContain('goblin_archer_spawn_left')
+      expect(ai.mode).toBe(ARCHER_AI_MODES.SPAWN)
+
+      // During spawn duration (time 200 ms < spawnUntil)
+      ai.spawnUntil = 500
+      ai.update(200, 16)
+      expect(ai.mode).toBe(ARCHER_AI_MODES.SPAWN)
+    })
+
+    it('triggers alert on first aggro before kiting or firing', () => {
+      const enemy = createMockEnemy(mockScene, 280, 100)
+      const ai = new ArcherAI(enemy, { hasSpawned: true })
+
+      ai.update(1000, 16)
+      expect(ai.mode).toBe(ARCHER_AI_MODES.ALERT)
+      expect(enemy.animHistory).toContain('goblin_archer_alert_left')
+      expect(ai.hasAlerted).toBe(true)
+
+      // After alert window (250 ms), enters attack/kiting
+      ai.update(1300, 16)
+      expect(ai.mode).not.toBe(ARCHER_AI_MODES.ALERT)
+    })
+
+    it('plays the alert clip when entering ALERT and never tints', () => {
+      mockScene.anims = { exists: () => true }
+      const enemy = createMockEnemy(mockScene, 280, 100)
+      enemy.setTint = vi.fn()
+      const ai = new ArcherAI(enemy, { hasSpawned: true })
+
+      ai.update(1000, 16)
+
+      expect(ai.mode).toBe(ARCHER_AI_MODES.ALERT)
+      expect(enemy.anims.play).toHaveBeenCalledWith('goblin_archer_alert_left', true)
+      expect(enemy.setTint).not.toHaveBeenCalled()
     })
   })
 
@@ -197,7 +245,7 @@ describe('Archer AI Controller (Package 1b-3)', () => {
     it('repositions and does NOT start attack when line of sight is obstructed', () => {
       // Archer at (280, 100), player at (100, 100). Distance = 180 px (within [140, 220] range)
       const enemy = createMockEnemy(mockScene, 280, 100)
-      const ai = new ArcherAI(enemy)
+      const ai = new ArcherAI(enemy, { hasSpawned: true, hasAlerted: true })
 
       // Place a wall directly between them
       mockScene._solidRects = [{ x: 180, y: 80, w: 40, h: 40 }]
@@ -212,7 +260,7 @@ describe('Archer AI Controller (Package 1b-3)', () => {
     it('engages in attack when line of sight is clear', () => {
       // Archer at (280, 100), player at (100, 100). Distance = 180 px, no walls
       const enemy = createMockEnemy(mockScene, 280, 100)
-      const ai = new ArcherAI(enemy)
+      const ai = new ArcherAI(enemy, { hasSpawned: true, hasAlerted: true })
       mockScene._solidRects = []
 
       ai.update(1000, 16)
@@ -225,7 +273,7 @@ describe('Archer AI Controller (Package 1b-3)', () => {
   describe('Criterion 3: arrow_impact plays on hit', () => {
     it('sets hitAnim to goblin_archer_arrow_impact and plays impact animation on hit', () => {
       const enemy = createMockEnemy(mockScene, 280, 100)
-      const ai = new ArcherAI(enemy)
+      const ai = new ArcherAI(enemy, { hasSpawned: true, hasAlerted: true })
 
       ai.startAttack(1000)
       ai.update(1760, 16) // Spawns arrow
@@ -248,7 +296,7 @@ describe('Archer AI Controller (Package 1b-3)', () => {
 
     it('plays arrow_impact when colliding with solid terrain', () => {
       const enemy = createMockEnemy(mockScene, 280, 100)
-      const ai = new ArcherAI(enemy)
+      const ai = new ArcherAI(enemy, { hasSpawned: true, hasAlerted: true })
 
       ai.startAttack(1000)
       ai.update(1760, 16)
@@ -268,7 +316,7 @@ describe('Archer AI Controller (Package 1b-3)', () => {
     it('advances towards player when distance > 220 px', () => {
       // Distance = 260 px
       const enemy = createMockEnemy(mockScene, 360, 100)
-      const ai = new ArcherAI(enemy)
+      const ai = new ArcherAI(enemy, { hasSpawned: true, hasAlerted: true })
 
       ai.update(1000, 16)
 
@@ -280,7 +328,7 @@ describe('Archer AI Controller (Package 1b-3)', () => {
     it('retreats away from player when distance < 140 px', () => {
       // Distance = 100 px
       const enemy = createMockEnemy(mockScene, 200, 100)
-      const ai = new ArcherAI(enemy)
+      const ai = new ArcherAI(enemy, { hasSpawned: true, hasAlerted: true })
 
       ai.update(1000, 16)
 
@@ -292,7 +340,7 @@ describe('Archer AI Controller (Package 1b-3)', () => {
     it('halts and maintains position when distance is between 140 and 220 px', () => {
       // Distance = 180 px
       const enemy = createMockEnemy(mockScene, 280, 100)
-      const ai = new ArcherAI(enemy)
+      const ai = new ArcherAI(enemy, { hasSpawned: true, hasAlerted: true })
 
       ai.update(1000, 16)
 
@@ -305,7 +353,7 @@ describe('Archer AI Controller (Package 1b-3)', () => {
   describe('Attack Timing, Per-Frame Durations, and 1800 ms Cooldown', () => {
     it('enforces release at 760 ms and total attack duration of 980 ms', () => {
       const enemy = createMockEnemy(mockScene, 280, 100)
-      const ai = new ArcherAI(enemy)
+      const ai = new ArcherAI(enemy, { hasSpawned: true, hasAlerted: true })
 
       // Start attack at t = 1000
       ai.startAttack(1000)
@@ -331,7 +379,7 @@ describe('Archer AI Controller (Package 1b-3)', () => {
 
     it('respects 1800 ms cooldown before allowing next attack', () => {
       const enemy = createMockEnemy(mockScene, 280, 100)
-      const ai = new ArcherAI(enemy)
+      const ai = new ArcherAI(enemy, { hasSpawned: true, hasAlerted: true })
 
       ai.startAttack(1000)
       ai.update(1980, 16) // Finished at 1980, cooldown until 3780
@@ -349,7 +397,7 @@ describe('Archer AI Controller (Package 1b-3)', () => {
 
     it('creates arrow with speed 300 px/s and range 400 px', () => {
       const enemy = createMockEnemy(mockScene, 280, 100)
-      const ai = new ArcherAI(enemy)
+      const ai = new ArcherAI(enemy, { hasSpawned: true, hasAlerted: true })
 
       ai.startAttack(1000)
       ai.update(1760, 16)

@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -172,7 +173,7 @@ test('import_blendsmith acceptance criteria and contracts', async (t) => {
     assert.deepEqual(manifest.groups.boot, ['fx_common', 'critters', 'knight']);
     assert.deepEqual(manifest.groups.village, ['knight', 'thief', 'dwarf', 'mage', 'critters', 'fx_common', 'village_props', 'hearth']);
     assert.deepEqual(manifest.groups.interiors, ['interior_props', 'npc_bartender', 'npc_vendor']);
-    assert.deepEqual(manifest.groups.cavern, ['dungeon_props', 'dungeon_brazier', 'treasure_chest']);
+    assert.deepEqual(manifest.groups.cavern, ['dungeon_props', 'dungeon_brazier', 'treasure_chest', 'mountain_mouth_props']);
     assert.deepEqual(manifest.groups.loot, ['loot_pickups']);
     assert.deepEqual(manifest.groups.boss_fx_extra, ['dragon_fx_extra']);
 
@@ -206,6 +207,7 @@ test('import_blendsmith acceptance criteria and contracts', async (t) => {
     const as3Atlases = [
       { id: 'interior_props', kind: 'props', y: 1.0 },
       { id: 'dungeon_props', kind: 'props', y: 1.0 },
+      { id: 'mountain_mouth_props', kind: 'props', y: 1.0 },
       { id: 'dungeon_brazier', kind: 'props', y: 1.0 },
       { id: 'treasure_chest', kind: 'props', y: 1.0 },
       { id: 'wild_props', kind: 'props', y: 1.0 },
@@ -223,5 +225,76 @@ test('import_blendsmith acceptance criteria and contracts', async (t) => {
       assert.equal(entry.kind, kind, `Asset ${id} kind must be ${kind}`);
       assert.ok(Math.abs(entry.anchor.y - y) < 0.001, `Asset ${id} anchor.y (${entry.anchor.y}) must match expected (${y})`);
     }
+  });
+
+  await t.test('AS-M: registers mage_spells_v2 and spell_fx_v2 without replacing v1 or changing load groups', () => {
+    const hero = manifest.assets.mage_spells_v2;
+    const fx = manifest.assets.spell_fx_v2;
+    assert.ok(hero, 'mage_spells_v2 must exist');
+    assert.ok(fx, 'spell_fx_v2 must exist');
+    assert.equal(hero.kind, 'hero');
+    assert.equal(fx.kind, 'fx');
+    assert.equal(hero.image, 'assets/characters/mage/spells_v2/mage_spells_v2.png');
+    assert.equal(hero.json, 'assets/characters/mage/spells_v2/mage_spells_v2.json');
+    assert.equal(fx.image, 'assets/characters/mage/spells_v2/spell_fx_v2.png');
+    assert.equal(fx.json, 'assets/characters/mage/spells_v2/spell_fx_v2.json');
+    assert.deepEqual(hero.sidecars, ['anchors_v2.json']);
+    assert.deepEqual(fx.sidecars, []);
+    assert.deepEqual(manifest.groups.mage_spells, ['mage_spells_v2', 'spell_fx_v2']);
+
+    assert.equal(manifest.assets.mage.sheets.mage_spells.image, 'assets/characters/mage/mage_spells.png');
+    assert.equal(manifest.assets.mage.sheets.spell_fx.image, 'assets/characters/mage/spell_fx.png');
+    assert.equal(manifest.assets.mage.sheets.mage_spells.json, 'assets/characters/mage/mage_spells.json');
+    assert.equal(manifest.assets.mage.sheets.spell_fx.json, 'assets/characters/mage/spell_fx.json');
+
+    for (const group of ['boot', 'village', 'wilderness', 'boss']) {
+      assert.equal(manifest.groups[group].includes('mage_spells_v2'), false, `${group} must not load mage_spells_v2`);
+      assert.equal(manifest.groups[group].includes('spell_fx_v2'), false, `${group} must not load spell_fx_v2`);
+    }
+  });
+
+  await t.test('AS-M: copies art byte-identical and reads release, spawn, and anchors from sheet meta', () => {
+    const locked = {
+      'anchors_v2.json': '1397671a32b11968c92f7d59a09685bfe3794c5091efa2df1c24a24145c038f6',
+      'mage_spells_v2.json': '949433a210b94b430af6ee45792cdb77f540771f9bdd530237395c173662e225',
+      'mage_spells_v2.png': '3ed6d8a4782cb478948c6d295b1a440250a5ef966d1a2a090e56f0a10f665186',
+      'spell_fx_v2.json': '39cf248482e6f558ccaf414fea3b5b6eb584f0059fd609b60f5b33d7abc4fabe',
+      'spell_fx_v2.png': '580a4c9b9d604a410741407b4d89ef247543a3a21b94b9c8ba71ec92f6b68040'
+    };
+    const sourceDir = path.join(REPO_ROOT, 'art-source', 'blendsmith', 'mage', 'spells_v2');
+    const publicDir = path.join(ASSETS_DIR, 'characters', 'mage', 'spells_v2');
+
+    for (const [name, expected] of Object.entries(locked)) {
+      const sourcePath = path.join(sourceDir, name);
+      const publicPath = path.join(publicDir, name);
+      const sourceHash = createHash('sha256').update(fs.readFileSync(sourcePath)).digest('hex');
+      const publicHash = createHash('sha256').update(fs.readFileSync(publicPath)).digest('hex');
+      assert.equal(sourceHash, expected, `${name} art-source hash drifted from the locked pack`);
+      assert.equal(publicHash, sourceHash, `${name} public copy is not byte-identical to art-source`);
+    }
+
+    const body = JSON.parse(fs.readFileSync(path.join(sourceDir, 'mage_spells_v2.json'), 'utf8'));
+    const fx = JSON.parse(fs.readFileSync(path.join(sourceDir, 'spell_fx_v2.json'), 'utf8'));
+    const hero = manifest.assets.mage_spells_v2;
+    const fxEntry = manifest.assets.spell_fx_v2;
+
+    assert.deepEqual(hero.anchor, body.meta.origin);
+    assert.deepEqual(hero.release, body.meta.release);
+    assert.deepEqual(hero.spawnOffset, body.meta.spawnOffset);
+    assert.deepEqual(hero.returnOffset, body.meta.returnOffset);
+    assert.deepEqual(hero.anims, body.meta.anims);
+    assert.equal(body.meta.release.lightning, 5);
+    assert.equal(body.meta.release.leech, 5);
+    assert.equal(body.meta.anims.mage_cast_lightning_v2_down.frameRate, 16);
+    assert.equal(body.meta.anims.mage_cast_lightning_v2_down.releaseFrame, 5);
+    assert.equal(body.meta.anims.mage_cast_lightning_v2_down.releaseMs, 312.5);
+    assert.equal(body.meta.anims.mage_cast_lightning_v2_down.frames.length, 10);
+    assert.equal(body.meta.anims.mage_cast_leech_v2_up.frames.length, 10);
+
+    const firstFxFrame = Object.values(fx.frames)[0];
+    assert.deepEqual(fxEntry.anchor, { x: firstFxFrame.pivot.x, y: firstFxFrame.pivot.y });
+    assert.deepEqual(fxEntry.anims, fx.meta.anims);
+    assert.equal(fx.meta.anims.lightning_bolt_v2.frameRate, 16);
+    assert.equal(fx.meta.anims.lightning_bolt_v2.repeat, -1);
   });
 });

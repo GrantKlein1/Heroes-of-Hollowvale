@@ -377,7 +377,8 @@ describe('AssetRegistry — Dragon Boss Phase Lazy-Loading and Eviction', () => 
     expect(p2Sheets).toEqual(['red_dragon_p2_a', 'red_dragon_p2_b', 'red_dragon_p2_land'])
 
     const p3Sheets = registry.loadDragonPhase(3)
-    expect(p3Sheets).toEqual(['red_dragon_p3_a', 'red_dragon_p3_b'])
+    expect(p3Sheets).toEqual(['red_dragon_p3_a', 'red_dragon_p3_b', 'dragon_fx_extra'])
+    expect(registry.isGroupLoaded('boss_fx_extra')).toBe(true)
   })
 
   it('evicts previous phase textures and loads new phase via transitionDragonPhase', () => {
@@ -494,12 +495,18 @@ describe('AssetRegistry — AS-3 Groups Loading (Interiors, Cavern, Loot, Boss F
     )
   })
 
-  it('loads cavern group (dungeon_props, dungeon_brazier, treasure_chest)', () => {
+  it('loads cavern group (dungeon_props, dungeon_brazier, treasure_chest, mountain_mouth_props)', () => {
     const loadedKeys = registry.loadGroup('cavern')
     expect(registry.isGroupLoaded('cavern')).toBe(true)
     expect(loadedKeys).toContain('dungeon_props')
     expect(loadedKeys).toContain('dungeon_brazier')
     expect(loadedKeys).toContain('treasure_chest')
+    expect(loadedKeys).toContain('mountain_mouth_props')
+    expect(mockScene.load.atlas).toHaveBeenCalledWith(
+      'mountain_mouth_props',
+      'assets/env/mountain_mouth_props/mountain_mouth_props.png',
+      'assets/env/mountain_mouth_props/mountain_mouth_props.json'
+    )
   })
 
   it('loads loot group (loot_pickups)', () => {
@@ -524,6 +531,30 @@ describe('AssetRegistry — AS-3 Groups Loading (Interiors, Cavern, Loot, Boss F
     )
   })
 
+  it('loads the mage_spells group without attaching v2 sheets to village', () => {
+    const loadedKeys = registry.loadGroup('mage_spells')
+    expect(registry.isGroupLoaded('mage_spells')).toBe(true)
+    expect(loadedKeys).toEqual(['mage_spells_v2', 'spell_fx_v2'])
+    expect(mockScene.load.atlas).toHaveBeenCalledWith(
+      'mage_spells_v2',
+      'assets/characters/mage/spells_v2/mage_spells_v2.png',
+      'assets/characters/mage/spells_v2/mage_spells_v2.json'
+    )
+    expect(mockScene.load.atlas).toHaveBeenCalledWith(
+      'spell_fx_v2',
+      'assets/characters/mage/spells_v2/spell_fx_v2.png',
+      'assets/characters/mage/spells_v2/spell_fx_v2.json'
+    )
+    expect(registry.getAnchor('mage_spells_v2')).toEqual({ x: 0.5, y: 0.9274 })
+    expect(registry.getAnchor('spell_fx_v2')).toEqual({ x: 0, y: 0.5 })
+
+    const villageKeys = registry.loadGroup('village')
+    expect(villageKeys).not.toContain('mage_spells_v2')
+    expect(villageKeys).not.toContain('spell_fx_v2')
+    expect(villageKeys).toContain('mage_spells')
+    expect(villageKeys).toContain('spell_fx')
+  })
+
   it('resolves dynamic anchors for AS-3 assets from manifest', () => {
     registry.loadGroup('interiors')
     registry.loadGroup('cavern')
@@ -535,5 +566,81 @@ describe('AssetRegistry — AS-3 Groups Loading (Interiors, Cavern, Loot, Boss F
     expect(registry.getAnchor('npc_vendor')).toEqual({ x: 0.5, y: 0.9271 })
     expect(registry.getAnchor('loot_pickups')).toEqual({ x: 0.5, y: 0.875 })
     expect(registry.getAnchor('dragon_fx_extra')).toEqual({ x: 0.5, y: 0.5 })
+  })
+
+  it('loads the loot group with every area that can drop loot', () => {
+    registry.loadGroup('village')
+    expect(registry.isGroupLoaded('loot')).toBe(true)
+    expect(mockScene.load.atlas).toHaveBeenCalledWith(
+      'loot_pickups',
+      'assets/loot/loot_pickups/loot_pickups.png',
+      'assets/loot/loot_pickups/loot_pickups.json'
+    )
+
+    registry.unloadGroup('village')
+    expect(registry.isGroupLoaded('loot')).toBe(false)
+
+    registry.loadGroup('wilderness')
+    registry.loadGroup('cavern')
+    expect(registry.isGroupLoaded('loot')).toBe(true)
+    registry.unloadGroup('wilderness')
+    expect(registry.isGroupLoaded('loot')).toBe(true)
+    registry.unloadGroup('cavern')
+    expect(registry.isGroupLoaded('loot')).toBe(false)
+  })
+
+  it('keeps an explicitly loaded loot group after the parent area unloads', () => {
+    registry.loadGroup('loot')
+    registry.loadGroup('village')
+    registry.unloadGroup('village')
+    expect(registry.isGroupLoaded('loot')).toBe(true)
+  })
+
+  it('loads boss_fx_extra with phase 3 and evicts it when phase 3 unloads', () => {
+    registry.loadDragonPhase(3)
+    expect(registry.isGroupLoaded('boss_p3')).toBe(true)
+    expect(registry.isGroupLoaded('boss_fx_extra')).toBe(true)
+    expect(mockScene.load.atlas).toHaveBeenCalledWith(
+      'dragon_fx_extra',
+      'assets/boss/red_dragon/fx_extra/dragon_fx_extra.png',
+      'assets/boss/red_dragon/fx_extra/dragon_fx_extra.json'
+    )
+
+    registry.unloadDragonPhase(3)
+    expect(registry.isGroupLoaded('boss_p3')).toBe(false)
+    expect(registry.isGroupLoaded('boss_fx_extra')).toBe(false)
+  })
+
+  it('builds the meteor marker clip when phase 3 anims are created', () => {
+    registry.loadGroup('boss_p3')
+    mockScene.textures._addTexture('dragon_fx_extra', {
+      key: 'dragon_fx_extra',
+      customData: {
+        meta: {
+          anims: {
+            dfx_meteor_marker: {
+              frames: 7,
+              fps: 10,
+              loop: true,
+              frameNames: 'dfx_meteor_marker_<i>',
+            },
+          },
+        },
+      },
+    })
+
+    const created = registry.createAnims('boss_p3')
+    expect(created).toContain('dragon_fx_extra_dfx_meteor_marker')
+    expect(mockScene.anims.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        key: 'dragon_fx_extra_dfx_meteor_marker',
+        frameRate: 10,
+        repeat: -1,
+      })
+    )
+    const markerCall = mockScene.anims.create.mock.calls.find(
+      (c) => c[0].key === 'dragon_fx_extra_dfx_meteor_marker'
+    )
+    expect(markerCall[0].frames).toHaveLength(7)
   })
 })

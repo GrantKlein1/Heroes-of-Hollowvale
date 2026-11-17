@@ -92,9 +92,13 @@ import {
   castBlink,
   throwPoisonVial,
   ensureSpellAnimations,
+  armMageV2Cast,
+  tickMageV2Cast,
+  getV2CastTiming,
 } from '../spells.js'
 import { session } from '../../session.js'
 import mageCastAtlas from '../../../../public/assets/characters/mage/mage_cast.json'
+import mageSpellsV2Atlas from '../../../../public/assets/characters/mage/spells_v2/mage_spells_v2.json'
 import thiefFxAtlas from '../../../../public/assets/characters/thief/fx/thief_fx.json'
 
 describe('Spells & Projectile Mechanics (Package 1-5)', () => {
@@ -283,17 +287,21 @@ describe('Spells & Projectile Mechanics (Package 1-5)', () => {
       const proj = castLightning(mockScene, mockPlayer, 1000)
 
       expect(proj).toBeDefined()
-      expect(proj.texture.key).toBe('spell_fx')
-      expect(proj.flyAnim).toBe('lightning_bolt')
-      expect(proj.hitAnim).toBe('lightning_impact')
+      expect(proj.texture.key).toBe('spell_fx_v2')
+      expect(proj.flyAnim).toBe('lightning_bolt_v2')
+      expect(proj.hitAnim).toBe('lightning_impact_v2')
       expect(proj.impactType).toBe('lightning')
-      expect(proj.originX).toBe(0.0) // Left-end pivot from notes
+      expect(proj.originX).toBe(0.0) // bolt pivot from spell_fx_v2 frame
     })
 
     it('casts Life Leech, sets 10s cooldown, and drains 40% enemy HP on hit', () => {
       const proj = castLeech(mockScene, mockPlayer, 1000)
       expect(proj).toBeDefined()
-      expect(proj.texture.key).toBe('spell_fx')
+      expect(proj.texture.key).toBe('spell_fx_v2')
+      expect(proj.flyAnim).toBe('leech_orb_v2')
+      expect(proj.hitAnim).toBe('leech_impact_v2')
+      expect(proj.returnAnim).toBe('leech_return_v2')
+      expect(proj.absorbAnim).toBe('leech_absorb_v2')
       expect(proj.special).toBe('lifeLeech')
       expect(session.lifeLeechCooldownUntil).toBe(1000 + LEECH_COOLDOWN_MS)
 
@@ -355,11 +363,107 @@ describe('Spells & Projectile Mechanics (Package 1-5)', () => {
       expect(createdKeys).toContain('lightning_impact')
       expect(createdKeys).toContain('leech_orb')
       expect(createdKeys).toContain('leech_impact')
+      expect(createdKeys).toContain('lightning_bolt_v2')
+      expect(createdKeys).toContain('lightning_impact_v2')
+      expect(createdKeys).toContain('leech_orb_v2')
+      expect(createdKeys).toContain('leech_impact_v2')
+      expect(createdKeys).toContain('leech_return_v2')
+      expect(createdKeys).toContain('leech_absorb_v2')
+      expect(createdKeys).toContain('mage_cast_lightning_v2_down')
+      expect(createdKeys).toContain('mage_cast_leech_v2_up')
       expect(createdKeys).toContain('shield_form')
       expect(createdKeys).toContain('shield_loop')
       expect(createdKeys).toContain('blink_portal')
       expect(createdKeys).toContain('thief_poison_vial')
       expect(createdKeys).toContain('thief_poison_splash')
+    })
+  })
+
+  describe('Mage Lightning and Leech release on frame 5', () => {
+    function expectSpawnAt(proj, spellId, facing) {
+      const offset = mageSpellsV2Atlas.meta.spawnOffset[spellId][facing]
+      expect(Math.abs(proj.x - (mockPlayer.x + offset.x))).toBeLessThanOrEqual(2)
+      expect(Math.abs(proj.y - (mockPlayer.y + offset.y))).toBeLessThanOrEqual(2)
+      expect(proj.x).toBe(mockPlayer.x + offset.x)
+      expect(proj.y).toBe(mockPlayer.y + offset.y)
+    }
+
+    it('does not spawn Lightning before release and spawns at 312.5 ms on the meta offset', () => {
+      mockPlayer.classId = 'mage'
+      mockPlayer.facing = 'down'
+      const timing = getV2CastTiming('lightning', 'down')
+      expect(timing.releaseFrame).toBe(mageSpellsV2Atlas.meta.release.lightning)
+      expect(timing.releaseMs).toBe(312.5)
+      expect(timing.key).toBe('mage_cast_lightning_v2_down')
+
+      const pending = armMageV2Cast(mockScene, mockPlayer, 'lightning', 1000)
+      expect(pending.animKey).toBe('mage_cast_lightning_v2_down')
+      expect(mockScene.projectiles).toHaveLength(0)
+
+      expect(tickMageV2Cast(mockPlayer, 1000 + timing.releaseMs - 62.5)).toBeNull()
+      expect(mockScene.projectiles).toHaveLength(0)
+
+      const proj = tickMageV2Cast(mockPlayer, 1000 + timing.releaseMs)
+      expect(proj).toBeTruthy()
+      expect(pending.spawnedAt - pending.startedAt).toBe(312.5)
+      expect(proj.texture.key).toBe('spell_fx_v2')
+      expect(proj.flyAnim).toBe('lightning_bolt_v2')
+      expect(proj.hitAnim).toBe('lightning_impact_v2')
+      expectSpawnAt(proj, 'lightning', 'down')
+
+      mockPlayer.facing = 'right'
+      mockPlayer._v2Cast = null
+      armMageV2Cast(mockScene, mockPlayer, 'lightning', 5000)
+      const right = tickMageV2Cast(mockPlayer, 5000 + 312.5)
+      expect(right.flyAnim).toBe('lightning_bolt_v2')
+      expectSpawnAt(right, 'lightning', 'right')
+    })
+
+    it('releases the Leech orb on the same frame with return and absorb clips', () => {
+      mockPlayer.classId = 'mage'
+      mockPlayer.facing = 'down'
+      const timing = getV2CastTiming('leech', 'down')
+      expect(timing.releaseMs).toBe(312.5)
+      expect(timing.key).toBe('mage_cast_leech_v2_down')
+
+      const pending = armMageV2Cast(mockScene, mockPlayer, 'leech', 2000)
+      expect(mockScene.projectiles).toHaveLength(0)
+      expect(tickMageV2Cast(mockPlayer, 2000)).toBeNull()
+
+      const proj = tickMageV2Cast(mockPlayer, 2000 + timing.releaseMs)
+      expect(pending.spawnedAt - pending.startedAt).toBe(312.5)
+      expect(proj.texture.key).toBe('spell_fx_v2')
+      expect(proj.flyAnim).toBe('leech_orb_v2')
+      expect(proj.hitAnim).toBe('leech_impact_v2')
+      expect(proj.returnAnim).toBe('leech_return_v2')
+      expect(proj.absorbAnim).toBe('leech_absorb_v2')
+      expectSpawnAt(proj, 'leech', 'down')
+
+      const enemy = { x: 420, y: 350, hp: 40, hpMax: 40 }
+      proj.impact(enemy, false, 3000)
+      expect(enemy.hp).toBe(24)
+      expect(proj.isReturning).toBe(true)
+
+      mockPlayer.facing = 'left'
+      session.lifeLeechCooldownUntil = 0
+      armMageV2Cast(mockScene, mockPlayer, 'leech', 8000)
+      const left = tickMageV2Cast(mockPlayer, 8000 + 312.5)
+      expectSpawnAt(left, 'leech', 'left')
+    })
+
+    it('spawns when the playing clip reaches release frame 5', () => {
+      mockPlayer.classId = 'mage'
+      mockPlayer.facing = 'up'
+      armMageV2Cast(mockScene, mockPlayer, 'lightning', 1000)
+      mockPlayer.anims = {
+        currentFrame: { frame: { name: 'mage_cast_lightning_v2_up_4' } },
+      }
+      expect(tickMageV2Cast(mockPlayer, 1100)).toBeNull()
+      mockPlayer.anims.currentFrame = { frame: { name: 'mage_cast_lightning_v2_up_5' } }
+      const proj = tickMageV2Cast(mockPlayer, 1100)
+      expect(proj).toBeTruthy()
+      expect(mockPlayer._v2Cast.spawnedAt).toBe(1100)
+      expectSpawnAt(proj, 'lightning', 'up')
     })
   })
 })

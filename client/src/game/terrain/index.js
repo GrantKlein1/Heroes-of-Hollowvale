@@ -13,7 +13,6 @@ export {
   oppositeEdge,
 } from './worldGraph.js'
 export { getLayout, preloadNeighbors, evictBeyond, clearCache } from './screenCache.js'
-export { drawWilderness, wildernessCollidersPx } from './render.js'
 export {
   WILDERNESS_FRAME_W,
   WILDERNESS_FRAME_H,
@@ -26,5 +25,6 @@ export {
   detectCrossedEdge,
   wildernessExitPrompts,
   collidersWithExitGaps,
+  wildernessCollidersPx,
   preloadTerrainImages,
 } from './wildernessBridge.js'

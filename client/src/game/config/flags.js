@@ -2,8 +2,8 @@
  * Game configuration and runtime URL feature flag parser.
  *
  * Supported flags:
- * - renderer: 'legacy' (default) | 'blend'
- * - maps: 'legacy' | 'tiled' | string | null
+ * - renderer: 'blend' (default) | 'legacy' (`?renderer=legacy`)
+ * - maps: 'tiled' (default) | 'legacy' (`?maps=legacy`) | other string
  * - qa: boolean (true when ?qa=1 or ?qa=true)
  * - seed: number | string | null
  * - debug: boolean (true when ?debug=1 or ?debug=true)
@@ -31,7 +31,7 @@ function resolveSearchString(search) {
  *
  * @param {string} [search]
  * @returns {{
- *   renderer: 'legacy' | 'blend',
+ *   renderer: 'blend' | 'legacy',
  *   maps: string | null,
  *   qa: boolean,
  *   seed: number | string | null,
@@ -43,11 +43,16 @@ export function parseFlags(search) {
   const searchStr = resolveSearchString(search)
   const params = new URLSearchParams(searchStr)
 
-  const rawRenderer = params.get('renderer')?.trim()?.toLowerCase()
-  const renderer = rawRenderer === 'blend' ? 'blend' : 'legacy'
+  const rendererParam = params.get('renderer')
+  const rawRenderer = rendererParam?.trim()?.toLowerCase()
+  // No renderer param → blend. Explicit blend stays blend. `?renderer=legacy`
+  // and any other explicit value stay on the painted renderer.
+  const renderer = rendererParam === null || rawRenderer === 'blend' ? 'blend' : 'legacy'
 
-  const rawMaps = params.get('maps')?.trim() || null
-  const maps = rawMaps
+  const mapsParam = params.get('maps')
+  const rawMaps = mapsParam?.trim() || null
+  // No maps param → tiled. `?maps=legacy` (or any other explicit value) opts out.
+  const maps = mapsParam === null ? 'tiled' : rawMaps
 
   const rawQa = params.get('qa')?.trim()?.toLowerCase()
   const qa = rawQa === '1' || rawQa === 'true'
@@ -84,7 +89,7 @@ export function getFlags(search) {
 }
 
 /**
- * Returns the active renderer: 'blend' or 'legacy' (default).
+ * Returns the active renderer: 'blend' (default) or 'legacy'.
  *
  * @param {string} [search]
  * @returns {'blend' | 'legacy'}
@@ -104,7 +109,8 @@ export function isBlendRenderer(search) {
 }
 
 /**
- * Returns the active maps flag (e.g. 'tiled') or null if unset.
+ * Returns the active maps flag. Defaults to 'tiled' when the param is absent.
+ * An explicit empty value stays null so only a real mode string opts out.
  *
  * @param {string} [search]
  * @returns {string | null}

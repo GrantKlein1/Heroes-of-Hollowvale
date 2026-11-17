@@ -110,12 +110,12 @@ Rule between waves: **every PR from the wave is reviewed, CI green (after T-2), 
 - [ ] Title `[<id>] …`, branch `hv/<id>`, base `main`, only one package.
 - [ ] `git diff --stat` touches only the files the prompt allowed; no `.env`, no `newLore.txt`, no `art-source/` edits, no new deps unless allowed.
 - [ ] Each acceptance criterion is shown (test output, screenshot, or recording) — not just claimed.
-- [ ] Pull the branch locally: `git fetch origin && git switch hv/<id> && npm install && npm test && npm run build --workspace client`, then `npm run dev` and try it for 2 minutes (`?renderer=blend&qa=1&seed=1` once those exist). Legacy mode (no flags) still works.
+- [ ] Pull the branch locally: `git fetch origin && git switch hv/<id> && npm install && npm test && npm run build --workspace client`, then `npm run dev` and try it for 2 minutes (`?qa=1&seed=1`). Blendsmith rendering and Tiled maps are the default. `?renderer=legacy` and `?maps=legacy` still open the old path.
 - [ ] No `Math.random` added (after T-3); no hard-coded sprite origins; no invented place names.
 - [ ] CI green (after T-2). Squash-merge, delete the branch.
 - Optional: ask SWE to review the diff ("SWE, review PR #N for package <id> against WORK-PACKAGES"). It reads diffs; it doesn't push.
 
-**Handing to Hollowvale QA** (visual/gameplay PRs: T-5, 1-3 onward, maps): message QA: "Clone GrantKlein1/Heroes-of-Hollowvale locally on the box (no cloud agents), check out `main` after PR #N merged (or branch `hv/<id>` before merging), run `npm install && npm run dev`, and playtest `<what changed>` with Playwright at `?renderer=blend&qa=1&seed=1`. Stub NPC calls. Report bugs with screenshots; don't push." The first time, you must explicitly OK the local clone.
+**Handing to Hollowvale QA** (visual/gameplay PRs: T-5, 1-3 onward, maps): message QA: "Clone GrantKlein1/Heroes-of-Hollowvale locally on the box (no cloud agents), check out `main` after PR #N merged (or branch `hv/<id>` before merging), run `npm install && npm run dev`, and playtest `<what changed>` with Playwright at `?qa=1&seed=1` (blend renderer and Tiled maps are the default; add `?renderer=legacy&maps=legacy` only to check the old path). Stub NPC calls. Report bugs with screenshots; don't push." The first time, you must explicitly OK the local clone.
 
 ## F. Standing requests to send the bots now
 **Blendsmith — AS-1 asset PR (send now):**

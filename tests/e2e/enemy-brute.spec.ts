@@ -14,7 +14,7 @@ test.describe('Package 1b-2: Lane D Enemies — Brute Base & AI', () => {
       consoleLogs.push(msg.text());
     });
 
-    await page.goto('/?renderer=blend&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
 
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await expect(startButton).toBeVisible();
@@ -97,7 +97,7 @@ test.describe('Package 1b-2: Lane D Enemies — Brute Base & AI', () => {
   });
 
   test('Acceptance Criterion 2: Hitting an armored brute mid-swing does not cancel attack', async ({ page }) => {
-    await page.goto('/?renderer=blend&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
 
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await startButton.click();
@@ -158,7 +158,7 @@ test.describe('Package 1b-2: Lane D Enemies — Brute Base & AI', () => {
   });
 
   test('Acceptance Criterion 3: Knockback distance ≈ 260 px/s impulse applied on hit', async ({ page }) => {
-    await page.goto('/?renderer=blend&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
 
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await startButton.click();

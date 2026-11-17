@@ -5,7 +5,7 @@
  * - Dynamic per-sheet feet origin resolution from atlas metadata / AssetRegistry
  * - Accurate footprint collision body from meta.footprint
  * - 4-directional facings (down, left, right, up, dominant axis, no flipX)
- * - Multi-sheet asset resolution (e.g. goblin, goblin_telegraph, goblin_death, goblin_spawn)
+ * - Multi-sheet asset resolution (e.g. goblin, goblin_alert, goblin_telegraph, goblin_death, goblin_spawn)
  * - Integrated StateMachine (IDLE, WALK, ATTACK, HURT, DEAD)
  * - Telegraph clip playback before melee attack swing
  * - Frame-accurate melee attack hits on meta hitFrames
@@ -51,7 +51,30 @@ export const ENEMY_SHEETS = Object.freeze({
     telegraphSheet: 'goblin_telegraph',
     deathSheet: 'goblin_death',
     spawnSheet: 'goblin_spawn',
+    alertSheet: 'goblin_alert',
     initialFrame: 'goblin_idle_down',
+  },
+  archer: {
+    assetId: 'goblin_archer',
+    defaultSheet: 'goblin_archer',
+    walkSheet: 'goblin_archer',
+    hurtSheet: 'goblin_archer',
+    attackSheet: 'goblin_archer',
+    deathSheet: 'goblin_archer_death',
+    spawnSheet: 'goblin_archer_spawn',
+    alertSheet: 'goblin_archer_alert',
+    initialFrame: 'goblin_archer_idle_down',
+  },
+  goblin_archer: {
+    assetId: 'goblin_archer',
+    defaultSheet: 'goblin_archer',
+    walkSheet: 'goblin_archer',
+    hurtSheet: 'goblin_archer',
+    attackSheet: 'goblin_archer',
+    deathSheet: 'goblin_archer_death',
+    spawnSheet: 'goblin_archer_spawn',
+    alertSheet: 'goblin_archer_alert',
+    initialFrame: 'goblin_archer_idle_down',
   },
   brute: {
     assetId: 'goblin_brute',
@@ -62,6 +85,7 @@ export const ENEMY_SHEETS = Object.freeze({
     telegraphSheet: 'goblin_brute_telegraph',
     deathSheet: 'goblin_brute_death',
     spawnSheet: 'goblin_brute_spawn',
+    alertSheet: 'goblin_brute_alert',
     initialFrame: 'goblin_brute_idle_down',
   },
   goblin_brute: {
@@ -73,6 +97,7 @@ export const ENEMY_SHEETS = Object.freeze({
     telegraphSheet: 'goblin_brute_telegraph',
     deathSheet: 'goblin_brute_death',
     spawnSheet: 'goblin_brute_spawn',
+    alertSheet: 'goblin_brute_alert',
     initialFrame: 'goblin_brute_idle_down',
   },
 })
@@ -183,6 +208,9 @@ export class Enemy extends Actor {
     }
     if (animName === 'attack') {
       return sheetDef.attackSheet
+    }
+    if (animName === 'alert') {
+      return sheetDef.alertSheet || sheetDef.defaultSheet
     }
     if (animName === 'walk') {
       return sheetDef.walkSheet

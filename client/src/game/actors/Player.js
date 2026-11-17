@@ -42,6 +42,11 @@ import {
   castShield,
   castBlink,
   throwPoisonVial,
+  armMageV2Cast,
+  tickMageV2Cast,
+  ensureMageSpellsGroup,
+  getV2CastFramePivot,
+  getV2CastBodyLayout,
 } from '../combat/spells.js'
 import {
   DODGE_COOLDOWN_MS,
@@ -57,8 +62,11 @@ export const CLASS_SHEETS = Object.freeze({
   knight: {
     defaultSheet: 'knight',
     walkSheet: 'knight',
+    runSheet: 'knight_run',
     hurtSheet: 'knight',
     attackSheet: 'knight_attack',
+    attack2Sheet: 'knight_attack2',
+    chargedSheet: 'knight_charged',
     dodgeSheet: 'knight_dodge',
     blockSheet: 'knight_block',
     deathSheet: 'knight_death',
@@ -67,8 +75,11 @@ export const CLASS_SHEETS = Object.freeze({
   thief: {
     defaultSheet: 'thief',
     walkSheet: 'thief',
+    runSheet: 'thief_run',
     hurtSheet: 'thief',
     attackSheet: 'thief_attack',
+    attack2Sheet: 'thief_attack2',
+    chargedSheet: 'thief_charged',
     dodgeSheet: 'thief_dodge',
     deathSheet: 'thief_death',
     stealthSheet: 'thief_stealth',
@@ -77,8 +88,11 @@ export const CLASS_SHEETS = Object.freeze({
   dwarf: {
     defaultSheet: 'dwarf',
     walkSheet: 'dwarf',
+    runSheet: 'dwarf_run',
     hurtSheet: 'dwarf',
     attackSheet: 'dwarf_attack',
+    attack2Sheet: 'dwarf_attack2',
+    chargedSheet: 'dwarf_charged',
     dodgeSheet: 'dwarf_dodge',
     deathSheet: 'dwarf_death',
     initialFrame: 'dwarf_idle_down',
@@ -86,8 +100,11 @@ export const CLASS_SHEETS = Object.freeze({
   mage: {
     defaultSheet: 'mage_walk',
     walkSheet: 'mage_walk',
+    runSheet: 'mage_run',
     hurtSheet: 'mage_hurt',
     attackSheet: 'mage_attack2',
+    attack2Sheet: 'mage_attack2',
+    chargedSheet: 'mage_charged',
     castSheet: 'mage_cast',
     dodgeSheet: 'mage_dodge',
     deathSheet: 'mage_death',
@@ -128,6 +145,12 @@ export class Player extends Actor {
     this.blockState = { active: false, stage: 'idle', startTime: 0, holding: false, qaHolding: false }
     this.vanishState = { active: false, startTime: 0, invisible: false }
 
+    // P2 Combat States: Combo, Charge, Run
+    this.currentAttackType = null
+    this.comboQueued = false
+    this.chargeState = { active: false, startTime: 0, charged: false }
+    this.isRunning = false
+
     // Listen for animation completion to transition out of non-looping states
     if (typeof this.on === 'function') {
       const animCompleteEvent = Phaser?.Animations?.Events?.ANIMATION_COMPLETE || 'animationcomplete'
@@ -165,7 +188,7 @@ export class Player extends Actor {
             const tookDamage = this.takeDamage(
               amount,
               typeof performance !== 'undefined' ? performance.now() : Date.now(),
-              opts
+              { ...opts, fromSceneHurt: true }
             )
             if (!tookDamage) return false
             const actualDamage = typeof this.lastDamageTaken === 'number' ? this.lastDamageTaken : amount
@@ -186,6 +209,10 @@ export class Player extends Actor {
       }
     }
 
+    if (this.classId === 'mage') {
+      ensureMageSpellsGroup(this.scene)
+    }
+
     // Start with idle animation if scene anims are available
     this.playAnim('idle')
   }
@@ -199,6 +226,9 @@ export class Player extends Actor {
     if (!(classId in CLASS_SHEETS)) return
     this.classId = classId
     this.assetId = classId
+    if (this.classId === 'mage') {
+      ensureMageSpellsGroup(this.scene)
+    }
 
     const classDef = CLASS_SHEETS[classId]
 
@@ -228,20 +258,50 @@ export class Player extends Actor {
   }
 
   /**
+   * Checks whether the player is currently moving at run speed.
+   *
+   * @returns {boolean}
+   */
+  isAtRunSpeed() {
+    if (this.isRunning) return true
+    const now = typeof performance !== 'undefined' ? performance.now() : Date.now()
+    if (session?.speedBoostUntil && session.speedBoostUntil > now) return true
+    const vx = this.body?.velocity?.x || 0
+    const vy = this.body?.velocity?.y || 0
+    const currentSpeed = Math.hypot(vx, vy)
+    const unit = this.scene?.unit || 1
+    const baseSpeed = (session?.baseSpeed || 160) * unit
+    return currentSpeed >= baseSpeed * 1.2
+  }
+
+  /**
    * Resolves sheet key for a given animation action type based on active class.
    *
-   * @param {string} animType - 'idle' | 'walk' | 'hurt' | 'attack' | 'cast' | 'dodge' | 'block' | 'death' | 'vanish'
+   * @param {string} animType - 'idle' | 'walk' | 'run' | 'hurt' | 'attack' | 'attack_2' | 'charge_hold' | 'charged_release' | 'cast' | 'dodge' | 'block' | 'death' | 'vanish'
    * @returns {string}
    */
   getSheetForAnim(animType) {
     const classDef = CLASS_SHEETS[this.classId] || CLASS_SHEETS.knight
+    if (this.currentAttackType === 'attack_2' && animType === 'attack') {
+      return classDef.attack2Sheet || classDef.attackSheet
+    }
+    if (this.currentAttackType === 'charged_release' && animType === 'attack') {
+      return classDef.chargedSheet || classDef.attackSheet
+    }
     switch (animType) {
       case 'walk':
         return classDef.walkSheet
+      case 'run':
+        return classDef.runSheet || classDef.walkSheet
       case 'hurt':
         return classDef.hurtSheet
       case 'attack':
         return classDef.attackSheet
+      case 'attack_2':
+        return classDef.attack2Sheet || classDef.attackSheet
+      case 'charge_hold':
+      case 'charged_release':
+        return classDef.chargedSheet || classDef.attackSheet
       case 'cast':
         return classDef.castSheet || classDef.attackSheet || classDef.defaultSheet
       case 'dodge':
@@ -263,14 +323,24 @@ export class Player extends Actor {
 
   /**
    * Resolves canonical animation key for a given action and direction.
-   * Special case: Mage melee staff bonk is named 'attack_2' in mage_attack2.json.
-   * Special case: Mage spell casting is named 'cast' in mage_cast.json.
    *
    * @param {string} anim
    * @param {string} [dir=this.facing]
    * @returns {string}
    */
   getAnimKey(anim, dir = this.facing) {
+    if (anim === 'run') {
+      return buildAnimKey(this.assetId, 'run', dir)
+    }
+    if (anim === 'attack_2') {
+      return buildAnimKey(this.assetId, 'attack_2', dir)
+    }
+    if (anim === 'charge_hold') {
+      return buildAnimKey(this.assetId, 'charge_hold', dir)
+    }
+    if (anim === 'charged_release') {
+      return buildAnimKey(this.assetId, 'charged_release', dir)
+    }
     if (anim === 'attack' && this.classId === 'mage') {
       return buildAnimKey(this.assetId, 'attack_2', dir)
     }
@@ -319,13 +389,32 @@ export class Player extends Actor {
   }
 
   /**
-   * Triggers an attack swing if the state machine permits.
+   * Triggers an attack swing or chains attack_2 combo if inside combo window.
    *
    * @param {number} [now=performance.now()]
    * @returns {boolean}
    */
   attack(now = (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
     if (this.is(ACTOR_STATES.DEAD)) return false
+
+    // Combo check: if already in attack swing 1, check combo window
+    if (this.is(ACTOR_STATES.ATTACK) && (!this.currentAttackType || this.currentAttackType === 'attack')) {
+      const frameIndex = getAnimationFrameIndex(this.anims?.currentFrame)
+      if (frameIndex >= 3) {
+        this.currentAttackType = 'attack_2'
+        this.comboQueued = false
+        this.currentSwingId = (this.currentSwingId || 0) + 1
+        this._hitFramesProcessed = new Set()
+        this.playAnim('attack_2', false)
+        try {
+          onMeleeSwing()
+        } catch (_e) {}
+        return true
+      } else {
+        this.comboQueued = true
+        return true
+      }
+    }
 
     if (!this.stateMachine.canInterrupt(ACTOR_STATES.ATTACK)) {
       this.bufferInput(ACTOR_STATES.ATTACK, now)
@@ -335,6 +424,8 @@ export class Player extends Actor {
     const transitioned = this.transition(ACTOR_STATES.ATTACK, { time: now })
     if (!transitioned) return false
 
+    this.currentAttackType = 'attack'
+    this.comboQueued = false
     this.currentSwingId = (this.currentSwingId || 0) + 1
     this._hitFramesProcessed = new Set()
 
@@ -345,6 +436,68 @@ export class Player extends Actor {
     }
 
     return true
+  }
+
+  /**
+   * Begins charging a melee attack (hold).
+   *
+   * @param {number} [now=performance.now()]
+   * @returns {boolean}
+   */
+  startCharge(now = (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
+    if (this.is(ACTOR_STATES.DEAD)) return false
+    if (!this.stateMachine.canInterrupt(ACTOR_STATES.ATTACK)) {
+      return false
+    }
+
+    const transitioned = this.transition(ACTOR_STATES.ATTACK, { time: now })
+    if (!transitioned) return false
+
+    this.chargeState = {
+      active: true,
+      startTime: now,
+      charged: false,
+    }
+    this.currentAttackType = 'charge_hold'
+    this.playAnim('charge_hold', false)
+
+    if (this.body && typeof this.body.setVelocity === 'function') {
+      this.body.setVelocity(0, 0)
+    }
+
+    return true
+  }
+
+  /**
+   * Releases a charged melee attack.
+   *
+   * @param {number} [now=performance.now()]
+   * @returns {boolean}
+   */
+  releaseCharge(now = (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
+    if (!this.chargeState?.active) return false
+
+    const isCharged = this.chargeState.charged || (now - this.chargeState.startTime >= 600)
+    this.chargeState.active = false
+
+    this.currentSwingId = (this.currentSwingId || 0) + 1
+    this._hitFramesProcessed = new Set()
+
+    if (isCharged) {
+      this.currentAttackType = 'charged_release'
+      this.playAnim('charged_release', false)
+      try {
+        onMeleeSwing()
+      } catch (_e) {}
+      return true
+    } else {
+      this.currentAttackType = 'attack'
+      this.playAnim('attack', false)
+      try {
+        onMeleeSwing()
+      } catch (_e) {}
+      return true
+    }
   }
 
   /**
@@ -360,6 +513,20 @@ export class Player extends Actor {
     if (!this.stateMachine.canInterrupt(ACTOR_STATES.ATTACK)) {
       this.bufferInput(ACTOR_STATES.ATTACK, now)
       return false
+    }
+
+    const v2MageCast = this.classId === 'mage' && (spellId === 'lightning' || spellId === 'leech')
+    if (v2MageCast) {
+      const pending = armMageV2Cast(this.scene, this, spellId, now)
+      if (!pending) return false
+      this.currentAttackType = `cast_${spellId}`
+      const transitioned = this.transition(ACTOR_STATES.ATTACK, { time: now })
+      if (!transitioned) {
+        this._v2Cast = null
+        this.currentAttackType = null
+        return false
+      }
+      return true
     }
 
     let success = false
@@ -598,6 +765,12 @@ export class Player extends Actor {
           const blockKnockbackSpeed = options.knockbackSpeed ? Math.round(options.knockbackSpeed * 0.4) : 40
           applyKnockback(this, attackerPos.x, attackerPos.y, blockKnockbackSpeed, 100)
         }
+        if (!options.fromSceneHurt && this.scene && typeof this.scene.hp === 'number') {
+          this.scene.hp = Math.max(0, this.scene.hp - this.lastDamageTaken)
+          if (typeof this.scene._publishVitals === 'function') {
+            this.scene._publishVitals(true)
+          }
+        }
         return true
       }
     }
@@ -611,6 +784,13 @@ export class Player extends Actor {
       const knockbackSpeed = options.knockbackSpeed ?? 120
       const knockbackDuration = options.knockbackDuration ?? 150
       applyKnockback(this, options.fromX, options.fromY, knockbackSpeed, knockbackDuration)
+    }
+
+    if (!options.fromSceneHurt && this.scene && typeof this.scene.hp === 'number') {
+      this.scene.hp = Math.max(0, this.scene.hp - this.lastDamageTaken)
+      if (typeof this.scene._publishVitals === 'function') {
+        this.scene._publishVitals(true)
+      }
     }
 
     this.transition(ACTOR_STATES.HURT)
@@ -628,13 +808,23 @@ export class Player extends Actor {
     super.onStateEnter(newState, prevState, options)
 
     if (newState === ACTOR_STATES.WALK) {
-      this.playAnim('walk')
+      this.playAnim(this.isAtRunSpeed() ? 'run' : 'walk')
     } else if (newState === ACTOR_STATES.IDLE) {
       this.playAnim('idle')
     } else if (newState === ACTOR_STATES.HURT) {
       this.playAnim('hurt', false)
     } else if (newState === ACTOR_STATES.ATTACK) {
-      this.playAnim('attack', false)
+      if (this.currentAttackType === 'charge_hold') {
+        this.playAnim('charge_hold', false)
+      } else if (this.currentAttackType === 'charged_release') {
+        this.playAnim('charged_release', false)
+      } else if (this.currentAttackType === 'attack_2') {
+        this.playAnim('attack_2', false)
+      } else if (typeof this.currentAttackType === 'string' && this.currentAttackType.startsWith('cast_')) {
+        this._playV2CastBody()
+      } else {
+        this.playAnim(this.anims?.currentAnim?.key?.includes('cast') ? 'cast' : 'attack', false)
+      }
     } else if (newState === ACTOR_STATES.DODGE) {
       this.playAnim('dodge', false)
     } else if (newState === ACTOR_STATES.BLOCK) {
@@ -656,7 +846,26 @@ export class Player extends Actor {
       if (!consumed) {
         this.transition(ACTOR_STATES.IDLE, { force: true })
       }
-    } else if ((key.includes('attack') || key.includes('cast')) && this.is(ACTOR_STATES.ATTACK)) {
+    } else if ((key.includes('attack') || key.includes('cast') || key.includes('charged_release')) && this.is(ACTOR_STATES.ATTACK)) {
+      if (this.currentAttackType === 'charge_hold') {
+        return // Loop while held
+      }
+      if (typeof this.currentAttackType === 'string' && this.currentAttackType.startsWith('cast_')) {
+        this._v2Cast = null
+      }
+      if (this.currentAttackType === 'attack' && this.comboQueued) {
+        this.comboQueued = false
+        this.currentAttackType = 'attack_2'
+        this.currentSwingId = (this.currentSwingId || 0) + 1
+        this._hitFramesProcessed = new Set()
+        this.playAnim('attack_2', false)
+        try {
+          onMeleeSwing()
+        } catch (_e) {}
+        return
+      }
+      this.currentAttackType = null
+      this.comboQueued = false
       if (this.scene) {
         this.scene._attacking = false
       }
@@ -728,11 +937,21 @@ export class Player extends Actor {
    */
   _refreshCurrentAnim() {
     if (this.is(ACTOR_STATES.WALK)) {
-      this.playAnim('walk', false)
+      this.playAnim(this.isAtRunSpeed() ? 'run' : 'walk', false)
     } else if (this.is(ACTOR_STATES.HURT)) {
       this.playAnim('hurt', false)
     } else if (this.is(ACTOR_STATES.ATTACK)) {
-      this.playAnim(this.anims?.currentAnim?.key?.includes('cast') ? 'cast' : 'attack', false)
+      if (this.currentAttackType === 'charge_hold') {
+        this.playAnim('charge_hold', false)
+      } else if (this.currentAttackType === 'charged_release') {
+        this.playAnim('charged_release', false)
+      } else if (this.currentAttackType === 'attack_2') {
+        this.playAnim('attack_2', false)
+      } else if (typeof this.currentAttackType === 'string' && this.currentAttackType.startsWith('cast_')) {
+        this._playV2CastBody()
+      } else {
+        this.playAnim(this.anims?.currentAnim?.key?.includes('cast') ? 'cast' : 'attack', false)
+      }
     } else if (this.is(ACTOR_STATES.DODGE)) {
       this.playAnim('dodge', false)
     } else if (this.is(ACTOR_STATES.BLOCK)) {
@@ -745,6 +964,18 @@ export class Player extends Actor {
   }
 
   /**
+   * Sets whether the player is running.
+   *
+   * @param {boolean} running
+   */
+  setRunning(running = true) {
+    this.isRunning = Boolean(running)
+    if (this.is(ACTOR_STATES.WALK)) {
+      this.playAnim(this.isRunning ? 'run' : 'walk', true)
+    }
+  }
+
+  /**
    * Checks for hitFrame triggers during active attack animation.
    *
    * @param {number} time
@@ -753,11 +984,25 @@ export class Player extends Actor {
     const currentFrame = this.anims?.currentFrame
     const frameIndex = getAnimationFrameIndex(currentFrame)
     if (frameIndex >= 0 && !this._hitFramesProcessed.has(frameIndex)) {
-      const sheetKey = this.getSheetForAnim('attack')
-      const animMetaKey = this.classId === 'mage' ? 'attack_2' : 'attack'
+      const isAttack2 = this.currentAttackType === 'attack_2' || this.anims?.currentAnim?.key?.includes('attack_2')
+      const isCharged = this.currentAttackType === 'charged_release' || this.anims?.currentAnim?.key?.includes('charged_release')
+
+      let animMetaKey = 'attack'
+      if (isCharged) {
+        animMetaKey = 'charged_release'
+      } else if (isAttack2 || this.classId === 'mage') {
+        animMetaKey = 'attack_2'
+      }
+
+      const sheetKey = this.getSheetForAnim(isCharged ? 'charged_release' : (isAttack2 ? 'attack_2' : 'attack'))
       const hitFrames = getHitFrames(this.scene, sheetKey, animMetaKey)
       if (hitFrames.includes(frameIndex)) {
         this._hitFramesProcessed.add(frameIndex)
+        if (isAttack2) {
+          console.log(`[Hit] attack_2 frame ${frameIndex}`)
+        } else if (isCharged) {
+          console.log(`[Hit] charged_release frame ${frameIndex}`)
+        }
         executePlayerMeleeHit(this, frameIndex, time, animMetaKey)
       }
     }
@@ -792,6 +1037,53 @@ export class Player extends Actor {
   }
 
   /**
+   * Plays the facing's v2 body clip. Does not use the generic mage_cast key and does not flipX.
+   */
+  _playV2CastBody() {
+    const pending = this._v2Cast
+    if (!pending?.animKey) return
+    if (this.anims?.currentAnim?.key === pending.animKey) {
+      this._syncV2CastPivot()
+      return
+    }
+
+    ensureMageSpellsGroup(this.scene)
+    const layout = getV2CastBodyLayout()
+    const frameName = `${pending.animKey}_0`
+    if (typeof this.setTexture === 'function') {
+      this.setTexture(layout.sheet, frameName)
+    }
+    const pivot = getV2CastFramePivot(frameName)
+    if (pivot && typeof this.setOrigin === 'function') {
+      this.setOrigin(pivot.x, pivot.y)
+    }
+    if (typeof this.setFlipX === 'function') this.setFlipX(false)
+    this.flipX = false
+    if (layout.hurtbox) this.hurtbox = { ...layout.hurtbox }
+    if (layout.footprint) this.applyFootprint(layout.sheet, layout.footprint)
+    if (this.anims && typeof this.anims.play === 'function') {
+      this.anims.play(pending.animKey, false)
+    }
+  }
+
+  /**
+   * Keeps the sprite origin on the current cast frame's pivot.
+   */
+  _syncV2CastPivot() {
+    const pending = this._v2Cast
+    if (!pending?.animKey) return
+    const frameName = this.anims?.currentFrame?.frame?.name
+      || this.anims?.currentFrame?.textureFrame
+      || this.frame?.name
+    if (!frameName || !String(frameName).startsWith(`${pending.animKey}_`)) return
+    const pivot = getV2CastFramePivot(frameName)
+    if (!pivot || typeof this.setOrigin !== 'function') return
+    if (this.originX !== pivot.x || this.originY !== pivot.y) {
+      this.setOrigin(pivot.x, pivot.y)
+    }
+  }
+
+  /**
    * Per-frame update step.
    *
    * @param {number} time
@@ -800,9 +1092,47 @@ export class Player extends Actor {
   update(time = Date.now(), delta = 0) {
     super.update(time, delta)
 
-    // Check hitFrames during active attack
+    const v2Casting = typeof this.currentAttackType === 'string' && this.currentAttackType.startsWith('cast_')
+    if (this._v2Cast && !this._v2Cast.released && !this.is(ACTOR_STATES.ATTACK)) {
+      this._v2Cast = null
+      if (v2Casting) this.currentAttackType = null
+    }
+
+    // Check hitFrames during active attack. v2 casts release a projectile instead of melee.
     if (this.is(ACTOR_STATES.ATTACK)) {
-      this._checkAttackHitFrames(time)
+      if (v2Casting) {
+        this._syncV2CastPivot()
+        if (this._v2Cast && !this._v2Cast.released) {
+          tickMageV2Cast(this, time)
+        }
+      } else {
+        this._checkAttackHitFrames(time)
+
+        // Combo queue check: if combo queued, trigger when frame >= 3 reached
+        if (this.comboQueued && (!this.currentAttackType || this.currentAttackType === 'attack')) {
+          const frameIndex = getAnimationFrameIndex(this.anims?.currentFrame)
+          if (frameIndex >= 3) {
+            this.comboQueued = false
+            this.currentAttackType = 'attack_2'
+            this.currentSwingId = (this.currentSwingId || 0) + 1
+            this._hitFramesProcessed = new Set()
+            this.playAnim('attack_2', false)
+            try {
+              onMeleeSwing()
+            } catch (_e) {}
+          }
+        }
+
+        // Charge hold check: mark charged after 600 ms hold
+        if (this.chargeState?.active) {
+          if (time - this.chargeState.startTime >= 600) {
+            this.chargeState.charged = true
+          }
+          if (this.body && typeof this.body.setVelocity === 'function') {
+            this.body.setVelocity(0, 0)
+          }
+        }
+      }
     }
 
     // Process dodge travel displacement
@@ -823,6 +1153,15 @@ export class Player extends Actor {
       if (!this.is(ACTOR_STATES.HURT) && !this.is(ACTOR_STATES.DEAD) && !this.is(ACTOR_STATES.ATTACK)) {
         if (!this.is(ACTOR_STATES.WALK)) {
           this.transition(ACTOR_STATES.WALK)
+        } else {
+          // Dynamic run vs walk animation transition based on run speed
+          const shouldRun = this.isAtRunSpeed()
+          const currentAnim = this.anims?.currentAnim?.key || ''
+          if (shouldRun && !currentAnim.includes('run')) {
+            this.playAnim('run', true)
+          } else if (!shouldRun && currentAnim.includes('run')) {
+            this.playAnim('walk', true)
+          }
         }
       }
     } else {
