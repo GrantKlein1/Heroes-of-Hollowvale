@@ -5,6 +5,7 @@ import {
   MELEE_DMG,
   WEAPON,
   CONSUMABLE,
+  CONSUMABLE_EFFECTS,
   FIREBALL_SPEED,
   FIREBALL_DIST,
   FIRE_LINGER_MS,
@@ -56,11 +57,45 @@ describe('Combat Balance Constants & Formulas', () => {
       })
     })
 
-    it('preserves consumable items set', () => {
+    it('preserves consumable items set and effect table', () => {
       expect(CONSUMABLE.has('healing_potion')).toBe(true)
       expect(CONSUMABLE.has('mana_potion')).toBe(true)
       expect(CONSUMABLE.has('speed_potion')).toBe(true)
-      expect(CONSUMABLE.size).toBe(3)
+      expect(CONSUMABLE.has('apple')).toBe(true)
+      expect(CONSUMABLE.has('ale_flask')).toBe(true)
+      expect(CONSUMABLE.size).toBe(5)
+
+      expect(CONSUMABLE_EFFECTS.healing_potion).toEqual({
+        heal: 70,
+        mana: 0,
+        speedMs: 0,
+        clip: 'use_drink',
+      })
+      expect(CONSUMABLE_EFFECTS.mana_potion).toEqual({
+        heal: 0,
+        mana: 75,
+        speedMs: 0,
+        clip: 'use_drink',
+      })
+      expect(CONSUMABLE_EFFECTS.speed_potion).toEqual({
+        heal: 0,
+        mana: 0,
+        speedMs: 10000,
+        clip: 'use_drink',
+      })
+      expect(CONSUMABLE_EFFECTS.apple).toEqual({
+        heal: 25,
+        mana: 0,
+        speedMs: 0,
+        clip: 'use_eat',
+      })
+      expect(CONSUMABLE_EFFECTS.ale_flask).toEqual({
+        heal: 15,
+        mana: 0,
+        speedMs: 5000,
+        clip: 'use_drink',
+      })
+      expect(Object.isFrozen(CONSUMABLE_EFFECTS)).toBe(true)
     })
   })
 
