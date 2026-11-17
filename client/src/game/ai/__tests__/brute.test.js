@@ -169,6 +169,19 @@ describe('Brute AI & Enemy Integration — Package 1b-2', () => {
     expect(vx).toBeCloseTo(-BRUTE_BASE_SPEED)
   })
 
+  it('plays the alert clip when entering ALERT and never tints', () => {
+    const enemy = new Enemy(mockScene, 200, 100, 'brute')
+    enemy.setTint = vi.fn()
+    const ai = enemy.ai
+    ai.hasSpawned = true
+
+    ai.update(1000, 16)
+
+    expect(ai.mode).toBe(BRUTE_AI_MODES.ALERT)
+    expect(enemy.anims.play).toHaveBeenCalledWith('goblin_brute_alert_left', true)
+    expect(enemy.setTint).not.toHaveBeenCalled()
+  })
+
   it('patrols when player is beyond aggro radius (> 180 px)', () => {
     const enemy = new Enemy(mockScene, 400, 400, 'brute')
     const ai = enemy.ai

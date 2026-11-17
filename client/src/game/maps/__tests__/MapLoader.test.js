@@ -260,8 +260,8 @@ describe('Package 2-1: MapLoader & Tiled TMJ Architecture', () => {
   // =========================================================================
   // ?maps=tiled URL Flag Support
   // =========================================================================
-  describe('Flag Control: ?maps=tiled', () => {
-    it('returns true when ?maps=tiled is present', () => {
+  describe('Flag Control: tiled maps default on', () => {
+    it('returns true when ?maps=tiled, 1, or true is present', () => {
       expect(isTiledMapsEnabled('?maps=tiled')).toBe(true)
       expect(isTiledMapsEnabled('?renderer=blend&maps=tiled&seed=42')).toBe(true)
       expect(isTiledMapsEnabled('maps=tiled')).toBe(true)
@@ -269,11 +269,32 @@ describe('Package 2-1: MapLoader & Tiled TMJ Architecture', () => {
       expect(isTiledMapsEnabled('?maps=true')).toBe(true)
     })
 
-    it('returns false when maps flag is absent or set to other value', () => {
-      expect(isTiledMapsEnabled('')).toBe(false)
-      expect(isTiledMapsEnabled('?renderer=blend')).toBe(false)
+    it('defaults on when search is omitted, empty, or has no maps param', () => {
+      const previousWindow = globalThis.window
+      delete globalThis.window
+      try {
+        expect(isTiledMapsEnabled(undefined)).toBe(true)
+        expect(isTiledMapsEnabled()).toBe(true)
+      } finally {
+        if (previousWindow === undefined) {
+          delete globalThis.window
+        } else {
+          globalThis.window = previousWindow
+        }
+      }
+      expect(isTiledMapsEnabled('')).toBe(true)
+      expect(isTiledMapsEnabled('?qa=1')).toBe(true)
+      expect(isTiledMapsEnabled('?renderer=blend')).toBe(true)
+      expect(isTiledMapsEnabled('?renderer=legacy')).toBe(true)
+      expect(isTiledMapsEnabled('?maps=')).toBe(true)
+      expect(isTiledMapsEnabled('?maps=   ')).toBe(true)
+    })
+
+    it('returns false only for ?maps=legacy, ignoring case and surrounding space', () => {
       expect(isTiledMapsEnabled('?maps=legacy')).toBe(false)
-      expect(isTiledMapsEnabled('?renderer=legacy')).toBe(false)
+      expect(isTiledMapsEnabled('?maps=LEGACY')).toBe(false)
+      expect(isTiledMapsEnabled('?maps= Legacy ')).toBe(false)
+      expect(isTiledMapsEnabled('?qa=1&maps=legacy')).toBe(false)
     })
   })
 

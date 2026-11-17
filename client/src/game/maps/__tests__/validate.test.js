@@ -353,7 +353,7 @@ describe('Package 2-2: Tiled Map Validator & CI Test Suite', () => {
       const feetX = base.x + base.width / 2;
       const feetY = base.y + base.height;
       expect(feetX).toBe(384);
-      expect(feetY).toBe(224);
+      expect(feetY).toBe(640);
       expect(arch.x + arch.width / 2).toBe(feetX);
       expect(arch.y + arch.height).toBe(feetY);
 
@@ -371,7 +371,7 @@ describe('Package 2-2: Tiled Map Validator & CI Test Suite', () => {
       expect(result.valid).toBe(true);
       expect(result.errors).toEqual([]);
       expect(result.stats.mapWidth).toBe(24);
-      expect(result.stats.mapHeight).toBe(16);
+      expect(result.stats.mapHeight).toBe(29);
       expect(result.stats.spawnCount).toBeGreaterThanOrEqual(1);
       expect(result.stats.exitCount).toBeGreaterThanOrEqual(1);
     });

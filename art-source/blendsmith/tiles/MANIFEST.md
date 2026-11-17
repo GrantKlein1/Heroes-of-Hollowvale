@@ -1,4 +1,5 @@
 # AS-2 v4 manifest
+AS-2 v5 visual swap (approved by Grant 2026-11-09): 6 PNGs replaced, all metadata unchanged.
 
 LOCAL art scope complete; not game-integrated or approved.
 15 tilesets,222 tile IDs,20 logical props. No character asset changes.
@@ -11,13 +12,13 @@ LOCAL art scope complete; not game-integrated or approved.
 | ground/cliff_face | 136x34 | 0..3 | 4 | none | 528 | 2564 |
 | ground/cobble_road | 136x136 | 0..15 | 16 | none | 1922 | 18173 |
 | ground/dirt_road | 136x136 | 0..15 | 16 | none | 1757 | 18167 |
-| ground/dungeon_floor | 102x68 | 0..5 | 6 | none | 817 | 3288 |
+| ground/dungeon_floor | 102x68 | 0..5 | 6 | none | 1006 | 3288 |
 | ground/dungeon_wall | 136x34 | 0..3 | 4 | none | 292 | 2568 |
 | ground/grass | 136x68 | 0..7 | 8 | none | 1227 | 3986 |
-| ground/interior_market_floor | 136x34 | 0..3 | 4 | none | 416 | 2590 |
-| ground/interior_market_wall | 136x34 | 0..3 | 4 | none | 312 | 2584 |
-| ground/interior_tavern_floor | 136x34 | 0..3 | 4 | none | 376 | 2590 |
-| ground/interior_tavern_wall | 136x34 | 0..3 | 4 | none | 265 | 2584 |
+| ground/interior_market_floor | 136x34 | 0..3 | 4 | none | 584 | 2590 |
+| ground/interior_market_wall | 136x34 | 0..3 | 4 | none | 443 | 2584 |
+| ground/interior_tavern_floor | 136x34 | 0..3 | 4 | none | 526 | 2590 |
+| ground/interior_tavern_wall | 136x34 | 0..3 | 4 | none | 405 | 2584 |
 | ground/water | 136x544 | 0..63 | 61 | wet1..15:4x160ms | 8280 | 62939 |
 | ground/water_ford | 136x34 | 0..3 | 4 | none | 1170 | 2568 |
 | ground/water_shore | 136x544 | 0..63 | 61 | wet1..15:4x160ms | 8206 | 62957 |
@@ -25,7 +26,7 @@ LOCAL art scope complete; not game-integrated or approved.
 ## Prop atlases
 | Atlas | Image px | Frames | Origin | Anims | PNG bytes | JSON bytes |
 |---|---|---:|---|---|---:|---:|
-| props/village_props | 902x418 | 19 | 0.5,1.0 | static | 10141 | 16819 |
+| props/village_props | 902x418 | 19 | 0.5,1.0 | static | 14872 | 16819 |
 | props/hearth | 576x96 | 6 | 0.5,1.0 | burn6@8fps loop | 2571 | 3090 |
 
 | Prop | Canvas | Footprint x,y,w,h,shape | Layer |
@@ -71,19 +72,19 @@ MANIFEST.md itself excluded to avoid self-reference.
 | ground/cobble_road.tsj | 18173 | e14764c031496a906bd78aa968b5cd841d55af05ddcbb74f425d0ac8389ec21b |
 | ground/dirt_road.png | 1757 | 5ae57b29928562f2277fa2dcd6368248f8e3e920dc97b3208606e5b49ea2553e |
 | ground/dirt_road.tsj | 18167 | ef037d5b6ad5b3001dfc242882df4d055ede67084aa6e82dd61eff0236e91abf |
-| ground/dungeon_floor.png | 817 | 5a7a1785667e91c7318c474615da74447edffd0f52b184bdffba5e924369f44e |
+| ground/dungeon_floor.png | 1006 | b792ec95e4b99e1cde20642cea16eb6d2df6b1537de47f7b2f74dafd5c99eded |
 | ground/dungeon_floor.tsj | 3288 | aa685e7ebbb469bab852b00107efd0877ba41e4fe46d41d3f25e7aae44212a35 |
 | ground/dungeon_wall.png | 292 | b0e3a4a4705fe945dbdc21c08ba8829d8ff1242cabb73679ee8d3550906bd1ca |
 | ground/dungeon_wall.tsj | 2568 | 4358a559afc8271dddc85412e08bf479b77780f2031976b9ec5cb36102259132 |
 | ground/grass.png | 1227 | a9de1f1861dedf3b4e50d441826213b15492f8496a250df0b24380828084fed6 |
 | ground/grass.tsj | 3986 | 6629ad7f81cec7c4534d15c70c0e226b6fbad71d74c923ad71ae03f773faddbb |
-| ground/interior_market_floor.png | 416 | 4db23c10df02cde5d818c0ab1939b670a01159a7f4c952286cb182f4ea73f64c |
+| ground/interior_market_floor.png | 584 | 014905f5d28d87af37750c98b61d91f6934a0cf4ccf61340be51da887e07292d |
 | ground/interior_market_floor.tsj | 2590 | 2ec7162023ed2f4f024b4cd63887e0e713a1feb3eeefb7d7ff913bbfb4bea16d |
-| ground/interior_market_wall.png | 312 | 497b2355bc999619c463cbdbfd3c8b843fe66589baa742ae100c3b04cfedd796 |
+| ground/interior_market_wall.png | 443 | f00675360e7b0bcc3151b6c554344321e9159ff347ddaa3b92b35bcad56341ec |
 | ground/interior_market_wall.tsj | 2584 | 5185184d320f3e30ca0071f764408d6a421f18e7555d71512ce30b4656c71f3c |
-| ground/interior_tavern_floor.png | 376 | f14f73faaf39ee6df5ace2345eb7d74762300aacf85baf348b35c67a9cd0c1a0 |
+| ground/interior_tavern_floor.png | 526 | 6e0cab777d77df6996ce5edfe6e06732cd2bbee9c6cb36ce601e5478c49946dc |
 | ground/interior_tavern_floor.tsj | 2590 | f444ba46e5949594527ef0662187de8883d2351a84f7aeb461be5790c03ecb28 |
-| ground/interior_tavern_wall.png | 265 | 255150f43aa7f2828abeb7466787630f4ea12cf59832edccb2d64ddac482cffe |
+| ground/interior_tavern_wall.png | 405 | f2a4c163edabc3b9190cd7be525eaee9d563533d8ff0fed5f81de16227120fa3 |
 | ground/interior_tavern_wall.tsj | 2584 | c14124dcde7e0a22875563a4e0179f2385d21c1f5fab904c650e72440109d23f |
 | ground/water.png | 8280 | d9f286d1b44220e87129d61ec5ed677460539ce5aeaad5a6fbb463dc94e8dfe4 |
 | ground/water.tsj | 62939 | 5924788df478fa33b2a623575f7e945bbf28d509eaceaf9a4d2bdcc1c45b91a7 |
@@ -97,4 +98,4 @@ MANIFEST.md itself excluded to avoid self-reference.
 | props/hearth.png | 2571 | 2d6f08c34adc4b80a2259f7c70b88ce9b8530a198052be566dc07b5dac09c0de |
 | props/pairing.json | 1003 | 2d0a818517f2e1e06052a63a0968846db10ccedc87e3da67e540424b0c3416d6 |
 | props/village_props.json | 16819 | 0df69b8cf9e2f14308b281c50678efce2b8208f41465370fd8f7de831fd9ddf9 |
-| props/village_props.png | 10141 | 2a551ae389f98d94ba5b0001c0b29b8fc2f1de802b1c4cb3412e2ddbcc673ac3 |
+| props/village_props.png | 14872 | ef39c4743149f5d142912f7ff4255238521a32af3b6f7a0dc72a4eab02d34f95 |

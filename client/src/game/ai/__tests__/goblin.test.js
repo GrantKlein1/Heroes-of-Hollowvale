@@ -120,6 +120,19 @@ describe('Goblin AI — Package 1b-1 & 4-1', () => {
     expect(enemy.facing).toBe('left')
   })
 
+  it('plays the alert clip when entering ALERT and never tints', () => {
+    const enemy = new Enemy(mockScene, 180, 100, 'goblin')
+    enemy.setTint = vi.fn()
+    const ai = enemy.ai
+    ai.hasSpawned = true
+
+    ai.update(1000, 16)
+
+    expect(ai.mode).toBe(GOBLIN_AI_MODES.ALERT)
+    expect(enemy.anims.play).toHaveBeenCalledWith('goblin_alert_left', true)
+    expect(enemy.setTint).not.toHaveBeenCalled()
+  })
+
   it('triggers attack when within 36 px and acquires attack token', () => {
     // Enemy at (125, 100), player at (100, 100) -> distance 25 px (<= 36 px)
     const enemy = new Enemy(mockScene, 125, 100, 'goblin')

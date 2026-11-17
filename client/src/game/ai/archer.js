@@ -24,7 +24,7 @@ import { random } from '../rng.js'
 import { ACTOR_STATES } from '../actors/stateMachine.js'
 import { resolveFacing, DEFAULT_FACING } from '../actors/facing.js'
 import { Projectile } from '../actors/Projectile.js'
-import { resolveAnimWithFallback, applyGenericAlert } from '../combat/fallbacks.js'
+import { resolveAnimWithFallback } from '../combat/fallbacks.js'
 
 export const ARCHER_AI_MODES = Object.freeze({
   SPAWN: 'SPAWN',
@@ -305,7 +305,6 @@ export class ArcherAI {
           enemy.anims?.play?.(clipToPlay, true)
         } catch (_e) {}
       }
-      applyGenericAlert(enemy, 250)
       return
     }
 

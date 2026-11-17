@@ -77,26 +77,3 @@ export function applyGenericTelegraph(actor, durationMs = 250, tint = 0xffaa44) 
     })
   }
 }
-
-/**
- * Performs a safe procedural flash for an alert state when an enemy lacks a dedicated alert clip.
- *
- * @param {import('phaser').GameObjects.Sprite} actor
- * @param {number} [durationMs=250]
- * @param {number} [tint=0xffee66]
- */
-export function applyGenericAlert(actor, durationMs = 250, tint = 0xffee66) {
-  if (!actor) return
-
-  if (typeof actor.setTint === 'function') {
-    actor.setTint(tint)
-  }
-
-  if (actor.scene?.time?.delayedCall) {
-    actor.scene.time.delayedCall(durationMs, () => {
-      if (actor.active && typeof actor.clearTint === 'function') {
-        actor.clearTint()
-      }
-    })
-  }
-}
