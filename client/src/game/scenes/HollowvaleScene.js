@@ -818,21 +818,33 @@ export default class HollowvaleScene extends Phaser.Scene {
         this._consumeStart = now
         this._consumeId = equipped
         this._consumeSlot = session.hotbarSlot
+        this._consumeCommitted = false
+        this.player?.beginItemUse?.(equipped, now)
       }
       return
     }
-    const still = kDown && canConsume && session.equippedId === this._consumeId && session.hotbarSlot === this._consumeSlot
-    if (!still) {
-      this._consuming = false
-      return
+    if (!this._consumeCommitted) {
+      const still = kDown && canConsume && session.equippedId === this._consumeId && session.hotbarSlot === this._consumeSlot
+      if (!still) {
+        this._consuming = false
+        this.player?.endItemUse?.()
+        return
+      }
+      if (now - this._consumeStart >= 625) {
+        this._consumeCommitted = true
+        const effect = CONSUMABLE.effects?.[this._consumeId]
+        if (effect) {
+          if (effect.heal) this._heal(effect.heal)
+          if (effect.mana) this._addMana(effect.mana)
+          if (effect.speedMs) session.speedBoostUntil = now + effect.speedMs
+        }
+        eventBus.emit(GameEvents.ITEM_CONSUMED, { id: this._consumeId, slot: this._consumeSlot, mode: 'slot' })
+      }
     }
     if (now - this._consumeStart < 1000) return
-    eventBus.emit(GameEvents.ITEM_CONSUMED, { id: this._consumeId, slot: this._consumeSlot, mode: 'slot' })
-    if (this._consumeId === 'speed_potion') session.speedBoostUntil = now + 10000
-    else if (this._consumeId === 'mana_potion') this._addMana(75)
-    else if (this._consumeId === 'healing_potion') this._heal(70)
     this._consuming = false
     this._consumeNeedsRelease = true
+    this.player?.endItemUse?.()
   }
 
   _combat(now, dt) {
