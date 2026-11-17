@@ -1358,6 +1358,21 @@
   "pxPerUnit": 36.923,
   "propCameraDegFromHorizontal": 12,
   "pivotRowPx": 89.0016,
+  "footprint": {
+   "x": -9,
+   "y": -3,
+   "w": 18,
+   "h": 5,
+   "shape": "ellipse",
+   "note": "collision footprint centred on feet"
+  },
+  "hurtbox": {
+   "x": -11,
+   "y": -32,
+   "w": 22,
+   "h": 32,
+   "note": "body hurtbox, bottom on feet"
+  },
   "note": "left and right rendered separately (not mirrored). Main-hand weapon hidden; item is a separate in-hand sprite composited via hand anchors.",
   "hand": "hand.R",
   "anchorsFile": "thief_use_lockpick_anchors.json",
