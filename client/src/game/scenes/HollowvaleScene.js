@@ -226,6 +226,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       this.assetRegistry.loadGroup('village')
       this.assetRegistry.loadGroup('wilderness')
       this.assetRegistry.loadGroup('cavern')
+      this.assetRegistry.loadGroup('interiors')
     }
 
     if (isTiledMaps()) {
@@ -262,6 +263,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       this.assetRegistry.createAnims('village')
       this.assetRegistry.createAnims('wilderness')
       this.assetRegistry.createAnims('cavern')
+      this.assetRegistry.createAnims('interiors')
       ensureSpellAnimations(this)
     }
     eventBus.on(GameEvents.DIED, () => {
