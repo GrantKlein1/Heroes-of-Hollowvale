@@ -142,7 +142,7 @@ test.describe('Package 3-3 wilderness tiles', () => {
     await page.waitForFunction(() => (window as any).__hv?.scene() === 'dungeon', { timeout: 8000 })
     const dungeon = await page.evaluate(() => (window as any).__hv.world())
     expect(dungeon.w).toBe(768)
-    expect(dungeon.h).toBe(512)
+    expect(dungeon.h).toBe(928)
 
     const back = await page.evaluate(() => {
       const scene = (window as any).__scene

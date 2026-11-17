@@ -18,11 +18,15 @@ const dungeonBrazierMeta = JSON.parse(
 const treasureChestMeta = JSON.parse(
   fs.readFileSync(path.join(REPO_ROOT, 'client/public/assets/env/treasure_chest/treasure_chest.json'), 'utf8')
 ).meta;
+const mountainMouthMeta = JSON.parse(
+  fs.readFileSync(path.join(REPO_ROOT, 'client/public/assets/env/mountain_mouth_props/mountain_mouth_props.json'), 'utf8')
+).meta;
 
 function getAtlasPropMeta(propId) {
   if (dungeonPropsMeta.props?.[propId]) return dungeonPropsMeta.props[propId];
   if (dungeonBrazierMeta.props?.[propId]) return dungeonBrazierMeta.props[propId];
   if (treasureChestMeta.props?.[propId]) return treasureChestMeta.props[propId];
+  if (mountainMouthMeta.props?.[propId]) return mountainMouthMeta.props[propId];
   return null;
 }
 
@@ -62,10 +66,14 @@ function formatPropProperties(meta, instance = {}, isOverhead = false) {
 
 // -------------------------------------------------------------------------------------------
 // Map 1: Cavern Mouth (Cavern of Embers Entrance)
+// 24x29. O-V5-1 prepended 13 rows above the original 24x16 mouth and shifted
+// every object down by 416 px. Mountain feet stay at (384, 640).
 // -------------------------------------------------------------------------------------------
+const MOUTH_PREPENDED_ROWS = 13;
+
 function buildCavernMouthMap() {
   const width = 24;
-  const height = 16;
+  const height = 16 + MOUTH_PREPENDED_ROWS;
   const ground = new Array(width * height).fill(0);
   const groundDetail = new Array(width * height).fill(0);
   const walls = new Array(width * height).fill(0);
@@ -77,33 +85,45 @@ function buildCavernMouthMap() {
   // 2. cliff_face (17..20)
   // 3. dungeon_wall_trim (21..36)
   // 4. dungeon_floor (37..42)
+  // 5. grass (43..50)
   const tsCliff = loadTileset('cliff', 1);
   const tsCliffFace = loadTileset('cliff_face', 17);
   const tsDungeonWallTrim = loadTileset('dungeon_wall_trim', 21);
   const tsDungeonFloor = loadTileset('dungeon_floor', 37);
+  const tsGrass = loadTileset('grass', 43);
 
-  // Ground: rows 5..15 fill with dungeon_floor (gid 37..40)
-  for (let r = 5; r < height; r++) {
+  // gid 16 is cliff local id 15 (wangId 15): all four corners are cliff.
+  // Rows 0-12 are the prepended mountain. A diagonal cycle of every corner
+  // variant puts unmatched edges side by side, so those rows are solid cliff.
+  const SOLID_CLIFF_GID = 16;
+  for (let r = 0; r < height; r++) {
     for (let c = 0; c < width; c++) {
-      ground[r * width + c] = 37 + ((r + c) % 4);
+      const i = r * width + c;
+      if (r <= 12) {
+        ground[i] = SOLID_CLIFF_GID;
+      } else if (r <= 16) {
+        ground[i] = 1 + ((((r - MOUTH_PREPENDED_ROWS) * 4 + c) % 16) + 16) % 16;
+      } else if (r >= 18) {
+        ground[i] = 43 + ((r + c) % 8);
+      }
     }
   }
 
-  // North cliff background: rows 0..4
-  for (let r = 0; r <= 3; r++) {
+  // Mountain mass, including the original cliff rows now at 13-16.
+  for (let r = 0; r <= 16; r++) {
     for (let c = 0; c < width; c++) {
-      ground[r * width + c] = 1 + ((r * 4 + c) % 16);
       collision[r * width + c] = 1;
     }
   }
-  // Cliff face row 4
+  // Cliff face sits on the old row 4, shifted down with the prepended rows.
+  const cliffFaceRow = 4 + MOUTH_PREPENDED_ROWS;
   for (let c = 0; c < width; c++) {
-    walls[4 * width + c] = 17 + (c % 4);
-    collision[4 * width + c] = 17;
+    walls[cliffFaceRow * width + c] = 17 + (c % 4);
+    collision[cliffFaceRow * width + c] = 17;
   }
 
-  // West & East boundary collisions (rows 5..15)
-  for (let r = 5; r < height; r++) {
+  // West and east edges of the grass apron (old rows 5..14).
+  for (let r = 5 + MOUTH_PREPENDED_ROWS; r < height - 1; r++) {
     collision[r * width + 0] = 1;
     collision[r * width + (width - 1)] = 1;
   }
@@ -118,36 +138,36 @@ function buildCavernMouthMap() {
   let nextObjId = 1;
   const propsObjects = [];
 
-  // cavern_mouth_base + cavern_mouth_arch (256x224, feet at center-bottom)
-  const mouthW = 256;
-  const mouthH = 224;
-  const mouthFeetX = 12 * TILE_SIZE; // col 12 (384 px)
-  const mouthFeetY = 7 * TILE_SIZE; // row 7 (224 px)
-  const mouthX = mouthFeetX - mouthW / 2; // 256 px
+  // mountain_mouth_base + mountain_mouth_arch (512x640, feet at center-bottom)
+  const mouthW = 512;
+  const mouthH = 640;
+  const mouthFeetX = 12 * TILE_SIZE; // 384 px
+  const mouthFeetY = (7 + MOUTH_PREPENDED_ROWS) * TILE_SIZE; // 640 px
+  const mouthX = mouthFeetX - mouthW / 2; // 128 px
   const mouthY = mouthFeetY - mouthH; // 0 px
 
   propsObjects.push({
     id: nextObjId++,
-    name: 'cavern_mouth_base',
+    name: 'mountain_mouth_base',
     type: 'prop',
     x: mouthX,
     y: mouthY,
     width: mouthW,
     height: mouthH,
     visible: true,
-    properties: formatPropProperties(dungeonPropsMeta.props['cavern_mouth_base']),
+    properties: formatPropProperties(getAtlasPropMeta('mountain_mouth_base')),
   });
 
   propsObjects.push({
     id: nextObjId++,
-    name: 'cavern_mouth_arch',
+    name: 'mountain_mouth_arch',
     type: 'prop',
     x: mouthX,
     y: mouthY,
     width: mouthW,
     height: mouthH,
     visible: true,
-    properties: formatPropProperties(dungeonPropsMeta.props['cavern_mouth_arch'], {}, true),
+    properties: formatPropProperties(getAtlasPropMeta('mountain_mouth_arch'), {}, true),
   });
 
   // Flanking rocks: cavern_rock_large_a & b
@@ -158,7 +178,7 @@ function buildCavernMouthMap() {
     name: 'cavern_rock_large_a',
     type: 'prop',
     x: 6 * TILE_SIZE - rockAW / 2,
-    y: 7 * TILE_SIZE - rockAH,
+    y: (7 + MOUTH_PREPENDED_ROWS) * TILE_SIZE - rockAH,
     width: rockAW,
     height: rockAH,
     visible: true,
@@ -172,7 +192,7 @@ function buildCavernMouthMap() {
     name: 'cavern_rock_large_b',
     type: 'prop',
     x: 18 * TILE_SIZE - rockBW / 2,
-    y: 7 * TILE_SIZE - rockBH,
+    y: (7 + MOUTH_PREPENDED_ROWS) * TILE_SIZE - rockBH,
     width: rockBW,
     height: rockBH,
     visible: true,
@@ -187,7 +207,7 @@ function buildCavernMouthMap() {
     name: 'cavern_torch_wall',
     type: 'prop',
     x: 4 * TILE_SIZE,
-    y: 4 * TILE_SIZE - 32,
+    y: (4 + MOUTH_PREPENDED_ROWS) * TILE_SIZE - 32,
     width: torchW,
     height: torchH,
     visible: true,
@@ -198,7 +218,7 @@ function buildCavernMouthMap() {
     name: 'cavern_torch_wall',
     type: 'prop',
     x: 19 * TILE_SIZE,
-    y: 4 * TILE_SIZE - 32,
+    y: (4 + MOUTH_PREPENDED_ROWS) * TILE_SIZE - 32,
     width: torchW,
     height: torchH,
     visible: true,
@@ -212,7 +232,7 @@ function buildCavernMouthMap() {
       name: 'spawn_default',
       type: 'spawn',
       x: 18 * TILE_SIZE + 16,
-      y: 13 * TILE_SIZE,
+      y: (13 + MOUTH_PREPENDED_ROWS) * TILE_SIZE,
       width: 32,
       height: 32,
       visible: true,
@@ -223,7 +243,7 @@ function buildCavernMouthMap() {
       name: 'spawn_wilderness',
       type: 'spawn',
       x: 18 * TILE_SIZE + 16,
-      y: 13 * TILE_SIZE,
+      y: (13 + MOUTH_PREPENDED_ROWS) * TILE_SIZE,
       width: 32,
       height: 32,
       visible: true,
@@ -234,7 +254,7 @@ function buildCavernMouthMap() {
       name: 'spawn_halls',
       type: 'spawn',
       x: 12 * TILE_SIZE - 16,
-      y: 8 * TILE_SIZE,
+      y: (8 + MOUTH_PREPENDED_ROWS) * TILE_SIZE,
       width: 32,
       height: 32,
       visible: true,
@@ -245,7 +265,7 @@ function buildCavernMouthMap() {
       name: 'door_halls',
       type: 'door',
       x: 11 * TILE_SIZE,
-      y: 5 * TILE_SIZE,
+      y: (5 + MOUTH_PREPENDED_ROWS) * TILE_SIZE,
       width: 2 * TILE_SIZE,
       height: 2 * TILE_SIZE,
       visible: true,
@@ -263,7 +283,7 @@ function buildCavernMouthMap() {
       name: 'exit_wilderness',
       type: 'exit',
       x: 17 * TILE_SIZE,
-      y: 14 * TILE_SIZE,
+      y: (14 + MOUTH_PREPENDED_ROWS) * TILE_SIZE,
       width: 4 * TILE_SIZE,
       height: 2 * TILE_SIZE,
       visible: true,
@@ -295,12 +315,12 @@ function buildCavernMouthMap() {
     properties: [
       { name: 'canonName', type: 'string', value: 'Cavern of Embers' },
       { name: 'placeName', type: 'string', value: 'Cavern of Embers' },
-      { name: 'backdrop', type: 'string', value: 'pending' },
-      { name: 'propAtlases', type: 'string', value: 'dungeon_props,dungeon_brazier,treasure_chest' },
+      { name: 'backdrop', type: 'string', value: 'mountain_mouth' },
+      { name: 'propAtlases', type: 'string', value: 'dungeon_props,dungeon_brazier,treasure_chest,mountain_mouth_props' },
       { name: 'leagueX', type: 'int', value: 0 },
       { name: 'leagueY', type: 'int', value: 0 },
     ],
-    tilesets: [tsCliff, tsCliffFace, tsDungeonWallTrim, tsDungeonFloor],
+    tilesets: [tsCliff, tsCliffFace, tsDungeonWallTrim, tsDungeonFloor, tsGrass],
     layers: [
       { id: 1, name: 'ground', type: 'tilelayer', visible: true, opacity: 1, x: 0, y: 0, width, height, data: ground },
       { id: 2, name: 'ground_detail', type: 'tilelayer', visible: true, opacity: 1, x: 0, y: 0, width, height, data: groundDetail },
@@ -1056,20 +1076,86 @@ function buildCavernLairMap() {
   };
 }
 
-export function buildAllCavernMaps() {
-  const mouthTmj = buildCavernMouthMap();
-  const hallsTmj = buildCavernHallsMap();
-  const treasureTmj = buildCavernTreasureMap();
-  const lairTmj = buildCavernLairMap();
+const CAVERN_MAP_BUILDERS = [
+  ['cavern_mouth.tmj', buildCavernMouthMap],
+  ['cavern_halls.tmj', buildCavernHallsMap],
+  ['cavern_treasure.tmj', buildCavernTreasureMap],
+  ['cavern_lair.tmj', buildCavernLairMap],
+];
 
-  const mapsDir = path.join(REPO_ROOT, 'client/public/maps');
-  fs.writeFileSync(path.join(mapsDir, 'cavern_mouth.tmj'), JSON.stringify(mouthTmj, null, 2) + '\n');
-  fs.writeFileSync(path.join(mapsDir, 'cavern_halls.tmj'), JSON.stringify(hallsTmj, null, 2) + '\n');
-  fs.writeFileSync(path.join(mapsDir, 'cavern_treasure.tmj'), JSON.stringify(treasureTmj, null, 2) + '\n');
-  fs.writeFileSync(path.join(mapsDir, 'cavern_lair.tmj'), JSON.stringify(lairTmj, null, 2) + '\n');
-
-  console.log('Successfully built: cavern_mouth.tmj, cavern_halls.tmj, cavern_treasure.tmj, cavern_lair.tmj');
+function serializeCavernMap(map) {
+  return JSON.stringify(map, null, 2) + '\n';
 }
 
-buildAllCavernMaps();
+function firstDifferencePath(built, committed, prefix) {
+  if (Object.is(built, committed)) return null;
+  const builtObject = built !== null && typeof built === 'object';
+  const committedObject = committed !== null && typeof committed === 'object';
+  if (!builtObject || !committedObject) return prefix || '$';
+
+  if (Array.isArray(built) || Array.isArray(committed)) {
+    if (!Array.isArray(built) || !Array.isArray(committed)) return prefix || '$';
+    const shared = Math.min(built.length, committed.length);
+    for (let i = 0; i < shared; i++) {
+      const found = firstDifferencePath(built[i], committed[i], `${prefix}[${i}]`);
+      if (found) return found;
+    }
+    if (built.length !== committed.length) return `${prefix}.length`;
+    return null;
+  }
+
+  const builtKeys = Object.keys(built);
+  const committedKeys = Object.keys(committed);
+  const keyCount = Math.max(builtKeys.length, committedKeys.length);
+  for (let i = 0; i < keyCount; i++) {
+    const builtKey = builtKeys[i];
+    const committedKey = committedKeys[i];
+    if (builtKey !== committedKey) return prefix ? `${prefix}.${builtKey ?? committedKey}` : (builtKey ?? committedKey);
+    const found = firstDifferencePath(built[builtKey], committed[committedKey], prefix ? `${prefix}.${builtKey}` : builtKey);
+    if (found) return found;
+  }
+  return null;
+}
+
+export function buildAllCavernMaps() {
+  const mapsDir = path.join(REPO_ROOT, 'client/public/maps');
+  const names = [];
+  for (const [filename, build] of CAVERN_MAP_BUILDERS) {
+    fs.writeFileSync(path.join(mapsDir, filename), serializeCavernMap(build()));
+    names.push(filename);
+  }
+  console.log(`Successfully built: ${names.join(', ')}`);
+}
+
+function checkCavernMaps() {
+  const mapsDir = path.join(REPO_ROOT, 'client/public/maps');
+  for (const [filename, build] of CAVERN_MAP_BUILDERS) {
+    const built = serializeCavernMap(build());
+    const committed = fs.readFileSync(path.join(mapsDir, filename), 'utf8');
+    if (built === committed) continue;
+    let where = 'byte content';
+    try {
+      where = firstDifferencePath(JSON.parse(built), JSON.parse(committed), '') || 'byte content';
+    } catch {
+      where = 'parse error';
+    }
+    let index = 0;
+    const limit = Math.min(built.length, committed.length);
+    while (index < limit && built[index] === committed[index]) index += 1;
+    console.error(`${filename} differs at ${where} (string index ${index}, built ${built.length} bytes, committed ${committed.length} bytes)`);
+    return false;
+  }
+  console.log('Cavern maps match the committed files.');
+  return true;
+}
+
+const invokedDirectly = process.argv[1]
+  && fileURLToPath(import.meta.url) === path.resolve(process.argv[1]);
+if (invokedDirectly) {
+  if (process.argv.includes('--check')) {
+    if (!checkCavernMaps()) process.exit(1);
+  } else {
+    buildAllCavernMaps();
+  }
+}
 
