@@ -1,0 +1,370 @@
+{
+ "actor": "thief",
+ "clip": "use_lockpick",
+ "cell": [
+  64,
+  96
+ ],
+ "origin": {
+  "x": 0.5,
+  "y": 0.9271
+ },
+ "pivotPx": [
+  32.0,
+  89.0016
+ ],
+ "hand": "hand.R",
+ "units": "px from feet origin, +y down",
+ "rotation": "degrees, 0=item upright (cork/picks up), positive clockwise on screen",
+ "layer": "front|behind|none, relative to the body sprite. Up is forced front so the item reads. use_lockpick left is also forced front: true depth hides the picks behind the cloak while the lock is in front.",
+ "format": "{x, y, rotation, layer}",
+ "layerLock": {
+  "down": "front",
+  "left": "front",
+  "right": "front",
+  "up": "front"
+ },
+ "frames": {
+  "thief_use_lockpick_down_0": {
+   "x": -16.16,
+   "y": -39.23,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "thief_use_lockpick_down_1": {
+   "x": -18.86,
+   "y": -39.38,
+   "rotation": -4.34,
+   "layer": "front"
+  },
+  "thief_use_lockpick_down_2": {
+   "x": -18.86,
+   "y": -29.21,
+   "rotation": -4.31,
+   "layer": "front"
+  },
+  "thief_use_lockpick_down_3": {
+   "x": -18.86,
+   "y": -28.35,
+   "rotation": -4.31,
+   "layer": "front"
+  },
+  "thief_use_lockpick_down_4": {
+   "x": -16.2,
+   "y": -28.3,
+   "rotation": -0.84,
+   "layer": "front"
+  },
+  "thief_use_lockpick_down_5": {
+   "x": -17.02,
+   "y": -28.92,
+   "rotation": 5.63,
+   "layer": "front"
+  },
+  "thief_use_lockpick_down_6": {
+   "x": -16.98,
+   "y": -28.97,
+   "rotation": 6.6,
+   "layer": "front"
+  },
+  "thief_use_lockpick_down_7": {
+   "x": -16.13,
+   "y": -28.41,
+   "rotation": 0.75,
+   "layer": "front"
+  },
+  "thief_use_lockpick_down_8": {
+   "x": -15.22,
+   "y": -27.87,
+   "rotation": -4.74,
+   "layer": "front"
+  },
+  "thief_use_lockpick_down_9": {
+   "x": -15.25,
+   "y": -27.82,
+   "rotation": -5.37,
+   "layer": "front"
+  },
+  "thief_use_lockpick_down_10": {
+   "x": -18.86,
+   "y": -27.77,
+   "rotation": -4.31,
+   "layer": "front"
+  },
+  "thief_use_lockpick_down_11": {
+   "x": -18.86,
+   "y": -35.64,
+   "rotation": -4.32,
+   "layer": "front"
+  },
+  "thief_use_lockpick_down_12": {
+   "x": -18.86,
+   "y": -39.94,
+   "rotation": -4.35,
+   "layer": "front"
+  },
+  "thief_use_lockpick_down_13": {
+   "x": -16.16,
+   "y": -39.23,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "thief_use_lockpick_left_0": {
+   "x": -14.95,
+   "y": -45.7,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "thief_use_lockpick_left_1": {
+   "x": -13.42,
+   "y": -46.09,
+   "rotation": 5.34,
+   "layer": "front"
+  },
+  "thief_use_lockpick_left_2": {
+   "x": -13.18,
+   "y": -35.87,
+   "rotation": 10.18,
+   "layer": "front"
+  },
+  "thief_use_lockpick_left_3": {
+   "x": -13.01,
+   "y": -34.98,
+   "rotation": 12.79,
+   "layer": "front"
+  },
+  "thief_use_lockpick_left_4": {
+   "x": -14.42,
+   "y": -34.67,
+   "rotation": 7.45,
+   "layer": "front"
+  },
+  "thief_use_lockpick_left_5": {
+   "x": -13.96,
+   "y": -35.36,
+   "rotation": 11.53,
+   "layer": "front"
+  },
+  "thief_use_lockpick_left_6": {
+   "x": -13.97,
+   "y": -35.4,
+   "rotation": 14.38,
+   "layer": "front"
+  },
+  "thief_use_lockpick_left_7": {
+   "x": -14.43,
+   "y": -34.76,
+   "rotation": 13.03,
+   "layer": "front"
+  },
+  "thief_use_lockpick_left_8": {
+   "x": -14.75,
+   "y": -34.1,
+   "rotation": 8.22,
+   "layer": "front"
+  },
+  "thief_use_lockpick_left_9": {
+   "x": -14.75,
+   "y": -34.05,
+   "rotation": 5.43,
+   "layer": "front"
+  },
+  "thief_use_lockpick_left_10": {
+   "x": -13.11,
+   "y": -34.41,
+   "rotation": 11.22,
+   "layer": "front"
+  },
+  "thief_use_lockpick_left_11": {
+   "x": -13.31,
+   "y": -42.33,
+   "rotation": 7.76,
+   "layer": "front"
+  },
+  "thief_use_lockpick_left_12": {
+   "x": -13.46,
+   "y": -46.66,
+   "rotation": 4.31,
+   "layer": "front"
+  },
+  "thief_use_lockpick_left_13": {
+   "x": -14.95,
+   "y": -45.7,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "thief_use_lockpick_right_0": {
+   "x": 14.95,
+   "y": -38.98,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "thief_use_lockpick_right_1": {
+   "x": 13.42,
+   "y": -38.25,
+   "rotation": -5.52,
+   "layer": "front"
+  },
+  "thief_use_lockpick_right_2": {
+   "x": 13.18,
+   "y": -28.03,
+   "rotation": -10.51,
+   "layer": "front"
+  },
+  "thief_use_lockpick_right_3": {
+   "x": 13.01,
+   "y": -27.14,
+   "rotation": -13.2,
+   "layer": "front"
+  },
+  "thief_use_lockpick_right_4": {
+   "x": 14.42,
+   "y": -27.93,
+   "rotation": -7.5,
+   "layer": "front"
+  },
+  "thief_use_lockpick_right_5": {
+   "x": 13.96,
+   "y": -28.29,
+   "rotation": -11.06,
+   "layer": "front"
+  },
+  "thief_use_lockpick_right_6": {
+   "x": 13.97,
+   "y": -28.34,
+   "rotation": -13.7,
+   "layer": "front"
+  },
+  "thief_use_lockpick_right_7": {
+   "x": 14.43,
+   "y": -28.05,
+   "rotation": -12.95,
+   "layer": "front"
+  },
+  "thief_use_lockpick_right_8": {
+   "x": 14.75,
+   "y": -27.77,
+   "rotation": -8.51,
+   "layer": "front"
+  },
+  "thief_use_lockpick_right_9": {
+   "x": 14.75,
+   "y": -27.71,
+   "rotation": -5.65,
+   "layer": "front"
+  },
+  "thief_use_lockpick_right_10": {
+   "x": 13.11,
+   "y": -26.57,
+   "rotation": -11.58,
+   "layer": "front"
+  },
+  "thief_use_lockpick_right_11": {
+   "x": 13.31,
+   "y": -34.48,
+   "rotation": -8.02,
+   "layer": "front"
+  },
+  "thief_use_lockpick_right_12": {
+   "x": 13.46,
+   "y": -38.81,
+   "rotation": -4.45,
+   "layer": "front"
+  },
+  "thief_use_lockpick_right_13": {
+   "x": 14.95,
+   "y": -38.98,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "thief_use_lockpick_up_0": {
+   "x": 16.16,
+   "y": -45.45,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "thief_use_lockpick_up_1": {
+   "x": 18.86,
+   "y": -44.96,
+   "rotation": 4.52,
+   "layer": "front"
+  },
+  "thief_use_lockpick_up_2": {
+   "x": 18.86,
+   "y": -34.69,
+   "rotation": 4.65,
+   "layer": "front"
+  },
+  "thief_use_lockpick_up_3": {
+   "x": 18.86,
+   "y": -33.76,
+   "rotation": 4.75,
+   "layer": "front"
+  },
+  "thief_use_lockpick_up_4": {
+   "x": 16.2,
+   "y": -34.3,
+   "rotation": 0.88,
+   "layer": "front"
+  },
+  "thief_use_lockpick_up_5": {
+   "x": 17.02,
+   "y": -34.73,
+   "rotation": -6.12,
+   "layer": "front"
+  },
+  "thief_use_lockpick_up_6": {
+   "x": 16.98,
+   "y": -34.78,
+   "rotation": -7.32,
+   "layer": "front"
+  },
+  "thief_use_lockpick_up_7": {
+   "x": 16.13,
+   "y": -34.41,
+   "rotation": -0.82,
+   "layer": "front"
+  },
+  "thief_use_lockpick_up_8": {
+   "x": 15.22,
+   "y": -34.0,
+   "rotation": 5.04,
+   "layer": "front"
+  },
+  "thief_use_lockpick_up_9": {
+   "x": 15.25,
+   "y": -33.95,
+   "rotation": 5.59,
+   "layer": "front"
+  },
+  "thief_use_lockpick_up_10": {
+   "x": 18.86,
+   "y": -33.22,
+   "rotation": 4.69,
+   "layer": "front"
+  },
+  "thief_use_lockpick_up_11": {
+   "x": 18.86,
+   "y": -41.17,
+   "rotation": 4.58,
+   "layer": "front"
+  },
+  "thief_use_lockpick_up_12": {
+   "x": 18.86,
+   "y": -45.53,
+   "rotation": 4.49,
+   "layer": "front"
+  },
+  "thief_use_lockpick_up_13": {
+   "x": 16.16,
+   "y": -45.45,
+   "rotation": 0.0,
+   "layer": "front"
+  }
+ },
+ "fps": 12,
+ "framesCount": 14,
+ "startFrames": 4,
+ "loopFrames": 6,
+ "endFrames": 4
+}

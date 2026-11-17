@@ -98,7 +98,7 @@
   }
  },
  "meta": {
-  "app": "items_b9_full/scripts/dwarf_pack.py",
+  "app": "items_b10/scripts/dwarf_pack.py",
   "version": "1.0",
   "image": "dwarf_hold_idle.png",
   "format": "RGBA8888",
@@ -124,7 +124,7 @@
    "right",
    "up"
   ],
-  "note": "left and right rendered separately (not mirrored). Main-hand weapon hidden; item is a separate in-hand sprite composited via hand anchors.",
+  "note": "left and right rendered separately (not mirrored). Axe hidden; pickaxe is a separate in-hand sprite composited via hand anchors.",
   "footprint": {
    "x": -13,
    "y": -4,
@@ -142,7 +142,7 @@
   },
   "hand": "hand.R",
   "anchorsFile": "dwarf_hold_idle_anchors.json",
-  "weapon": "axe hidden (Haft, Grip, Socket, AxeBlade, AxeEdge, BackSpike); item in hand.R. Axe roll from dwarf_attack_v2 is n/a while hidden.",
+  "weapon": "axe hidden (Haft, Grip, Socket, AxeBlade, AxeEdge, BackSpike); pickaxe is a separate in-hand sprite in hand.R",
   "anims": {
    "hold_idle": {
     "frames": 1,
@@ -165,7 +165,7 @@
      0.5,
      0.9125
     ],
-    "note": "matches dwarf idle frame count/fps (1 @ 1). Loop while the item is held."
+    "note": "matches dwarf idle frame count/fps (1 @ 1). Loop while the pickaxe is held."
    }
   }
  }

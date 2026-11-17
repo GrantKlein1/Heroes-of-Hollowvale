@@ -15,8 +15,8 @@
  ],
  "hand": "hand.R",
  "units": "px from feet origin, +y down",
- "rotation": "degrees, 0=item upright (cork/stem up), positive clockwise on screen",
- "layer": "front|behind, relative to the body sprite. Up is forced front so the item reads (true depth hides it behind the body).",
+ "rotation": "degrees, 0=item upright (pick head up), positive clockwise on screen",
+ "layer": "front|behind, relative to the body sprite. Up is forced front so the item reads.",
  "format": "{x, y, rotation, layer}",
  "layerLock": {
   "down": "front",
@@ -26,195 +26,195 @@
  },
  "frames": {
   "dwarf_hold_run_down_0": {
-   "x": -6.15,
-   "y": -28.69,
-   "rotation": 0.0,
+   "x": -10.02,
+   "y": -24.67,
+   "rotation": -0.0,
    "layer": "front"
   },
   "dwarf_hold_run_down_1": {
-   "x": -6.45,
-   "y": -27.93,
-   "rotation": -0.5,
-   "layer": "front"
-  },
-  "dwarf_hold_run_down_2": {
-   "x": -6.57,
-   "y": -29.8,
-   "rotation": -0.71,
-   "layer": "front"
-  },
-  "dwarf_hold_run_down_3": {
-   "x": -6.45,
-   "y": -27.93,
-   "rotation": -0.5,
-   "layer": "front"
-  },
-  "dwarf_hold_run_down_4": {
-   "x": -6.15,
-   "y": -28.69,
+   "x": -10.17,
+   "y": -23.93,
    "rotation": 0.0,
    "layer": "front"
   },
+  "dwarf_hold_run_down_2": {
+   "x": -10.23,
+   "y": -25.81,
+   "rotation": -0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_down_3": {
+   "x": -10.17,
+   "y": -23.93,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_down_4": {
+   "x": -10.02,
+   "y": -24.67,
+   "rotation": -0.0,
+   "layer": "front"
+  },
   "dwarf_hold_run_down_5": {
-   "x": -5.84,
-   "y": -27.86,
-   "rotation": 0.5,
+   "x": -9.85,
+   "y": -23.83,
+   "rotation": 0.0,
    "layer": "front"
   },
   "dwarf_hold_run_down_6": {
-   "x": -5.71,
-   "y": -29.71,
-   "rotation": 0.71,
+   "x": -9.79,
+   "y": -25.67,
+   "rotation": -0.0,
    "layer": "front"
   },
   "dwarf_hold_run_down_7": {
-   "x": -5.84,
-   "y": -27.86,
-   "rotation": 0.5,
+   "x": -9.85,
+   "y": -23.83,
+   "rotation": 0.0,
    "layer": "front"
   },
   "dwarf_hold_run_left_0": {
-   "x": -12.42,
-   "y": -32.55,
-   "rotation": -18.38,
+   "x": -6.43,
+   "y": -28.09,
+   "rotation": -0.0,
    "layer": "behind"
   },
   "dwarf_hold_run_left_1": {
-   "x": -12.26,
-   "y": -31.82,
-   "rotation": -18.34,
+   "x": -6.18,
+   "y": -27.33,
+   "rotation": 0.0,
    "layer": "behind"
   },
   "dwarf_hold_run_left_2": {
-   "x": -12.2,
-   "y": -33.7,
-   "rotation": -18.32,
+   "x": -6.08,
+   "y": -29.2,
+   "rotation": 0.0,
    "layer": "behind"
   },
   "dwarf_hold_run_left_3": {
-   "x": -12.26,
-   "y": -31.82,
-   "rotation": -18.34,
+   "x": -6.18,
+   "y": -27.33,
+   "rotation": 0.0,
    "layer": "behind"
   },
   "dwarf_hold_run_left_4": {
-   "x": -12.42,
-   "y": -32.55,
-   "rotation": -18.38,
+   "x": -6.43,
+   "y": -28.09,
+   "rotation": -0.0,
    "layer": "behind"
   },
   "dwarf_hold_run_left_5": {
-   "x": -12.57,
-   "y": -31.69,
-   "rotation": -18.4,
+   "x": -6.68,
+   "y": -27.26,
+   "rotation": 0.0,
    "layer": "behind"
   },
   "dwarf_hold_run_left_6": {
-   "x": -12.63,
-   "y": -33.52,
-   "rotation": -18.41,
+   "x": -6.78,
+   "y": -29.11,
+   "rotation": 0.0,
    "layer": "behind"
   },
   "dwarf_hold_run_left_7": {
-   "x": -12.57,
-   "y": -31.69,
-   "rotation": -18.4,
+   "x": -6.68,
+   "y": -27.26,
+   "rotation": -0.0,
    "layer": "behind"
   },
   "dwarf_hold_run_right_0": {
-   "x": 12.42,
-   "y": -29.99,
-   "rotation": 18.38,
+   "x": 6.43,
+   "y": -23.93,
+   "rotation": 0.0,
    "layer": "front"
   },
   "dwarf_hold_run_right_1": {
-   "x": 12.26,
-   "y": -29.13,
-   "rotation": 18.4,
+   "x": 6.18,
+   "y": -23.1,
+   "rotation": 0.0,
    "layer": "front"
   },
   "dwarf_hold_run_right_2": {
-   "x": 12.2,
-   "y": -30.97,
-   "rotation": 18.41,
+   "x": 6.08,
+   "y": -24.95,
+   "rotation": -0.0,
    "layer": "front"
   },
   "dwarf_hold_run_right_3": {
-   "x": 12.26,
-   "y": -29.13,
-   "rotation": 18.4,
+   "x": 6.18,
+   "y": -23.1,
+   "rotation": 0.0,
    "layer": "front"
   },
   "dwarf_hold_run_right_4": {
-   "x": 12.42,
-   "y": -29.99,
-   "rotation": 18.38,
+   "x": 6.43,
+   "y": -23.93,
+   "rotation": 0.0,
    "layer": "front"
   },
   "dwarf_hold_run_right_5": {
-   "x": 12.57,
-   "y": -29.26,
-   "rotation": 18.34,
+   "x": 6.68,
+   "y": -23.17,
+   "rotation": 0.0,
    "layer": "front"
   },
   "dwarf_hold_run_right_6": {
-   "x": 12.63,
-   "y": -31.15,
-   "rotation": 18.32,
+   "x": 6.78,
+   "y": -25.04,
+   "rotation": 0.0,
    "layer": "front"
   },
   "dwarf_hold_run_right_7": {
-   "x": 12.57,
-   "y": -29.26,
-   "rotation": 18.34,
+   "x": 6.68,
+   "y": -23.17,
+   "rotation": 0.0,
    "layer": "front"
   },
   "dwarf_hold_run_up_0": {
-   "x": 6.15,
-   "y": -33.85,
+   "x": 10.02,
+   "y": -27.35,
    "rotation": 0.0,
    "layer": "front"
   },
   "dwarf_hold_run_up_1": {
-   "x": 6.45,
-   "y": -33.03,
-   "rotation": 0.44,
+   "x": 10.17,
+   "y": -26.5,
+   "rotation": 0.0,
    "layer": "front"
   },
   "dwarf_hold_run_up_2": {
-   "x": 6.57,
-   "y": -34.87,
-   "rotation": 0.62,
+   "x": 10.23,
+   "y": -28.34,
+   "rotation": 0.0,
    "layer": "front"
   },
   "dwarf_hold_run_up_3": {
-   "x": 6.45,
-   "y": -33.03,
-   "rotation": 0.44,
+   "x": 10.17,
+   "y": -26.5,
+   "rotation": 0.0,
    "layer": "front"
   },
   "dwarf_hold_run_up_4": {
-   "x": 6.15,
-   "y": -33.85,
+   "x": 10.02,
+   "y": -27.35,
    "rotation": 0.0,
    "layer": "front"
   },
   "dwarf_hold_run_up_5": {
-   "x": 5.84,
-   "y": -33.09,
-   "rotation": -0.44,
+   "x": 9.85,
+   "y": -26.6,
+   "rotation": 0.0,
    "layer": "front"
   },
   "dwarf_hold_run_up_6": {
-   "x": 5.71,
-   "y": -34.96,
-   "rotation": -0.62,
+   "x": 9.79,
+   "y": -28.49,
+   "rotation": 0.0,
    "layer": "front"
   },
   "dwarf_hold_run_up_7": {
-   "x": 5.84,
-   "y": -33.09,
-   "rotation": -0.44,
+   "x": 9.85,
+   "y": -26.6,
+   "rotation": 0.0,
    "layer": "front"
   }
  },
