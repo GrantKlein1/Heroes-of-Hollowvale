@@ -472,9 +472,7 @@ test.describe('QA-1 full shipped path', () => {
         return { seed: (window as any).__hv.seed(), enemies }
       })
       console.log('[QA-1] BUG killed goblin stays at 0 HP (active=false, death clip never completes, no pickup)', JSON.stringify(diag))
-      // die() sets active=false before playAnim('death'). Phaser only advances
-      // animations on active objects, so the clip never finishes and loot never spawns.
-      test.fixme(true, 'Killed goblin stays at 0 HP; death clip never completes, so no pickup spawns')
+      expect(dropped, 'killed goblin should leave a pickup').toBe(true)
     })
   })
 })

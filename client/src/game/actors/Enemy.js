@@ -291,11 +291,8 @@ export class Enemy extends Actor {
       return
     }
 
-    if (key.includes('death')) {
-      if (this.body) {
-        this.body.enable = false
-      }
-      onEnemyDeathComplete(this)
+    if (key.includes('death') && (this._deathClipPlaying || this.is(ACTOR_STATES.DEAD))) {
+      this.completeDeath()
     }
   }
 
@@ -372,6 +369,9 @@ export class Enemy extends Actor {
    * @returns {boolean} - True if player was struck
    */
   executeAttackHit(now = (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
+    if (this._deathClipPlaying || this.is(ACTOR_STATES.DEAD) || this.hp <= 0) return false
+    if (this.body && this.body.enable === false) return false
+
     const scene = this.scene
     const player = scene?.player
     if (!player || player.hp <= 0 || player.is?.(ACTOR_STATES.DEAD)) {
@@ -479,28 +479,157 @@ export class Enemy extends Actor {
   }
 
   /**
+   * Turns collision and motion off without removing the sprite from the update list.
+   * Phaser does not advance animations on inactive game objects.
+   */
+  disableCombatBody() {
+    // Phaser disableBody calls this.body.stop() with no guard. After a scene
+    // change the body is already gone, and that read throws.
+    if (this.body && typeof this.disableBody === 'function') {
+      this.disableBody(false, false)
+    }
+    const body = this.body
+    if (!body) return
+    if (typeof body.setVelocity === 'function') body.setVelocity(0, 0)
+    body.enable = false
+    if (body.checkCollision) body.checkCollision.none = true
+  }
+
+  /**
+   * Milliseconds of the death clip from atlas meta, or 0 when the sheet has no playable length.
+   * @returns {number}
+   */
+  deathClipMetaDurationMs() {
+    const sheetKey = this.getSheetForAnim('death')
+    const def = this.scene?.textures?.get?.(sheetKey)?.customData?.meta?.anims?.death
+    if (!def) return 0
+    const frames = Array.isArray(def.frames) ? def.frames.length : Number(def.frames) || 0
+    const fps = Number(def.fps || def.frameRate) || 0
+    if (!(frames > 0) || !(fps > 0)) return 0
+    return Math.round((frames / fps) * 1000)
+  }
+
+  /**
+   * @param {object} [clip]
+   * @returns {number}
+   */
+  clipDurationMs(clip) {
+    if (!clip) return 0
+    if (typeof clip.duration === 'number' && clip.duration > 0) return clip.duration
+    const frames = Array.isArray(clip.frames) ? clip.frames.length : 0
+    const fps = Number(clip.frameRate || clip.fps) || 0
+    if (frames > 0 && fps > 0) return Math.round((frames / fps) * 1000)
+    return 0
+  }
+
+  /**
+   * Whether the death animation can actually advance.
+   * A missing registry entry or a clip with 0 frames cannot.
+   * @returns {{ playable: boolean, durationMs: number, key: string }}
+   */
+  inspectDeathClip() {
+    const key = this.getAnimKey('death')
+    const anims = this.scene?.anims
+    const metaMs = this.deathClipMetaDurationMs()
+    if (anims && typeof anims.exists === 'function' && !anims.exists(key)) {
+      return { playable: false, durationMs: metaMs, key }
+    }
+    if (anims && typeof anims.get === 'function') {
+      const clip = anims.get(key)
+      if (clip) {
+        const count = Array.isArray(clip.frames) ? clip.frames.length : 0
+        if (count <= 0) {
+          return { playable: false, durationMs: this.clipDurationMs(clip) || metaMs, key }
+        }
+        return { playable: true, durationMs: this.clipDurationMs(clip) || metaMs, key }
+      }
+    }
+    return { playable: true, durationMs: metaMs, key }
+  }
+
+  /**
+   * @param {number} ms
+   * @returns {boolean} True when a scene clock accepted the fallback
+   */
+  armDeathTimer(ms) {
+    if (!(ms > 0)) return false
+    const clock = this.scene?.time
+    if (typeof clock?.delayedCall !== 'function') return false
+    this.clearDeathTimer()
+    this._deathTimer = clock.delayedCall(ms, () => {
+      this._deathTimer = null
+      if (this._destroyed || !this.scene) return
+      this.completeDeath()
+    })
+    return Boolean(this._deathTimer)
+  }
+
+  clearDeathTimer() {
+    const timer = this._deathTimer
+    this._deathTimer = null
+    if (timer && typeof timer.remove === 'function') timer.remove(false)
+  }
+
+  /**
+   * Drops loot and removes the actor. Idempotent via onEnemyDeathComplete.
+   * @returns {boolean}
+   */
+  completeDeath() {
+    if (this._deathCompleted) return false
+    if (this._destroyed || !this.scene) {
+      this.clearDeathTimer()
+      return false
+    }
+    this.clearDeathTimer()
+    this.disableCombatBody()
+    this.active = false
+    return onEnemyDeathComplete(this)
+  }
+
+  /**
+   * @param {boolean} [fromScene]
+   */
+  destroy(fromScene) {
+    this._destroyed = true
+    this.clearDeathTimer()
+    if (typeof super.destroy === 'function') super.destroy(fromScene)
+  }
+
+  /**
    * Triggers enemy death sequence and permanently halts movement.
+   * The sprite stays active until the death clip finishes so Phaser can advance it.
    */
   die() {
-    if (this.is(ACTOR_STATES.DEAD)) return
+    if (this._deathClipPlaying || this.is(ACTOR_STATES.DEAD)) return
 
-    // Release any allocated attack token
     if (this.scene?.attackTokenManager) {
       this.scene.attackTokenManager.release(this)
     }
 
     this.isAttacking = false
     this.attackPhase = 'none'
-    this.active = false
+    this._hitFrameProcessed = true
     this._deathProcessed = true
+    this._deathClipPlaying = true
+    this.hp = 0
 
     this.transition(ACTOR_STATES.DEAD, { force: true })
+    this.disableCombatBody()
+    this.active = true
 
-    if (this.body && typeof this.body.setVelocity === 'function') {
-      this.body.setVelocity(0, 0)
+    const status = this.inspectDeathClip()
+    if (!status.playable) {
+      const armed = status.durationMs > 0 && this.armDeathTimer(status.durationMs)
+      if (!armed) this.completeDeath()
+      return
     }
 
     this.playAnim('death', false)
+    if (!this._deathCompleted) this.active = true
+    if (!this._deathCompleted && status.durationMs > 0) {
+      // Event wins when the clip finishes; this only covers a missed animationcomplete.
+      this.armDeathTimer(status.durationMs + 150)
+    }
   }
 
   /**
@@ -516,6 +645,7 @@ export class Enemy extends Actor {
     }
 
     if (this.is(ACTOR_STATES.DEAD)) {
+      this.disableCombatBody()
       return
     }
 
