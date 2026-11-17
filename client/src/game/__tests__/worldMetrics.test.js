@@ -8,8 +8,6 @@ import {
   TARGET_VIRTUAL_W,
   TARGET_VIRTUAL_H,
   TARGET_VIRTUAL_MIN_H,
-  PAINTED_WORLD_W,
-  PAINTED_WORLD_H,
   integerCoverZoom,
   integerTiledZoom,
 } from '../worldMetrics.js'
@@ -26,14 +24,14 @@ describe('Package 1-3b: worldMetrics and Camera Calibration', () => {
     expect(TARGET_VIRTUAL_MIN_H).toBe(270)
   })
 
-  describe('integerCoverZoom (painted scenes)', () => {
-    it('calculates integer cover zoom for painted backdrop across standard viewports', () => {
-      // 1280x720: cover is max(1280/1024, 720/1536) = 1.25 -> zoom 2
-      expect(integerCoverZoom(1280, 720, PAINTED_WORLD_W, PAINTED_WORLD_H)).toBe(2)
-      // 1920x1080: cover is max(1920/1024, 1080/1536) = 1.875 -> zoom 2
-      expect(integerCoverZoom(1920, 1080, PAINTED_WORLD_W, PAINTED_WORLD_H)).toBe(2)
-      // 2560x1440: cover is max(2560/1024, 1440/1536) = 2.5 -> zoom 3
-      expect(integerCoverZoom(2560, 1440, PAINTED_WORLD_W, PAINTED_WORLD_H)).toBe(3)
+  describe('integerCoverZoom', () => {
+    it('calculates integer cover zoom across standard viewports', () => {
+      // 1280x720 over a 1024x1536 world: max(1.25, 0.46875) -> zoom 2
+      expect(integerCoverZoom(1280, 720, 1024, 1536)).toBe(2)
+      // 1920x1080: max(1.875, 0.703125) -> zoom 2
+      expect(integerCoverZoom(1920, 1080, 1024, 1536)).toBe(2)
+      // 2560x1440: max(2.5, 0.9375) -> zoom 3
+      expect(integerCoverZoom(2560, 1440, 1024, 1536)).toBe(3)
     })
 
     it('handles edge cases safely', () => {

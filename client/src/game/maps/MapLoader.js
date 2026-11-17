@@ -7,7 +7,7 @@
  * - Feet-anchored Y-sorting via depth.js
  * - Zones extraction and registry via zones.js
  * - Sweep collision prevention for player / entity colliders
- * - Flag check: tiled maps default on; `?maps=legacy` turns them off
+ * - Flag check: tiled maps are always on (package 3-4 removed the opt-out)
  */
 
 import {
@@ -23,32 +23,15 @@ import { parseZonesLayer, ZonesRegistry, parseProperties } from './zones.js'
 
 /**
  * Checks if Tiled maps are enabled.
- * No search, no `maps` param, or an empty value stays on.
- * `?maps=tiled`, `?maps=1`, and `?maps=true` stay on.
- * `?maps=legacy` (case-insensitive, trimmed) turns them off.
+ * Always true. Package 3-4 removed the query opt-out. The search argument
+ * is ignored and kept so existing callers compile.
+ * Follow-up: delete this helper once nothing imports it.
  *
- * @param {string} [search] - Optional query string. When omitted, uses
- *   window.location.search if a window exists; with no window, maps stay on.
+ * @param {string} [_search] - Ignored.
  * @returns {boolean}
  */
-export function isTiledMapsEnabled(search) {
-  let searchStr = search
-  if (searchStr === undefined && typeof window !== 'undefined' && window.location) {
-    searchStr = window.location.search
-  }
-  if (typeof searchStr !== 'string' || searchStr.length === 0) {
-    return true
-  }
-  const clean = searchStr.startsWith('?') ? searchStr.slice(1) : searchStr
-  const params = new URLSearchParams(clean)
-  if (!params.has('maps')) {
-    return true
-  }
-  const raw = params.get('maps')
-  const val = typeof raw === 'string' ? raw.trim() : ''
-  if (val === '') return true
-  if (val.toLowerCase() === 'legacy') return false
-  return val === 'tiled' || val === '1' || val === 'true'
+export function isTiledMapsEnabled(_search) {
+  return true
 }
 
 /**

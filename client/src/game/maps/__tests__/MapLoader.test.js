@@ -290,11 +290,11 @@ describe('Package 2-1: MapLoader & Tiled TMJ Architecture', () => {
       expect(isTiledMapsEnabled('?maps=   ')).toBe(true)
     })
 
-    it('returns false only for ?maps=legacy, ignoring case and surrounding space', () => {
-      expect(isTiledMapsEnabled('?maps=legacy')).toBe(false)
-      expect(isTiledMapsEnabled('?maps=LEGACY')).toBe(false)
-      expect(isTiledMapsEnabled('?maps= Legacy ')).toBe(false)
-      expect(isTiledMapsEnabled('?qa=1&maps=legacy')).toBe(false)
+    it('stays on when the removed maps opt-out is present', () => {
+      expect(isTiledMapsEnabled('?maps=legacy')).toBe(true)
+      expect(isTiledMapsEnabled('?maps=LEGACY')).toBe(true)
+      expect(isTiledMapsEnabled('?maps= Legacy ')).toBe(true)
+      expect(isTiledMapsEnabled('?qa=1&maps=legacy')).toBe(true)
     })
   })
 

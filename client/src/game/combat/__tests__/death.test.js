@@ -133,6 +133,15 @@ describe('Combat Death & Respawn — Package 1b-4', () => {
       expect(entrance).toEqual({ x: 500, y: 540 })
     })
 
+    it('uses the generic entrance when no spawn or tiled spawns are recorded', () => {
+      const entrance = resolveAreaEntrance({
+        worldW: 1000,
+        worldH: 600,
+        sceneId: 'village',
+      })
+      expect(entrance).toEqual({ x: 500, y: 510 })
+    })
+
     it('respawns player with full HP/mana and resets dead flag', () => {
       const respawnEvents = []
       const noticeEvents = []

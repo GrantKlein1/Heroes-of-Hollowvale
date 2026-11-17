@@ -11,7 +11,6 @@
 import { getRng, random } from '../rng.js'
 import { eventBus, GameEvents } from '../../lib/eventBus.js'
 import { ACTOR_STATES } from '../actors/stateMachine.js'
-import { PAINTED_SCENES } from '../sceneCatalog.js'
 import { buildAnimKey } from '../assets/animKeys.js'
 
 /** World-drop atlas imported in AS-3. Idle cells use the sheet anchor; collect is centred. */
@@ -454,17 +453,7 @@ export function resolveAreaEntrance(scene) {
     }
   }
 
-  // 3. Painted scene catalog default spawn
-  const sceneId = scene?.sceneId || 'village'
-  const def = PAINTED_SCENES[sceneId]
-  if (def?.spawn) {
-    return {
-      x: def.spawn.nx * worldW,
-      y: def.spawn.ny * worldH,
-    }
-  }
-
-  // 4. Generic safe entrance fallback
+  // 3. Generic safe entrance fallback
   return { x: worldW / 2, y: worldH * 0.85 }
 }
 

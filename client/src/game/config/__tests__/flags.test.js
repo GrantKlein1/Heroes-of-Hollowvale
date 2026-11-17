@@ -53,17 +53,17 @@ describe('Runtime URL Feature Flags (flags.js)', () => {
       expect(getRenderer('?renderer=%20blend%20')).toBe('blend')
     })
 
-    it('explicitly returns "legacy" when ?renderer=legacy', () => {
+    it('ignores a legacy renderer query and stays on blend', () => {
       const flags = parseFlags('?renderer=legacy')
-      expect(flags.renderer).toBe('legacy')
-      expect(getRenderer('?renderer=legacy')).toBe('legacy')
-      expect(isBlendRenderer('?renderer=legacy')).toBe(false)
+      expect(flags.renderer).toBe('blend')
+      expect(getRenderer('?renderer=legacy')).toBe('blend')
+      expect(isBlendRenderer('?renderer=legacy')).toBe(true)
     })
 
-    it('falls back to "legacy" for any unrecognized renderer value', () => {
-      expect(getRenderer('?renderer=threejs')).toBe('legacy')
-      expect(getRenderer('?renderer=canvas')).toBe('legacy')
-      expect(getRenderer('?renderer=')).toBe('legacy')
+    it('ignores unrecognized renderer values and stays on blend', () => {
+      expect(getRenderer('?renderer=threejs')).toBe('blend')
+      expect(getRenderer('?renderer=canvas')).toBe('blend')
+      expect(getRenderer('?renderer=')).toBe('blend')
     })
 
     it('reads renderer from window.location.search when search parameter is omitted', () => {
@@ -72,8 +72,8 @@ describe('Runtime URL Feature Flags (flags.js)', () => {
       expect(isBlendRenderer()).toBe(true)
 
       globalThis.window = { location: { search: '?renderer=legacy' } }
-      expect(getRenderer()).toBe('legacy')
-      expect(isBlendRenderer()).toBe(false)
+      expect(getRenderer()).toBe('blend')
+      expect(isBlendRenderer()).toBe(true)
 
       globalThis.window = { location: { search: '' } }
       expect(getRenderer()).toBe('blend')
@@ -97,9 +97,9 @@ describe('Runtime URL Feature Flags (flags.js)', () => {
       expect(isTiledMaps('')).toBe(true)
     })
 
-    it('returns "legacy" and disables tiled maps when ?maps=legacy', () => {
-      expect(getMaps('?maps=legacy')).toBe('legacy')
-      expect(isTiledMaps('?maps=legacy')).toBe(false)
+    it('ignores ?maps=legacy and stays on tiled maps', () => {
+      expect(getMaps('?maps=legacy')).toBe('tiled')
+      expect(isTiledMaps('?maps=legacy')).toBe(true)
     })
 
     it('reads ?maps=tiled correctly', () => {
@@ -107,9 +107,9 @@ describe('Runtime URL Feature Flags (flags.js)', () => {
       expect(isTiledMaps('?maps=tiled')).toBe(true)
     })
 
-    it('preserves other custom map modes', () => {
-      expect(getMaps('?maps=custom')).toBe('custom')
-      expect(isTiledMaps('?maps=custom')).toBe(false)
+    it('ignores other map query values and stays on tiled maps', () => {
+      expect(getMaps('?maps=custom')).toBe('tiled')
+      expect(isTiledMaps('?maps=custom')).toBe(true)
     })
   })
 
