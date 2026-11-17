@@ -176,12 +176,15 @@ test.describe('Package 1b-4: Death & Respawn, Seeded Loot & Critter Flee AI', ()
       );
     }, null, { timeout: 15000 });
 
-    const playerPos = await page.evaluate(() => (window as any).__hv.player());
-
-    const drop = await page.evaluate(({ x, y }) => {
+    // The village entrance is walled in on the tiled map. Stand on an open
+    // tile and drop the gem a short walk to the right of the sprite origin.
+    // __hv.player() is the physics body, which does not match the collect point.
+    const drop = await page.evaluate(() => {
       const scene = (window as any).__scene;
       const hv = (window as any).__hv;
-      const enemy = scene.spawn('goblin', x + 180, y);
+      scene.player.setPosition(200, 200);
+      scene.player.body.reset(200, 200);
+      const enemy = scene.spawn('goblin', scene.player.x + 48, scene.player.y);
       hv.seed(1);
       enemy.takeDamage(500, performance.now());
       enemy.onAnimationComplete({ key: 'goblin_death_down' });
@@ -197,7 +200,7 @@ test.describe('Package 1b-4: Death & Respawn, Seeded Loot & Critter Flee AI', ()
             originY: pickup.originY,
           }
         : null;
-    }, { x: playerPos.x, y: playerPos.y });
+    });
 
     expect(drop).not.toBeNull();
     expect(drop?.id).toBe('emerald');
