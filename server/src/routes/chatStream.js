@@ -4,7 +4,7 @@ import { getNPC, NPC_IDS } from '../npcData.js';
 import * as memory from '../memory.js';
 import { chatCompletionStream } from '../groqClient.js';
 import { buildMessages, resolveNpcChatMaxTokens } from '../buildMessages.js';
-import { retrieveLoreWithShadow } from '../rag/store.js';
+import { loreTurnLogLines, retrieveLoreForTurn } from '../rag/store.js';
 import { getGroqApiKey } from '../config/secrets.js';
 import { SentenceSplitter } from '../tts/sentenceSplitter.js';
 import { createTurn, addSentence, finishTurn, abortTurn, getTurn } from '../tts/turnAudio.js';
@@ -232,21 +232,17 @@ router.post('/chat/stream', async (req, res, next) => {
       retrievalQuery = `${message}\n\nHints: ${ragHints}`.trim();
     }
 
-    let loreChunks = [];
+    // Same RAG_RERANK / COS_GATE contract as chat.js (default off = cosine).
+    let loreSystem = null;
     try {
-      const { loreChunks: retrievedLore, shadowMetrics } = await retrieveLoreWithShadow(retrievalQuery, {
+      const turn = await retrieveLoreForTurn(retrievalQuery, {
         candidateK: 10,
         topK: 3,
       });
-      loreChunks = retrievedLore;
-      const maxCosStr = shadowMetrics?.maxCos !== undefined ? shadowMetrics.maxCos.toFixed(4) : '0.0000';
-      const rerankTopScoreStr = (shadowMetrics?.rerankTopScore !== null && shadowMetrics?.rerankTopScore !== undefined)
-        ? shadowMetrics.rerankTopScore.toFixed(4)
-        : 'none';
-      const scoresStr = Array.isArray(shadowMetrics?.rerankScores)
-        ? `[${shadowMetrics.rerankScores.map(s => Number(s).toFixed(4)).join(', ')}]`
-        : '[]';
-      console.info(`[RAG Shadow] maxCos: ${maxCosStr}, rerankTopScore: ${rerankTopScoreStr}, rerankScores: ${scoresStr}`);
+      if (turn.loreSystem) {
+        loreSystem = { role: 'system', content: turn.loreSystem };
+      }
+      for (const line of loreTurnLogLines(turn)) console.info(line);
     } catch (e) {
       console.warn('[RAG] retrieval failed, continuing without lore:', e.message);
     }
@@ -254,15 +250,6 @@ router.post('/chat/stream', async (req, res, next) => {
     if (isAborted || isTimedOut) {
       return;
     }
-
-    const loreSystem = loreChunks.length
-      ? {
-          role: 'system',
-          content:
-            `Lore context (for grounding; do not contradict, and don't quote verbatim unless asked):\n\n` +
-            loreChunks.map((t, i) => `— [${i+1}] ${t}`).join('\n\n')
-        }
-      : null;
 
     const promptMessages = buildMessages({
       systemPrompt,
