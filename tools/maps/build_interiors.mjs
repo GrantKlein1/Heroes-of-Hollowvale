@@ -529,7 +529,7 @@ function buildMarketMap() {
         { name: 'kind', type: 'string', value: 'exit' },
         { name: 'type', type: 'string', value: 'door' },
         { name: 'targetMap', type: 'string', value: 'brackenford.tmj' },
-        { name: 'targetSpawn', type: 'string', value: 'door_market' },
+        { name: 'targetSpawn', type: 'string', value: 'spawn_from_market' },
         { name: 'prompt', type: 'string', value: 'Press E to exit to Brackenford' },
       ],
     },
