@@ -1,0 +1,55 @@
+{
+ "actor": "thief",
+ "clip": "hold_idle",
+ "cell": [
+  64,
+  96
+ ],
+ "origin": {
+  "x": 0.5,
+  "y": 0.9271
+ },
+ "pivotPx": [
+  32.0,
+  89.0016
+ ],
+ "hand": "hand.R",
+ "units": "px from feet origin, +y down",
+ "rotation": "degrees, 0=item upright (cork/stem up), positive clockwise on screen",
+ "layer": "front|behind, relative to the body sprite. Up is forced front so the item reads (true depth hides it behind the body).",
+ "format": "{x, y, rotation, layer}",
+ "layerLock": {
+  "down": "front",
+  "left": "behind",
+  "right": "front",
+  "up": "front"
+ },
+ "frames": {
+  "thief_hold_idle_down_0": {
+   "x": -4.17,
+   "y": -37.42,
+   "rotation": -0.0,
+   "layer": "front"
+  },
+  "thief_hold_idle_left_0": {
+   "x": -15.48,
+   "y": -41.51,
+   "rotation": 0.0,
+   "layer": "behind"
+  },
+  "thief_hold_idle_right_0": {
+   "x": 15.48,
+   "y": -39.78,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "thief_hold_idle_up_0": {
+   "x": 4.17,
+   "y": -43.86,
+   "rotation": 0.0,
+   "layer": "front"
+  }
+ },
+ "fps": 1,
+ "framesCount": 1
+}

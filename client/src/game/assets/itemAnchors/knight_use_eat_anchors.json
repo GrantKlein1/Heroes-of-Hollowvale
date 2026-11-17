@@ -1,0 +1,416 @@
+{
+ "actor": "knight",
+ "clip": "use_eat",
+ "cell": [
+  64,
+  96
+ ],
+ "origin": {
+  "x": 0.5,
+  "y": 0.9271
+ },
+ "pivotPx": [
+  32.0,
+  89.0016
+ ],
+ "hand": "hand.R",
+ "units": "px from feet origin, +y down",
+ "rotation": "degrees, 0=item upright (cork/stem up), positive clockwise on screen",
+ "layer": "front|behind; up is forced front so the item reads",
+ "format": "{x, y, rotation, layer}",
+ "layerLock": {
+  "down": "front",
+  "left": "behind",
+  "right": "front",
+  "up": "front"
+ },
+ "frames": {
+  "knight_use_eat_down_0": {
+   "x": -4.35,
+   "y": -40.76,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "knight_use_eat_down_1": {
+   "x": -4.22,
+   "y": -41.91,
+   "rotation": -2.82,
+   "layer": "front"
+  },
+  "knight_use_eat_down_2": {
+   "x": -4.13,
+   "y": -44.79,
+   "rotation": -9.71,
+   "layer": "front"
+  },
+  "knight_use_eat_down_3": {
+   "x": -4.43,
+   "y": -48.38,
+   "rotation": -18.52,
+   "layer": "front"
+  },
+  "knight_use_eat_down_4": {
+   "x": -5.03,
+   "y": -51.42,
+   "rotation": -26.6,
+   "layer": "front"
+  },
+  "knight_use_eat_down_5": {
+   "x": -5.37,
+   "y": -52.68,
+   "rotation": -30.21,
+   "layer": "front"
+  },
+  "knight_use_eat_down_6": {
+   "x": -5.37,
+   "y": -52.68,
+   "rotation": -29.43,
+   "layer": "front"
+  },
+  "knight_use_eat_down_7": {
+   "x": -5.37,
+   "y": -52.68,
+   "rotation": -27.53,
+   "layer": "front"
+  },
+  "knight_use_eat_down_8": {
+   "x": -5.37,
+   "y": -52.68,
+   "rotation": -25.25,
+   "layer": "front"
+  },
+  "knight_use_eat_down_9": {
+   "x": -5.37,
+   "y": -52.68,
+   "rotation": -23.35,
+   "layer": "front"
+  },
+  "knight_use_eat_down_10": {
+   "x": -5.37,
+   "y": -52.68,
+   "rotation": -22.56,
+   "layer": "front"
+  },
+  "knight_use_eat_down_11": {
+   "x": -5.37,
+   "y": -52.68,
+   "rotation": -22.52,
+   "layer": "front"
+  },
+  "knight_use_eat_down_12": {
+   "x": -5.37,
+   "y": -52.68,
+   "rotation": -26.4,
+   "layer": "front"
+  },
+  "knight_use_eat_down_13": {
+   "x": -4.62,
+   "y": -49.52,
+   "rotation": -18.65,
+   "layer": "front"
+  },
+  "knight_use_eat_down_14": {
+   "x": -4.12,
+   "y": -43.69,
+   "rotation": -6.21,
+   "layer": "front"
+  },
+  "knight_use_eat_down_15": {
+   "x": -4.35,
+   "y": -40.76,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "knight_use_eat_left_0": {
+   "x": -13.7,
+   "y": -44.52,
+   "rotation": 0.0,
+   "layer": "behind"
+  },
+  "knight_use_eat_left_1": {
+   "x": -13.92,
+   "y": -45.68,
+   "rotation": 3.26,
+   "layer": "behind"
+  },
+  "knight_use_eat_left_2": {
+   "x": -14.14,
+   "y": -48.59,
+   "rotation": 10.5,
+   "layer": "behind"
+  },
+  "knight_use_eat_left_3": {
+   "x": -13.82,
+   "y": -52.18,
+   "rotation": 18.39,
+   "layer": "behind"
+  },
+  "knight_use_eat_left_4": {
+   "x": -13.07,
+   "y": -55.19,
+   "rotation": 24.61,
+   "layer": "behind"
+  },
+  "knight_use_eat_left_5": {
+   "x": -12.63,
+   "y": -56.42,
+   "rotation": 27.17,
+   "layer": "behind"
+  },
+  "knight_use_eat_left_6": {
+   "x": -12.63,
+   "y": -56.42,
+   "rotation": 27.49,
+   "layer": "behind"
+  },
+  "knight_use_eat_left_7": {
+   "x": -12.63,
+   "y": -56.42,
+   "rotation": 28.24,
+   "layer": "behind"
+  },
+  "knight_use_eat_left_8": {
+   "x": -12.63,
+   "y": -56.42,
+   "rotation": 29.12,
+   "layer": "behind"
+  },
+  "knight_use_eat_left_9": {
+   "x": -12.63,
+   "y": -56.42,
+   "rotation": 29.9,
+   "layer": "behind"
+  },
+  "knight_use_eat_left_10": {
+   "x": -12.63,
+   "y": -56.42,
+   "rotation": 30.25,
+   "layer": "behind"
+  },
+  "knight_use_eat_left_11": {
+   "x": -12.63,
+   "y": -56.42,
+   "rotation": 30.16,
+   "layer": "behind"
+  },
+  "knight_use_eat_left_12": {
+   "x": -12.63,
+   "y": -56.42,
+   "rotation": 28.69,
+   "layer": "behind"
+  },
+  "knight_use_eat_left_13": {
+   "x": -13.59,
+   "y": -53.31,
+   "rotation": 21.88,
+   "layer": "behind"
+  },
+  "knight_use_eat_left_14": {
+   "x": -14.11,
+   "y": -47.48,
+   "rotation": 8.45,
+   "layer": "behind"
+  },
+  "knight_use_eat_left_15": {
+   "x": -13.7,
+   "y": -44.52,
+   "rotation": 0.0,
+   "layer": "behind"
+  },
+  "knight_use_eat_right_0": {
+   "x": 13.7,
+   "y": -42.71,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "knight_use_eat_right_1": {
+   "x": 13.92,
+   "y": -43.93,
+   "rotation": -3.33,
+   "layer": "front"
+  },
+  "knight_use_eat_right_2": {
+   "x": 14.14,
+   "y": -46.87,
+   "rotation": -11.29,
+   "layer": "front"
+  },
+  "knight_use_eat_right_3": {
+   "x": 13.82,
+   "y": -50.33,
+   "rotation": -21.12,
+   "layer": "front"
+  },
+  "knight_use_eat_right_4": {
+   "x": 13.07,
+   "y": -53.09,
+   "rotation": -30.0,
+   "layer": "front"
+  },
+  "knight_use_eat_right_5": {
+   "x": 12.63,
+   "y": -54.19,
+   "rotation": -34.0,
+   "layer": "front"
+  },
+  "knight_use_eat_right_6": {
+   "x": 12.63,
+   "y": -54.19,
+   "rotation": -34.14,
+   "layer": "front"
+  },
+  "knight_use_eat_right_7": {
+   "x": 12.63,
+   "y": -54.19,
+   "rotation": -34.46,
+   "layer": "front"
+  },
+  "knight_use_eat_right_8": {
+   "x": 12.63,
+   "y": -54.19,
+   "rotation": -34.83,
+   "layer": "front"
+  },
+  "knight_use_eat_right_9": {
+   "x": 12.63,
+   "y": -54.19,
+   "rotation": -35.19,
+   "layer": "front"
+  },
+  "knight_use_eat_right_10": {
+   "x": 12.63,
+   "y": -54.19,
+   "rotation": -35.37,
+   "layer": "front"
+  },
+  "knight_use_eat_right_11": {
+   "x": 12.63,
+   "y": -54.19,
+   "rotation": -35.25,
+   "layer": "front"
+  },
+  "knight_use_eat_right_12": {
+   "x": 12.63,
+   "y": -54.19,
+   "rotation": -34.65,
+   "layer": "front"
+  },
+  "knight_use_eat_right_13": {
+   "x": 13.59,
+   "y": -51.39,
+   "rotation": -25.08,
+   "layer": "front"
+  },
+  "knight_use_eat_right_14": {
+   "x": 14.11,
+   "y": -45.77,
+   "rotation": -8.85,
+   "layer": "front"
+  },
+  "knight_use_eat_right_15": {
+   "x": 13.7,
+   "y": -42.71,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "knight_use_eat_up_0": {
+   "x": 4.35,
+   "y": -46.46,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "knight_use_eat_up_1": {
+   "x": 4.22,
+   "y": -47.7,
+   "rotation": 2.89,
+   "layer": "front"
+  },
+  "knight_use_eat_up_2": {
+   "x": 4.13,
+   "y": -50.67,
+   "rotation": 10.51,
+   "layer": "front"
+  },
+  "knight_use_eat_up_3": {
+   "x": 4.43,
+   "y": -54.13,
+   "rotation": 21.24,
+   "layer": "front"
+  },
+  "knight_use_eat_up_4": {
+   "x": 5.03,
+   "y": -56.86,
+   "rotation": 31.79,
+   "layer": "front"
+  },
+  "knight_use_eat_up_5": {
+   "x": 5.37,
+   "y": -57.93,
+   "rotation": 36.61,
+   "layer": "front"
+  },
+  "knight_use_eat_up_6": {
+   "x": 5.37,
+   "y": -57.93,
+   "rotation": 35.81,
+   "layer": "front"
+  },
+  "knight_use_eat_up_7": {
+   "x": 5.37,
+   "y": -57.93,
+   "rotation": 33.85,
+   "layer": "front"
+  },
+  "knight_use_eat_up_8": {
+   "x": 5.37,
+   "y": -57.93,
+   "rotation": 31.42,
+   "layer": "front"
+  },
+  "knight_use_eat_up_9": {
+   "x": 5.37,
+   "y": -57.93,
+   "rotation": 29.36,
+   "layer": "front"
+  },
+  "knight_use_eat_up_10": {
+   "x": 5.37,
+   "y": -57.93,
+   "rotation": 28.5,
+   "layer": "front"
+  },
+  "knight_use_eat_up_11": {
+   "x": 5.37,
+   "y": -57.93,
+   "rotation": 28.43,
+   "layer": "front"
+  },
+  "knight_use_eat_up_12": {
+   "x": 5.37,
+   "y": -57.93,
+   "rotation": 32.65,
+   "layer": "front"
+  },
+  "knight_use_eat_up_13": {
+   "x": 4.62,
+   "y": -55.17,
+   "rotation": 22.01,
+   "layer": "front"
+  },
+  "knight_use_eat_up_14": {
+   "x": 4.12,
+   "y": -49.56,
+   "rotation": 6.62,
+   "layer": "front"
+  },
+  "knight_use_eat_up_15": {
+   "x": 4.35,
+   "y": -46.46,
+   "rotation": 0.0,
+   "layer": "front"
+  }
+ },
+ "fps": 16,
+ "framesCount": 16,
+ "effectFrame": 10
+}

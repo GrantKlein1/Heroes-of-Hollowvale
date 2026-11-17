@@ -1,0 +1,165 @@
+{
+ "frames": {
+  "mage_hold_idle_down_0": {
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "mage_hold_idle_left_0": {
+   "frame": {
+    "x": 0,
+    "y": 96,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "mage_hold_idle_right_0": {
+   "frame": {
+    "x": 0,
+    "y": 192,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "mage_hold_idle_up_0": {
+   "frame": {
+    "x": 0,
+    "y": 288,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  }
+ },
+ "meta": {
+  "app": "items_b9_full/scripts/pack_clips.py",
+  "version": "1.0",
+  "image": "mage_hold_idle.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 64,
+   "h": 384
+  },
+  "scale": "1",
+  "pxPerUnit": 36.923,
+  "origin": {
+   "x": 0.5,
+   "y": 0.9271
+  },
+  "propCameraDegFromHorizontal": 12,
+  "rows": [
+   "down",
+   "left",
+   "right",
+   "up"
+  ],
+  "note": "left and right rendered separately (not mirrored). Main-hand weapon hidden; item is a separate in-hand sprite composited via hand anchors.",
+  "footprint": {
+   "x": -14,
+   "y": -4,
+   "w": 28,
+   "h": 8,
+   "shape": "ellipse",
+   "note": "collision footprint centred on feet"
+  },
+  "hurtbox": {
+   "x": -17,
+   "y": -36,
+   "w": 34,
+   "h": 36,
+   "note": "body hurtbox, bottom on feet"
+  },
+  "hand": "arm.R",
+  "anchorsFile": "mage_hold_idle_anchors.json",
+  "anims": {
+   "hold_idle": {
+    "frames": 1,
+    "fps": 1,
+    "loop": true,
+    "playback": "loop",
+    "durationMs": 1000,
+    "cell": [
+     64,
+     96
+    ],
+    "origin": {
+     "x": 0.5,
+     "y": 0.9271
+    },
+    "directions": [
+     "down",
+     "left",
+     "right",
+     "up"
+    ],
+    "frameNames": "mage_hold_idle_<dir>_<i>"
+   }
+  }
+ }
+}

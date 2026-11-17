@@ -1,0 +1,416 @@
+{
+ "actor": "mage",
+ "clip": "use_drink",
+ "cell": [
+  64,
+  96
+ ],
+ "origin": {
+  "x": 0.5,
+  "y": 0.9271
+ },
+ "pivotPx": [
+  32.0,
+  89.0016
+ ],
+ "hand": "arm.R",
+ "units": "px from feet origin, +y down",
+ "rotation": "degrees, 0=item upright (cork/stem up), positive clockwise on screen",
+ "layer": "front|behind; up is forced front so the item reads",
+ "format": "{x, y, rotation, layer}",
+ "layerLock": {
+  "down": "front",
+  "left": "front",
+  "right": "front",
+  "up": "front"
+ },
+ "frames": {
+  "mage_use_drink_down_0": {
+   "x": -4.96,
+   "y": -37.69,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "mage_use_drink_down_1": {
+   "x": -5.0,
+   "y": -38.45,
+   "rotation": 1.62,
+   "layer": "front"
+  },
+  "mage_use_drink_down_2": {
+   "x": -4.93,
+   "y": -40.47,
+   "rotation": 4.74,
+   "layer": "front"
+  },
+  "mage_use_drink_down_3": {
+   "x": -4.54,
+   "y": -43.22,
+   "rotation": 7.16,
+   "layer": "front"
+  },
+  "mage_use_drink_down_4": {
+   "x": -4.02,
+   "y": -45.7,
+   "rotation": 8.14,
+   "layer": "front"
+  },
+  "mage_use_drink_down_5": {
+   "x": -3.76,
+   "y": -46.77,
+   "rotation": 8.25,
+   "layer": "front"
+  },
+  "mage_use_drink_down_6": {
+   "x": -3.76,
+   "y": -46.77,
+   "rotation": 11.33,
+   "layer": "front"
+  },
+  "mage_use_drink_down_7": {
+   "x": -3.76,
+   "y": -46.77,
+   "rotation": 22.34,
+   "layer": "front"
+  },
+  "mage_use_drink_down_8": {
+   "x": -3.76,
+   "y": -46.77,
+   "rotation": 57.75,
+   "layer": "front"
+  },
+  "mage_use_drink_down_9": {
+   "x": -3.76,
+   "y": -46.77,
+   "rotation": 120.92,
+   "layer": "front"
+  },
+  "mage_use_drink_down_10": {
+   "x": -3.76,
+   "y": -46.77,
+   "rotation": 138.13,
+   "layer": "front"
+  },
+  "mage_use_drink_down_11": {
+   "x": -3.76,
+   "y": -46.77,
+   "rotation": 134.73,
+   "layer": "front"
+  },
+  "mage_use_drink_down_12": {
+   "x": -3.76,
+   "y": -46.77,
+   "rotation": 106.22,
+   "layer": "front"
+  },
+  "mage_use_drink_down_13": {
+   "x": -4.36,
+   "y": -44.14,
+   "rotation": 34.02,
+   "layer": "front"
+  },
+  "mage_use_drink_down_14": {
+   "x": -4.99,
+   "y": -39.68,
+   "rotation": 8.59,
+   "layer": "front"
+  },
+  "mage_use_drink_down_15": {
+   "x": -4.96,
+   "y": -37.69,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "mage_use_drink_left_0": {
+   "x": -14.04,
+   "y": -41.64,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "mage_use_drink_left_1": {
+   "x": -14.03,
+   "y": -42.41,
+   "rotation": 4.41,
+   "layer": "front"
+  },
+  "mage_use_drink_left_2": {
+   "x": -13.81,
+   "y": -44.37,
+   "rotation": 15.64,
+   "layer": "front"
+  },
+  "mage_use_drink_left_3": {
+   "x": -13.06,
+   "y": -46.88,
+   "rotation": 29.99,
+   "layer": "front"
+  },
+  "mage_use_drink_left_4": {
+   "x": -11.94,
+   "y": -49.02,
+   "rotation": 42.32,
+   "layer": "front"
+  },
+  "mage_use_drink_left_5": {
+   "x": -11.32,
+   "y": -49.91,
+   "rotation": 47.44,
+   "layer": "front"
+  },
+  "mage_use_drink_left_6": {
+   "x": -11.32,
+   "y": -49.91,
+   "rotation": 55.19,
+   "layer": "front"
+  },
+  "mage_use_drink_left_7": {
+   "x": -11.32,
+   "y": -49.91,
+   "rotation": 73.74,
+   "layer": "front"
+  },
+  "mage_use_drink_left_8": {
+   "x": -11.32,
+   "y": -49.91,
+   "rotation": 95.66,
+   "layer": "front"
+  },
+  "mage_use_drink_left_9": {
+   "x": -11.32,
+   "y": -49.91,
+   "rotation": 113.61,
+   "layer": "front"
+  },
+  "mage_use_drink_left_10": {
+   "x": -11.32,
+   "y": -49.91,
+   "rotation": 121.01,
+   "layer": "front"
+  },
+  "mage_use_drink_left_11": {
+   "x": -11.32,
+   "y": -49.91,
+   "rotation": 118.99,
+   "layer": "front"
+  },
+  "mage_use_drink_left_12": {
+   "x": -11.32,
+   "y": -49.91,
+   "rotation": 109.14,
+   "layer": "front"
+  },
+  "mage_use_drink_left_13": {
+   "x": -12.7,
+   "y": -47.68,
+   "rotation": 81.29,
+   "layer": "front"
+  },
+  "mage_use_drink_left_14": {
+   "x": -13.93,
+   "y": -43.62,
+   "rotation": 27.18,
+   "layer": "front"
+  },
+  "mage_use_drink_left_15": {
+   "x": -14.04,
+   "y": -41.64,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "mage_use_drink_right_0": {
+   "x": 14.04,
+   "y": -39.58,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "mage_use_drink_right_1": {
+   "x": 14.03,
+   "y": -40.33,
+   "rotation": -4.36,
+   "layer": "front"
+  },
+  "mage_use_drink_right_2": {
+   "x": 13.81,
+   "y": -42.32,
+   "rotation": -15.1,
+   "layer": "front"
+  },
+  "mage_use_drink_right_3": {
+   "x": 13.06,
+   "y": -44.99,
+   "rotation": -28.57,
+   "layer": "front"
+  },
+  "mage_use_drink_right_4": {
+   "x": 11.94,
+   "y": -47.35,
+   "rotation": -40.32,
+   "layer": "front"
+  },
+  "mage_use_drink_right_5": {
+   "x": 11.32,
+   "y": -48.34,
+   "rotation": -45.34,
+   "layer": "front"
+  },
+  "mage_use_drink_right_6": {
+   "x": 11.32,
+   "y": -48.34,
+   "rotation": -52.27,
+   "layer": "front"
+  },
+  "mage_use_drink_right_7": {
+   "x": 11.32,
+   "y": -48.34,
+   "rotation": -68.94,
+   "layer": "front"
+  },
+  "mage_use_drink_right_8": {
+   "x": 11.32,
+   "y": -48.34,
+   "rotation": -89.56,
+   "layer": "front"
+  },
+  "mage_use_drink_right_9": {
+   "x": 11.32,
+   "y": -48.34,
+   "rotation": -107.69,
+   "layer": "front"
+  },
+  "mage_use_drink_right_10": {
+   "x": 11.32,
+   "y": -48.34,
+   "rotation": -115.53,
+   "layer": "front"
+  },
+  "mage_use_drink_right_11": {
+   "x": 11.32,
+   "y": -48.34,
+   "rotation": -113.46,
+   "layer": "front"
+  },
+  "mage_use_drink_right_12": {
+   "x": 11.32,
+   "y": -48.34,
+   "rotation": -103.01,
+   "layer": "front"
+  },
+  "mage_use_drink_right_13": {
+   "x": 12.7,
+   "y": -45.87,
+   "rotation": -74.83,
+   "layer": "front"
+  },
+  "mage_use_drink_right_14": {
+   "x": 13.93,
+   "y": -41.54,
+   "rotation": -25.6,
+   "layer": "front"
+  },
+  "mage_use_drink_right_15": {
+   "x": 14.04,
+   "y": -39.58,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "mage_use_drink_up_0": {
+   "x": 4.96,
+   "y": -43.53,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "mage_use_drink_up_1": {
+   "x": 5.0,
+   "y": -44.28,
+   "rotation": -1.68,
+   "layer": "front"
+  },
+  "mage_use_drink_up_2": {
+   "x": 4.93,
+   "y": -46.22,
+   "rotation": -5.31,
+   "layer": "front"
+  },
+  "mage_use_drink_up_3": {
+   "x": 4.54,
+   "y": -48.65,
+   "rotation": -9.03,
+   "layer": "front"
+  },
+  "mage_use_drink_up_4": {
+   "x": 4.02,
+   "y": -50.67,
+   "rotation": -11.7,
+   "layer": "front"
+  },
+  "mage_use_drink_up_5": {
+   "x": 3.76,
+   "y": -51.48,
+   "rotation": -12.73,
+   "layer": "front"
+  },
+  "mage_use_drink_up_6": {
+   "x": 3.76,
+   "y": -51.48,
+   "rotation": -19.72,
+   "layer": "front"
+  },
+  "mage_use_drink_up_7": {
+   "x": 3.76,
+   "y": -51.48,
+   "rotation": -59.84,
+   "layer": "front"
+  },
+  "mage_use_drink_up_8": {
+   "x": 3.76,
+   "y": -51.48,
+   "rotation": -134.62,
+   "layer": "front"
+  },
+  "mage_use_drink_up_9": {
+   "x": 3.76,
+   "y": -51.48,
+   "rotation": -154.13,
+   "layer": "front"
+  },
+  "mage_use_drink_up_10": {
+   "x": 3.76,
+   "y": -51.48,
+   "rotation": -158.32,
+   "layer": "front"
+  },
+  "mage_use_drink_up_11": {
+   "x": 3.76,
+   "y": -51.48,
+   "rotation": -157.63,
+   "layer": "front"
+  },
+  "mage_use_drink_up_12": {
+   "x": 3.76,
+   "y": -51.48,
+   "rotation": -150.7,
+   "layer": "front"
+  },
+  "mage_use_drink_up_13": {
+   "x": 4.36,
+   "y": -49.42,
+   "rotation": -89.15,
+   "layer": "front"
+  },
+  "mage_use_drink_up_14": {
+   "x": 4.99,
+   "y": -45.48,
+   "rotation": -10.53,
+   "layer": "front"
+  },
+  "mage_use_drink_up_15": {
+   "x": 4.96,
+   "y": -43.53,
+   "rotation": 0.0,
+   "layer": "front"
+  }
+ },
+ "fps": 16,
+ "framesCount": 16,
+ "effectFrame": 10
+}

@@ -1,0 +1,416 @@
+{
+ "actor": "dwarf",
+ "clip": "use_drink",
+ "cell": [
+  64,
+  80
+ ],
+ "origin": {
+  "x": 0.5,
+  "y": 0.9125
+ },
+ "pivotPx": [
+  32.0,
+  73.0
+ ],
+ "hand": "hand.R",
+ "units": "px from feet origin, +y down",
+ "rotation": "degrees, 0=item upright (cork/stem up), positive clockwise on screen",
+ "layer": "front|behind, relative to the body sprite. Up is forced front so the item reads (true depth hides it behind the body).",
+ "format": "{x, y, rotation, layer}",
+ "layerLock": {
+  "down": "front",
+  "left": "behind",
+  "right": "front",
+  "up": "front"
+ },
+ "frames": {
+  "dwarf_use_drink_down_0": {
+   "x": -6.15,
+   "y": -30.79,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_use_drink_down_1": {
+   "x": -6.28,
+   "y": -31.27,
+   "rotation": -0.71,
+   "layer": "front"
+  },
+  "dwarf_use_drink_down_2": {
+   "x": -6.66,
+   "y": -32.45,
+   "rotation": -2.18,
+   "layer": "front"
+  },
+  "dwarf_use_drink_down_3": {
+   "x": -7.2,
+   "y": -33.92,
+   "rotation": -3.56,
+   "layer": "front"
+  },
+  "dwarf_use_drink_down_4": {
+   "x": -7.72,
+   "y": -35.19,
+   "rotation": -4.47,
+   "layer": "front"
+  },
+  "dwarf_use_drink_down_5": {
+   "x": -7.95,
+   "y": -35.72,
+   "rotation": -4.79,
+   "layer": "front"
+  },
+  "dwarf_use_drink_down_6": {
+   "x": -7.95,
+   "y": -35.72,
+   "rotation": 1.32,
+   "layer": "front"
+  },
+  "dwarf_use_drink_down_7": {
+   "x": -7.95,
+   "y": -35.72,
+   "rotation": 17.26,
+   "layer": "front"
+  },
+  "dwarf_use_drink_down_8": {
+   "x": -7.95,
+   "y": -35.72,
+   "rotation": 40.12,
+   "layer": "front"
+  },
+  "dwarf_use_drink_down_9": {
+   "x": -7.95,
+   "y": -35.72,
+   "rotation": 62.78,
+   "layer": "front"
+  },
+  "dwarf_use_drink_down_10": {
+   "x": -7.95,
+   "y": -35.72,
+   "rotation": 72.82,
+   "layer": "front"
+  },
+  "dwarf_use_drink_down_11": {
+   "x": -7.95,
+   "y": -35.72,
+   "rotation": 70.13,
+   "layer": "front"
+  },
+  "dwarf_use_drink_down_12": {
+   "x": -7.95,
+   "y": -35.72,
+   "rotation": 56.86,
+   "layer": "front"
+  },
+  "dwarf_use_drink_down_13": {
+   "x": -7.39,
+   "y": -34.39,
+   "rotation": 35.22,
+   "layer": "front"
+  },
+  "dwarf_use_drink_down_14": {
+   "x": -6.51,
+   "y": -32.0,
+   "rotation": 9.53,
+   "layer": "front"
+  },
+  "dwarf_use_drink_down_15": {
+   "x": -6.15,
+   "y": -30.79,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_use_drink_left_0": {
+   "x": -10.23,
+   "y": -34.2,
+   "rotation": -0.0,
+   "layer": "behind"
+  },
+  "dwarf_use_drink_left_1": {
+   "x": -10.32,
+   "y": -34.72,
+   "rotation": 2.63,
+   "layer": "behind"
+  },
+  "dwarf_use_drink_left_2": {
+   "x": -10.46,
+   "y": -36.01,
+   "rotation": 8.89,
+   "layer": "behind"
+  },
+  "dwarf_use_drink_left_3": {
+   "x": -10.45,
+   "y": -37.59,
+   "rotation": 16.38,
+   "layer": "behind"
+  },
+  "dwarf_use_drink_left_4": {
+   "x": -10.29,
+   "y": -38.93,
+   "rotation": 22.72,
+   "layer": "behind"
+  },
+  "dwarf_use_drink_left_5": {
+   "x": -10.18,
+   "y": -39.49,
+   "rotation": 25.4,
+   "layer": "behind"
+  },
+  "dwarf_use_drink_left_6": {
+   "x": -10.18,
+   "y": -39.49,
+   "rotation": 30.61,
+   "layer": "behind"
+  },
+  "dwarf_use_drink_left_7": {
+   "x": -10.18,
+   "y": -39.49,
+   "rotation": 44.18,
+   "layer": "behind"
+  },
+  "dwarf_use_drink_left_8": {
+   "x": -10.18,
+   "y": -39.49,
+   "rotation": 64.19,
+   "layer": "behind"
+  },
+  "dwarf_use_drink_left_9": {
+   "x": -10.18,
+   "y": -39.49,
+   "rotation": 85.71,
+   "layer": "behind"
+  },
+  "dwarf_use_drink_left_10": {
+   "x": -10.18,
+   "y": -39.49,
+   "rotation": 95.98,
+   "layer": "behind"
+  },
+  "dwarf_use_drink_left_11": {
+   "x": -10.18,
+   "y": -39.49,
+   "rotation": 93.32,
+   "layer": "behind"
+  },
+  "dwarf_use_drink_left_12": {
+   "x": -10.18,
+   "y": -39.49,
+   "rotation": 79.74,
+   "layer": "behind"
+  },
+  "dwarf_use_drink_left_13": {
+   "x": -10.41,
+   "y": -38.09,
+   "rotation": 55.69,
+   "layer": "behind"
+  },
+  "dwarf_use_drink_left_14": {
+   "x": -10.43,
+   "y": -35.52,
+   "rotation": 18.35,
+   "layer": "behind"
+  },
+  "dwarf_use_drink_left_15": {
+   "x": -10.23,
+   "y": -34.2,
+   "rotation": -0.0,
+   "layer": "behind"
+  },
+  "dwarf_use_drink_right_0": {
+   "x": 10.23,
+   "y": -31.64,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_use_drink_right_1": {
+   "x": 10.32,
+   "y": -32.11,
+   "rotation": -2.64,
+   "layer": "front"
+  },
+  "dwarf_use_drink_right_2": {
+   "x": 10.46,
+   "y": -33.24,
+   "rotation": -9.03,
+   "layer": "front"
+  },
+  "dwarf_use_drink_right_3": {
+   "x": 10.45,
+   "y": -34.59,
+   "rotation": -16.82,
+   "layer": "front"
+  },
+  "dwarf_use_drink_right_4": {
+   "x": 10.29,
+   "y": -35.72,
+   "rotation": -23.45,
+   "layer": "front"
+  },
+  "dwarf_use_drink_right_5": {
+   "x": 10.18,
+   "y": -36.19,
+   "rotation": -26.26,
+   "layer": "front"
+  },
+  "dwarf_use_drink_right_6": {
+   "x": 10.18,
+   "y": -36.19,
+   "rotation": -30.35,
+   "layer": "front"
+  },
+  "dwarf_use_drink_right_7": {
+   "x": 10.18,
+   "y": -36.19,
+   "rotation": -39.81,
+   "layer": "front"
+  },
+  "dwarf_use_drink_right_8": {
+   "x": 10.18,
+   "y": -36.19,
+   "rotation": -52.14,
+   "layer": "front"
+  },
+  "dwarf_use_drink_right_9": {
+   "x": 10.18,
+   "y": -36.19,
+   "rotation": -65.35,
+   "layer": "front"
+  },
+  "dwarf_use_drink_right_10": {
+   "x": 10.18,
+   "y": -36.19,
+   "rotation": -72.33,
+   "layer": "front"
+  },
+  "dwarf_use_drink_right_11": {
+   "x": 10.18,
+   "y": -36.19,
+   "rotation": -70.8,
+   "layer": "front"
+  },
+  "dwarf_use_drink_right_12": {
+   "x": 10.18,
+   "y": -36.19,
+   "rotation": -61.43,
+   "layer": "front"
+  },
+  "dwarf_use_drink_right_13": {
+   "x": 10.41,
+   "y": -35.02,
+   "rotation": -45.33,
+   "layer": "front"
+  },
+  "dwarf_use_drink_right_14": {
+   "x": 10.43,
+   "y": -32.81,
+   "rotation": -17.11,
+   "layer": "front"
+  },
+  "dwarf_use_drink_right_15": {
+   "x": 10.23,
+   "y": -31.64,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_use_drink_up_0": {
+   "x": 6.15,
+   "y": -35.04,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_use_drink_up_1": {
+   "x": 6.28,
+   "y": -35.56,
+   "rotation": 0.73,
+   "layer": "front"
+  },
+  "dwarf_use_drink_up_2": {
+   "x": 6.66,
+   "y": -36.8,
+   "rotation": 2.32,
+   "layer": "front"
+  },
+  "dwarf_use_drink_up_3": {
+   "x": 7.2,
+   "y": -38.27,
+   "rotation": 4.03,
+   "layer": "front"
+  },
+  "dwarf_use_drink_up_4": {
+   "x": 7.72,
+   "y": -39.47,
+   "rotation": 5.33,
+   "layer": "front"
+  },
+  "dwarf_use_drink_up_5": {
+   "x": 7.95,
+   "y": -39.96,
+   "rotation": 5.85,
+   "layer": "front"
+  },
+  "dwarf_use_drink_up_6": {
+   "x": 7.95,
+   "y": -39.96,
+   "rotation": -1.68,
+   "layer": "front"
+  },
+  "dwarf_use_drink_up_7": {
+   "x": 7.95,
+   "y": -39.96,
+   "rotation": -24.38,
+   "layer": "front"
+  },
+  "dwarf_use_drink_up_8": {
+   "x": 7.95,
+   "y": -39.96,
+   "rotation": -59.11,
+   "layer": "front"
+  },
+  "dwarf_use_drink_up_9": {
+   "x": 7.95,
+   "y": -39.96,
+   "rotation": -86.34,
+   "layer": "front"
+  },
+  "dwarf_use_drink_up_10": {
+   "x": 7.95,
+   "y": -39.96,
+   "rotation": -95.67,
+   "layer": "front"
+  },
+  "dwarf_use_drink_up_11": {
+   "x": 7.95,
+   "y": -39.96,
+   "rotation": -93.68,
+   "layer": "front"
+  },
+  "dwarf_use_drink_up_12": {
+   "x": 7.95,
+   "y": -39.96,
+   "rotation": -79.96,
+   "layer": "front"
+  },
+  "dwarf_use_drink_up_13": {
+   "x": 7.39,
+   "y": -38.72,
+   "rotation": -49.56,
+   "layer": "front"
+  },
+  "dwarf_use_drink_up_14": {
+   "x": 6.51,
+   "y": -36.34,
+   "rotation": -10.85,
+   "layer": "front"
+  },
+  "dwarf_use_drink_up_15": {
+   "x": 6.15,
+   "y": -35.04,
+   "rotation": 0.0,
+   "layer": "front"
+  }
+ },
+ "fps": 16,
+ "framesCount": 16,
+ "effectFrame": 10
+}
