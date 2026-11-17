@@ -1,0 +1,223 @@
+{
+ "actor": "dwarf",
+ "clip": "hold_run",
+ "cell": [
+  64,
+  80
+ ],
+ "origin": {
+  "x": 0.5,
+  "y": 0.9125
+ },
+ "pivotPx": [
+  32.0,
+  73.0
+ ],
+ "hand": "hand.R",
+ "units": "px from feet origin, +y down",
+ "rotation": "degrees, 0=item upright (pick head up), positive clockwise on screen",
+ "layer": "front|behind, relative to the body sprite. Up is forced front so the item reads.",
+ "format": "{x, y, rotation, layer}",
+ "layerLock": {
+  "down": "front",
+  "left": "behind",
+  "right": "front",
+  "up": "front"
+ },
+ "frames": {
+  "dwarf_hold_run_down_0": {
+   "x": -10.02,
+   "y": -24.67,
+   "rotation": -0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_down_1": {
+   "x": -10.17,
+   "y": -23.93,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_down_2": {
+   "x": -10.23,
+   "y": -25.81,
+   "rotation": -0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_down_3": {
+   "x": -10.17,
+   "y": -23.93,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_down_4": {
+   "x": -10.02,
+   "y": -24.67,
+   "rotation": -0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_down_5": {
+   "x": -9.85,
+   "y": -23.83,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_down_6": {
+   "x": -9.79,
+   "y": -25.67,
+   "rotation": -0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_down_7": {
+   "x": -9.85,
+   "y": -23.83,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_left_0": {
+   "x": -6.43,
+   "y": -28.09,
+   "rotation": -0.0,
+   "layer": "behind"
+  },
+  "dwarf_hold_run_left_1": {
+   "x": -6.18,
+   "y": -27.33,
+   "rotation": 0.0,
+   "layer": "behind"
+  },
+  "dwarf_hold_run_left_2": {
+   "x": -6.08,
+   "y": -29.2,
+   "rotation": 0.0,
+   "layer": "behind"
+  },
+  "dwarf_hold_run_left_3": {
+   "x": -6.18,
+   "y": -27.33,
+   "rotation": 0.0,
+   "layer": "behind"
+  },
+  "dwarf_hold_run_left_4": {
+   "x": -6.43,
+   "y": -28.09,
+   "rotation": -0.0,
+   "layer": "behind"
+  },
+  "dwarf_hold_run_left_5": {
+   "x": -6.68,
+   "y": -27.26,
+   "rotation": 0.0,
+   "layer": "behind"
+  },
+  "dwarf_hold_run_left_6": {
+   "x": -6.78,
+   "y": -29.11,
+   "rotation": 0.0,
+   "layer": "behind"
+  },
+  "dwarf_hold_run_left_7": {
+   "x": -6.68,
+   "y": -27.26,
+   "rotation": -0.0,
+   "layer": "behind"
+  },
+  "dwarf_hold_run_right_0": {
+   "x": 6.43,
+   "y": -23.93,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_right_1": {
+   "x": 6.18,
+   "y": -23.1,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_right_2": {
+   "x": 6.08,
+   "y": -24.95,
+   "rotation": -0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_right_3": {
+   "x": 6.18,
+   "y": -23.1,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_right_4": {
+   "x": 6.43,
+   "y": -23.93,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_right_5": {
+   "x": 6.68,
+   "y": -23.17,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_right_6": {
+   "x": 6.78,
+   "y": -25.04,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_right_7": {
+   "x": 6.68,
+   "y": -23.17,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_up_0": {
+   "x": 10.02,
+   "y": -27.35,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_up_1": {
+   "x": 10.17,
+   "y": -26.5,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_up_2": {
+   "x": 10.23,
+   "y": -28.34,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_up_3": {
+   "x": 10.17,
+   "y": -26.5,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_up_4": {
+   "x": 10.02,
+   "y": -27.35,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_up_5": {
+   "x": 9.85,
+   "y": -26.6,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_up_6": {
+   "x": 9.79,
+   "y": -28.49,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_run_up_7": {
+   "x": 9.85,
+   "y": -26.6,
+   "rotation": 0.0,
+   "layer": "front"
+  }
+ },
+ "fps": 14,
+ "framesCount": 8
+}

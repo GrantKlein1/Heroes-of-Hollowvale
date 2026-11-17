@@ -1,0 +1,172 @@
+{
+ "frames": {
+  "dwarf_hold_idle_down_0": {
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_hold_idle_left_0": {
+   "frame": {
+    "x": 0,
+    "y": 80,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_hold_idle_right_0": {
+   "frame": {
+    "x": 0,
+    "y": 160,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_hold_idle_up_0": {
+   "frame": {
+    "x": 0,
+    "y": 240,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  }
+ },
+ "meta": {
+  "app": "items_b10/scripts/dwarf_pack.py",
+  "version": "1.0",
+  "image": "dwarf_hold_idle.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 64,
+   "h": 320
+  },
+  "scale": "1",
+  "pxPerUnit": 36.923,
+  "origin": {
+   "x": 0.5,
+   "y": 0.9125
+  },
+  "propCameraDegFromHorizontal": 12,
+  "cell": {
+   "w": 64,
+   "h": 80
+  },
+  "pivotRowPx": 73.0,
+  "rows": [
+   "down",
+   "left",
+   "right",
+   "up"
+  ],
+  "note": "left and right rendered separately (not mirrored). Axe hidden; pickaxe is a separate in-hand sprite composited via hand anchors.",
+  "footprint": {
+   "x": -13,
+   "y": -4,
+   "w": 26,
+   "h": 8,
+   "shape": "ellipse",
+   "note": "collision footprint centred on feet"
+  },
+  "hurtbox": {
+   "x": -16,
+   "y": -29,
+   "w": 31,
+   "h": 29,
+   "note": "body hurtbox, bottom on feet"
+  },
+  "hand": "hand.R",
+  "anchorsFile": "dwarf_hold_idle_anchors.json",
+  "weapon": "axe hidden (Haft, Grip, Socket, AxeBlade, AxeEdge, BackSpike); pickaxe is a separate in-hand sprite in hand.R",
+  "anims": {
+   "hold_idle": {
+    "frames": 1,
+    "fps": 1,
+    "loop": true,
+    "playback": "loop",
+    "directions": [
+     "down",
+     "left",
+     "right",
+     "up"
+    ],
+    "frameNames": "dwarf_hold_idle_<dir>_<i>",
+    "durationMs": 1000,
+    "cell": [
+     64,
+     80
+    ],
+    "origin": [
+     0.5,
+     0.9125
+    ],
+    "note": "matches dwarf idle frame count/fps (1 @ 1). Loop while the pickaxe is held."
+   }
+  }
+ }
+}
