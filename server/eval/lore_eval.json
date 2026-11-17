@@ -1,0 +1,277 @@
+[
+  {
+    "id": "q01",
+    "question": "Was Hollowvale born as a land, or as a song in the dark?",
+    "relevant": ["chunk_4"]
+  },
+  {
+    "id": "q02",
+    "question": "Who hammered the mountains from molten rock, and what did his breath make?",
+    "relevant": ["chunk_5"]
+  },
+  {
+    "id": "q03",
+    "question": "Why did Veyrath take to the skies, and what did his roaring breath birth?",
+    "relevant": ["chunk_6"]
+  },
+  {
+    "id": "q04",
+    "question": "What rose from the ashes when the Three Flames turned on one another?",
+    "relevant": ["chunk_7"]
+  },
+  {
+    "id": "q05",
+    "question": "What is a Ley Flame, and what happened to the land where a dragon slept?",
+    "relevant": ["chunk_8"]
+  },
+  {
+    "id": "q06",
+    "question": "What secret did Aeltharion whisper to the smith, and what was the first metal that did not break to dragon flame?",
+    "relevant": ["chunk_9"]
+  },
+  {
+    "id": "q07",
+    "question": "Why did Aeltharion forge the Ley-Lines beneath the earth after the Flames quarreled?",
+    "relevant": ["chunk_10"]
+  },
+  {
+    "id": "q08",
+    "question": "What was the Silencing, and what opened in the heart of Hollowvale where the Three Flames once danced?",
+    "relevant": ["chunk_11"]
+  },
+  {
+    "id": "q09",
+    "question": "The keeper says he has poured ale for men who touched the ley-lines. Does he believe the Flames are gone?",
+    "relevant": ["chunk_12"]
+  },
+  {
+    "id": "q10",
+    "question": "What does the keeper of the Embered Flagon call the Age of Flame instead?",
+    "relevant": ["chunk_13"]
+  },
+  {
+    "id": "q11",
+    "question": "Who is lord of the Sky Pyre, and who is Zhyranda the Gilded Maw?",
+    "relevant": ["chunk_14"]
+  },
+  {
+    "id": "q12",
+    "question": "Who is Vaelra the Kindled, and what tribute did each dragon demand from mortals?",
+    "relevant": ["chunk_15"]
+  },
+  {
+    "id": "q13",
+    "question": "Where did the dwarves delve to survive dragon wrath, and where did the elves flee?",
+    "relevant": ["chunk_16"]
+  },
+  {
+    "id": "q14",
+    "question": "Who was Seran Blackforge, and what did Lira of the Emberwood strike down with a single arrow?",
+    "relevant": ["chunk_17"]
+  },
+  {
+    "id": "q15",
+    "question": "What name did Seran Blackforge give his sword before folk called it the Sword of Aeltharion, and in what year of the First Age was it finished?",
+    "relevant": ["chunk_18"]
+  },
+  {
+    "id": "q16",
+    "question": "What creed did the Order of the Shattered Flame swear when mortals rebelled against dragon tribute?",
+    "relevant": ["chunk_19"]
+  },
+  {
+    "id": "q17",
+    "question": "When Seran pierced Veyrath at Sky Pyre, what did the dragon's falling body create?",
+    "relevant": ["chunk_20"]
+  },
+  {
+    "id": "q18",
+    "question": "After Veyrath fell, what knowledge did the Order of the Shattered Flame swear to hide?",
+    "relevant": ["chunk_21"]
+  },
+  {
+    "id": "q19",
+    "question": "What does the tavernkeeper say still burns deep below the Cavern of Embers?",
+    "relevant": ["chunk_22"]
+  },
+  {
+    "id": "q20",
+    "question": "Why was the Third Age called the Age of Shadows?",
+    "relevant": ["chunk_24"]
+  },
+  {
+    "id": "q21",
+    "question": "What became of Vaelorin in the Third Age, and what is Stonehold Deep?",
+    "relevant": ["chunk_25"]
+  },
+  {
+    "id": "q22",
+    "question": "What is the Last Flame the Ashen Cult seeks to awaken, and who is Vareth the Pale?",
+    "relevant": ["chunk_27"]
+  },
+  {
+    "id": "q23",
+    "question": "Which goblin clan founded Emberwood, and which clan roams the Ashen Wastes collecting relics?",
+    "relevant": ["chunk_28"]
+  },
+  {
+    "id": "q24",
+    "question": "Who is Kaelen the Ash-Walker, and which sorceress claimed to speak to Veyrath's heart?",
+    "relevant": ["chunk_29"]
+  },
+  {
+    "id": "q25",
+    "question": "Where do the Forgotten Isles lie, and what did returning sailors claim they had glimpsed?",
+    "relevant": ["chunk_30"]
+  },
+  {
+    "id": "q26",
+    "question": "How does the Sword of Aeltharion treat dragon-scale, and when does the blade glow?",
+    "relevant": ["chunk_34"]
+  },
+  {
+    "id": "q27",
+    "question": "Under whose guidance were the Chains of the Shattered Flame forged, and can mortal hands break them?",
+    "relevant": ["chunk_35"]
+  },
+  {
+    "id": "q28",
+    "question": "What was the Cursed Crown of Vaelorin infused with, and what happened to kings who wore it?",
+    "relevant": ["chunk_36"]
+  },
+  {
+    "id": "q29",
+    "question": "What incantations are in the Grimoire of Whispered Flames, and who do some claim wrote it?",
+    "relevant": ["chunk_37"]
+  },
+  {
+    "id": "q30",
+    "question": "What crystal formed from one of the goddess' tears when the first seas were born, and what can it do?",
+    "relevant": ["chunk_38"]
+  },
+  {
+    "id": "q31",
+    "question": "What happened in the tavern the day after the keeper held the Embered Flagon Chalice?",
+    "relevant": ["chunk_39"]
+  },
+  {
+    "id": "q32",
+    "question": "The keeper says the Order of the Shattered Flame was born in the Second Age. What symbol does it use, and what relics does it guard?",
+    "relevant": ["chunk_41"]
+  },
+  {
+    "id": "q33",
+    "question": "Who is High Seeress Ilthara, and what symbol does the Ashen Cult use?",
+    "relevant": ["chunk_42"]
+  },
+  {
+    "id": "q34",
+    "question": "Who is Grishnak Flameeye, and who is Thren Blackanvil?",
+    "relevant": ["chunk_43"]
+  },
+  {
+    "id": "q35",
+    "question": "Who are the Free Tribes of Gorn, and who are the Elyndar Remnants?",
+    "relevant": ["chunk_44"]
+  },
+  {
+    "id": "q36",
+    "question": "What does Brackenford look like, and what happens in Storyteller's Square?",
+    "relevant": ["chunk_46"]
+  },
+  {
+    "id": "q37",
+    "question": "What is the Firefang Shrine, and what is rumored to sit in the Dragon's Heart Chamber?",
+    "relevant": ["chunk_47"]
+  },
+  {
+    "id": "q38",
+    "question": "What is Starfall Peak, and what are the Gates of Flame?",
+    "relevant": ["chunk_48"]
+  },
+  {
+    "id": "q39",
+    "question": "What are the Obsidian Monoliths in the Ashen Wastes?",
+    "relevant": ["chunk_49"]
+  },
+  {
+    "id": "q40",
+    "question": "In the myth of the Embered Flight, which dragon's wings carried the scent of fire across Hollowvale?",
+    "relevant": ["chunk_52"]
+  },
+  {
+    "id": "q41",
+    "question": "What became of Ashstring, the bow of Lira of the Emberwood?",
+    "relevant": ["chunk_53"]
+  },
+  {
+    "id": "q42",
+    "question": "What do the prophecies say the Sword will do when the Last Flame rises?",
+    "relevant": ["chunk_54"]
+  },
+  {
+    "id": "q43",
+    "question": "What are red ash storms a warning of, and what are the Singing Stones?",
+    "relevant": ["chunk_55"]
+  },
+  {
+    "id": "q44",
+    "question": "Which side tale has surviving goblins rallying under Grishnak Flameeye and raiding for stolen relics?",
+    "relevant": ["chunk_58"]
+  },
+  {
+    "id": "q45",
+    "question": "What hides in the chamber beneath the Embered Flagon, and what do the Stonehollow dwarves say their debt was forged with?",
+    "relevant": ["chunk_60"]
+  },
+  {
+    "id": "q46",
+    "question": "What is the Phantom Caravan, and what does the Moonlit Grove grant under the full moon?",
+    "relevant": ["chunk_61"]
+  },
+  {
+    "id": "q47",
+    "question": "Which red dragon is rumored to survive in the Cavern of Embers, and which blue dragon's wings could stir storms?",
+    "relevant": ["chunk_63"]
+  },
+  {
+    "id": "q48",
+    "question": "Where do Ice-Spine Wyverns hunt, and what are Ashen Revenants?",
+    "relevant": ["chunk_64"]
+  },
+  {
+    "id": "q49",
+    "question": "What is the Ember Drake born from, and what is the Flame-Horned Stag a herald of?",
+    "relevant": ["chunk_65"]
+  },
+  {
+    "id": "q50",
+    "question": "What is Ley-Line Communion, and what can Emberfire Glyphs do?",
+    "relevant": ["chunk_67"]
+  },
+  {
+    "id": "q51",
+    "question": "What does the Last Flame Invocation require, and what is Smoke Divination?",
+    "relevant": ["chunk_68"]
+  },
+  {
+    "id": "q52",
+    "question": "What does runic forging imbue a weapon with, and what is soul binding?",
+    "relevant": ["chunk_69"]
+  },
+  {
+    "id": "q53",
+    "question": "In what year of the Age of Chains was Dragon-King Veyrath defeated, and what did the dwarves bind at Ember Peaks in the year 899?",
+    "relevant": ["chunk_72"]
+  },
+  {
+    "id": "q54",
+    "question": "In what year was Brackenford founded, and in what year did the Ashen Cult emerge?",
+    "relevant": ["chunk_73"]
+  },
+  {
+    "id": "q55",
+    "question": "When were the Emberwood Skirmishes, and in what year was the Battle of Stonehollow?",
+    "relevant": ["chunk_74"]
+  }
+]

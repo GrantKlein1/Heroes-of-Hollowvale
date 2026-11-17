@@ -26,3 +26,30 @@
 - **Streaming Audio:** Server streams synthesized voice chunks to minimize latency before speech begins in the browser.
 - **Voice Customization:** Custom voice parameters tuned per NPC (e.g., deeper, slower voice for the bartender).
 
+---
+
+## 3. L-4 rerank flag and lore eval
+
+`RAG_RERANK` and `COS_GATE` are read by `server/src/routes/chat.js` and `server/src/routes/chatStream.js` through `retrieveLoreForTurn` in `server/src/rag/store.js`.
+
+| `RAG_RERANK` | Retrieval | Lore injected |
+|---|---|---|
+| unset, empty, unknown, or `off` (default) | cosine top 3, cross-encoder not called | cosine chunks |
+| `shadow` | cosine top 3, cross-encoder scored for logs only | cosine chunks (same replies as off) |
+| `on` | cross-encoder order of the cosine top 10 | reranked chunks, unless `COS_GATE` skips them |
+
+`COS_GATE` applies only in `on` mode. A finite value skips lore injection when `maxCos` is below it. The skip is decided before the cross-encoder runs. Unset or non-numeric `COS_GATE` does not skip.
+
+Each turn that injects lore logs `[RAG Lore] mode=<mode> tokens: <n>`. The grounding message is capped at 600 whitespace tokens (three L-2 chunks of about 175 words plus the preamble). Real chunks already fit, so the cap does not change today's passages.
+
+`server/eval/lore_eval.json` holds 55 player questions labelled with chunk ids taken from `server/src/rag/lore.json`. `node server/eval/run.mjs` prints recall@3 for cosine and, when `Xenova/ms-marco-MiniLM-L-6-v2` loads, for rerank. If the cross-encoder cannot load it still prints the cosine numbers and exits 2.
+
+Offline run in this sandbox (MiniLM download failed, so scores are token-overlap, not embedding cosine; cross-encoder warmup returned false):
+
+- cosine recall@3: 0.9636 (53/55 hit@3)
+- mean maxCos correct top hit: 0.2835 (n=46)
+- mean maxCos wrong top hit: 0.2828 (n=9)
+- candidate `COS_GATE`: 0.2171 (keeps 42/46 correct top hits, drops 0/9 wrong top hits)
+
+**Recommended `COS_GATE`: leave unset.** `0.2171` does not separate correct from wrong on this run, and it is not in MiniLM cosine units. Re-run the eval where both models load before setting the gate. Keep `RAG_RERANK` off unless that run shows rerank recall@3 beating cosine.
+

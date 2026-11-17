@@ -4,7 +4,7 @@ import { getNPC, NPC_IDS } from '../npcData.js';
 import * as memory from '../memory.js';
 import { chatCompletion } from '../groqClient.js';
 import { buildMessages, resolveNpcChatMaxTokens } from '../buildMessages.js';
-import { retrieveLoreForQuery, retrieveLoreWithShadow } from '../rag/store.js';
+import { loreTurnLogLines, retrieveLoreForTurn } from '../rag/store.js';
 import { getGroqApiKey } from '../config/secrets.js';
 
 // --- Helpers ---------------------------------------------------------------
@@ -100,33 +100,27 @@ router.post('/chat', async (req, res, next) => {
       retrievalQuery = `${message}\n\nHints:${ragHints.startsWith(' ')?'':''} ${ragHints}`.trim()
     }
 
-    // RAG: retrieve up to 3 relevant lore chunks for this player input (evaluating reranker in shadow mode)
-    let loreChunks = []
+    // RAG_RERANK=off|shadow|on (default off). COS_GATE is optional.
+    // off: cosine top 3. The cross-encoder is not called, so replies match
+    //      today's cosine grounding. Unknown or unset values are off.
+    // shadow: same cosine chunks, plus maxCos / rerankTopScore / rerankScores.
+    // on: cross-encoder order. When COS_GATE is a finite number and maxCos is
+    //     below it, lore is not injected. Unset COS_GATE does not skip lore.
+    //     The eval in server/eval/run.mjs prints a suggested COS_GATE; it is
+    //     not applied unless the env var is set. Lore text is capped at 600 tokens.
+    let loreSystem = null
     try {
-      const { loreChunks: retrievedLore, shadowMetrics } = await retrieveLoreWithShadow(retrievalQuery, {
+      const turn = await retrieveLoreForTurn(retrievalQuery, {
         candidateK: 10,
         topK: 3,
       })
-      loreChunks = retrievedLore
-      const maxCosStr = shadowMetrics?.maxCos !== undefined ? shadowMetrics.maxCos.toFixed(4) : '0.0000'
-      const rerankTopScoreStr = (shadowMetrics?.rerankTopScore !== null && shadowMetrics?.rerankTopScore !== undefined)
-        ? shadowMetrics.rerankTopScore.toFixed(4)
-        : 'none'
-      const scoresStr = Array.isArray(shadowMetrics?.rerankScores)
-        ? `[${shadowMetrics.rerankScores.map(s => Number(s).toFixed(4)).join(', ')}]`
-        : '[]'
-      console.info(`[RAG Shadow] maxCos: ${maxCosStr}, rerankTopScore: ${rerankTopScoreStr}, rerankScores: ${scoresStr}`)
+      if (turn.loreSystem) {
+        loreSystem = { role: 'system', content: turn.loreSystem }
+      }
+      for (const line of loreTurnLogLines(turn)) console.info(line)
     } catch (e) {
       console.warn('[RAG] retrieval failed, continuing without lore:', e.message)
     }
-    const loreSystem = loreChunks.length
-      ? {
-          role: 'system',
-          content:
-            `Lore context (for grounding; do not contradict, and don't quote verbatim unless asked):\n\n` +
-            loreChunks.map((t, i) => `— [${i+1}] ${t}`).join('\n\n')
-        }
-      : null
 
     // Pin persona + lore. Trim only the dialogue window (history, then
     // client context that is not already in that history) to the last 8.
