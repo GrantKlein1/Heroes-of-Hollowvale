@@ -42,7 +42,10 @@ import {
   castLeech,
   castShield,
   castBlink,
-  throwPoisonVial,
+  armPoisonVialThrow,
+  tickPoisonVialThrow,
+  cancelPoisonVialThrow,
+  getVialThrowTiming,
   armMageV2Cast,
   tickMageV2Cast,
   ensureMageSpellsGroup,
@@ -155,6 +158,8 @@ export class Player extends Actor {
     // Item hold and use states (Package IT-1)
     this.itemUseState = { active: false, itemId: null, startTime: 0, clip: null }
     this.itemSprite = null
+    this._vialThrow = null
+    this._vialCooldownUntil = 0
 
     // Listen for animation completion to transition out of non-looping states
     if (typeof this.on === 'function') {
@@ -173,8 +178,7 @@ export class Player extends Actor {
           const cls = session.classId
           const item = session.equippedId
           if (cls === 'thief' && item === 'poison_vial') {
-            scene._attacking = true
-            return throwPoisonVial(scene, this, now)
+            return this.beginVialThrow(now)
           }
           if (cls === 'mage' && item === 'spellbook') {
             scene._attacking = true
@@ -229,6 +233,9 @@ export class Player extends Actor {
    */
   setClass(classId) {
     if (!(classId in CLASS_SHEETS)) return
+    if (this._vialThrow && !this._vialThrow.released) {
+      cancelPoisonVialThrow(this)
+    }
     if (this.itemSprite) {
       if (typeof this.itemSprite.destroy === 'function') {
         this.itemSprite.destroy()
@@ -846,6 +853,16 @@ export class Player extends Actor {
   onStateEnter(newState, prevState, options) {
     super.onStateEnter(newState, prevState, options)
 
+    if (
+      newState === ACTOR_STATES.HURT
+      || newState === ACTOR_STATES.DODGE
+      || newState === ACTOR_STATES.DEAD
+    ) {
+      if (this._vialThrow && !this._vialThrow.released) {
+        cancelPoisonVialThrow(this)
+      }
+    }
+
     if (newState === ACTOR_STATES.WALK) {
       this.playAnim(this.isAtRunSpeed() ? 'run' : 'walk')
     } else if (newState === ACTOR_STATES.IDLE) {
@@ -880,7 +897,7 @@ export class Player extends Actor {
    */
   onAnimationComplete(anim) {
     const key = anim?.key || this.anims?.currentAnim?.key || ''
-    if (key.includes('use_drink') || key.includes('use_eat')) {
+    if (key.includes('use_drink') || key.includes('use_eat') || key.includes('use_throw')) {
       if (this.itemUseState?.active) {
         this.itemUseState = { active: false, itemId: null, startTime: 0, clip: null }
         this._refreshCurrentAnim()
@@ -1036,6 +1053,75 @@ export class Player extends Actor {
   }
 
   /**
+   * Starts the thief poison-vial wind-up. The projectile, item cost, and
+   * cooldown wait until releaseFrame 3. Facing changes reuse the use-clip path.
+   *
+   * @param {number} [now]
+   * @returns {object|null}
+   */
+  beginVialThrow(now = (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
+    if (this.classId !== 'thief') return null
+    if (this.is(ACTOR_STATES.DEAD) || this.is(ACTOR_STATES.HURT) || this.is(ACTOR_STATES.DODGE)) return null
+    if (this.itemUseState?.active && this.itemUseState.clip !== 'use_throw') return null
+
+    const alreadyWinding = Boolean(this._vialThrow && !this._vialThrow.released && !this._vialThrow.cancelled)
+    const pending = armPoisonVialThrow(this.scene, this, now)
+    if (!pending) return null
+    if (alreadyWinding || pending.animStarted) return pending
+
+    pending.animStarted = true
+    this.itemUseState = { active: true, itemId: 'poison_vial', startTime: now, clip: 'use_throw' }
+    const key = pending.animKey
+    const sheetKey = 'thief_use_throw'
+
+    if (this.scene?.anims && typeof this.scene.anims.exists === 'function' && !this.scene.anims.exists(key)) {
+      console.warn(`[Player] Animation key "${key}" not found in scene anims.`)
+    }
+
+    this.applySheetOrigin(sheetKey)
+    if (this.anims && typeof this.anims.play === 'function') {
+      this.anims.play(key, false)
+    }
+    this.applySheetOrigin(sheetKey)
+    this.applyFootprint(sheetKey)
+    this._syncItemInHandSprite()
+    return pending
+  }
+
+  /**
+   * Releases or cancels the vial wind-up, then ends the body clip when it finishes.
+   *
+   * @param {number} time
+   */
+  _tickVialThrow(time) {
+    const pending = this._vialThrow
+    if (!pending || pending.cancelled) return
+
+    if (!pending.released) {
+      const interrupted = this.classId !== 'thief'
+        || this.is(ACTOR_STATES.HURT)
+        || this.is(ACTOR_STATES.DODGE)
+        || this.is(ACTOR_STATES.DEAD)
+      if (interrupted) {
+        cancelPoisonVialThrow(this)
+        this._syncItemInHandSprite()
+        return
+      }
+      tickPoisonVialThrow(this, time)
+    }
+
+    const active = this._vialThrow
+    if (active?.released && this.itemUseState?.clip === 'use_throw') {
+      const durationMs = active.durationMs ?? getVialThrowTiming(this.facing).durationMs
+      if (time - active.startedAt >= durationMs) {
+        this.itemUseState = { active: false, itemId: null, startTime: 0, clip: null }
+        this._refreshCurrentAnim()
+        this._syncItemInHandSprite()
+      }
+    }
+  }
+
+  /**
    * Starts consuming an item, playing the one-shot use clip from frame 0.
    *
    * @param {string} itemId
@@ -1101,8 +1187,9 @@ export class Player extends Actor {
     if (!this.itemSprite && this.scene) {
       const activeItemId = this.itemUseState?.active ? this.itemUseState.itemId : getHeldItemId(session)
       const frameName = activeItemId ? `${activeItemId}_${this.facing}` : 'healing_potion_down'
+      const atlasKey = activeItemId === 'poison_vial' ? 'items_inhand_b10' : 'items_inhand'
       if (this.scene.add && typeof this.scene.add.image === 'function') {
-        this.itemSprite = this.scene.add.image(this.x, this.y, 'items_inhand', frameName)
+        this.itemSprite = this.scene.add.image(this.x, this.y, atlasKey, frameName)
       } else {
         this.itemSprite = {
           x: this.x,
@@ -1112,7 +1199,7 @@ export class Player extends Actor {
           depth: 0,
           originX: 0.5,
           originY: 0.5,
-          texture: { key: 'items_inhand' },
+          texture: { key: atlasKey },
           frame: { name: frameName },
           setOrigin(ox, oy) { this.originX = ox; this.originY = oy; return this; },
           setTexture(key, fn) { this.texture = { key }; this.frame = { name: fn }; return this; },
@@ -1159,10 +1246,13 @@ export class Player extends Actor {
     if (!sprite) return
 
     const itemFrameName = `${activeItemId}_${this.facing}`
-    if (typeof sprite.setFrame === 'function') {
+    const atlasKey = activeItemId === 'poison_vial' ? 'items_inhand_b10' : 'items_inhand'
+    if (sprite.texture?.key !== atlasKey && typeof sprite.setTexture === 'function') {
+      sprite.setTexture(atlasKey, itemFrameName)
+    } else if (typeof sprite.setFrame === 'function') {
       sprite.setFrame(itemFrameName)
     } else if (typeof sprite.setTexture === 'function') {
-      sprite.setTexture('items_inhand', itemFrameName)
+      sprite.setTexture(atlasKey, itemFrameName)
     }
 
     let clip = 'hold_idle'
@@ -1188,6 +1278,15 @@ export class Player extends Actor {
       layer: this.facing === 'up' ? 'front' : 'front'
     }
     this._lastAnchor = anchor
+
+    if (anchor.layer === 'none') {
+      if (typeof sprite.setVisible === 'function') {
+        sprite.setVisible(false)
+      } else {
+        sprite.visible = false
+      }
+      return
+    }
 
     const ox = 12.0 / 24
     const oy = 15.61 / 24
@@ -1368,6 +1467,7 @@ export class Player extends Actor {
   update(time = Date.now(), delta = 0) {
     super.update(time, delta)
     this._syncItemInHandSprite()
+    this._tickVialThrow(time)
 
     const v2Casting = typeof this.currentAttackType === 'string' && this.currentAttackType.startsWith('cast_')
     if (this._v2Cast && !this._v2Cast.released && !this.is(ACTOR_STATES.ATTACK)) {

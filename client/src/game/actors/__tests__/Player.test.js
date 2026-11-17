@@ -104,7 +104,10 @@ import { Player, CLASS_SHEETS } from '../Player.js'
 import { FACING } from '../facing.js'
 import { ACTOR_STATES } from '../stateMachine.js'
 import { session } from '../../session.js'
+import { eventBus, GameEvents } from '../../../lib/eventBus.js'
+import { getVialThrowTiming, VIAL_THROW_COOLDOWN_MS } from '../../combat/spells.js'
 import mageSpellsV2Atlas from '../../../../public/assets/characters/mage/spells_v2/mage_spells_v2.json'
+import thiefUseThrowAtlas from '../../../../public/assets/characters/thief/thief_use_throw.json'
 
 function createMockScene() {
   const metadataMap = {
@@ -1019,6 +1022,103 @@ describe('Player Actor — Package 1-3', () => {
       knight.destroy()
       expect(destroySpy2).toHaveBeenCalled()
       expect(knight.itemSprite).toBeNull()
+    })
+  })
+
+  describe('Thief poison vial wind-up (Package B10-1)', () => {
+    function listenConsumed() {
+      const events = []
+      const off = eventBus.on(GameEvents.ITEM_CONSUMED, (evt) => events.push(evt))
+      return { events, off }
+    }
+
+    it('plays thief_use_throw and spawns on the sheet offset only after 250 ms', () => {
+      const thief = new Player(mockScene, 200, 300, 'thief')
+      mockScene.projectiles = []
+      thief.facing = 'down'
+      const timing = getVialThrowTiming('down')
+      const consumed = listenConsumed()
+
+      const pending = thief.beginVialThrow(5000)
+      expect(pending.animKey).toBe('thief_use_throw_down')
+      expect(thief.anims.currentAnim.key).toBe('thief_use_throw_down')
+      expect(thief.itemUseState.clip).toBe('use_throw')
+      expect(mockScene.projectiles).toHaveLength(0)
+
+      thief.update(5000 + timing.releaseMs - 1, 16)
+      expect(mockScene.projectiles).toHaveLength(0)
+      expect(consumed.events).toHaveLength(0)
+      expect(thief._vialCooldownUntil).toBe(0)
+
+      thief.update(5000 + timing.releaseMs, 16)
+      expect(mockScene.projectiles).toHaveLength(1)
+      const vial = mockScene.projectiles[0]
+      const meta = thiefUseThrowAtlas.meta.anims.use_throw.spawnOffsetPx.down
+      expect(Math.abs(vial.x - (200 + meta.x))).toBeLessThanOrEqual(2)
+      expect(Math.abs(vial.y - (300 + meta.y))).toBeLessThanOrEqual(2)
+      expect(vial.flyAnim).toBe('thief_poison_vial')
+      expect(vial.damage).toBe(8)
+      expect(consumed.events).toEqual([{ id: 'poison_vial', mode: 'search' }])
+      expect(thief._vialCooldownUntil).toBe(5000 + timing.releaseMs + VIAL_THROW_COOLDOWN_MS)
+      consumed.off()
+    })
+
+    it('uses the right-facing sheet offset', () => {
+      const thief = new Player(mockScene, 40, 70, 'thief')
+      mockScene.projectiles = []
+      thief.facing = 'right'
+      const meta = thiefUseThrowAtlas.meta.anims.use_throw.spawnOffsetPx.right
+      thief.beginVialThrow(1000)
+      thief.update(1000 + 250, 16)
+      const vial = mockScene.projectiles[0]
+      expect(Math.abs(vial.x - (40 + meta.x))).toBeLessThanOrEqual(2)
+      expect(Math.abs(vial.y - (70 + meta.y))).toBeLessThanOrEqual(2)
+    })
+
+    it('switches throw clips at the same frame index when facing changes', () => {
+      const thief = new Player(mockScene, 10, 10, 'thief')
+      thief.beginVialThrow(1000)
+      thief.anims.currentFrame = { frame: { name: 'thief_use_throw_down_2' } }
+      thief.anims.setCurrentFrame = vi.fn()
+      const frames = Array.from({ length: 8 }, (_, i) => ({ index: i }))
+      mockScene.anims.get.mockImplementation(() => ({ frames }))
+
+      thief.setFacing('left')
+      expect(thief.anims.play).toHaveBeenCalledWith('thief_use_throw_left', false)
+      expect(thief.anims.setCurrentFrame).toHaveBeenCalledWith(frames[2])
+    })
+
+    it('shows the in-hand vial during the wind-up and hides it when the anchor layer is none', () => {
+      const thief = new Player(mockScene, 10, 10, 'thief')
+      thief.beginVialThrow(1000)
+      thief.anims.currentFrame = { frame: { name: 'thief_use_throw_down_1' } }
+      thief._syncItemInHandSprite()
+      expect(thief.itemSprite.visible).toBe(true)
+      expect(thief.itemSprite.texture.key).toBe('items_inhand_b10')
+      expect(thief.itemSprite.frame.name).toBe('poison_vial_down')
+
+      thief.anims.currentFrame = { frame: { name: 'thief_use_throw_down_4' } }
+      thief._syncItemInHandSprite()
+      expect(thief.itemSprite.visible).toBe(false)
+      expect(thief._lastAnchor.layer).toBe('none')
+    })
+
+    it.each([
+      ['hurt', (thief, now) => thief.takeDamage(10, now)],
+      ['dodge', (thief, now) => thief.dodge(now)],
+      ['death', (thief) => thief.die()],
+      ['class change', (thief) => thief.setClass('mage')],
+    ])('cancel by %s before release spawns nothing and charges nothing', (_label, cancel) => {
+      const thief = new Player(mockScene, 15, 25, 'thief')
+      mockScene.projectiles = []
+      const consumed = listenConsumed()
+      thief.beginVialThrow(4000)
+      cancel(thief, 4100)
+      thief.update(4000 + 400, 16)
+      expect(mockScene.projectiles).toHaveLength(0)
+      expect(consumed.events).toHaveLength(0)
+      expect(thief._vialCooldownUntil).toBe(0)
+      consumed.off()
     })
   })
 })

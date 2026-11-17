@@ -19,6 +19,7 @@ import { buildV2CastAnimKey } from '../assets/animKeys.js'
 import { getAnimationFrameIndex } from './hitSystem.js'
 import mageSpellsV2Atlas from '../../../public/assets/characters/mage/spells_v2/mage_spells_v2.json'
 import spellFxV2Atlas from '../../../public/assets/characters/mage/spells_v2/spell_fx_v2.json'
+import thiefUseThrowAtlas from '../../../public/assets/characters/thief/thief_use_throw.json'
 function safeSpellCast() {
   try {
     onSpellCast()
@@ -35,10 +36,17 @@ function safeSpellImpact() {
   }
 }
 import {
+  ATTACK_MS,
   FIREBALL_SPEED,
   FIREBALL_DIST,
   FIRE_LINGER_MS,
 } from './balance.js'
+
+/** Cooldown charged when the vial leaves the hand. Same cadence as the thief attack. */
+export const VIAL_THROW_COOLDOWN_MS = ATTACK_MS.thief
+
+/** Used only when the throw sheet omits fps. The authored clip is 12. */
+const VIAL_THROW_FPS_FALLBACK = 12
 
 /** Used only when a v2 clip omits frameRate. Authored sheets set frameRate in meta. */
 const V2_CAST_FPS_FALLBACK = 16
@@ -791,22 +799,102 @@ export function castBlink(scene, player, now = (typeof performance !== 'undefine
 }
 
 /**
- * Throws a Thief Poison Vial projectile.
+ * Release frame, release time, clip length, and feet-relative spawn offset
+ * for one facing of thief_use_throw. Offsets come from the sheet meta.
+ *
+ * @param {string} [facing='down']
+ * @returns {{ key: string, releaseFrame: number, releaseMs: number, frameRate: number, durationMs: number, offset: { x: number, y: number } }}
+ */
+export function getVialThrowTiming(facing = 'down') {
+  const clip = thiefUseThrowAtlas.meta?.anims?.use_throw || {}
+  const releaseFrame = Number.isInteger(clip.releaseFrame) ? clip.releaseFrame : 3
+  const frameRate = clip.fps > 0 ? clip.fps : VIAL_THROW_FPS_FALLBACK
+  const frameCount = clip.frames > 0 ? clip.frames : 8
+  const releaseMs = (releaseFrame / frameRate) * 1000
+  const durationMs = typeof clip.durationMs === 'number'
+    ? clip.durationMs
+    : (frameCount / frameRate) * 1000
+  const raw = clip.spawnOffsetPx?.[facing]
+  const offset = raw && typeof raw.x === 'number' && typeof raw.y === 'number'
+    ? { x: raw.x, y: raw.y }
+    : { x: 0, y: 0 }
+  return {
+    key: `thief_use_throw_${facing}`,
+    releaseFrame,
+    releaseMs,
+    frameRate,
+    durationMs,
+    offset,
+  }
+}
+
+function vialThrowInterrupted(player) {
+  if (!player) return true
+  if (player.classId && player.classId !== 'thief') return true
+  if (typeof player.is !== 'function') return false
+  return player.is('HURT') || player.is('DODGE') || player.is('DEAD')
+}
+
+/**
+ * Drops an in-progress vial wind-up. Spawns nothing and charges nothing.
+ *
+ * @param {object} player
+ * @returns {boolean}
+ */
+export function cancelPoisonVialThrow(player) {
+  const pending = player?._vialThrow
+  if (!pending || pending.released) return false
+  pending.cancelled = true
+  player._vialThrow = null
+  if (player.itemUseState?.clip === 'use_throw') {
+    player.itemUseState = { active: false, itemId: null, startTime: 0, clip: null }
+  }
+  return true
+}
+
+/**
+ * Starts the vial wind-up. The projectile is not created yet.
  *
  * @param {import('phaser').Scene} scene
- * @param {import('../actors/Player.js').Player} player
+ * @param {object} player
  * @param {number} [now]
- * @returns {Projectile|null}
+ * @returns {object|null}
  */
-export function throwPoisonVial(scene, player, now = (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
+export function armPoisonVialThrow(scene, player, now = (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
   if (!scene || !player) return null
+  if (player.classId && player.classId !== 'thief') return null
+  if (vialThrowInterrupted(player)) return null
+  const existing = player._vialThrow
+  if (existing && !existing.released && !existing.cancelled) return existing
+  if (now < (player._vialCooldownUntil || 0)) return null
 
+  const facing = player.facing || 'down'
+  const timing = getVialThrowTiming(facing)
+  const pending = {
+    scene,
+    facing,
+    animKey: timing.key,
+    releaseFrame: timing.releaseFrame,
+    releaseMs: timing.releaseMs,
+    durationMs: timing.durationMs,
+    startedAt: now,
+    released: false,
+    charged: false,
+    cancelled: false,
+    animStarted: false,
+    spawnedAt: null,
+    projectile: null,
+  }
+  player._vialThrow = pending
+  return pending
+}
+
+function spawnPoisonVial(scene, player, facing) {
   ensureSpellAnimations(scene)
-
-  const facing = player.facing || scene.facing?.() || 'down'
   const [dx, dy] = facingToVector(facing)
-  const spawnX = player.x + dx * 12
-  const spawnY = player.y - 16 + dy * 12
+  const { offset } = getVialThrowTiming(facing)
+  const spawnX = player.x + offset.x
+  const spawnY = player.y + offset.y
 
   const proj = new Projectile(scene, spawnX, spawnY, 'thief_fx', 'thief_fx_poison_vial_0', {
     dirX: dx,
@@ -834,8 +922,64 @@ export function throwPoisonVial(scene, player, now = (typeof performance !== 'un
     scene.projectiles.push(proj)
   }
 
-  // Consume item
   eventBus.emit(GameEvents.ITEM_CONSUMED, { id: 'poison_vial', mode: 'search' })
-
   return proj
+}
+
+/**
+ * Releases the armed vial on releaseFrame (250 ms at 12 fps) or not at all.
+ * Cost and cooldown are applied only when the projectile is created.
+ *
+ * @param {object} player
+ * @param {number} now
+ * @returns {Projectile|null}
+ */
+export function tickPoisonVialThrow(player, now) {
+  const pending = player?._vialThrow
+  if (!pending || pending.released || pending.cancelled) return null
+  if (vialThrowInterrupted(player)) {
+    cancelPoisonVialThrow(player)
+    return null
+  }
+
+  const facing = player.facing || pending.facing || 'down'
+  const timing = getVialThrowTiming(facing)
+  const frame = player.anims?.currentFrame
+  const frameName = frame?.frame?.name || frame?.textureFrame || ''
+  const frameIndex = getAnimationFrameIndex(frame)
+  const onClip = typeof frameName === 'string' && frameName.startsWith('thief_use_throw_')
+  const frameDue = onClip && frameIndex >= timing.releaseFrame
+  const timeDue = now - pending.startedAt >= timing.releaseMs
+  if (!frameDue && !timeDue) return null
+
+  pending.released = true
+  pending.charged = true
+  pending.facing = facing
+  pending.spawnedAt = now
+  const scene = pending.scene || player.scene
+  const proj = spawnPoisonVial(scene, player, facing)
+  pending.projectile = proj
+  player._vialCooldownUntil = now + VIAL_THROW_COOLDOWN_MS
+  if (scene) scene._attackUntil = now + VIAL_THROW_COOLDOWN_MS
+  return proj
+}
+
+/**
+ * Arms a thief poison vial, then releases it once the wind-up is due.
+ * A single call at the cast instant returns null. The projectile, item
+ * cost, and cooldown appear on the call that reaches releaseFrame 3.
+ *
+ * @param {import('phaser').Scene} scene
+ * @param {import('../actors/Player.js').Player} player
+ * @param {number} [now]
+ * @returns {Projectile|null}
+ */
+export function throwPoisonVial(scene, player, now = (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
+  if (!scene || !player) return null
+  const existing = player._vialThrow
+  if (!existing || existing.released || existing.cancelled) {
+    const armed = armPoisonVialThrow(scene, player, now)
+    if (!armed) return null
+  }
+  return tickPoisonVialThrow(player, now)
 }

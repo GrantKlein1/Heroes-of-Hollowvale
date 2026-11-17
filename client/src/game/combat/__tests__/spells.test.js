@@ -95,8 +95,17 @@ import {
   armMageV2Cast,
   tickMageV2Cast,
   getV2CastTiming,
+  getVialThrowTiming,
+  armPoisonVialThrow,
+  tickPoisonVialThrow,
+  cancelPoisonVialThrow,
+  VIAL_THROW_COOLDOWN_MS,
 } from '../spells.js'
 import { session } from '../../session.js'
+import { eventBus, GameEvents } from '../../../lib/eventBus.js'
+import thiefUseThrowAtlas from '../../../../public/assets/characters/thief/thief_use_throw.json'
+import thiefUseLockpickAtlas from '../../../../public/assets/characters/thief/thief_use_lockpick.json'
+import dwarfUsePickaxeAtlas from '../../../../public/assets/characters/dwarf/dwarf_use_pickaxe.json'
 import mageCastAtlas from '../../../../public/assets/characters/mage/mage_cast.json'
 import mageSpellsV2Atlas from '../../../../public/assets/characters/mage/spells_v2/mage_spells_v2.json'
 import thiefFxAtlas from '../../../../public/assets/characters/thief/fx/thief_fx.json'
@@ -265,11 +274,50 @@ describe('Spells & Projectile Mechanics (Package 1-5)', () => {
   })
 
   describe('Acceptance Criterion 3: Poison Vial Uses Atlas Frames (No GIF)', () => {
-    it('reads thief_fx.json metadata and spawns thief_poison_vial with baked spin', () => {
+    const DIRS = ['down', 'left', 'right', 'up']
+
+    it('ships throw, lockpick, and pickaxe clips for every facing', () => {
+      for (const dir of DIRS) {
+        expect(thiefUseThrowAtlas.frames[`thief_use_throw_${dir}_0`]).toBeDefined()
+        expect(thiefUseThrowAtlas.frames[`thief_use_throw_${dir}_7`]).toBeDefined()
+        expect(thiefUseLockpickAtlas.frames[`thief_use_lockpick_${dir}_0`]).toBeDefined()
+        expect(thiefUseLockpickAtlas.frames[`thief_use_lockpick_${dir}_13`]).toBeDefined()
+        expect(dwarfUsePickaxeAtlas.frames[`dwarf_use_pickaxe_${dir}_0`]).toBeDefined()
+        expect(dwarfUsePickaxeAtlas.frames[`dwarf_use_pickaxe_${dir}_7`]).toBeDefined()
+      }
+      expect(thiefUseThrowAtlas.meta.anims.use_throw.frameNames).toBe('thief_use_throw_<dir>_<i>')
+      expect(thiefUseLockpickAtlas.meta.anims.use_lockpick.frameNames).toBe('thief_use_lockpick_<dir>_<i>')
+      expect(dwarfUsePickaxeAtlas.meta.anims.use_pickaxe.frameNames).toBe('dwarf_use_pickaxe_<dir>_<i>')
+    })
+
+    it('reads thief_fx.json metadata and spawns thief_poison_vial with baked spin after the wind-up', () => {
       expect(thiefFxAtlas.meta.anims.poison_vial).toBeDefined()
       expect(thiefFxAtlas.meta.anims.poison_splash).toBeDefined()
 
-      const vial = throwPoisonVial(mockScene, mockPlayer, 1000)
+      mockPlayer.classId = 'thief'
+      mockPlayer.facing = 'down'
+      mockPlayer.x = 200
+      mockPlayer.y = 350
+      const timing = getVialThrowTiming('down')
+      expect(timing.releaseFrame).toBe(3)
+      expect(timing.releaseMs).toBe(250)
+      expect(timing.key).toBe('thief_use_throw_down')
+      expect(timing.offset).toMatchObject({
+        x: thiefUseThrowAtlas.meta.anims.use_throw.spawnOffsetPx.down.x,
+        y: thiefUseThrowAtlas.meta.anims.use_throw.spawnOffsetPx.down.y,
+      })
+
+      const consumed = []
+      const off = eventBus.on(GameEvents.ITEM_CONSUMED, (evt) => consumed.push(evt))
+
+      expect(throwPoisonVial(mockScene, mockPlayer, 1000)).toBeNull()
+      expect(mockScene.projectiles).toHaveLength(0)
+      expect(throwPoisonVial(mockScene, mockPlayer, 1000 + timing.releaseMs - 1)).toBeNull()
+      expect(mockScene.projectiles).toHaveLength(0)
+      expect(consumed).toHaveLength(0)
+      expect(mockPlayer._vialCooldownUntil || 0).toBe(0)
+
+      const vial = throwPoisonVial(mockScene, mockPlayer, 1000 + timing.releaseMs)
       expect(vial).toBeDefined()
       expect(vial.texture.key).toBe('thief_fx')
       expect(vial.flyAnim).toBe('thief_poison_vial')
@@ -278,6 +326,49 @@ describe('Spells & Projectile Mechanics (Package 1-5)', () => {
       expect(vial.bakedSpin).toBe(true)
       expect(vial.lingerMs).toBe(2000)
       expect(vial.lingerDps).toBe(5)
+      expect(vial.damage).toBe(8)
+      expect(Math.abs(vial.x - (mockPlayer.x + timing.offset.x))).toBeLessThanOrEqual(2)
+      expect(Math.abs(vial.y - (mockPlayer.y + timing.offset.y))).toBeLessThanOrEqual(2)
+      expect(consumed).toEqual([{ id: 'poison_vial', mode: 'search' }])
+      expect(mockPlayer._vialCooldownUntil).toBe(1000 + timing.releaseMs + VIAL_THROW_COOLDOWN_MS)
+      expect(mockScene._attackUntil).toBe(mockPlayer._vialCooldownUntil)
+      off()
+    })
+
+    it('spawns within 2 px of the sheet offset for a second facing and ignores a frame before release', () => {
+      mockPlayer.classId = 'thief'
+      mockPlayer.facing = 'right'
+      mockPlayer.x = 80
+      mockPlayer.y = 120
+      const timing = getVialThrowTiming('right')
+      expect(timing.offset).toMatchObject({
+        x: thiefUseThrowAtlas.meta.anims.use_throw.spawnOffsetPx.right.x,
+        y: thiefUseThrowAtlas.meta.anims.use_throw.spawnOffsetPx.right.y,
+      })
+
+      armPoisonVialThrow(mockScene, mockPlayer, 2000)
+      mockPlayer.anims = { currentFrame: { frame: { name: 'thief_use_throw_right_2' } } }
+      expect(tickPoisonVialThrow(mockPlayer, 2000 + timing.releaseMs - 1)).toBeNull()
+
+      mockPlayer.anims.currentFrame = { frame: { name: 'thief_use_throw_right_3' } }
+      const vial = tickPoisonVialThrow(mockPlayer, 2000 + 100)
+      expect(vial).toBeTruthy()
+      expect(Math.abs(vial.x - (80 + timing.offset.x))).toBeLessThanOrEqual(2)
+      expect(Math.abs(vial.y - (120 + timing.offset.y))).toBeLessThanOrEqual(2)
+    })
+
+    it('charges nothing when the wind-up is cancelled before release', () => {
+      mockPlayer.classId = 'thief'
+      mockPlayer.facing = 'down'
+      const consumed = []
+      const off = eventBus.on(GameEvents.ITEM_CONSUMED, (evt) => consumed.push(evt))
+      armPoisonVialThrow(mockScene, mockPlayer, 3000)
+      expect(cancelPoisonVialThrow(mockPlayer)).toBe(true)
+      expect(tickPoisonVialThrow(mockPlayer, 3000 + 250)).toBeNull()
+      expect(mockScene.projectiles).toHaveLength(0)
+      expect(consumed).toHaveLength(0)
+      expect(mockPlayer._vialCooldownUntil || 0).toBe(0)
+      off()
     })
   })
 
