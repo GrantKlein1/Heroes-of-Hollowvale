@@ -793,7 +793,7 @@ export function buildBrackenfordMap(tilesets, seed = DEFAULT_SEED) {
 
   // Environmental Props
   addProp('well', 16, 6);
-  addProp('barrel', 4, 6);
+  addProp('barrel', 17, 6);
   addProp('crate', 2, 7);
   addProp('torch', 8, 9);
   addProp('tree_pine_base', 3, 2);
