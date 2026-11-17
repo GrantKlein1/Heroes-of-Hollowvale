@@ -10,7 +10,7 @@ test.describe('Heroes of Hollowvale — Dodge & Block Mechanics (Package 1-6)', 
 
   test('3. __hv.missingAssets() is empty for P0/P1 clips', async ({ page }) => {
     // Boot game with blend renderer and QA enabled
-    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
 
     const canvas = page.locator('canvas');
     await expect(canvas).toBeVisible();
@@ -39,7 +39,7 @@ test.describe('Heroes of Hollowvale — Dodge & Block Mechanics (Package 1-6)', 
 
   test('1. Dodging through a goblin swing takes 0 damage', async ({ page }) => {
     // 1. Boot game with blend renderer and QA enabled
-    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
 
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await expect(startButton).toBeVisible();
@@ -102,7 +102,7 @@ test.describe('Heroes of Hollowvale — Dodge & Block Mechanics (Package 1-6)', 
 
   test('2. Knight block from the front reduces damage by 70%; from behind it does not', async ({ page }) => {
     // 1. Boot game with blend renderer and QA enabled
-    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
 
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await expect(startButton).toBeVisible();

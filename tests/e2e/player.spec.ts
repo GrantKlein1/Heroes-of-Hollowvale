@@ -36,7 +36,7 @@ test.describe('Heroes of Hollowvale — Player Actor (Package 1-3)', () => {
       });
 
       // 1. Boot with blend renderer and QA mode
-      await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
+      await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
 
       const canvas = page.locator('canvas');
       await expect(canvas).toBeVisible();
@@ -151,7 +151,7 @@ test.describe('Heroes of Hollowvale — Player Actor (Package 1-3)', () => {
       window.HTMLMediaElement.prototype.play = () => Promise.resolve();
     });
 
-    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
 
     const canvas = page.locator('canvas');
     await expect(canvas).toBeVisible();
@@ -194,8 +194,8 @@ test.describe('Heroes of Hollowvale — Player Actor (Package 1-3)', () => {
     // Footprint body matches atlas metadata (23x7)
     expect(metrics.bodyWidth).toBe(23);
     expect(metrics.bodyHeight).toBe(7);
-    // Camera zoom covers painted backdrop
-    expect(metrics.zoom).toBe(2);
+    // Tiled maps use integer zoom: 3x at 1920x1080.
+    expect(metrics.zoom).toBe(3);
 
     // Freeze frame 0 and capture 1080p baseline screenshot
     await page.evaluate(() => {
@@ -210,7 +210,7 @@ test.describe('Heroes of Hollowvale — Player Actor (Package 1-3)', () => {
   });
 
   test('Package 4-1: Hero plays run animation when moving at run speed', async ({ page }) => {
-    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
 
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await startButton.click();
@@ -237,7 +237,7 @@ test.describe('Heroes of Hollowvale — Player Actor (Package 1-3)', () => {
   });
 
   test('Package 4-1: Critters use rendered up/down facings without fallback', async ({ page }) => {
-    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
 
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await startButton.click();

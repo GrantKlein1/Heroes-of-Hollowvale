@@ -17,7 +17,7 @@ test.describe('Heroes of Hollowvale — Hit System & Combat Feedback (Package 1-
     });
 
     // 1. Boot game with blend renderer and QA enabled
-    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
 
     const canvas = page.locator('canvas');
     await expect(canvas).toBeVisible();
@@ -155,7 +155,7 @@ test.describe('Heroes of Hollowvale — Hit System & Combat Feedback (Package 1-
 
   test('Player I-Frames: No second player hit within 600 ms', async ({ page }) => {
     // 1. Boot game with blend renderer and QA enabled
-    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
 
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await startButton.click();

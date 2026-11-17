@@ -9,7 +9,7 @@ test.describe('Package 1b-4: Death & Respawn, Seeded Loot & Critter Flee AI', ()
   });
 
   test('Acceptance Criterion 1: Die -> DIED event -> respawn with HP == max', async ({ page }) => {
-    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
 
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await expect(startButton).toBeVisible();
@@ -72,7 +72,7 @@ test.describe('Package 1b-4: Death & Respawn, Seeded Loot & Critter Flee AI', ()
   });
 
   test('Acceptance Criterion 2: Enemy death clip plays fully before removal', async ({ page }) => {
-    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
 
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await expect(startButton).toBeVisible();
@@ -161,7 +161,7 @@ test.describe('Package 1b-4: Death & Respawn, Seeded Loot & Critter Flee AI', ()
   });
 
   test('LM-1: seed=1 goblin drops an idling emerald that collects on walk-over', async ({ page }) => {
-    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
 
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await expect(startButton).toBeVisible();
@@ -249,7 +249,7 @@ test.describe('Package 1b-4: Death & Respawn, Seeded Loot & Critter Flee AI', ()
   });
 
   test('Acceptance Criterion 4: Ambient critters flee from player with directional clips', async ({ page }) => {
-    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
 
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await expect(startButton).toBeVisible();

@@ -279,41 +279,4 @@ test.describe('Package 3-2: Cavern of Embers Tiled Maps & Dragon Lair Encounter'
     await page.waitForFunction(() => (window as any).__hv?.scene() === 'dungeonInterior', { timeout: 10000 });
     expect(await page.evaluate(() => (window as any).__hv.scene())).toBe('dungeonInterior');
   });
-
-  test('legacy/painted mode (?maps=legacy) preserves painted dungeon scenes', async ({ page }) => {
-    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
-
-    const startButton = page.getByRole('button', { name: 'Start Game' });
-    await expect(startButton).toBeVisible();
-    await page.waitForTimeout(400);
-    await startButton.click();
-
-    // Select class
-    const classModalHeading = page.getByText('Choose Your Class');
-    await expect(classModalHeading).toBeVisible();
-    await page.waitForTimeout(400);
-    await page.getByRole('button', { name: 'Choose' }).first().click();
-    await expect(classModalHeading).toBeHidden();
-
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village');
-
-    // Enter dungeon
-    await page.evaluate(() => {
-      const scene = (window as any).__scene;
-      scene.enterScene('dungeon');
-    });
-
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'dungeon', { timeout: 10000 });
-
-    const isPainted = await page.evaluate(() => {
-      const scene = (window as any).__scene;
-      return {
-        hasBg: Boolean(scene.bg),
-        hasTiledLoader: Boolean(scene.tiledMapLoader),
-      };
-    });
-
-    expect(isPainted.hasBg).toBe(true);
-    expect(isPainted.hasTiledLoader).toBe(false);
-  });
 });

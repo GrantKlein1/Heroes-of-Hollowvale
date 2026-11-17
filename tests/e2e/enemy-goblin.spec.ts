@@ -10,7 +10,7 @@ test.describe('Package 1b-1: Lane D Enemies — Goblin Base & AI', () => {
 
   test('Acceptance Criterion 2: Standing inside a goblin deals no touch damage', async ({ page }) => {
     // 1. Boot game with blend renderer and QA enabled
-    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
 
     const canvas = page.locator('canvas');
     await expect(canvas).toBeVisible();
@@ -70,7 +70,7 @@ test.describe('Package 1b-1: Lane D Enemies — Goblin Base & AI', () => {
       consoleLogs.push(msg.text());
     });
 
-    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
 
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await startButton.click();
@@ -158,7 +158,7 @@ test.describe('Package 1b-1: Lane D Enemies — Goblin Base & AI', () => {
   });
 
   test('Acceptance Criterion 1: 3 goblins, never more than 2 attacking at once (attack tokens)', async ({ page }) => {
-    await page.goto('/?renderer=blend&maps=legacy&seed=42&qa=1');
+    await page.goto('/?renderer=blend&maps=tiled&seed=42&qa=1');
 
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await startButton.click();
@@ -219,7 +219,7 @@ test.describe('Package 1b-1: Lane D Enemies — Goblin Base & AI', () => {
   });
 
   test('Package 4-1: Goblin plays spawn on spawn and alert on aggro before telegraph/attack', async ({ page }) => {
-    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
 
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await startButton.click();
