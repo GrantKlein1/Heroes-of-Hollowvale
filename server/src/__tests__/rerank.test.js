@@ -3,12 +3,15 @@ import assert from 'node:assert/strict';
 import { rerank, warmupReranker } from '../rag/rerank.js';
 import { retrieveCandidates, retrieveLoreForQuery, retrieveLoreWithShadow } from '../rag/store.js';
 
+const modelReady = await warmupReranker();
+const OFFLINE = 'cross-encoder model unavailable (offline)';
+
 test('warmupReranker initializes cross-encoder without throwing', async () => {
   const ready = await warmupReranker();
   assert.equal(typeof ready, 'boolean');
 });
 
-test('rerank orders a relevant chunk above an unrelated one', async () => {
+test('rerank orders a relevant chunk above an unrelated one', { skip: !modelReady && OFFLINE }, async () => {
   const query = 'Where is the Cavern of Embers and Veyrath the dragon?';
   const unrelatedChunk = 'The village baker in Brackenford sells warm bread, dried apples, and cider every morning.';
   const relevantChunk = 'The Cavern of Embers lies in the Blackspire Mountains, where Veyrath the red dragon hoards ancient treasures amidst rivers of flame.';
@@ -38,6 +41,37 @@ test('rerank orders a relevant chunk above an unrelated one', async () => {
   // Preserves original cosine score under cosScore
   assert.equal(rankedObjects[0].cosScore, 0.60);
 });
+
+test(
+  'rerank fallback keeps every candidate once, in input order, without throwing',
+  { skip: modelReady && 'model available; fallback path not reachable without mocks' },
+  async () => {
+    const strings = ['a', 'b', 'c'];
+    const rankedStrings = await rerank('q', strings);
+    assert.equal(rankedStrings.length, 3);
+    assert.deepEqual(rankedStrings.map((o) => o.text), strings);
+    assert.equal(new Set(rankedStrings.map((o) => o.text)).size, strings.length);
+    for (const item of rankedStrings) {
+      assert.equal(item.rerankScore, 0);
+    }
+
+    const objects = [
+      { id: 'c1', text: 'x', score: 0.75 },
+      { id: 'c2', text: 'y', score: 0.6, cosScore: 0.6 },
+    ];
+    const rankedObjects = await rerank('q', objects);
+    assert.deepEqual(rankedObjects.map((o) => o.id), ['c1', 'c2']);
+    assert.equal(rankedObjects[0].score, 0.75);
+    assert.equal(rankedObjects[1].score, 0.6);
+    assert.equal(rankedObjects[0].cosScore, undefined);
+    assert.equal(rankedObjects[1].cosScore, 0.6);
+    assert.equal(rankedObjects[0].rerankScore, 0);
+    assert.equal(rankedObjects[1].rerankScore, 0);
+    assert.equal(new Set(rankedObjects.map((o) => o.text)).size, objects.length);
+
+    await assert.doesNotReject(rerank('q', ['a']));
+  }
+);
 
 test('retrieveCandidates returns candidates with cosine similarity in descending order', async () => {
   const candidates = await retrieveCandidates('dragon in the cavern', 5);
