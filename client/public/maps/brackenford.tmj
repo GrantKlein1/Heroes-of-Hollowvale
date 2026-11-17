@@ -6842,7 +6842,7 @@
         {
           "name": "barrel",
           "type": "prop",
-          "x": 128,
+          "x": 544,
           "y": 176,
           "width": 32,
           "height": 48,

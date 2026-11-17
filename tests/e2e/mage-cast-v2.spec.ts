@@ -17,8 +17,8 @@ test.describe('MS-1 — Mage Lightning and Leech release on the v2 cast frame', 
     await page.waitForFunction(() => (window as any).__hv?.scene() === 'village');
     await page.waitForFunction(() => {
       const scene = (window as any).__scene;
-      return scene?.anims?.exists?.('mage_cast_lightning_v2_down')
-        && scene?.anims?.exists?.('mage_cast_leech_v2_right')
+      return (scene?.anims?.get?.('mage_cast_lightning_v2_down')?.frames?.length > 0)
+        && (scene?.anims?.get?.('mage_cast_leech_v2_right')?.frames?.length > 0)
         && scene?.textures?.exists?.('spell_fx_v2');
     });
   }
@@ -44,8 +44,8 @@ test.describe('MS-1 — Mage Lightning and Leech release on the v2 cast frame', 
             const proj = list[list.length - 1];
             resolve({
               elapsed: performance.now() - started,
-              x: proj.x,
-              y: proj.y,
+              x: proj.startX ?? proj.x,
+              y: proj.startY ?? proj.y,
               key: proj.texture?.key,
               fly: proj.flyAnim,
               hit: proj.hitAnim,
@@ -105,8 +105,8 @@ test.describe('MS-1 — Mage Lightning and Leech release on the v2 cast frame', 
             const proj = list[list.length - 1];
             resolve({
               elapsed: performance.now() - started,
-              x: proj.x,
-              y: proj.y,
+              x: proj.startX ?? proj.x,
+              y: proj.startY ?? proj.y,
               fly: proj.flyAnim,
               hit: proj.hitAnim,
               ret: proj.returnAnim,

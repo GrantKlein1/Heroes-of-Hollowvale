@@ -259,12 +259,26 @@ export function ensureSpellAnimations(scene) {
   if (!scene?.anims || typeof scene.anims.create !== 'function') return
 
   const createIfMissing = (config) => {
-    if (typeof scene.anims.exists === 'function' && !scene.anims.exists(config.key)) {
-      try {
-        scene.anims.create(config)
-      } catch (e) {
-        // Safe fallback if textures are not yet loaded in mock/test
+    const textureKey = config.frames?.[0]?.key
+    if (textureKey && scene.textures && typeof scene.textures.exists === 'function') {
+      if (!scene.textures.exists(textureKey)) {
+        return
       }
+    }
+    if (typeof scene.anims.exists === 'function' && scene.anims.exists(config.key)) {
+      const existing = typeof scene.anims.get === 'function' ? scene.anims.get(config.key) : null
+      if (existing && (!existing.frames || existing.frames.length === 0)) {
+        if (typeof scene.anims.remove === 'function') {
+          scene.anims.remove(config.key)
+        }
+      } else {
+        return
+      }
+    }
+    try {
+      scene.anims.create(config)
+    } catch (e) {
+      // Safe fallback if textures are not yet loaded in mock/test
     }
   }
 
@@ -578,6 +592,18 @@ export function armMageV2Cast(scene, player, spellId, now = (typeof performance 
   if (player.classId && player.classId !== 'mage') return null
   if (spellId === 'leech' && now < (session.lifeLeechCooldownUntil || 0)) return null
 
+  const facing = player.facing || 'down'
+  const timing = getV2CastTiming(spellId, facing)
+
+  const textureMissing = typeof scene.textures?.exists === 'function' && !scene.textures.exists('mage_spells_v2')
+  const clip = typeof scene.anims?.get === 'function' ? scene.anims.get(timing.key) : null
+  const clipNotPlayable = typeof scene.anims?.get === 'function' ? (!clip || !clip.frames || clip.frames.length === 0) : false
+
+  if (textureMissing || clipNotPlayable) {
+    scene._notice?.('Spells are still loading')
+    return null
+  }
+
   if (spellId === 'leech') {
     session.lifeLeechCooldownUntil = now + LEECH_COOLDOWN_MS
     scene._notice?.('Cast Life Leech')
@@ -586,8 +612,6 @@ export function armMageV2Cast(scene, player, spellId, now = (typeof performance 
   ensureMageSpellsGroup(scene)
   safeSpellCast()
 
-  const facing = player.facing || 'down'
-  const timing = getV2CastTiming(spellId, facing)
   const pending = {
     scene,
     spellId,
