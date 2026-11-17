@@ -45,6 +45,7 @@ export const CONSUMABLE_EFFECTS = Object.freeze({
 })
 
 export const CONSUMABLE = new Set(Object.keys(CONSUMABLE_EFFECTS))
+CONSUMABLE.effects = CONSUMABLE_EFFECTS
 
 /** Projectile speed, travel distance, and lingering duration */
 export const FIREBALL_SPEED = 420

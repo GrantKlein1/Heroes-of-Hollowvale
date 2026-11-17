@@ -1187,6 +1187,7 @@ export class Player extends Actor {
       rotation: 0,
       layer: this.facing === 'up' ? 'front' : 'front'
     }
+    this._lastAnchor = anchor
 
     const ox = 12.0 / 24
     const oy = 15.61 / 24
