@@ -1,0 +1,55 @@
+{
+ "actor": "knight",
+ "clip": "hold_idle",
+ "cell": [
+  64,
+  96
+ ],
+ "origin": {
+  "x": 0.5,
+  "y": 0.9271
+ },
+ "pivotPx": [
+  32.0,
+  89.0016
+ ],
+ "hand": "hand.R",
+ "units": "px from feet origin, +y down",
+ "rotation": "degrees, 0=item upright (cork/stem up), positive clockwise on screen",
+ "layer": "front|behind, relative to the body sprite. Up is forced front so the item reads (true depth hides it behind the backplate).",
+ "format": "{x, y, rotation, layer}",
+ "layerLock": {
+  "down": "front",
+  "left": "behind",
+  "right": "front",
+  "up": "front"
+ },
+ "frames": {
+  "knight_hold_idle_down_0": {
+   "x": -4.35,
+   "y": -40.76,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "knight_hold_idle_left_0": {
+   "x": -13.7,
+   "y": -44.52,
+   "rotation": 0.0,
+   "layer": "behind"
+  },
+  "knight_hold_idle_right_0": {
+   "x": 13.7,
+   "y": -42.71,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "knight_hold_idle_up_0": {
+   "x": 4.35,
+   "y": -46.46,
+   "rotation": 0.0,
+   "layer": "front"
+  }
+ },
+ "fps": 1,
+ "framesCount": 1
+}

@@ -913,5 +913,113 @@ describe('Player Actor — Package 1-3', () => {
       expect(mage.anims.play).toHaveBeenCalledWith('mage_cast_right', false)
     })
   })
+
+  describe('Hero Item Hold and Use Animations (Package IT-1)', () => {
+    beforeEach(() => {
+      session.equippedId = null
+      session.hotbarSlot = 0
+    })
+
+    it('picks hold_idle / hold_run only when a consumable is equipped', () => {
+      const knight = new Player(mockScene, 100, 100, 'knight')
+      session.equippedId = 'healing_potion'
+
+      // Idle with consumable plays knight_hold_idle_down
+      knight.playAnim('idle')
+      expect(knight.anims.play).toHaveBeenCalledWith('knight_hold_idle_down', true)
+
+      // Walk with consumable plays knight_hold_run_down
+      knight.playAnim('walk')
+      expect(knight.anims.play).toHaveBeenCalledWith('knight_hold_run_down', true)
+
+      // Run with consumable plays knight_hold_run_down
+      knight.playAnim('run')
+      expect(knight.anims.play).toHaveBeenCalledWith('knight_hold_run_down', true)
+
+      // With non-consumable (weapon or null), regular anims are played
+      session.equippedId = 'iron_sword'
+      knight.playAnim('idle')
+      expect(knight.anims.play).toHaveBeenCalledWith('knight_idle_down', true)
+
+      session.equippedId = null
+      knight.playAnim('walk')
+      expect(knight.anims.play).toHaveBeenCalledWith('knight_walk_down', true)
+    })
+
+    it('plays hold animations across all 4 heroes when consumable is equipped', () => {
+      session.equippedId = 'mana_potion'
+      for (const hero of ['knight', 'thief', 'dwarf', 'mage']) {
+        const player = new Player(mockScene, 100, 100, hero)
+        player.playAnim('idle')
+        expect(player.anims.play).toHaveBeenCalledWith(`${hero}_hold_idle_down`, true)
+      }
+    })
+
+    it('begins item use with drink or eat animation and overrides walk/run', () => {
+      const knight = new Player(mockScene, 100, 100, 'knight')
+      session.equippedId = 'healing_potion'
+
+      knight.beginItemUse('healing_potion', 1000)
+      expect(knight.itemUseState.active).toBe(true)
+      expect(knight.itemUseState.clip).toBe('use_drink')
+      expect(knight.anims.play).toHaveBeenCalledWith('knight_use_drink_down', false)
+
+      // While using, walk and run do not override use animation
+      knight.playAnim('walk')
+      expect(knight.anims.play).not.toHaveBeenCalledWith('knight_walk_down', expect.anything())
+      expect(knight.anims.play).not.toHaveBeenCalledWith('knight_hold_run_down', expect.anything())
+
+      // Apple plays use_eat
+      const dwarf = new Player(mockScene, 100, 100, 'dwarf')
+      dwarf.beginItemUse('apple', 1000)
+      expect(dwarf.itemUseState.clip).toBe('use_eat')
+      expect(dwarf.anims.play).toHaveBeenCalledWith('dwarf_use_eat_down', false)
+    })
+
+    it('switches facing mid-use at the same frame index without restarting', () => {
+      const knight = new Player(mockScene, 100, 100, 'knight')
+      knight.anims.currentFrame = { frame: { name: 'knight_use_drink_down_5' } }
+      knight.beginItemUse('healing_potion', 1000)
+
+      // Mid-use facing change
+      knight.setFacing('right')
+      expect(knight.anims.play).toHaveBeenCalledWith('knight_use_drink_right', false)
+    })
+
+    it('returns to hold (or normal idle) when use completes or ends', () => {
+      const knight = new Player(mockScene, 100, 100, 'knight')
+      session.equippedId = 'healing_potion'
+      knight.beginItemUse('healing_potion', 1000)
+
+      knight.endItemUse()
+      expect(knight.itemUseState.active).toBe(false)
+      expect(knight.anims.play).toHaveBeenCalledWith('knight_hold_idle_down', false)
+
+      // If item is unequipped when use ends, returns to regular idle
+      knight.beginItemUse('healing_potion', 2000)
+      session.equippedId = null
+      knight.endItemUse()
+      expect(knight.anims.play).toHaveBeenCalledWith('knight_idle_down', false)
+    })
+
+    it('manages itemSprite lifecycle across setClass and destroy', () => {
+      const knight = new Player(mockScene, 100, 100, 'knight')
+      session.equippedId = 'healing_potion'
+      knight._syncItemInHandSprite()
+      expect(knight.itemSprite).toBeDefined()
+
+      const oldSprite = knight.itemSprite
+      const destroySpy = vi.spyOn(oldSprite, 'destroy')
+      knight.setClass('mage')
+      expect(destroySpy).toHaveBeenCalled()
+
+      expect(knight.itemSprite).toBeDefined()
+      const mageSprite = knight.itemSprite
+      const destroySpy2 = vi.spyOn(mageSprite, 'destroy')
+      knight.destroy()
+      expect(destroySpy2).toHaveBeenCalled()
+      expect(knight.itemSprite).toBeNull()
+    })
+  })
 })
 

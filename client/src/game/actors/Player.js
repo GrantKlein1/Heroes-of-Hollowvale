@@ -35,6 +35,7 @@ import {
   PLAYER_IFRAME_DURATION_MS,
 } from '../combat/feedback.js'
 import { session } from '../session.js'
+import { getHeldItemId, holdClipFor, useClipFor, getItemAnchor } from './itemHold.js'
 import {
   castFireball,
   castLightning,
@@ -151,6 +152,10 @@ export class Player extends Actor {
     this.chargeState = { active: false, startTime: 0, charged: false }
     this.isRunning = false
 
+    // Item hold and use states (Package IT-1)
+    this.itemUseState = { active: false, itemId: null, startTime: 0, clip: null }
+    this.itemSprite = null
+
     // Listen for animation completion to transition out of non-looping states
     if (typeof this.on === 'function') {
       const animCompleteEvent = Phaser?.Animations?.Events?.ANIMATION_COMPLETE || 'animationcomplete'
@@ -224,6 +229,12 @@ export class Player extends Actor {
    */
   setClass(classId) {
     if (!(classId in CLASS_SHEETS)) return
+    if (this.itemSprite) {
+      if (typeof this.itemSprite.destroy === 'function') {
+        this.itemSprite.destroy()
+      }
+      this.itemSprite = null
+    }
     this.classId = classId
     this.assetId = classId
     if (this.classId === 'mage') {
@@ -358,12 +369,38 @@ export class Player extends Actor {
    * @returns {Player}
    */
   playAnim(animName, ignoreIfPlaying = true) {
-    const targetSheet = this.getSheetForAnim(animName)
+    if (this.itemUseState?.active) {
+      if (animName === 'idle' || animName === 'walk' || animName === 'run') {
+        this._syncItemInHandSprite()
+        return this
+      }
+    }
+
+    const isBusy = (
+      this.is(ACTOR_STATES.ATTACK) ||
+      this.is(ACTOR_STATES.DODGE) ||
+      this.is(ACTOR_STATES.BLOCK) ||
+      this.is(ACTOR_STATES.HURT) ||
+      this.is(ACTOR_STATES.DEAD) ||
+      Boolean(this.vanishState?.invisible)
+    )
+
+    const heldItem = !isBusy ? getHeldItemId(session) : null
+    let targetSheet
+    let key
+
+    if (heldItem && (animName === 'idle' || animName === 'walk' || animName === 'run')) {
+      const clip = holdClipFor(animName === 'walk' || animName === 'run')
+      targetSheet = `${this.classId}_${clip}`
+      key = `${this.classId}_${clip}_${this.facing}`
+    } else {
+      targetSheet = this.getSheetForAnim(animName)
+      key = this.getAnimKey(animName)
+    }
+
     if (targetSheet && targetSheet !== this.texture?.key) {
       this.applySheetOrigin(targetSheet)
     }
-
-    const key = this.getAnimKey(animName)
 
     if (this.scene?.anims && typeof this.scene.anims.exists === 'function' && !this.scene.anims.exists(key)) {
       console.warn(`[Player] Animation key "${key}" not found in scene anims.`)
@@ -384,6 +421,8 @@ export class Player extends Actor {
       this.applySheetOrigin(targetSheet)
       this.applyFootprint(targetSheet)
     }
+
+    this._syncItemInHandSprite()
 
     return this
   }
@@ -841,6 +880,14 @@ export class Player extends Actor {
    */
   onAnimationComplete(anim) {
     const key = anim?.key || this.anims?.currentAnim?.key || ''
+    if (key.includes('use_drink') || key.includes('use_eat')) {
+      if (this.itemUseState?.active) {
+        this.itemUseState = { active: false, itemId: null, startTime: 0, clip: null }
+        this._refreshCurrentAnim()
+        this._syncItemInHandSprite()
+      }
+      return
+    }
     if (key.includes('hurt') && this.is(ACTOR_STATES.HURT)) {
       const consumed = this.consumeBuffer(Date.now())
       if (!consumed) {
@@ -936,6 +983,29 @@ export class Player extends Actor {
    * Refreshes the currently playing animation in the new facing direction.
    */
   _refreshCurrentAnim() {
+    if (this.itemUseState?.active) {
+      const clip = this.itemUseState.clip || 'use_drink'
+      const newKey = `${this.classId}_${clip}_${this.facing}`
+      const sheetKey = `${this.classId}_${clip}`
+      const frameIndex = getAnimationFrameIndex(this.anims?.currentFrame)
+
+      this.applySheetOrigin(sheetKey)
+      if (this.anims && typeof this.anims.play === 'function') {
+        this.anims.play(newKey, false)
+        if (frameIndex >= 0) {
+          const animObj = typeof this.scene?.anims?.get === 'function' ? this.scene.anims.get(newKey) : null
+          const targetFrame = animObj?.frames?.[frameIndex] || this.anims?.currentAnim?.frames?.[frameIndex]
+          if (targetFrame && typeof this.anims?.setCurrentFrame === 'function') {
+            this.anims.setCurrentFrame(targetFrame)
+          }
+        }
+      }
+      this.applySheetOrigin(sheetKey)
+      this.applyFootprint(sheetKey)
+      this._syncItemInHandSprite()
+      return
+    }
+
     if (this.is(ACTOR_STATES.WALK)) {
       this.playAnim(this.isAtRunSpeed() ? 'run' : 'walk', false)
     } else if (this.is(ACTOR_STATES.HURT)) {
@@ -960,6 +1030,206 @@ export class Player extends Actor {
       this.playAnim('death', false)
     } else {
       this.playAnim('idle', false)
+    }
+
+    this._syncItemInHandSprite()
+  }
+
+  /**
+   * Starts consuming an item, playing the one-shot use clip from frame 0.
+   *
+   * @param {string} itemId
+   * @param {number} [now=Date.now()]
+   * @returns {Player}
+   */
+  beginItemUse(itemId, now = (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
+    const clip = useClipFor(itemId) || 'use_drink'
+    this.itemUseState = { active: true, itemId, startTime: now, clip }
+    const key = `${this.classId}_${clip}_${this.facing}`
+    const sheetKey = `${this.classId}_${clip}`
+
+    if (this.scene?.anims && typeof this.scene.anims.exists === 'function' && !this.scene.anims.exists(key)) {
+      console.warn(`[Player] Animation key "${key}" not found in scene anims.`)
+    }
+
+    this.applySheetOrigin(sheetKey)
+    if (this.anims && typeof this.anims.play === 'function') {
+      this.anims.play(key, false)
+    }
+    this.applySheetOrigin(sheetKey)
+    this.applyFootprint(sheetKey)
+    this._syncItemInHandSprite()
+    return this
+  }
+
+  /**
+   * Cancels or completes an active item use.
+   *
+   * @returns {Player}
+   */
+  endItemUse() {
+    if (!this.itemUseState?.active) return this
+    this.itemUseState = { active: false, itemId: null, startTime: 0, clip: null }
+    this._refreshCurrentAnim()
+    this._syncItemInHandSprite()
+    return this
+  }
+
+  /**
+   * Destroys this actor and its associated item sprite.
+   *
+   * @param {boolean} [fromScene]
+   */
+  destroy(fromScene) {
+    if (this.itemSprite) {
+      if (typeof this.itemSprite.destroy === 'function') {
+        this.itemSprite.destroy()
+      }
+      this.itemSprite = null
+    }
+    if (typeof super.destroy === 'function') {
+      super.destroy(fromScene)
+    }
+  }
+
+  /**
+   * Lazily creates or returns the in-hand item sprite.
+   *
+   * @returns {Phaser.GameObjects.Image|object|null}
+   */
+  _getItemSprite() {
+    if (!this.itemSprite && this.scene) {
+      const activeItemId = this.itemUseState?.active ? this.itemUseState.itemId : getHeldItemId(session)
+      const frameName = activeItemId ? `${activeItemId}_${this.facing}` : 'healing_potion_down'
+      if (this.scene.add && typeof this.scene.add.image === 'function') {
+        this.itemSprite = this.scene.add.image(this.x, this.y, 'items_inhand', frameName)
+      } else {
+        this.itemSprite = {
+          x: this.x,
+          y: this.y,
+          visible: false,
+          rotation: 0,
+          depth: 0,
+          originX: 0.5,
+          originY: 0.5,
+          texture: { key: 'items_inhand' },
+          frame: { name: frameName },
+          setOrigin(ox, oy) { this.originX = ox; this.originY = oy; return this; },
+          setTexture(key, fn) { this.texture = { key }; this.frame = { name: fn }; return this; },
+          setFrame(fn) { this.frame = { name: fn }; return this; },
+          setRotation(rad) { this.rotation = rad; return this; },
+          setAngle(deg) { this.rotation = deg * (Math.PI / 180); return this; },
+          setDepth(d) { this.depth = d; return this; },
+          setPosition(px, py) { this.x = px; this.y = py; return this; },
+          setVisible(v) { this.visible = v; return this; },
+          destroy() { this.visible = false; },
+        }
+      }
+    }
+    return this.itemSprite
+  }
+
+  /**
+   * Synchronizes the in-hand item sprite's frame, position, rotation, and depth.
+   */
+  _syncItemInHandSprite() {
+    const isBusy = (
+      this.is(ACTOR_STATES.ATTACK) ||
+      this.is(ACTOR_STATES.DODGE) ||
+      this.is(ACTOR_STATES.BLOCK) ||
+      this.is(ACTOR_STATES.HURT) ||
+      this.is(ACTOR_STATES.DEAD) ||
+      Boolean(this.vanishState?.invisible)
+    )
+    const isUsing = Boolean(this.itemUseState?.active)
+    const activeItemId = isUsing ? this.itemUseState.itemId : getHeldItemId(session)
+
+    if (!activeItemId || (isBusy && !isUsing)) {
+      if (this.itemSprite) {
+        if (typeof this.itemSprite.setVisible === 'function') {
+          this.itemSprite.setVisible(false)
+        } else {
+          this.itemSprite.visible = false
+        }
+      }
+      return
+    }
+
+    const sprite = this._getItemSprite()
+    if (!sprite) return
+
+    const itemFrameName = `${activeItemId}_${this.facing}`
+    if (typeof sprite.setFrame === 'function') {
+      sprite.setFrame(itemFrameName)
+    } else if (typeof sprite.setTexture === 'function') {
+      sprite.setTexture('items_inhand', itemFrameName)
+    }
+
+    let clip = 'hold_idle'
+    if (isUsing) {
+      clip = this.itemUseState.clip || 'use_drink'
+    } else {
+      const isMoving = this.is(ACTOR_STATES.WALK) || this.isAtRunSpeed() || this.isRunning
+      clip = holdClipFor(isMoving)
+    }
+
+    let playerFrameName = this.anims?.currentFrame?.frame?.name
+    if (!playerFrameName) {
+      playerFrameName = this.frame?.name
+    }
+    if (!playerFrameName || !playerFrameName.startsWith(`${this.classId}_${clip}`)) {
+      playerFrameName = `${this.classId}_${clip}_${this.facing}_0`
+    }
+
+    const anchor = getItemAnchor(this.classId, clip, playerFrameName) || {
+      x: 0,
+      y: 0,
+      rotation: 0,
+      layer: this.facing === 'up' ? 'front' : 'front'
+    }
+    this._lastAnchor = anchor
+
+    const ox = 12.0 / 24
+    const oy = 15.61 / 24
+    if (typeof sprite.setOrigin === 'function') {
+      sprite.setOrigin(ox, oy)
+    } else {
+      sprite.originX = ox
+      sprite.originY = oy
+    }
+
+    const scale = this.scaleX !== undefined ? this.scaleX : (this.scale !== undefined ? this.scale : 1)
+    const posX = this.x + anchor.x * scale
+    const posY = this.y + anchor.y * scale
+
+    if (typeof sprite.setPosition === 'function') {
+      sprite.setPosition(posX, posY)
+    } else {
+      sprite.x = posX
+      sprite.y = posY
+    }
+
+    if (typeof sprite.setAngle === 'function') {
+      sprite.setAngle(anchor.rotation)
+    } else if (typeof sprite.setRotation === 'function') {
+      sprite.setRotation(anchor.rotation * (Math.PI / 180))
+    } else {
+      sprite.rotation = anchor.rotation * (Math.PI / 180)
+    }
+
+    const layer = (this.facing === 'up' || anchor.layer === 'front') ? 'front' : 'behind'
+    const depthBias = layer === 'front' ? 1 : -1
+    const targetDepth = (this.depth ?? 0) + depthBias
+    if (typeof sprite.setDepth === 'function') {
+      sprite.setDepth(targetDepth)
+    } else {
+      sprite.depth = targetDepth
+    }
+
+    if (typeof sprite.setVisible === 'function') {
+      sprite.setVisible(true)
+    } else {
+      sprite.visible = true
     }
   }
 
@@ -1097,6 +1367,7 @@ export class Player extends Actor {
    */
   update(time = Date.now(), delta = 0) {
     super.update(time, delta)
+    this._syncItemInHandSprite()
 
     const v2Casting = typeof this.currentAttackType === 'string' && this.currentAttackType.startsWith('cast_')
     if (this._v2Cast && !this._v2Cast.released && !this.is(ACTOR_STATES.ATTACK)) {
@@ -1183,6 +1454,8 @@ export class Player extends Actor {
         this._refreshCurrentAnim()
       }
     }
+
+    this._syncItemInHandSprite()
   }
 
   // --- StateMachine Pass-Through API (with setter to prevent Phaser GameObject collision) ---

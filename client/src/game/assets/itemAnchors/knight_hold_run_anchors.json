@@ -1,0 +1,223 @@
+{
+ "actor": "knight",
+ "clip": "hold_run",
+ "cell": [
+  64,
+  96
+ ],
+ "origin": {
+  "x": 0.5,
+  "y": 0.9271
+ },
+ "pivotPx": [
+  32.0,
+  89.0016
+ ],
+ "hand": "hand.R",
+ "units": "px from feet origin, +y down",
+ "rotation": "degrees, 0=item upright (cork/stem up), positive clockwise on screen",
+ "layer": "front|behind; up is forced front so the item reads",
+ "format": "{x, y, rotation, layer}",
+ "layerLock": {
+  "down": "front",
+  "left": "behind",
+  "right": "front",
+  "up": "front"
+ },
+ "frames": {
+  "knight_hold_run_down_0": {
+   "x": -4.35,
+   "y": -37.57,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "knight_hold_run_down_1": {
+   "x": -4.71,
+   "y": -35.37,
+   "rotation": -0.5,
+   "layer": "front"
+  },
+  "knight_hold_run_down_2": {
+   "x": -4.87,
+   "y": -34.09,
+   "rotation": -0.71,
+   "layer": "front"
+  },
+  "knight_hold_run_down_3": {
+   "x": -4.71,
+   "y": -35.37,
+   "rotation": -0.5,
+   "layer": "front"
+  },
+  "knight_hold_run_down_4": {
+   "x": -4.35,
+   "y": -37.57,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "knight_hold_run_down_5": {
+   "x": -3.97,
+   "y": -35.32,
+   "rotation": 0.5,
+   "layer": "front"
+  },
+  "knight_hold_run_down_6": {
+   "x": -3.82,
+   "y": -34.02,
+   "rotation": 0.71,
+   "layer": "front"
+  },
+  "knight_hold_run_down_7": {
+   "x": -3.97,
+   "y": -35.32,
+   "rotation": 0.5,
+   "layer": "front"
+  },
+  "knight_hold_run_left_0": {
+   "x": -15.0,
+   "y": -41.59,
+   "rotation": -18.38,
+   "layer": "behind"
+  },
+  "knight_hold_run_left_1": {
+   "x": -14.88,
+   "y": -39.44,
+   "rotation": -18.34,
+   "layer": "behind"
+  },
+  "knight_hold_run_left_2": {
+   "x": -14.84,
+   "y": -38.18,
+   "rotation": -18.32,
+   "layer": "behind"
+  },
+  "knight_hold_run_left_3": {
+   "x": -14.88,
+   "y": -39.44,
+   "rotation": -18.34,
+   "layer": "behind"
+  },
+  "knight_hold_run_left_4": {
+   "x": -15.0,
+   "y": -41.59,
+   "rotation": -18.38,
+   "layer": "behind"
+  },
+  "knight_hold_run_left_5": {
+   "x": -15.1,
+   "y": -39.29,
+   "rotation": -18.4,
+   "layer": "behind"
+  },
+  "knight_hold_run_left_6": {
+   "x": -15.14,
+   "y": -37.96,
+   "rotation": -18.41,
+   "layer": "behind"
+  },
+  "knight_hold_run_left_7": {
+   "x": -15.1,
+   "y": -39.29,
+   "rotation": -18.4,
+   "layer": "behind"
+  },
+  "knight_hold_run_right_0": {
+   "x": 15.0,
+   "y": -39.78,
+   "rotation": 18.38,
+   "layer": "front"
+  },
+  "knight_hold_run_right_1": {
+   "x": 14.88,
+   "y": -37.48,
+   "rotation": 18.4,
+   "layer": "front"
+  },
+  "knight_hold_run_right_2": {
+   "x": 14.84,
+   "y": -36.16,
+   "rotation": 18.41,
+   "layer": "front"
+  },
+  "knight_hold_run_right_3": {
+   "x": 14.88,
+   "y": -37.48,
+   "rotation": 18.4,
+   "layer": "front"
+  },
+  "knight_hold_run_right_4": {
+   "x": 15.0,
+   "y": -39.78,
+   "rotation": 18.38,
+   "layer": "front"
+  },
+  "knight_hold_run_right_5": {
+   "x": 15.1,
+   "y": -37.64,
+   "rotation": 18.34,
+   "layer": "front"
+  },
+  "knight_hold_run_right_6": {
+   "x": 15.14,
+   "y": -36.38,
+   "rotation": 18.32,
+   "layer": "front"
+  },
+  "knight_hold_run_right_7": {
+   "x": 15.1,
+   "y": -37.64,
+   "rotation": 18.34,
+   "layer": "front"
+  },
+  "knight_hold_run_up_0": {
+   "x": 4.35,
+   "y": -43.8,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "knight_hold_run_up_1": {
+   "x": 4.71,
+   "y": -41.56,
+   "rotation": 0.44,
+   "layer": "front"
+  },
+  "knight_hold_run_up_2": {
+   "x": 4.87,
+   "y": -40.25,
+   "rotation": 0.62,
+   "layer": "front"
+  },
+  "knight_hold_run_up_3": {
+   "x": 4.71,
+   "y": -41.56,
+   "rotation": 0.44,
+   "layer": "front"
+  },
+  "knight_hold_run_up_4": {
+   "x": 4.35,
+   "y": -43.8,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "knight_hold_run_up_5": {
+   "x": 3.97,
+   "y": -41.6,
+   "rotation": -0.44,
+   "layer": "front"
+  },
+  "knight_hold_run_up_6": {
+   "x": 3.82,
+   "y": -40.32,
+   "rotation": -0.62,
+   "layer": "front"
+  },
+  "knight_hold_run_up_7": {
+   "x": 3.97,
+   "y": -41.6,
+   "rotation": -0.44,
+   "layer": "front"
+  }
+ },
+ "fps": 14,
+ "framesCount": 8
+}

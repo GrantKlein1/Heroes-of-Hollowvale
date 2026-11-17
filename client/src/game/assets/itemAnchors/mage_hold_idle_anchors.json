@@ -1,0 +1,55 @@
+{
+ "actor": "mage",
+ "clip": "hold_idle",
+ "cell": [
+  64,
+  96
+ ],
+ "origin": {
+  "x": 0.5,
+  "y": 0.9271
+ },
+ "pivotPx": [
+  32.0,
+  89.0016
+ ],
+ "hand": "arm.R",
+ "units": "px from feet origin, +y down",
+ "rotation": "degrees, 0=item upright (cork/stem up), positive clockwise on screen",
+ "layer": "front|behind; up is forced front so the item reads",
+ "format": "{x, y, rotation, layer}",
+ "layerLock": {
+  "down": "front",
+  "left": "behind",
+  "right": "front",
+  "up": "front"
+ },
+ "frames": {
+  "mage_hold_idle_down_0": {
+   "x": -4.96,
+   "y": -37.69,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "mage_hold_idle_left_0": {
+   "x": -14.04,
+   "y": -41.64,
+   "rotation": 0.0,
+   "layer": "behind"
+  },
+  "mage_hold_idle_right_0": {
+   "x": 14.04,
+   "y": -39.58,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "mage_hold_idle_up_0": {
+   "x": 4.96,
+   "y": -43.53,
+   "rotation": 0.0,
+   "layer": "front"
+  }
+ },
+ "fps": 1,
+ "framesCount": 1
+}

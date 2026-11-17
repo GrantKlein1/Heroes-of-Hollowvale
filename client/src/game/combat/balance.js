@@ -35,8 +35,17 @@ export const WEAPON = Object.freeze({
   dwarf: 'battle_axe',
 })
 
-/** Supported consumable items */
-export const CONSUMABLE = new Set(['healing_potion', 'mana_potion', 'speed_potion'])
+/** Supported consumable items and effects */
+export const CONSUMABLE_EFFECTS = Object.freeze({
+  healing_potion: Object.freeze({ heal: 70, mana: 0, speedMs: 0, clip: 'use_drink' }),
+  mana_potion: Object.freeze({ heal: 0, mana: 75, speedMs: 0, clip: 'use_drink' }),
+  speed_potion: Object.freeze({ heal: 0, mana: 0, speedMs: 10000, clip: 'use_drink' }),
+  apple: Object.freeze({ heal: 25, mana: 0, speedMs: 0, clip: 'use_eat' }), // Grant-tunable: modest first-pass values
+  ale_flask: Object.freeze({ heal: 15, mana: 0, speedMs: 5000, clip: 'use_drink' }), // Grant-tunable: modest first-pass values
+})
+
+export const CONSUMABLE = new Set(Object.keys(CONSUMABLE_EFFECTS))
+CONSUMABLE.effects = CONSUMABLE_EFFECTS
 
 /** Projectile speed, travel distance, and lingering duration */
 export const FIREBALL_SPEED = 420

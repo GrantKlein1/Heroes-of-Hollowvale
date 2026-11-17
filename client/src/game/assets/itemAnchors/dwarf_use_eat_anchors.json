@@ -1,0 +1,416 @@
+{
+ "actor": "dwarf",
+ "clip": "use_eat",
+ "cell": [
+  64,
+  80
+ ],
+ "origin": {
+  "x": 0.5,
+  "y": 0.9125
+ },
+ "pivotPx": [
+  32.0,
+  73.0
+ ],
+ "hand": "hand.R",
+ "units": "px from feet origin, +y down",
+ "rotation": "degrees, 0=item upright (cork/stem up), positive clockwise on screen",
+ "layer": "front|behind, relative to the body sprite. Up is forced front so the item reads (true depth hides it behind the body).",
+ "format": "{x, y, rotation, layer}",
+ "layerLock": {
+  "down": "front",
+  "left": "behind",
+  "right": "front",
+  "up": "front"
+ },
+ "frames": {
+  "dwarf_use_eat_down_0": {
+   "x": -6.15,
+   "y": -30.79,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_use_eat_down_1": {
+   "x": -6.28,
+   "y": -31.27,
+   "rotation": -0.86,
+   "layer": "front"
+  },
+  "dwarf_use_eat_down_2": {
+   "x": -6.66,
+   "y": -32.45,
+   "rotation": -2.69,
+   "layer": "front"
+  },
+  "dwarf_use_eat_down_3": {
+   "x": -7.2,
+   "y": -33.92,
+   "rotation": -4.54,
+   "layer": "front"
+  },
+  "dwarf_use_eat_down_4": {
+   "x": -7.72,
+   "y": -35.19,
+   "rotation": -5.88,
+   "layer": "front"
+  },
+  "dwarf_use_eat_down_5": {
+   "x": -7.95,
+   "y": -35.72,
+   "rotation": -6.38,
+   "layer": "front"
+  },
+  "dwarf_use_eat_down_6": {
+   "x": -7.95,
+   "y": -35.72,
+   "rotation": -5.37,
+   "layer": "front"
+  },
+  "dwarf_use_eat_down_7": {
+   "x": -7.95,
+   "y": -35.72,
+   "rotation": -2.9,
+   "layer": "front"
+  },
+  "dwarf_use_eat_down_8": {
+   "x": -7.95,
+   "y": -35.72,
+   "rotation": 0.15,
+   "layer": "front"
+  },
+  "dwarf_use_eat_down_9": {
+   "x": -7.95,
+   "y": -35.72,
+   "rotation": 2.79,
+   "layer": "front"
+  },
+  "dwarf_use_eat_down_10": {
+   "x": -7.95,
+   "y": -35.72,
+   "rotation": 3.91,
+   "layer": "front"
+  },
+  "dwarf_use_eat_down_11": {
+   "x": -7.95,
+   "y": -35.72,
+   "rotation": 2.11,
+   "layer": "front"
+  },
+  "dwarf_use_eat_down_12": {
+   "x": -7.95,
+   "y": -35.72,
+   "rotation": 0.29,
+   "layer": "front"
+  },
+  "dwarf_use_eat_down_13": {
+   "x": -7.39,
+   "y": -34.39,
+   "rotation": -0.49,
+   "layer": "front"
+  },
+  "dwarf_use_eat_down_14": {
+   "x": -6.51,
+   "y": -32.0,
+   "rotation": -0.54,
+   "layer": "front"
+  },
+  "dwarf_use_eat_down_15": {
+   "x": -6.15,
+   "y": -30.79,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_use_eat_left_0": {
+   "x": -10.23,
+   "y": -34.2,
+   "rotation": -0.0,
+   "layer": "behind"
+  },
+  "dwarf_use_eat_left_1": {
+   "x": -10.32,
+   "y": -34.72,
+   "rotation": 2.48,
+   "layer": "behind"
+  },
+  "dwarf_use_eat_left_2": {
+   "x": -10.46,
+   "y": -36.01,
+   "rotation": 8.39,
+   "layer": "behind"
+  },
+  "dwarf_use_eat_left_3": {
+   "x": -10.45,
+   "y": -37.59,
+   "rotation": 15.48,
+   "layer": "behind"
+  },
+  "dwarf_use_eat_left_4": {
+   "x": -10.29,
+   "y": -38.93,
+   "rotation": 21.49,
+   "layer": "behind"
+  },
+  "dwarf_use_eat_left_5": {
+   "x": -10.18,
+   "y": -39.49,
+   "rotation": 24.04,
+   "layer": "behind"
+  },
+  "dwarf_use_eat_left_6": {
+   "x": -10.18,
+   "y": -39.49,
+   "rotation": 24.86,
+   "layer": "behind"
+  },
+  "dwarf_use_eat_left_7": {
+   "x": -10.18,
+   "y": -39.49,
+   "rotation": 26.81,
+   "layer": "behind"
+  },
+  "dwarf_use_eat_left_8": {
+   "x": -10.18,
+   "y": -39.49,
+   "rotation": 29.1,
+   "layer": "behind"
+  },
+  "dwarf_use_eat_left_9": {
+   "x": -10.18,
+   "y": -39.49,
+   "rotation": 31.01,
+   "layer": "behind"
+  },
+  "dwarf_use_eat_left_10": {
+   "x": -10.18,
+   "y": -39.49,
+   "rotation": 31.81,
+   "layer": "behind"
+  },
+  "dwarf_use_eat_left_11": {
+   "x": -10.18,
+   "y": -39.49,
+   "rotation": 30.53,
+   "layer": "behind"
+  },
+  "dwarf_use_eat_left_12": {
+   "x": -10.18,
+   "y": -39.49,
+   "rotation": 29.32,
+   "layer": "behind"
+  },
+  "dwarf_use_eat_left_13": {
+   "x": -10.41,
+   "y": -38.09,
+   "rotation": 21.86,
+   "layer": "behind"
+  },
+  "dwarf_use_eat_left_14": {
+   "x": -10.43,
+   "y": -35.52,
+   "rotation": 7.68,
+   "layer": "behind"
+  },
+  "dwarf_use_eat_left_15": {
+   "x": -10.23,
+   "y": -34.2,
+   "rotation": -0.0,
+   "layer": "behind"
+  },
+  "dwarf_use_eat_right_0": {
+   "x": 10.23,
+   "y": -31.64,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_use_eat_right_1": {
+   "x": 10.32,
+   "y": -32.11,
+   "rotation": -2.49,
+   "layer": "front"
+  },
+  "dwarf_use_eat_right_2": {
+   "x": 10.46,
+   "y": -33.24,
+   "rotation": -8.55,
+   "layer": "front"
+  },
+  "dwarf_use_eat_right_3": {
+   "x": 10.45,
+   "y": -34.59,
+   "rotation": -16.0,
+   "layer": "front"
+  },
+  "dwarf_use_eat_right_4": {
+   "x": 10.29,
+   "y": -35.72,
+   "rotation": -22.41,
+   "layer": "front"
+  },
+  "dwarf_use_eat_right_5": {
+   "x": 10.18,
+   "y": -36.19,
+   "rotation": -25.14,
+   "layer": "front"
+  },
+  "dwarf_use_eat_right_6": {
+   "x": 10.18,
+   "y": -36.19,
+   "rotation": -25.81,
+   "layer": "front"
+  },
+  "dwarf_use_eat_right_7": {
+   "x": 10.18,
+   "y": -36.19,
+   "rotation": -27.35,
+   "layer": "front"
+  },
+  "dwarf_use_eat_right_8": {
+   "x": 10.18,
+   "y": -36.19,
+   "rotation": -29.07,
+   "layer": "front"
+  },
+  "dwarf_use_eat_right_9": {
+   "x": 10.18,
+   "y": -36.19,
+   "rotation": -30.44,
+   "layer": "front"
+  },
+  "dwarf_use_eat_right_10": {
+   "x": 10.18,
+   "y": -36.19,
+   "rotation": -31.0,
+   "layer": "front"
+  },
+  "dwarf_use_eat_right_11": {
+   "x": 10.18,
+   "y": -36.19,
+   "rotation": -30.1,
+   "layer": "front"
+  },
+  "dwarf_use_eat_right_12": {
+   "x": 10.18,
+   "y": -36.19,
+   "rotation": -29.26,
+   "layer": "front"
+  },
+  "dwarf_use_eat_right_13": {
+   "x": 10.41,
+   "y": -35.02,
+   "rotation": -21.94,
+   "layer": "front"
+  },
+  "dwarf_use_eat_right_14": {
+   "x": 10.43,
+   "y": -32.81,
+   "rotation": -7.71,
+   "layer": "front"
+  },
+  "dwarf_use_eat_right_15": {
+   "x": 10.23,
+   "y": -31.64,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_use_eat_up_0": {
+   "x": 6.15,
+   "y": -35.04,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_use_eat_up_1": {
+   "x": 6.28,
+   "y": -35.56,
+   "rotation": 0.88,
+   "layer": "front"
+  },
+  "dwarf_use_eat_up_2": {
+   "x": 6.66,
+   "y": -36.8,
+   "rotation": 2.86,
+   "layer": "front"
+  },
+  "dwarf_use_eat_up_3": {
+   "x": 7.2,
+   "y": -38.27,
+   "rotation": 5.11,
+   "layer": "front"
+  },
+  "dwarf_use_eat_up_4": {
+   "x": 7.72,
+   "y": -39.47,
+   "rotation": 6.94,
+   "layer": "front"
+  },
+  "dwarf_use_eat_up_5": {
+   "x": 7.95,
+   "y": -39.96,
+   "rotation": 7.71,
+   "layer": "front"
+  },
+  "dwarf_use_eat_up_6": {
+   "x": 7.95,
+   "y": -39.96,
+   "rotation": 6.53,
+   "layer": "front"
+  },
+  "dwarf_use_eat_up_7": {
+   "x": 7.95,
+   "y": -39.96,
+   "rotation": 3.58,
+   "layer": "front"
+  },
+  "dwarf_use_eat_up_8": {
+   "x": 7.95,
+   "y": -39.96,
+   "rotation": -0.19,
+   "layer": "front"
+  },
+  "dwarf_use_eat_up_9": {
+   "x": 7.95,
+   "y": -39.96,
+   "rotation": -3.57,
+   "layer": "front"
+  },
+  "dwarf_use_eat_up_10": {
+   "x": 7.95,
+   "y": -39.96,
+   "rotation": -5.05,
+   "layer": "front"
+  },
+  "dwarf_use_eat_up_11": {
+   "x": 7.95,
+   "y": -39.96,
+   "rotation": -2.7,
+   "layer": "front"
+  },
+  "dwarf_use_eat_up_12": {
+   "x": 7.95,
+   "y": -39.96,
+   "rotation": -0.36,
+   "layer": "front"
+  },
+  "dwarf_use_eat_up_13": {
+   "x": 7.39,
+   "y": -38.72,
+   "rotation": 0.58,
+   "layer": "front"
+  },
+  "dwarf_use_eat_up_14": {
+   "x": 6.51,
+   "y": -36.34,
+   "rotation": 0.57,
+   "layer": "front"
+  },
+  "dwarf_use_eat_up_15": {
+   "x": 6.15,
+   "y": -35.04,
+   "rotation": 0.0,
+   "layer": "front"
+  }
+ },
+ "fps": 16,
+ "framesCount": 16,
+ "effectFrame": 10
+}

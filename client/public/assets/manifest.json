@@ -30,7 +30,8 @@
       "village_props",
       "wild_props",
       "wild_props_4b",
-      "ember_vent"
+      "ember_vent",
+      "items_inhand"
     ],
     "boss": [
       "knight",
@@ -38,7 +39,8 @@
       "dwarf",
       "mage",
       "fx_common",
-      "dragon_fx_v2"
+      "dragon_fx_v2",
+      "items_inhand"
     ],
     "boss_p1": [
       "red_dragon_p1_a",
@@ -155,6 +157,42 @@
             "x": 0.5,
             "y": 0.9271
           }
+        },
+        "knight_hold_idle": {
+          "key": "knight_hold_idle",
+          "image": "assets/characters/knight/knight_hold_idle.png",
+          "json": "assets/characters/knight/knight_hold_idle.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "knight_hold_run": {
+          "key": "knight_hold_run",
+          "image": "assets/characters/knight/knight_hold_run.png",
+          "json": "assets/characters/knight/knight_hold_run.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "knight_use_drink": {
+          "key": "knight_use_drink",
+          "image": "assets/characters/knight/knight_use_drink.png",
+          "json": "assets/characters/knight/knight_use_drink.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "knight_use_eat": {
+          "key": "knight_use_eat",
+          "image": "assets/characters/knight/knight_use_eat.png",
+          "json": "assets/characters/knight/knight_use_eat.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
         }
       },
       "sidecars": [
@@ -249,6 +287,42 @@
             "x": 0.5,
             "y": 0.9327
           }
+        },
+        "thief_hold_idle": {
+          "key": "thief_hold_idle",
+          "image": "assets/characters/thief/thief_hold_idle.png",
+          "json": "assets/characters/thief/thief_hold_idle.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "thief_hold_run": {
+          "key": "thief_hold_run",
+          "image": "assets/characters/thief/thief_hold_run.png",
+          "json": "assets/characters/thief/thief_hold_run.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "thief_use_drink": {
+          "key": "thief_use_drink",
+          "image": "assets/characters/thief/thief_use_drink.png",
+          "json": "assets/characters/thief/thief_use_drink.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "thief_use_eat": {
+          "key": "thief_use_eat",
+          "image": "assets/characters/thief/thief_use_eat.png",
+          "json": "assets/characters/thief/thief_use_eat.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
         }
       },
       "sidecars": [
@@ -321,6 +395,42 @@
           "key": "dwarf_run",
           "image": "assets/characters/dwarf/dwarf_run.png",
           "json": "assets/characters/dwarf/dwarf_run.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9125
+          }
+        },
+        "dwarf_hold_idle": {
+          "key": "dwarf_hold_idle",
+          "image": "assets/characters/dwarf/dwarf_hold_idle.png",
+          "json": "assets/characters/dwarf/dwarf_hold_idle.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9125
+          }
+        },
+        "dwarf_hold_run": {
+          "key": "dwarf_hold_run",
+          "image": "assets/characters/dwarf/dwarf_hold_run.png",
+          "json": "assets/characters/dwarf/dwarf_hold_run.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9125
+          }
+        },
+        "dwarf_use_drink": {
+          "key": "dwarf_use_drink",
+          "image": "assets/characters/dwarf/dwarf_use_drink.png",
+          "json": "assets/characters/dwarf/dwarf_use_drink.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9125
+          }
+        },
+        "dwarf_use_eat": {
+          "key": "dwarf_use_eat",
+          "image": "assets/characters/dwarf/dwarf_use_eat.png",
+          "json": "assets/characters/dwarf/dwarf_use_eat.json",
           "anchor": {
             "x": 0.5,
             "y": 0.9125
@@ -445,6 +555,42 @@
           "anchor": {
             "x": 0,
             "y": 0.5
+          }
+        },
+        "mage_hold_idle": {
+          "key": "mage_hold_idle",
+          "image": "assets/characters/mage/mage_hold_idle.png",
+          "json": "assets/characters/mage/mage_hold_idle.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "mage_hold_run": {
+          "key": "mage_hold_run",
+          "image": "assets/characters/mage/mage_hold_run.png",
+          "json": "assets/characters/mage/mage_hold_run.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "mage_use_drink": {
+          "key": "mage_use_drink",
+          "image": "assets/characters/mage/mage_use_drink.png",
+          "json": "assets/characters/mage/mage_use_drink.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "mage_use_eat": {
+          "key": "mage_use_eat",
+          "image": "assets/characters/mage/mage_use_eat.png",
+          "json": "assets/characters/mage/mage_use_eat.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
           }
         }
       },
@@ -1933,6 +2079,27 @@
       "sidecars": [
         "fx_defs_extra.json"
       ]
+    },
+    "items_inhand": {
+      "id": "items_inhand",
+      "kind": "items",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.6504
+      },
+      "image": "assets/items/inhand/items_inhand.png",
+      "json": "assets/items/inhand/items_inhand.json",
+      "sheets": {
+        "items_inhand": {
+          "key": "items_inhand",
+          "image": "assets/items/inhand/items_inhand.png",
+          "json": "assets/items/inhand/items_inhand.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.6504
+          }
+        }
+      }
     }
   },
   "tiles": {

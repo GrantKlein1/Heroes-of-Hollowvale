@@ -1,0 +1,607 @@
+{
+ "frames": {
+  "healing_potion_down": {
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  },
+  "healing_potion_left": {
+   "frame": {
+    "x": 24,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  },
+  "healing_potion_right": {
+   "frame": {
+    "x": 48,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  },
+  "healing_potion_up": {
+   "frame": {
+    "x": 72,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  },
+  "mana_potion_down": {
+   "frame": {
+    "x": 0,
+    "y": 24,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  },
+  "mana_potion_left": {
+   "frame": {
+    "x": 24,
+    "y": 24,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  },
+  "mana_potion_right": {
+   "frame": {
+    "x": 48,
+    "y": 24,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  },
+  "mana_potion_up": {
+   "frame": {
+    "x": 72,
+    "y": 24,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  },
+  "speed_potion_down": {
+   "frame": {
+    "x": 0,
+    "y": 48,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  },
+  "speed_potion_left": {
+   "frame": {
+    "x": 24,
+    "y": 48,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  },
+  "speed_potion_right": {
+   "frame": {
+    "x": 48,
+    "y": 48,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  },
+  "speed_potion_up": {
+   "frame": {
+    "x": 72,
+    "y": 48,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  },
+  "apple_down": {
+   "frame": {
+    "x": 0,
+    "y": 72,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  },
+  "apple_left": {
+   "frame": {
+    "x": 24,
+    "y": 72,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  },
+  "apple_right": {
+   "frame": {
+    "x": 48,
+    "y": 72,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  },
+  "apple_up": {
+   "frame": {
+    "x": 72,
+    "y": 72,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  },
+  "ale_flask_down": {
+   "frame": {
+    "x": 0,
+    "y": 96,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  },
+  "ale_flask_left": {
+   "frame": {
+    "x": 24,
+    "y": 96,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  },
+  "ale_flask_right": {
+   "frame": {
+    "x": 48,
+    "y": 96,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  },
+  "ale_flask_up": {
+   "frame": {
+    "x": 72,
+    "y": 96,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  }
+ },
+ "meta": {
+  "app": "items_b9_full/scripts/pack_clips.py",
+  "version": "1.0",
+  "image": "items_inhand.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 96,
+   "h": 120
+  },
+  "scale": "1",
+  "pxPerUnit": 36.923,
+  "propCameraDegFromHorizontal": 12,
+  "cell": [
+   24,
+   24
+  ],
+  "rows": [
+   "healing_potion",
+   "mana_potion",
+   "speed_potion",
+   "apple",
+   "ale_flask"
+  ],
+  "cols": [
+   "down",
+   "left",
+   "right",
+   "up"
+  ],
+  "pivotNote": "frame.pivot is the grip point in cell pixels (origin of rotation when composited onto a hand anchor)",
+  "pivots": {
+   "healing_potion_down": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "healing_potion_left": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "healing_potion_right": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "healing_potion_up": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "apple_down": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "apple_left": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "apple_right": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "apple_up": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "mana_potion_down": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "mana_potion_left": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "mana_potion_right": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "mana_potion_up": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "speed_potion_down": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "speed_potion_left": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "speed_potion_right": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "speed_potion_up": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "ale_flask_down": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "ale_flask_left": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "ale_flask_right": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "ale_flask_up": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  },
+  "silhouette": "healing_potion/mana_potion/speed_potion use combat_b7 make_flask geometry. healing_potion and apple cells are byte-identical to frozen items_b9. ale_flask is a wood/leather hip flask of the same visual weight.",
+  "pipeline": "EEVEE 1-sample toon + inverted-hull, same camera as the heroes",
+  "ids": [
+   "healing_potion",
+   "mana_potion",
+   "speed_potion",
+   "apple",
+   "ale_flask"
+  ],
+  "idsSource": "repo main 618462e client/src/Game.jsx MARKET_ITEMS"
+ }
+}

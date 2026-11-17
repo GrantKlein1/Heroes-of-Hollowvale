@@ -1,0 +1,172 @@
+{
+ "frames": {
+  "thief_hold_idle_down_0": {
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270999999999999
+   }
+  },
+  "thief_hold_idle_left_0": {
+   "frame": {
+    "x": 0,
+    "y": 96,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270999999999999
+   }
+  },
+  "thief_hold_idle_right_0": {
+   "frame": {
+    "x": 0,
+    "y": 192,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270999999999999
+   }
+  },
+  "thief_hold_idle_up_0": {
+   "frame": {
+    "x": 0,
+    "y": 288,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270999999999999
+   }
+  }
+ },
+ "meta": {
+  "app": "items_b9_full/scripts/thief_pack.py",
+  "version": "1.0",
+  "image": "thief_hold_idle.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 64,
+   "h": 384
+  },
+  "scale": "1",
+  "pxPerUnit": 36.923,
+  "origin": {
+   "x": 0.5,
+   "y": 0.9271
+  },
+  "propCameraDegFromHorizontal": 12,
+  "cell": {
+   "w": 64,
+   "h": 96
+  },
+  "pivotRowPx": 89.0016,
+  "rows": [
+   "down",
+   "left",
+   "right",
+   "up"
+  ],
+  "note": "left and right rendered separately (not mirrored). Main-hand weapon hidden; item is a separate in-hand sprite composited via hand anchors.",
+  "footprint": {
+   "x": -9,
+   "y": -3,
+   "w": 18,
+   "h": 5,
+   "shape": "ellipse",
+   "note": "collision footprint centred on feet"
+  },
+  "hurtbox": {
+   "x": -11,
+   "y": -32,
+   "w": 22,
+   "h": 32,
+   "note": "body hurtbox, bottom on feet"
+  },
+  "hand": "hand.R",
+  "anchorsFile": "thief_hold_idle_anchors.json",
+  "weapon": "right dagger hidden (Dagger.R, Guard.R); left dagger kept; item in hand.R",
+  "anims": {
+   "hold_idle": {
+    "frames": 1,
+    "fps": 1,
+    "loop": true,
+    "playback": "loop",
+    "directions": [
+     "down",
+     "left",
+     "right",
+     "up"
+    ],
+    "frameNames": "thief_hold_idle_<dir>_<i>",
+    "durationMs": 1000,
+    "cell": [
+     64,
+     96
+    ],
+    "origin": [
+     0.5,
+     0.9271
+    ],
+    "note": "matches thief idle frame count/fps (1 @ 1). Loop while the item is held."
+   }
+  }
+ }
+}

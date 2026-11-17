@@ -1,0 +1,416 @@
+{
+ "actor": "mage",
+ "clip": "use_eat",
+ "cell": [
+  64,
+  96
+ ],
+ "origin": {
+  "x": 0.5,
+  "y": 0.9271
+ },
+ "pivotPx": [
+  32.0,
+  89.0016
+ ],
+ "hand": "arm.R",
+ "units": "px from feet origin, +y down",
+ "rotation": "degrees, 0=item upright (cork/stem up), positive clockwise on screen",
+ "layer": "front|behind; up is forced front so the item reads",
+ "format": "{x, y, rotation, layer}",
+ "layerLock": {
+  "down": "front",
+  "left": "front",
+  "right": "front",
+  "up": "front"
+ },
+ "frames": {
+  "mage_use_eat_down_0": {
+   "x": -4.96,
+   "y": -37.69,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "mage_use_eat_down_1": {
+   "x": -5.0,
+   "y": -38.35,
+   "rotation": 1.36,
+   "layer": "front"
+  },
+  "mage_use_eat_down_2": {
+   "x": -4.93,
+   "y": -40.15,
+   "rotation": 3.88,
+   "layer": "front"
+  },
+  "mage_use_eat_down_3": {
+   "x": -4.54,
+   "y": -42.62,
+   "rotation": 5.54,
+   "layer": "front"
+  },
+  "mage_use_eat_down_4": {
+   "x": -4.02,
+   "y": -44.9,
+   "rotation": 5.67,
+   "layer": "front"
+  },
+  "mage_use_eat_down_5": {
+   "x": -3.76,
+   "y": -45.89,
+   "rotation": 5.32,
+   "layer": "front"
+  },
+  "mage_use_eat_down_6": {
+   "x": -3.76,
+   "y": -45.89,
+   "rotation": 5.63,
+   "layer": "front"
+  },
+  "mage_use_eat_down_7": {
+   "x": -3.76,
+   "y": -45.89,
+   "rotation": 6.38,
+   "layer": "front"
+  },
+  "mage_use_eat_down_8": {
+   "x": -3.76,
+   "y": -45.89,
+   "rotation": 7.37,
+   "layer": "front"
+  },
+  "mage_use_eat_down_9": {
+   "x": -3.76,
+   "y": -45.89,
+   "rotation": 8.26,
+   "layer": "front"
+  },
+  "mage_use_eat_down_10": {
+   "x": -3.76,
+   "y": -45.89,
+   "rotation": 8.65,
+   "layer": "front"
+  },
+  "mage_use_eat_down_11": {
+   "x": -3.76,
+   "y": -45.89,
+   "rotation": 8.57,
+   "layer": "front"
+  },
+  "mage_use_eat_down_12": {
+   "x": -3.76,
+   "y": -45.89,
+   "rotation": 6.83,
+   "layer": "front"
+  },
+  "mage_use_eat_down_13": {
+   "x": -4.36,
+   "y": -43.46,
+   "rotation": 6.71,
+   "layer": "front"
+  },
+  "mage_use_eat_down_14": {
+   "x": -4.99,
+   "y": -39.44,
+   "rotation": 3.39,
+   "layer": "front"
+  },
+  "mage_use_eat_down_15": {
+   "x": -4.96,
+   "y": -37.69,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "mage_use_eat_left_0": {
+   "x": -14.04,
+   "y": -41.64,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "mage_use_eat_left_1": {
+   "x": -14.13,
+   "y": -42.33,
+   "rotation": 3.28,
+   "layer": "front"
+  },
+  "mage_use_eat_left_2": {
+   "x": -14.16,
+   "y": -44.12,
+   "rotation": 11.71,
+   "layer": "front"
+  },
+  "mage_use_eat_left_3": {
+   "x": -13.79,
+   "y": -46.44,
+   "rotation": 22.65,
+   "layer": "front"
+  },
+  "mage_use_eat_left_4": {
+   "x": -13.05,
+   "y": -48.45,
+   "rotation": 32.17,
+   "layer": "front"
+  },
+  "mage_use_eat_left_5": {
+   "x": -12.61,
+   "y": -49.29,
+   "rotation": 36.15,
+   "layer": "front"
+  },
+  "mage_use_eat_left_6": {
+   "x": -12.61,
+   "y": -49.29,
+   "rotation": 37.0,
+   "layer": "front"
+  },
+  "mage_use_eat_left_7": {
+   "x": -12.61,
+   "y": -49.29,
+   "rotation": 39.02,
+   "layer": "front"
+  },
+  "mage_use_eat_left_8": {
+   "x": -12.61,
+   "y": -49.29,
+   "rotation": 41.43,
+   "layer": "front"
+  },
+  "mage_use_eat_left_9": {
+   "x": -12.61,
+   "y": -49.29,
+   "rotation": 43.46,
+   "layer": "front"
+  },
+  "mage_use_eat_left_10": {
+   "x": -12.61,
+   "y": -49.29,
+   "rotation": 44.3,
+   "layer": "front"
+  },
+  "mage_use_eat_left_11": {
+   "x": -12.61,
+   "y": -49.29,
+   "rotation": 44.32,
+   "layer": "front"
+  },
+  "mage_use_eat_left_12": {
+   "x": -12.61,
+   "y": -49.29,
+   "rotation": 40.23,
+   "layer": "front"
+  },
+  "mage_use_eat_left_13": {
+   "x": -13.56,
+   "y": -47.18,
+   "rotation": 29.22,
+   "layer": "front"
+  },
+  "mage_use_eat_left_14": {
+   "x": -14.18,
+   "y": -43.43,
+   "rotation": 9.49,
+   "layer": "front"
+  },
+  "mage_use_eat_left_15": {
+   "x": -14.04,
+   "y": -41.64,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "mage_use_eat_right_0": {
+   "x": 14.04,
+   "y": -39.58,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "mage_use_eat_right_1": {
+   "x": 14.13,
+   "y": -40.25,
+   "rotation": -3.25,
+   "layer": "front"
+  },
+  "mage_use_eat_right_2": {
+   "x": 14.16,
+   "y": -42.07,
+   "rotation": -11.38,
+   "layer": "front"
+  },
+  "mage_use_eat_right_3": {
+   "x": 13.79,
+   "y": -44.55,
+   "rotation": -21.77,
+   "layer": "front"
+  },
+  "mage_use_eat_right_4": {
+   "x": 13.05,
+   "y": -46.78,
+   "rotation": -30.98,
+   "layer": "front"
+  },
+  "mage_use_eat_right_5": {
+   "x": 12.61,
+   "y": -47.73,
+   "rotation": -34.95,
+   "layer": "front"
+  },
+  "mage_use_eat_right_6": {
+   "x": 12.61,
+   "y": -47.73,
+   "rotation": -35.71,
+   "layer": "front"
+  },
+  "mage_use_eat_right_7": {
+   "x": 12.61,
+   "y": -47.73,
+   "rotation": -37.51,
+   "layer": "front"
+  },
+  "mage_use_eat_right_8": {
+   "x": 12.61,
+   "y": -47.73,
+   "rotation": -39.64,
+   "layer": "front"
+  },
+  "mage_use_eat_right_9": {
+   "x": 12.61,
+   "y": -47.73,
+   "rotation": -41.41,
+   "layer": "front"
+  },
+  "mage_use_eat_right_10": {
+   "x": 12.61,
+   "y": -47.73,
+   "rotation": -42.14,
+   "layer": "front"
+  },
+  "mage_use_eat_right_11": {
+   "x": 12.61,
+   "y": -47.73,
+   "rotation": -42.17,
+   "layer": "front"
+  },
+  "mage_use_eat_right_12": {
+   "x": 12.61,
+   "y": -47.73,
+   "rotation": -38.59,
+   "layer": "front"
+  },
+  "mage_use_eat_right_13": {
+   "x": 13.56,
+   "y": -45.37,
+   "rotation": -27.91,
+   "layer": "front"
+  },
+  "mage_use_eat_right_14": {
+   "x": 14.18,
+   "y": -41.35,
+   "rotation": -9.26,
+   "layer": "front"
+  },
+  "mage_use_eat_right_15": {
+   "x": 14.04,
+   "y": -39.58,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "mage_use_eat_up_0": {
+   "x": 4.96,
+   "y": -43.53,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "mage_use_eat_up_1": {
+   "x": 5.0,
+   "y": -44.23,
+   "rotation": -1.39,
+   "layer": "front"
+  },
+  "mage_use_eat_up_2": {
+   "x": 4.93,
+   "y": -46.04,
+   "rotation": -4.22,
+   "layer": "front"
+  },
+  "mage_use_eat_up_3": {
+   "x": 4.54,
+   "y": -48.36,
+   "rotation": -6.56,
+   "layer": "front"
+  },
+  "mage_use_eat_up_4": {
+   "x": 4.02,
+   "y": -50.33,
+   "rotation": -7.31,
+   "layer": "front"
+  },
+  "mage_use_eat_up_5": {
+   "x": 3.76,
+   "y": -51.13,
+   "rotation": -7.16,
+   "layer": "front"
+  },
+  "mage_use_eat_up_6": {
+   "x": 3.76,
+   "y": -51.13,
+   "rotation": -7.64,
+   "layer": "front"
+  },
+  "mage_use_eat_up_7": {
+   "x": 3.76,
+   "y": -51.13,
+   "rotation": -8.85,
+   "layer": "front"
+  },
+  "mage_use_eat_up_8": {
+   "x": 3.76,
+   "y": -51.13,
+   "rotation": -10.49,
+   "layer": "front"
+  },
+  "mage_use_eat_up_9": {
+   "x": 3.76,
+   "y": -51.13,
+   "rotation": -12.04,
+   "layer": "front"
+  },
+  "mage_use_eat_up_10": {
+   "x": 3.76,
+   "y": -51.13,
+   "rotation": -12.74,
+   "layer": "front"
+  },
+  "mage_use_eat_up_11": {
+   "x": 3.76,
+   "y": -51.13,
+   "rotation": -12.62,
+   "layer": "front"
+  },
+  "mage_use_eat_up_12": {
+   "x": 3.76,
+   "y": -51.13,
+   "rotation": -9.6,
+   "layer": "front"
+  },
+  "mage_use_eat_up_13": {
+   "x": 4.36,
+   "y": -49.1,
+   "rotation": -8.41,
+   "layer": "front"
+  },
+  "mage_use_eat_up_14": {
+   "x": 4.99,
+   "y": -45.34,
+   "rotation": -3.62,
+   "layer": "front"
+  },
+  "mage_use_eat_up_15": {
+   "x": 4.96,
+   "y": -43.53,
+   "rotation": 0.0,
+   "layer": "front"
+  }
+ },
+ "fps": 16,
+ "framesCount": 16,
+ "effectFrame": 10
+}
