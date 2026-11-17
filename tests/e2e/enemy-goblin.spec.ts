@@ -279,4 +279,45 @@ test.describe('Package 1b-1: Lane D Enemies — Goblin Base & AI', () => {
     expect(hasSpawn).toBe(true);
     expect(hasAlertOrTelegraph).toBe(true);
   });
+
+  test('killed goblin can enter the tavern mid death clip without a pageerror', async ({ page }) => {
+    const pageErrors: string[] = [];
+    page.on('pageerror', (err) => pageErrors.push(err.message));
+
+    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
+
+    const startButton = page.getByRole('button', { name: 'Start Game' });
+    await startButton.click();
+    await page.getByRole('button', { name: 'Choose' }).nth(0).click();
+
+    await page.waitForFunction(() => {
+      return (
+        typeof (window as any).__scene?.enterScene === 'function' &&
+        typeof (window as any).__hv?.scene === 'function' &&
+        (window as any).__hv.scene() === 'village'
+      );
+    });
+
+    const started = await page.evaluate(() => {
+      const scene = (window as any).__scene;
+      const player = scene.player;
+      const enemy = scene.spawn('goblin', player.x + 40, player.y);
+      enemy.hp = 0;
+      enemy.die();
+      const playing = enemy.active === true
+        && enemy.hp === 0
+        && String(enemy.lastAnimKey || '').includes('death');
+      scene.enterScene('tavern');
+      return { playing, sceneId: scene.sceneId };
+    });
+
+    expect(started.playing, 'death clip should still be playing when the scene changes').toBe(true);
+    expect(started.sceneId).toBe('tavern');
+
+    // Longer than the death clip plus its backstop, so a leftover timer would have fired.
+    await page.waitForTimeout(1200);
+
+    expect(pageErrors, 'pageerror').toEqual([]);
+    expect(await page.evaluate(() => (window as any).__hv.scene())).toBe('tavern');
+  });
 });

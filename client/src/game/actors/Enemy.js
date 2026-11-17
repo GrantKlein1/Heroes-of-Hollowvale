@@ -483,7 +483,9 @@ export class Enemy extends Actor {
    * Phaser does not advance animations on inactive game objects.
    */
   disableCombatBody() {
-    if (typeof this.disableBody === 'function') {
+    // Phaser disableBody calls this.body.stop() with no guard. After a scene
+    // change the body is already gone, and that read throws.
+    if (this.body && typeof this.disableBody === 'function') {
       this.disableBody(false, false)
     }
     const body = this.body
@@ -556,6 +558,7 @@ export class Enemy extends Actor {
     this.clearDeathTimer()
     this._deathTimer = clock.delayedCall(ms, () => {
       this._deathTimer = null
+      if (this._destroyed || !this.scene) return
       this.completeDeath()
     })
     return Boolean(this._deathTimer)
@@ -573,10 +576,23 @@ export class Enemy extends Actor {
    */
   completeDeath() {
     if (this._deathCompleted) return false
+    if (this._destroyed || !this.scene) {
+      this.clearDeathTimer()
+      return false
+    }
     this.clearDeathTimer()
     this.disableCombatBody()
     this.active = false
     return onEnemyDeathComplete(this)
+  }
+
+  /**
+   * @param {boolean} [fromScene]
+   */
+  destroy(fromScene) {
+    this._destroyed = true
+    this.clearDeathTimer()
+    if (typeof super.destroy === 'function') super.destroy(fromScene)
   }
 
   /**

@@ -58,6 +58,12 @@ vi.mock('phaser', () => {
       this.texture = { key }
       return this
     }
+
+    destroy() {
+      this.body = undefined
+      this.scene = undefined
+      this.active = false
+    }
   }
 
   return {
@@ -234,5 +240,34 @@ describe('Enemy death clip — BUG-2', () => {
     expect(enemy._deathCompleted).toBe(true)
     expect(enemy.active).toBe(false)
     expect(scene.lootPickups.length).toBeGreaterThan(0)
+  })
+
+  it('completeDeath after destroy and body removal does not throw or drop loot', () => {
+    const scene = createScene()
+    const enemy = new Enemy(scene, 40, 40, 'goblin')
+    enemy.disableBody = vi.fn(() => {
+      if (!enemy.body) {
+        throw new TypeError("Cannot read properties of undefined (reading 'stop')")
+      }
+    })
+
+    enemy.die()
+
+    expect(scene.timers).toHaveLength(1)
+    const timer = scene.timers[0]
+    const disableCallsWhileAlive = enemy.disableBody.mock.calls.length
+    expect(disableCallsWhileAlive).toBeGreaterThan(0)
+
+    enemy.destroy()
+
+    expect(enemy._destroyed).toBe(true)
+    expect(enemy.scene).toBeUndefined()
+    expect(enemy.body).toBeUndefined()
+    expect(timer.remove).toHaveBeenCalledWith(false)
+    expect(enemy.completeDeath()).toBe(false)
+    expect(() => timer.fn()).not.toThrow()
+    expect(() => enemy.disableCombatBody()).not.toThrow()
+    expect(enemy.disableBody).toHaveBeenCalledTimes(disableCallsWhileAlive)
+    expect(scene.lootPickups || []).toHaveLength(0)
   })
 })
