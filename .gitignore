@@ -46,6 +46,8 @@ out/
 # Misc
 *.local
 *.pid
+test-results/
+playwright-report/
 ```# filepath: c:\Users\panda\Personal Files\medievalGame\.gitignore
 # Node
 node_modules/
@@ -95,3 +97,5 @@ out/
 # Misc
 *.local
 *.pid
+test-results/
+playwright-report/
