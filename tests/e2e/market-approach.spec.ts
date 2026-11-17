@@ -143,6 +143,39 @@ test.describe('Package BF-1: Brackenford Market Approach (Unblocked Bridge Walk)
 
     console.log('[BF-1 Post-Exit Spawn Report]', JSON.stringify(exitReport, null, 2));
 
+    expect(Math.hypot(exitReport.landingX - 96, exitReport.landingY - 160)).toBeGreaterThan(16);
+    expect(exitReport.landingX).toBeCloseTo(144, 0);
+    expect(exitReport.landingY).toBeCloseTo(208, 0);
+
+    await page.waitForFunction(() => {
+      const scene = (window as any).__scene;
+      const player = scene?.player;
+      const body = player?.body;
+      return Boolean(body && body.y > player.y - 10);
+    }, null, { timeout: 2000 });
+
+    const marketExitOverlap = await page.evaluate(() => {
+      const scene = (window as any).__scene;
+      const body = scene.player.body;
+      return scene.tiledMapLoader.checkCollision({
+        x: body.x,
+        y: body.y,
+        width: body.width,
+        height: body.height,
+      });
+    });
+    expect(marketExitOverlap).toBe(false);
+
+    await page.screenshot({ path: 'tests/e2e/__screenshots__/mx1-market-exit.png' });
+
+    await page.keyboard.down('ArrowRight');
+    await page.waitForFunction(
+      (startX) => (window as any).__scene.player.x >= startX + 32,
+      exitReport.landingX,
+      { timeout: 1000 }
+    );
+    await page.keyboard.up('ArrowRight');
+
     // Save screenshot of market approach in village
     await page.evaluate(() => {
       const scene = (window as any).__scene;

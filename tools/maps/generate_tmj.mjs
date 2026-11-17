@@ -845,19 +845,6 @@ export function buildBrackenfordMap(tilesets, seed = DEFAULT_SEED) {
       ],
     },
     {
-      name: 'door_market',
-      type: 'door',
-      x: 2 * TILE_SIZE,
-      y: 3 * TILE_SIZE,
-      width: 2 * TILE_SIZE,
-      height: 4 * TILE_SIZE,
-      properties: [
-        { name: 'kind', type: 'string', value: 'door' },
-        { name: 'prompt', type: 'string', value: 'Press E to enter the Market' },
-        { name: 'to', type: 'string', value: 'market' },
-      ],
-    },
-    {
       name: 'The Flagon',
       type: 'landmark',
       x: 7 * TILE_SIZE,
@@ -880,6 +867,30 @@ export function buildBrackenfordMap(tilesets, seed = DEFAULT_SEED) {
         { name: 'canonName', type: 'string', value: 'Brackenford' },
         { name: 'placeName', type: 'string', value: 'Brackenford' },
       ],
+    },
+    {
+      name: 'door_market',
+      type: 'door',
+      x: 2 * TILE_SIZE,
+      y: 3 * TILE_SIZE,
+      width: 2 * TILE_SIZE,
+      height: 4 * TILE_SIZE,
+      visible: true,
+      properties: [
+        { name: 'kind', type: 'string', value: 'door' },
+        { name: 'prompt', type: 'string', value: 'Press E to enter the Market' },
+        { name: 'to', type: 'string', value: 'market' },
+      ],
+    },
+    {
+      // Tile (4, 6): east of door_market. South of the door is the river.
+      name: 'spawn_from_market',
+      type: 'spawn',
+      x: 4 * TILE_SIZE,
+      y: 6 * TILE_SIZE,
+      width: TILE_SIZE,
+      height: TILE_SIZE,
+      properties: [{ name: 'kind', type: 'string', value: 'spawn' }],
     },
   ];
 

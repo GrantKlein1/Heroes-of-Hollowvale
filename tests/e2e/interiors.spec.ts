@@ -127,6 +127,41 @@ test.describe('Package 3-1: Interior Maps (Tavern & Market) Integration (?maps=t
     await page.waitForFunction(() => (window as any).__hv?.scene() === 'village', { timeout: 10000 });
     expect(await page.evaluate(() => (window as any).__hv.scene())).toBe('village');
 
+    // Regression: The Flagon exit already lands walkable at door_tavern (288, 144).
+    const tavernReturn = await page.evaluate(() => {
+      const scene = (window as any).__scene;
+      return { x: scene.player.x, y: scene.player.y };
+    });
+    expect(tavernReturn.x).toBeCloseTo(288, 0);
+    expect(tavernReturn.y).toBeCloseTo(144, 0);
+
+    await page.waitForFunction(() => {
+      const scene = (window as any).__scene;
+      const player = scene?.player;
+      const body = player?.body;
+      return Boolean(body && body.y > player.y - 10);
+    }, null, { timeout: 2000 });
+
+    const tavernOverlap = await page.evaluate(() => {
+      const scene = (window as any).__scene;
+      const body = scene.player.body;
+      return scene.tiledMapLoader.checkCollision({
+        x: body.x,
+        y: body.y,
+        width: body.width,
+        height: body.height,
+      });
+    });
+    expect(tavernOverlap).toBe(false);
+
+    await page.keyboard.down('ArrowDown');
+    await page.waitForFunction(
+      (startY) => (window as any).__scene.player.y >= startY + 32,
+      tavernReturn.y,
+      { timeout: 1000 }
+    );
+    await page.keyboard.up('ArrowDown');
+
     expect(consoleErrors).toEqual([]);
     expect(pageErrors).toEqual([]);
     expect(notFoundResponses).toEqual([]);
@@ -244,6 +279,41 @@ test.describe('Package 3-1: Interior Maps (Tavern & Market) Integration (?maps=t
 
     await page.waitForFunction(() => (window as any).__hv?.scene() === 'village', { timeout: 10000 });
     expect(await page.evaluate(() => (window as any).__hv.scene())).toBe('village');
+
+    const marketReturn = await page.evaluate(() => {
+      const scene = (window as any).__scene;
+      return { x: scene.player.x, y: scene.player.y };
+    });
+    expect(Math.hypot(marketReturn.x - 96, marketReturn.y - 160)).toBeGreaterThan(16);
+    expect(marketReturn.x).toBeCloseTo(144, 0);
+    expect(marketReturn.y).toBeCloseTo(208, 0);
+
+    await page.waitForFunction(() => {
+      const scene = (window as any).__scene;
+      const player = scene?.player;
+      const body = player?.body;
+      return Boolean(body && body.y > player.y - 10);
+    }, null, { timeout: 2000 });
+
+    const marketOverlap = await page.evaluate(() => {
+      const scene = (window as any).__scene;
+      const body = scene.player.body;
+      return scene.tiledMapLoader.checkCollision({
+        x: body.x,
+        y: body.y,
+        width: body.width,
+        height: body.height,
+      });
+    });
+    expect(marketOverlap).toBe(false);
+
+    await page.keyboard.down('ArrowRight');
+    await page.waitForFunction(
+      (startX) => (window as any).__scene.player.x >= startX + 32,
+      marketReturn.x,
+      { timeout: 1000 }
+    );
+    await page.keyboard.up('ArrowRight');
 
     expect(consoleErrors).toEqual([]);
     expect(pageErrors).toEqual([]);

@@ -2025,7 +2025,7 @@
             {
               "name": "targetSpawn",
               "type": "string",
-              "value": "door_market"
+              "value": "spawn_from_market"
             },
             {
               "name": "prompt",
