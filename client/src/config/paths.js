@@ -7,15 +7,8 @@ export const API_BASE = import.meta.env.VITE_API_BASE || '/api'
 export const IMAGES_BASE = '/images'
 export const AUDIO_BASE = '/audio'
 
-// Common background/title images
+// Common images. Painted scene backdrops moved to art-source/legacy-public in package 3-4.
 export const PATHS = {
-  villageBg: encodeURI(`${IMAGES_BASE}/start village screen.png`),
-  tavernBg: `${IMAGES_BASE}/tavern.png`,
-  marketBg: `${IMAGES_BASE}/market.png`,
-  walkingPath: `${IMAGES_BASE}/walkingPath.png`,
-  dungeonEntrance: encodeURI(`${IMAGES_BASE}/dungeon entrance.png`),
-  dungeonInterior: `${IMAGES_BASE}/dungeon.png`,
-  hiddenTreasureRoom: `${IMAGES_BASE}/hiddenTreasureRoom.png`,
   animatedFireSmallGif: `${IMAGES_BASE}/animatedFireSmall/animatedFireSmall.gif`,
   animatedFireBallGif: `${IMAGES_BASE}/animatedFireBall/animatedFireBall.gif`,
   animatedThiefPotionGif: `${IMAGES_BASE}/animatedThiefPotion/animatedThiefPotion.gif`,
