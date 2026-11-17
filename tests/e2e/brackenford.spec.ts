@@ -230,8 +230,9 @@ test.describe('Package 2-3: Playable Brackenford Tiled Map Integration (?maps=ti
     // 2. In tavern, walk up to bartender and press E to trigger NPC dialogue
     await page.evaluate(() => {
       const scene = (window as any).__scene;
-      scene.player.setPosition(scene.worldW * 0.5, scene.worldH * 0.5);
-      scene.player.body.reset(scene.worldW * 0.5, scene.worldH * 0.5);
+      scene.player.setPosition(340, 175);
+      scene.player.body.reset(340, 175);
+      scene._tryInteract();
     });
 
     await page.keyboard.press('e');
