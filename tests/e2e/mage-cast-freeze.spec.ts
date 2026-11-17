@@ -95,7 +95,7 @@ test.describe('Package BF-1: Mage Lightning/Leech Freeze Regression (Empty v2 Cl
       const scene = (window as any).__scene;
       const player = scene.player;
       player.setFacing('down');
-      const beforeCount = (scene.projectiles || []).length;
+      const before = new Set<any>(scene.projectiles || []);
       const startLoop = scene.game.loop.frame;
       const startedAt = performance.now();
 
@@ -103,7 +103,7 @@ test.describe('Package BF-1: Mage Lightning/Leech Freeze Regression (Empty v2 Cl
 
       const spawned = await new Promise<boolean>((resolve) => {
         const step = () => {
-          if ((scene.projectiles || []).length > beforeCount) {
+          if ((scene.projectiles || []).some((p: any) => !before.has(p))) {
             resolve(true);
             return;
           }
@@ -139,7 +139,7 @@ test.describe('Package BF-1: Mage Lightning/Leech Freeze Regression (Empty v2 Cl
       if (session) session.lifeLeechCooldownUntil = 0;
       const player = scene.player;
       player.setFacing('right');
-      const beforeCount = (scene.projectiles || []).length;
+      const before = new Set<any>(scene.projectiles || []);
       const startLoop = scene.game.loop.frame;
       const startedAt = performance.now();
 
@@ -147,7 +147,7 @@ test.describe('Package BF-1: Mage Lightning/Leech Freeze Regression (Empty v2 Cl
 
       const spawned = await new Promise<boolean>((resolve) => {
         const step = () => {
-          if ((scene.projectiles || []).length > beforeCount) {
+          if ((scene.projectiles || []).some((p: any) => !before.has(p))) {
             resolve(true);
             return;
           }
