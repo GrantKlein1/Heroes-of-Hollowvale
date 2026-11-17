@@ -55,3 +55,7 @@ map.createLayer('ground', tiles, 0, 0)
 The tileset name in `addTilesetImage` must match the name stored in the Tiled JSON. Collision for the league map can be an object layer of rectangles, or tile `collides` properties — the scene already builds Arcade static bodies from rectangles.
 
 Screens stay 20×12. Walking off an edge should call `ScreenCamera.setScreenBounds` with the next league rectangle and `slideMs` around 250. That helper is in `client/src/game/screenCamera.js`; today's painted scenes pass the whole backdrop and snap (`slideMs` 0).
+
+## Legacy public files
+
+Images and tool files under `client/public/` that nothing in the game references are moved, not deleted, to `art-source/legacy-public/`, keeping the path they had under `client/public/` (for example `art-source/legacy-public/images/bossFightEmptyRoom.png`). The audit is `docs/public-audit-2026-11-17.md` (`node tools/assets/audit_public_refs.mjs`). `art-source/blendsmith/` stays read-only.
