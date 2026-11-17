@@ -31,7 +31,8 @@
       "wild_props",
       "wild_props_4b",
       "ember_vent",
-      "items_inhand"
+      "items_inhand",
+      "items_inhand_b10"
     ],
     "boss": [
       "knight",
@@ -40,7 +41,8 @@
       "mage",
       "fx_common",
       "dragon_fx_v2",
-      "items_inhand"
+      "items_inhand",
+      "items_inhand_b10"
     ],
     "boss_p1": [
       "red_dragon_p1_a",
@@ -323,6 +325,24 @@
             "x": 0.5,
             "y": 0.9271
           }
+        },
+        "thief_use_lockpick": {
+          "key": "thief_use_lockpick",
+          "image": "assets/characters/thief/thief_use_lockpick.png",
+          "json": "assets/characters/thief/thief_use_lockpick.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "thief_use_throw": {
+          "key": "thief_use_throw",
+          "image": "assets/characters/thief/thief_use_throw.png",
+          "json": "assets/characters/thief/thief_use_throw.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
         }
       },
       "sidecars": [
@@ -431,6 +451,15 @@
           "key": "dwarf_use_eat",
           "image": "assets/characters/dwarf/dwarf_use_eat.png",
           "json": "assets/characters/dwarf/dwarf_use_eat.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9125
+          }
+        },
+        "dwarf_use_pickaxe": {
+          "key": "dwarf_use_pickaxe",
+          "image": "assets/characters/dwarf/dwarf_use_pickaxe.png",
+          "json": "assets/characters/dwarf/dwarf_use_pickaxe.json",
           "anchor": {
             "x": 0.5,
             "y": 0.9125
@@ -2094,6 +2123,27 @@
           "key": "items_inhand",
           "image": "assets/items/inhand/items_inhand.png",
           "json": "assets/items/inhand/items_inhand.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.6504
+          }
+        }
+      }
+    },
+    "items_inhand_b10": {
+      "id": "items_inhand_b10",
+      "kind": "items",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.6504
+      },
+      "image": "assets/items/inhand/items_inhand_b10.png",
+      "json": "assets/items/inhand/items_inhand_b10.json",
+      "sheets": {
+        "items_inhand_b10": {
+          "key": "items_inhand_b10",
+          "image": "assets/items/inhand/items_inhand_b10.png",
+          "json": "assets/items/inhand/items_inhand_b10.json",
           "anchor": {
             "x": 0.5,
             "y": 0.6504

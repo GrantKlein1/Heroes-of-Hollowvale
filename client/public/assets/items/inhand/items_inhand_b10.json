@@ -1,0 +1,390 @@
+{
+ "frames": {
+  "dwarf_pickaxe_down": {
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.658125
+   }
+  },
+  "dwarf_pickaxe_left": {
+   "frame": {
+    "x": 32,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.658125
+   }
+  },
+  "dwarf_pickaxe_right": {
+   "frame": {
+    "x": 64,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.658125
+   }
+  },
+  "dwarf_pickaxe_up": {
+   "frame": {
+    "x": 96,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.658125
+   }
+  },
+  "lockpicks_down": {
+   "frame": {
+    "x": 0,
+    "y": 32,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.6504166666666666
+   }
+  },
+  "lockpicks_left": {
+   "frame": {
+    "x": 24,
+    "y": 32,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.6504166666666666
+   }
+  },
+  "lockpicks_right": {
+   "frame": {
+    "x": 48,
+    "y": 32,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.6504166666666666
+   }
+  },
+  "lockpicks_up": {
+   "frame": {
+    "x": 72,
+    "y": 32,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.6504166666666666
+   }
+  },
+  "poison_vial_down": {
+   "frame": {
+    "x": 0,
+    "y": 56,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.6504166666666666
+   }
+  },
+  "poison_vial_left": {
+   "frame": {
+    "x": 24,
+    "y": 56,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.6504166666666666
+   }
+  },
+  "poison_vial_right": {
+   "frame": {
+    "x": 48,
+    "y": 56,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.6504166666666666
+   }
+  },
+  "poison_vial_up": {
+   "frame": {
+    "x": 72,
+    "y": 56,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.6504166666666666
+   }
+  }
+ },
+ "meta": {
+  "app": "items_b10/scripts/pack_items.py",
+  "version": "1.0",
+  "image": "items_inhand_b10.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 128,
+   "h": 80
+  },
+  "scale": "1",
+  "pxPerUnit": 36.923,
+  "propCameraDegFromHorizontal": 12,
+  "cell": "per-item; see itemCells",
+  "itemCells": {
+   "dwarf_pickaxe": [
+    32,
+    32
+   ],
+   "lockpicks": [
+    24,
+    24
+   ],
+   "poison_vial": [
+    24,
+    24
+   ]
+  },
+  "rows": [
+   "dwarf_pickaxe",
+   "lockpicks",
+   "poison_vial"
+  ],
+  "cols": [
+   "down",
+   "left",
+   "right",
+   "up"
+  ],
+  "pivotNote": "frame.pivot is the grip point in cell-normalized units; meta.pivots is the same point in cell pixels (origin of rotation when composited onto a hand anchor)",
+  "pivots": {
+   "dwarf_pickaxe_down": {
+    "x": 16.0,
+    "y": 21.06
+   },
+   "dwarf_pickaxe_left": {
+    "x": 16.0,
+    "y": 21.06
+   },
+   "dwarf_pickaxe_right": {
+    "x": 16.0,
+    "y": 21.06
+   },
+   "dwarf_pickaxe_up": {
+    "x": 16.0,
+    "y": 21.06
+   },
+   "lockpicks_down": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "lockpicks_left": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "lockpicks_right": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "lockpicks_up": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "poison_vial_down": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "poison_vial_left": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "poison_vial_right": {
+    "x": 12.0,
+    "y": 15.61
+   },
+   "poison_vial_up": {
+    "x": 12.0,
+    "y": 15.61
+   }
+  },
+  "pipeline": "EEVEE 1-sample toon + inverted-hull, same camera as the heroes",
+  "ids": [
+   "dwarf_pickaxe",
+   "lockpicks",
+   "poison_vial"
+  ],
+  "idsSource": "repo main MARKET_ITEMS (lockpicks, poison_vial) + dwarf_pickaxe when present",
+  "note": "dwarf_pickaxe is packed when frames/items/dwarf_pickaxe_<dir>.png (and optional dwarf_pickaxe.json pivots) exist; otherwise skipped"
+ }
+}

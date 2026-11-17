@@ -15,8 +15,8 @@
  ],
  "hand": "hand.R",
  "units": "px from feet origin, +y down",
- "rotation": "degrees, 0=item upright (cork/stem up), positive clockwise on screen",
- "layer": "front|behind, relative to the body sprite. Up is forced front so the item reads (true depth hides it behind the body).",
+ "rotation": "degrees, 0=item upright (pick head up), positive clockwise on screen",
+ "layer": "front|behind, relative to the body sprite. Up is forced front so the item reads.",
  "format": "{x, y, rotation, layer}",
  "layerLock": {
   "down": "front",
@@ -26,26 +26,26 @@
  },
  "frames": {
   "dwarf_hold_idle_down_0": {
-   "x": -6.15,
-   "y": -30.79,
+   "x": -10.02,
+   "y": -24.82,
    "rotation": 0.0,
    "layer": "front"
   },
   "dwarf_hold_idle_left_0": {
-   "x": -10.23,
-   "y": -34.2,
-   "rotation": -0.0,
+   "x": -6.19,
+   "y": -28.19,
+   "rotation": 0.0,
    "layer": "behind"
   },
   "dwarf_hold_idle_right_0": {
-   "x": 10.23,
-   "y": -31.64,
+   "x": 6.19,
+   "y": -24.02,
    "rotation": 0.0,
    "layer": "front"
   },
   "dwarf_hold_idle_up_0": {
-   "x": 6.15,
-   "y": -35.04,
+   "x": 10.02,
+   "y": -27.39,
    "rotation": 0.0,
    "layer": "front"
   }

@@ -1,0 +1,246 @@
+{
+ "actor": "thief",
+ "clip": "use_throw",
+ "cell": [
+  64,
+  96
+ ],
+ "origin": {
+  "x": 0.5,
+  "y": 0.9271
+ },
+ "pivotPx": [
+  32.0,
+  89.0016
+ ],
+ "hand": "hand.R",
+ "units": "px from feet origin, +y down",
+ "rotation": "degrees, 0=item upright (cork/picks up), positive clockwise on screen",
+ "layer": "front|behind|none, relative to the body sprite. Up is forced front so the item reads. layer \"none\" means the item is not in the hand (after throw release).",
+ "format": "{x, y, rotation, layer}",
+ "layerLock": {
+  "down": "front",
+  "left": "behind",
+  "right": "front",
+  "up": "front"
+ },
+ "frames": {
+  "thief_use_throw_down_0": {
+   "x": -16.16,
+   "y": -39.23,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "thief_use_throw_down_1": {
+   "x": -19.33,
+   "y": -33.65,
+   "rotation": 6.79,
+   "layer": "front"
+  },
+  "thief_use_throw_down_2": {
+   "x": -19.76,
+   "y": -35.39,
+   "rotation": 160.7,
+   "layer": "front"
+  },
+  "thief_use_throw_down_3": {
+   "x": -17.69,
+   "y": -34.81,
+   "rotation": -22.79,
+   "layer": "front"
+  },
+  "thief_use_throw_down_4": {
+   "x": -12.18,
+   "y": -40.87,
+   "rotation": -25.46,
+   "layer": "none"
+  },
+  "thief_use_throw_down_5": {
+   "x": -16.11,
+   "y": -39.9,
+   "rotation": -19.09,
+   "layer": "none"
+  },
+  "thief_use_throw_down_6": {
+   "x": -17.91,
+   "y": -39.53,
+   "rotation": -10.02,
+   "layer": "none"
+  },
+  "thief_use_throw_down_7": {
+   "x": -16.16,
+   "y": -39.23,
+   "rotation": 0.0,
+   "layer": "none"
+  },
+  "thief_use_throw_left_0": {
+   "x": -14.95,
+   "y": -45.7,
+   "rotation": 0.0,
+   "layer": "behind"
+  },
+  "thief_use_throw_left_1": {
+   "x": -5.65,
+   "y": -38.84,
+   "rotation": -53.73,
+   "layer": "behind"
+  },
+  "thief_use_throw_left_2": {
+   "x": 0.5,
+   "y": -39.4,
+   "rotation": -83.08,
+   "layer": "behind"
+  },
+  "thief_use_throw_left_3": {
+   "x": -9.84,
+   "y": -40.54,
+   "rotation": -31.7,
+   "layer": "behind"
+  },
+  "thief_use_throw_left_4": {
+   "x": -15.59,
+   "y": -46.65,
+   "rotation": -4.75,
+   "layer": "none"
+  },
+  "thief_use_throw_left_5": {
+   "x": -14.73,
+   "y": -46.31,
+   "rotation": 1.9,
+   "layer": "none"
+  },
+  "thief_use_throw_left_6": {
+   "x": -14.0,
+   "y": -46.16,
+   "rotation": 2.88,
+   "layer": "none"
+  },
+  "thief_use_throw_left_7": {
+   "x": -14.95,
+   "y": -45.7,
+   "rotation": 0.0,
+   "layer": "none"
+  },
+  "thief_use_throw_right_0": {
+   "x": 14.95,
+   "y": -38.98,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "thief_use_throw_right_1": {
+   "x": 5.65,
+   "y": -30.8,
+   "rotation": 52.75,
+   "layer": "front"
+  },
+  "thief_use_throw_right_2": {
+   "x": -0.5,
+   "y": -31.18,
+   "rotation": 82.42,
+   "layer": "front"
+  },
+  "thief_use_throw_right_3": {
+   "x": 9.84,
+   "y": -33.18,
+   "rotation": 35.68,
+   "layer": "front"
+  },
+  "thief_use_throw_right_4": {
+   "x": 15.59,
+   "y": -41.58,
+   "rotation": 5.76,
+   "layer": "none"
+  },
+  "thief_use_throw_right_5": {
+   "x": 14.73,
+   "y": -39.61,
+   "rotation": -2.19,
+   "layer": "none"
+  },
+  "thief_use_throw_right_6": {
+   "x": 14.0,
+   "y": -38.72,
+   "rotation": -3.11,
+   "layer": "none"
+  },
+  "thief_use_throw_right_7": {
+   "x": 14.95,
+   "y": -38.98,
+   "rotation": 0.0,
+   "layer": "none"
+  },
+  "thief_use_throw_up_0": {
+   "x": 16.16,
+   "y": -45.45,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "thief_use_throw_up_1": {
+   "x": 19.33,
+   "y": -36.0,
+   "rotation": -3.85,
+   "layer": "front"
+  },
+  "thief_use_throw_up_2": {
+   "x": 19.76,
+   "y": -35.18,
+   "rotation": -4.82,
+   "layer": "front"
+  },
+  "thief_use_throw_up_3": {
+   "x": 17.69,
+   "y": -38.91,
+   "rotation": 17.65,
+   "layer": "front"
+  },
+  "thief_use_throw_up_4": {
+   "x": 12.18,
+   "y": -47.36,
+   "rotation": 24.62,
+   "layer": "none"
+  },
+  "thief_use_throw_up_5": {
+   "x": 16.11,
+   "y": -46.02,
+   "rotation": 19.36,
+   "layer": "none"
+  },
+  "thief_use_throw_up_6": {
+   "x": 17.91,
+   "y": -45.35,
+   "rotation": 10.24,
+   "layer": "none"
+  },
+  "thief_use_throw_up_7": {
+   "x": 16.16,
+   "y": -45.45,
+   "rotation": 0.0,
+   "layer": "none"
+  }
+ },
+ "fps": 12,
+ "framesCount": 8,
+ "releaseFrame": 3,
+ "spawnOffsetPx": {
+  "down": {
+   "x": -17.69,
+   "y": -34.81,
+   "rotation": -22.79
+  },
+  "left": {
+   "x": -9.84,
+   "y": -40.54,
+   "rotation": -31.7
+  },
+  "right": {
+   "x": 9.84,
+   "y": -33.18,
+   "rotation": 35.68
+  },
+  "up": {
+   "x": 17.69,
+   "y": -38.91,
+   "rotation": 17.65
+  }
+ }
+}

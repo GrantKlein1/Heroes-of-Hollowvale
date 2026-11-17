@@ -85,16 +85,26 @@ test.describe('Package 1-5 — Lane C Player: Atlas Projectiles & Spells', () =>
 
     await page.waitForFunction(() => (window as any).__hv?.scene() === 'village');
 
-    // Select hotbar slot 1 (poison vial) and trigger attack
-    const throwResult = await page.evaluate(async () => {
+    // Select hotbar slot 1 (poison vial) and trigger attack.
+    // The vial is released on frame 3 (250 ms), so read it only after that.
+    await page.evaluate(() => {
       const scene = (window as any).__scene;
       const session = (window as any).__session || scene.session;
 
-      // Set equipped to poison vial
       session.equippedId = 'poison_vial';
       scene._tryAttack(performance.now());
+    });
 
-      const projectiles = scene.projectiles || [];
+    await expect.poll(async () => {
+      return page.evaluate(() => {
+        const projectiles = (window as any).__scene?.projectiles || [];
+        const proj = projectiles[projectiles.length - 1];
+        return proj?.flyAnim ?? null;
+      });
+    }).toBe('thief_poison_vial');
+
+    const throwResult = await page.evaluate(() => {
+      const projectiles = (window as any).__scene.projectiles || [];
       const proj = projectiles[projectiles.length - 1];
 
       return {

@@ -96,5 +96,19 @@ describe('itemHold pure module (Package IT-1)', () => {
       expect(getItemAnchor('nonexistent', 'hold_idle', 'frame')).toBeNull()
       expect(getItemAnchor('knight', 'invalid_clip', 'frame')).toBeNull()
     })
+
+    it('exposes Batch 10 throw, lockpick, and pickaxe anchors', () => {
+      const release = getItemAnchor('thief', 'use_throw', 'thief_use_throw_down_3')
+      expect(release).toMatchObject({ x: -17.69, y: -34.81, layer: 'front' })
+      const hidden = getItemAnchor('thief', 'use_throw', 'thief_use_throw_down_4')
+      expect(hidden.layer).toBe('none')
+      expect(getItemAnchor('thief', 'use_throw', 'thief_use_throw_left_3')).toMatchObject({
+        x: -9.84,
+        y: -40.54,
+      })
+      expect(getItemAnchor('thief', 'use_lockpick', 'thief_use_lockpick_down_0')).toBeTruthy()
+      expect(getItemAnchor('dwarf', 'use_pickaxe', 'dwarf_use_pickaxe_down_0')).toBeTruthy()
+      expect(getItemAnchor('dwarf', 'use_pickaxe', 'dwarf_use_pickaxe_up_4').layer).toBe('front')
+    })
   })
 })

@@ -65,9 +65,9 @@ export function useClipFor(itemId) {
  * Looks up the item hand anchor for a hero, clip, and frame name.
  *
  * @param {string} hero - 'knight' | 'mage' | 'thief' | 'dwarf'
- * @param {string} clip - 'hold_idle' | 'hold_run' | 'use_drink' | 'use_eat'
+ * @param {string} clip - 'hold_idle' | 'hold_run' | 'use_drink' | 'use_eat' | 'use_throw' | 'use_lockpick' | 'use_pickaxe'
  * @param {string} [frameName] - Specific frame name (e.g. 'knight_hold_idle_down_0')
- * @returns {{ x: number, y: number, rotation: number, layer: 'front'|'behind' } | object | null}
+ * @returns {{ x: number, y: number, rotation: number, layer: 'front'|'behind'|'none' } | object | null}
  */
 export function getItemAnchor(hero, clip, frameName) {
   const frames = anchorFramesByHeroClip.get(`${hero}_${clip}`)
