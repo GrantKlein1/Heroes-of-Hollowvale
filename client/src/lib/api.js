@@ -8,6 +8,25 @@ if (typeof window !== 'undefined') {
 
 const activeStreams = new Map()
 
+let sessionFallbackCount = 0
+
+function mintSessionId() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+  if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+    const bytes = new Uint8Array(8)
+    crypto.getRandomValues(bytes)
+    let hex = ''
+    for (let i = 0; i < bytes.length; i += 1) {
+      hex += bytes[i].toString(16).padStart(2, '0')
+    }
+    return `session_${hex}`
+  }
+  sessionFallbackCount += 1
+  return `session_${Date.now().toString(36)}_${sessionFallbackCount.toString(36)}`
+}
+
 export function resetActiveStreams() {
   activeStreams.clear()
 }
@@ -16,9 +35,7 @@ export function getSessionId() {
   try {
     let id = localStorage.getItem('sessionId')
     if (!id) {
-      id = (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function')
-        ? crypto.randomUUID()
-        : `session_${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`
+      id = mintSessionId()
       localStorage.setItem('sessionId', id)
     }
     return id
