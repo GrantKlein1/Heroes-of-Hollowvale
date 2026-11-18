@@ -1285,10 +1285,30 @@ describe('Player Actor — Package 1-3', () => {
       expect(arrow.damage).toBe(14)
       expect(arrow.vy).toBeGreaterThan(0)
       expect(arrow.vx).toBe(0)
-      expect(player._bowCooldownUntil).toBe(5000 + 500 + 833)
+      expect(player._bowCooldownUntil).toBe(5000 + 833)
 
-      // a second Space during the draw or the cooldown does nothing
+      // a second Space during the draw does nothing; once the clip ends, another draw can start
       expect(player.beginBowDraw(5600)).toBeNull()
+      player.update(5000 + 833, 16)
+      expect(player.itemUseState.active).toBe(false)
+      const again = player.beginBowDraw(5000 + 833)
+      expect(again).not.toBeNull()
+      expect(again.animKey).toBe(`${hero}_use_bow_down`)
+    })
+
+    it('waits for frame 6 while the draw clip is playing, even after the 500 ms mark', () => {
+      const player = new Player(mockScene, 200, 300, 'knight')
+      session.classId = 'knight'
+      mockScene.projectiles = []
+      player.facing = 'right'
+      player.beginBowDraw(5000)
+      player.anims.currentFrame = { frame: { name: 'knight_use_bow_right_4' } }
+      player.update(5000 + 700, 16)
+      expect(mockScene.projectiles).toHaveLength(0)
+      player.anims.currentFrame = { frame: { name: 'knight_use_bow_right_6' } }
+      player.update(5000 + 720, 16)
+      expect(mockScene.projectiles).toHaveLength(1)
+      expect(mockScene.projectiles[0].vx).toBeGreaterThan(0)
     })
 
     it('fires along the facing the hero has at release, from that facing\'s arrow tip', () => {

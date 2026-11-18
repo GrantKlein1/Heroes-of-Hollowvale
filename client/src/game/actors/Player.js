@@ -1152,6 +1152,9 @@ export class Player extends Actor {
     if (this.anims && typeof this.anims.play === 'function') {
       this.anims.play(key, false)
     }
+    // The draw is authored at 12 fps. A leftover attack timeScale (thief 1.5, dwarf 0.75)
+    // would move frame 6 off the 500 ms release. Idle scale keeps an external slow-down.
+    this._applyClassAnimTimeScale('idle')
     this.applySheetOrigin(sheetKey)
     this.applyFootprint(sheetKey)
     this._syncItemInHandSprite()

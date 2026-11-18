@@ -29,9 +29,6 @@ export const ARROW_IMPACT_TEXTURE = 'lightning_arrow_impact_b12'
 export const ARROW_FLY_ANIM = 'lightning_arrow_fly'
 export const ARROW_HIT_ANIM = 'lightning_arrow_hit'
 
-/** Backstop after the 500 ms release time while the draw clip is playing but has not reached frame 6. */
-export const BOW_RELEASE_GRACE_MS = 150
-
 const ARROW_FPS = 16
 const ARROW_FRAMES = 4
 const IMPACT_FRAMES = 7
@@ -61,7 +58,7 @@ export function getBowTiming() {
   return { releaseFrame, releaseMs, durationMs, frames: durations.length }
 }
 
-/** On-screen cooldown between shots: one full draw. */
+/** The next shot waits until this draw finishes (one full clip, counted from the press). */
 export function getBowCooldownMs() {
   return getBowTiming().durationMs
 }
@@ -225,7 +222,7 @@ export function spawnLightningArrow(scene, player, facing) {
 }
 
 /**
- * Fires the armed arrow once the release frame is due (frame 6, or 500 ms as a backstop).
+ * Fires the armed arrow on frame 6 while the draw is playing. 500 ms is the backstop only when that clip is not playing.
  *
  * @param {object} player
  * @param {number} now
@@ -244,10 +241,11 @@ export function tickBowShot(player, now) {
   const frameIndex = getAnimationFrameIndex(frame)
   const onClip = typeof frameName === 'string' && frameName.startsWith(`${player.classId}_use_bow_`)
   const frameDue = onClip && frameIndex >= pending.releaseFrame
-  // The clip's own frame 6 is the release. Elapsed time is only a backstop: at once when the clip
-  // is not playing, or a short grace after 500 ms when the animation clock runs a hair behind.
   const elapsed = now - pending.startedAt
-  const timeDue = onClip ? elapsed >= pending.releaseMs + BOW_RELEASE_GRACE_MS : elapsed >= pending.releaseMs
+  // Wall-clock time fires only when the draw clip is not playing (unit tests, a missing
+  // animation). While it is on screen, the arrow leaves on frame 6 and not before,
+  // even if the animation clock is behind the press.
+  const timeDue = !onClip && elapsed >= pending.releaseMs
   if (!frameDue && !timeDue) return null
 
   pending.released = true
@@ -256,7 +254,9 @@ export function tickBowShot(player, now) {
   const scene = pending.scene || player.scene
   const proj = spawnLightningArrow(scene, player, facing)
   pending.projectile = proj
-  player._bowCooldownUntil = now + getBowCooldownMs()
+  // The draw itself is the cooldown: the next shot can start when this clip ends,
+  // not a full draw after the release (that left the hero idle and unable to fire).
+  player._bowCooldownUntil = pending.startedAt + (pending.durationMs || getBowCooldownMs())
   safe(onSpellCast)
   return proj
 }
