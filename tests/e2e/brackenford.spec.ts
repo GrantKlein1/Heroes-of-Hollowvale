@@ -305,4 +305,72 @@ test.describe('Package 2-3: Playable Brackenford Tiled Map Integration (?maps=ti
       await expect(page).toHaveScreenshot(`brackenford-${classId}-1080p.png`);
     }
   });
+
+  test('no exit prompt is showing right after arrival from the south', async ({ page }) => {
+    await page.addInitScript(() => {
+      window.HTMLMediaElement.prototype.play = () => Promise.resolve();
+    });
+
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
+    await page.getByRole('button', { name: 'Start Game' }).click();
+    await page.getByRole('button', { name: 'Choose' }).first().click();
+    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village');
+
+    await page.evaluate(() => {
+      (window as any).__scene.enterScene('village', 'spawn_south');
+    });
+
+    await page.waitForFunction(() => {
+      const scene = (window as any).__scene;
+      const zone = scene?.tiledMapLoader?.getZone?.('spawn_south');
+      if (!zone) return false;
+      const py = zone.y + zone.height / 2;
+      return scene.sceneId === 'village' && Math.abs(scene.player.y - py) < 0.5;
+    });
+
+    // _drawBeacons runs on the next scene update, after enterScene clears the label.
+    await page.waitForTimeout(200);
+
+    const arrival = await page.evaluate(() => {
+      const scene = (window as any).__scene;
+      const body = scene._readPlayerBox();
+      const misses = (a: { x: number; y: number; w: number; h: number }, b: { x: number; y: number; w: number; h: number }) =>
+        a.x + a.w <= b.x || a.x >= b.x + b.w || a.y + a.h <= b.y || a.y >= b.y + b.h;
+      const exits = (scene.prompts || []).filter((prompt: { kind?: string }) => prompt.kind === 'exit');
+      const activeExits = exits
+        .filter((prompt: { x: number; y: number; w: number; h: number }) => !misses(body, prompt))
+        .map((prompt: { label?: string; short?: string }) => prompt.short || prompt.label || 'exit');
+
+      const hero = scene.player.getBounds();
+      const covering: string[] = [];
+      (scene.prompts || []).forEach((prompt: { kind?: string }, index: number) => {
+        if (prompt.kind !== 'exit') return;
+        const label = scene.beaconLabels[index];
+        const bounds = label?.getBounds?.();
+        if (!bounds) return;
+        const separated =
+          hero.right <= bounds.x ||
+          hero.x >= bounds.right ||
+          hero.bottom <= bounds.y ||
+          hero.y >= bounds.bottom;
+        if (!separated) covering.push(String(label.text));
+      });
+
+      return {
+        activeLabel: String(scene._activeLabel || ''),
+        activeExits,
+        covering,
+        x: scene.player.x as number,
+        y: scene.player.y as number,
+      };
+    });
+
+    expect(arrival.x).toBeCloseTo(304, 0);
+    expect(arrival.y).toBeCloseTo(272, 0);
+    expect(arrival.activeExits).toEqual([]);
+    expect(arrival.covering).toEqual([]);
+    expect(arrival.activeLabel.toLowerCase()).not.toContain('wilderness');
+    expect(arrival.activeLabel.toLowerCase()).not.toContain('exit');
+    await expect(page.getByText(/Press E to exit/i)).toHaveCount(0);
+  });
 });
