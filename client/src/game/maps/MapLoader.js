@@ -7,7 +7,6 @@
  * - Feet-anchored Y-sorting via depth.js
  * - Zones extraction and registry via zones.js
  * - Sweep collision prevention for player / entity colliders
- * - Flag check: tiled maps are always on (package 3-4 removed the opt-out)
  */
 
 import {
@@ -20,19 +19,6 @@ import {
   sortByFeet,
 } from './depth.js'
 import { parseZonesLayer, ZonesRegistry, parseProperties } from './zones.js'
-
-/**
- * Checks if Tiled maps are enabled.
- * Always true. Package 3-4 removed the query opt-out. The search argument
- * is ignored and kept so existing callers compile.
- * Follow-up: delete this helper once nothing imports it.
- *
- * @param {string} [_search] - Ignored.
- * @returns {boolean}
- */
-export function isTiledMapsEnabled(_search) {
-  return true
-}
 
 /**
  * Resolves list of prop atlas keys from mount options and map properties.
