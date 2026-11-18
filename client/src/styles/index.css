@@ -28,3 +28,12 @@ body { background: radial-gradient(ellipse at center, #3b2f2f 0%, #1c1917 70%); 
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }
+
+/* Keyboard focus only. :focus-visible does not match a mouse click, so the ring does not stick. */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #fbbf24;
+  outline-offset: 2px;
+}
