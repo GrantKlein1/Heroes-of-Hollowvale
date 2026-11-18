@@ -182,18 +182,25 @@ export function isEnemyType(type) {
 }
 
 /**
- * Picks one enemy id by spawnWeight.
+ * Picks one enemy id by weight.
+ *
+ * With no `weights`, every def's own spawnWeight is used. With `weights`
+ * ({ [defId]: weight }), only those ids are rolled, in the order given, and
+ * ids with no def or a weight of 0 are skipped.
  *
  * @param {() => number} rand - returns [0, 1)
+ * @param {Record<string, number>} [weights]
  * @returns {string|null}
  */
-export function pickEnemyTypeByWeight(rand) {
-  const ids = Object.keys(ENEMY_DEFS).filter((id) => (ENEMY_DEFS[id].spawnWeight || 0) > 0)
-  const total = ids.reduce((sum, id) => sum + ENEMY_DEFS[id].spawnWeight, 0)
+export function pickEnemyTypeByWeight(rand, weights) {
+  const weightOf = (id) => (weights ? weights[id] : ENEMY_DEFS[id].spawnWeight) || 0
+  const pool = weights ? Object.keys(weights).filter((id) => ENEMY_DEFS[id]) : Object.keys(ENEMY_DEFS)
+  const ids = pool.filter((id) => weightOf(id) > 0)
+  const total = ids.reduce((sum, id) => sum + weightOf(id), 0)
   if (!(total > 0)) return null
   let roll = rand() * total
   for (const id of ids) {
-    roll -= ENEMY_DEFS[id].spawnWeight
+    roll -= weightOf(id)
     if (roll < 0) return id
   }
   return ids[ids.length - 1]

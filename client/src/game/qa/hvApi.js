@@ -349,6 +349,26 @@ export function createHvApi(scene) {
     },
 
     /**
+     * Lists live enemies on the current screen: type, position and HP.
+     *
+     * @returns {Array<{ type: string, x: number, y: number, hp: number, hpMax: number }>}
+     */
+    enemies: () => {
+      const group = scene?.enemies
+      if (!group || typeof group.getChildren !== 'function') return []
+      return group
+        .getChildren()
+        .filter((e) => e && e.active && e.hp > 0)
+        .map((e) => ({ type: e.enemyType || 'unknown', x: e.x, y: e.y, hp: e.hp, hpMax: e.hpMax }))
+    },
+
+    /**
+     * The last wilderness spawn plan: screen id, biome, world seed and the
+     * planned { type, x, y } list. Null before any wilderness screen mounts.
+     */
+    wildSpawns: () => (scene?._wildSpawnPlan ? { ...scene._wildSpawnPlan, spawns: scene._wildSpawnPlan.spawns.map((s) => ({ ...s })) } : null),
+
+    /**
      * Adjusts physics and scene clock time scale.
      */
     timeScale: (n) => {

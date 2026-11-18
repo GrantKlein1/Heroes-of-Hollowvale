@@ -371,6 +371,33 @@ describe('Hollowvale QA and Debug API (hvApi.js)', () => {
       })
     })
 
+    describe('enemies() and wildSpawns() (SPAWN-TABLES-1)', () => {
+      it('lists live enemies with type, position and hp, skipping dead ones', () => {
+        mockScene.enemies = {
+          getChildren: () => [
+            { active: true, hp: 10, hpMax: 12, x: 1, y: 2, enemyType: 'goblin' },
+            { active: true, hp: 0, hpMax: 12, x: 3, y: 4, enemyType: 'brute' },
+            { active: false, hp: 5, hpMax: 5, x: 5, y: 6, enemyType: 'archer' },
+          ],
+        }
+        expect(api.enemies()).toEqual([{ type: 'goblin', x: 1, y: 2, hp: 10, hpMax: 12 }])
+      })
+
+      it('returns [] with no enemy group and null with no wilderness plan', () => {
+        mockScene.enemies = null
+        expect(api.enemies()).toEqual([])
+        expect(api.wildSpawns()).toBe(null)
+      })
+
+      it('returns a copy of the last wilderness spawn plan', () => {
+        mockScene._wildSpawnPlan = { nodeId: 'wild_2_0', biome: 'emberwood_forest', seed: 1, spawns: [{ type: 'goblin', x: 200, y: 300 }] }
+        const plan = api.wildSpawns()
+        expect(plan).toEqual(mockScene._wildSpawnPlan)
+        plan.spawns[0].x = 0
+        expect(mockScene._wildSpawnPlan.spawns[0].x).toBe(200)
+      })
+    })
+
     describe('combat()', () => {
       it('returns debug combat state snapshot', () => {
         const info = api.combat()
