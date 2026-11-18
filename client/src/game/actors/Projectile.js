@@ -10,6 +10,8 @@
  */
 
 import Phaser from 'phaser'
+import { scaleOutgoingDamage } from '../combat/balance.js'
+import { session } from '../session.js'
 
 // Safe sprite base resolution for both browser runtime and mocked test environments
 const SpriteBase = (Phaser && Phaser.GameObjects && Phaser.GameObjects.Sprite)
@@ -476,7 +478,7 @@ export class Projectile extends SpriteBase {
         }
       }
     } else {
-      const dmg = this.damage
+      const dmg = scaleOutgoingDamage(this.damage, now, session)
       enemy.hp = Math.max(0, enemy.hp - dmg)
       enemy.flashUntil = now + 180
       const color = this.impactType === 'poison' ? '#6abe30' : '#ff6161'
