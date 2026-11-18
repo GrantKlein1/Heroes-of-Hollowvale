@@ -20,7 +20,6 @@ import { Actor } from './Actor.js'
 import { ACTOR_STATES } from './stateMachine.js'
 import { isValidFacing, DEFAULT_FACING } from './facing.js'
 import { buildAnimKey } from '../assets/animKeys.js'
-import { isBlendRenderer } from '../config/flags.js'
 import { onMeleeSwing } from '../MainGameScene.js'
 import {
   getAnimationFrameIndex,
@@ -169,41 +168,35 @@ export class Player extends Actor {
       })
     }
 
-    // Hook scene attack and hurt handlers if mounted in HollowvaleScene
+    // Hook scene attack and hurt handlers if mounted in HollowvaleScene.
+    // The painted-renderer fallback is gone; these always run the blend player.
     if (scene && typeof scene._tryAttack === 'function' && !scene._hitSystemHooked) {
       scene._hitSystemHooked = true
-      const origTryAttack = scene._tryAttack.bind(scene)
       scene._tryAttack = (now) => {
-        if (isBlendRenderer() && scene.player instanceof Player) {
-          const cls = session.classId
-          const item = session.equippedId
-          if (cls === 'thief' && item === 'poison_vial') {
-            return this.beginVialThrow(now)
-          }
-          if (cls === 'mage' && item === 'spellbook') {
-            scene._attacking = true
-            return this.cast(session.spellId || 'lightning', now)
-          }
-          scene._attacking = true
-          return this.attack(now)
+        const cls = session.classId
+        const item = session.equippedId
+        if (cls === 'thief' && item === 'poison_vial') {
+          return this.beginVialThrow(now)
         }
-        return origTryAttack(now)
+        if (cls === 'mage' && item === 'spellbook') {
+          scene._attacking = true
+          return this.cast(session.spellId || 'lightning', now)
+        }
+        scene._attacking = true
+        return this.attack(now)
       }
 
       const origHurtPlayer = scene._hurtPlayer ? scene._hurtPlayer.bind(scene) : null
       if (origHurtPlayer) {
         scene._hurtPlayer = (amount = 10, opts = {}) => {
-          if (isBlendRenderer() && scene.player instanceof Player) {
-            const tookDamage = this.takeDamage(
-              amount,
-              typeof performance !== 'undefined' ? performance.now() : Date.now(),
-              { ...opts, fromSceneHurt: true }
-            )
-            if (!tookDamage) return false
-            const actualDamage = typeof this.lastDamageTaken === 'number' ? this.lastDamageTaken : amount
-            return origHurtPlayer(actualDamage, opts)
-          }
-          return origHurtPlayer(amount, opts)
+          const tookDamage = this.takeDamage(
+            amount,
+            typeof performance !== 'undefined' ? performance.now() : Date.now(),
+            { ...opts, fromSceneHurt: true }
+          )
+          if (!tookDamage) return false
+          const actualDamage = typeof this.lastDamageTaken === 'number' ? this.lastDamageTaken : amount
+          return origHurtPlayer(actualDamage, opts)
         }
       }
     }
