@@ -760,6 +760,7 @@ export default class HollowvaleScene extends Phaser.Scene {
     session.thiefVanishUntil = now + 1000
     session.thiefVanishCooldownUntil = now + 10000
     this._vanishArmed = true
+    eventBus.emit(GameEvents.ABILITY, { id: 'vanish' })
     if (this.player instanceof Player) {
       this.player.vanish(now)
     }
@@ -1488,7 +1489,6 @@ export default class HollowvaleScene extends Phaser.Scene {
   enterScene(id, spawn, slideMs = 0) {
     const tiledMapEntry = id === 'wilderness' ? null : resolveMap(id)
     if (id !== 'wilderness' && !tiledMapEntry) {
-      console.warn(`[HollowvaleScene] No Tiled map for "${id}"`)
       return
     }
     this.sceneId = id

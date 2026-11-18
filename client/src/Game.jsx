@@ -1257,10 +1257,11 @@ export default function Game() {
       }
       // Track keys for movement, but movement is paused when overlays are open anyway
       keysRef.current[e.key.toLowerCase()] = true
-      // prevent page scroll for arrow keys/space only when not typing into an input/textarea
-      if (!typing && ['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].includes(e.key.toLowerCase())) {
-        e.preventDefault()
-      }
+      // Do not preventDefault Arrow keys or Space. Phaser's keyboard manager
+      // ignores a keydown once defaultPrevented is set, and it already captures
+      // those keys so the page does not scroll. PhaserGame starts the game in a
+      // microtask, which registers its listener after this one. preventDefault
+      // here would swallow movement and attacks.
       // H toggles the controls menu during play. It stays closed on the title and class-select screens.
       if (!typing && !e.repeat && !classSelectOpenRef.current && (e.key === 'h' || e.key === 'H')) {
         e.preventDefault()
@@ -1409,6 +1410,7 @@ export default function Game() {
       setGameOver(false)
     }
     const onWheel = ({ open } = {}) => setSpellWheelOpen(!!open)
+    const onAbility = () => setAbilityNow(performance.now())
     const onVendor = () => {
       setShopOpen(true)
       markVendorActivity()
@@ -1426,6 +1428,7 @@ export default function Game() {
       eventBus.on(GameEvents.DIED, onDied),
       eventBus.on(GameEvents.RESPAWN, onRespawn),
       eventBus.on(GameEvents.SPELL_WHEEL, onWheel),
+      eventBus.on(GameEvents.ABILITY, onAbility),
       eventBus.on(GameEvents.VENDOR, onVendor),
     ]
     return () => { for (const off of offs) off() }
@@ -1605,25 +1608,25 @@ export default function Game() {
               <div className="absolute left-1/2 -translate-x-1/2 top-4 flex flex-col items-center gap-1 text-amber-200" title="Lightning Bolt (1)">
                 <img src={PATHS.lightningBoltIcon} alt="Lightning Bolt" className="w-8 h-8 rounded border border-amber-900/40 bg-stone-900/40 object-contain" onError={(e)=>{e.currentTarget.style.visibility='hidden'}} />
                 <div className="text-xs">Lightning Bolt</div>
-                <div className="text-[10px] text-stone-400">[1]</div>
+                <div className="text-xs text-stone-300">[1]</div>
               </div>
               {/* Right: Blink */}
               <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 text-amber-200" title="Blink (2)">
                 <img src={PATHS.blinkIcon} alt="Blink" className="w-8 h-8 rounded border border-amber-900/40 bg-stone-900/40 object-contain" onError={(e)=>{e.currentTarget.style.visibility='hidden'}} />
                 <div className="text-xs">Blink</div>
-                <div className="text-[10px] text-stone-400">[2]</div>
+                <div className="text-xs text-stone-300">[2]</div>
               </div>
               {/* Bottom: Life Leech */}
               <div className="absolute left-1/2 -translate-x-1/2 bottom-4 flex flex-col items-center gap-1 text-amber-200" title="Life Leech (3)">
                 <img src={PATHS.lifeLeechIcon} alt="Life Leech" className="w-8 h-8 rounded border border-amber-900/40 bg-stone-900/40 object-contain" onError={(e)=>{e.currentTarget.style.visibility='hidden'}} />
                 <div className="text-xs">Life Leech</div>
-                <div className="text-[10px] text-stone-400">[3]</div>
+                <div className="text-xs text-stone-300">[3]</div>
               </div>
               {/* Left: Mana Shield */}
               <div className="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 text-amber-200" title="Mana Shield (4)">
                 <img src={PATHS.manaShieldIcon} alt="Mana Shield" className="w-8 h-8 rounded border border-amber-900/40 bg-stone-900/40 object-contain" onError={(e)=>{e.currentTarget.style.visibility='hidden'}} />
                 <div className="text-xs">Mana Shield</div>
-                <div className="text-[10px] text-stone-400">[4]</div>
+                <div className="text-xs text-stone-300">[4]</div>
               </div>
             </div>
           </div>
@@ -1657,7 +1660,7 @@ export default function Game() {
                   <div className="mt-1 h-1.5 w-full bg-stone-700/80 rounded overflow-hidden">
                     <div className="h-full" style={{ width: `${Math.round(pct*100)}%`, backgroundColor: color }} />
                   </div>
-                  <div className="mt-1 text-[10px] text-stone-400">Attack: Space • Invisibility: J</div>
+                  <div className="mt-1 text-xs text-stone-300">Attack: Space • Invisibility: J</div>
                 </div>
               </div>
             )
@@ -1685,7 +1688,7 @@ export default function Game() {
                   <div className="mt-1 h-1.5 w-full bg-stone-700/80 rounded overflow-hidden">
                     <div className="h-full" style={{ width: `${Math.round(pct*100)}%`, backgroundColor: color }} />
                   </div>
-                  <div className="mt-1 text-[10px] text-stone-400">Cast: Space (Spellbook)</div>
+                  <div className="mt-1 text-xs text-stone-300">Cast: Space (Spellbook)</div>
                 </div>
               </div>
             )
@@ -1897,9 +1900,9 @@ export default function Game() {
               </div>
               <div className="flex items-center gap-4 mb-4 text-sm">
                 <span className="text-stone-300/80">Your gems:</span>
-                <span className="px-2 py-0.5 rounded bg-stone-800/80 border border-amber-900/40 text-amber-200">R {inventoryTotals.ruby||0}</span>
-                <span className="px-2 py-0.5 rounded bg-stone-800/80 border border-amber-900/40 text-amber-200">S {inventoryTotals.sapphire||0}</span>
-                <span className="px-2 py-0.5 rounded bg-stone-800/80 border border-amber-900/40 text-amber-200">E {inventoryTotals.emerald||0}</span>
+                <span className="px-2 py-0.5 rounded bg-stone-800/80 border border-amber-900/40 text-amber-200">Ruby {inventoryTotals.ruby||0}</span>
+                <span className="px-2 py-0.5 rounded bg-stone-800/80 border border-amber-900/40 text-amber-200">Sapphire {inventoryTotals.sapphire||0}</span>
+                <span className="px-2 py-0.5 rounded bg-stone-800/80 border border-amber-900/40 text-amber-200">Emerald {inventoryTotals.emerald||0}</span>
               </div>
               <div className="mb-3 flex flex-wrap gap-2">
                 {['Potions','Magic','Food','Weaponry','Armor','Tools'].map(cat => (
@@ -1926,9 +1929,9 @@ export default function Game() {
                         <div className="flex-1 min-w-0">
                           <div className="text-amber-200 font-medium truncate">{def.name}</div>
                           <div className="text-xs text-stone-300/80 flex gap-2 mt-0.5">
-                            {price.ruby>0 && <span className="px-1 rounded bg-stone-900/60 border border-amber-900/40">R {price.ruby}</span>}
-                            {price.sapphire>0 && <span className="px-1 rounded bg-stone-900/60 border border-amber-900/40">S {price.sapphire}</span>}
-                            {price.emerald>0 && <span className="px-1 rounded bg-stone-900/60 border border-amber-900/40">E {price.emerald}</span>}
+                            {price.ruby>0 && <span className="px-1 rounded bg-stone-900/60 border border-amber-900/40">Ruby {price.ruby}</span>}
+                            {price.sapphire>0 && <span className="px-1 rounded bg-stone-900/60 border border-amber-900/40">Sapphire {price.sapphire}</span>}
+                            {price.emerald>0 && <span className="px-1 rounded bg-stone-900/60 border border-amber-900/40">Emerald {price.emerald}</span>}
                             {(price.ruby||0)+(price.sapphire||0)+(price.emerald||0)===0 && <span className="px-1 rounded bg-stone-900/60 border border-amber-900/40">Free</span>}
                           </div>
                         </div>
@@ -2250,10 +2253,10 @@ export default function Game() {
                     onError={(e)=>{ e.currentTarget.style.display='none' }}
                   />
                 ) : (
-                  <span className="text-stone-500 text-[10px]">offhand</span>
+                  <span className="text-stone-500 text-xs">offhand</span>
                 )}
                 {inventory.armor.offhand?.count > 1 && (
-                  <span className="absolute bottom-0.5 right-0.5 text-[10px] px-1 rounded bg-stone-900/80 text-amber-200">
+                  <span className="absolute bottom-0.5 right-0.5 text-xs px-1 rounded bg-stone-900/80 text-amber-200">
                     {inventory.armor.offhand.count}
                   </span>
                 )}
@@ -2284,7 +2287,7 @@ export default function Game() {
                       />
                     ) : null}
                     {/* number label like Minecraft */}
-                    <span className="absolute top-0.5 left-1 text-[10px] text-stone-400">{idx+1}</span>
+                    <span className="absolute top-0.5 left-1 text-xs text-stone-300">{idx+1}</span>
                     {it?.count > 1 && (
                       <span className="absolute bottom-0.5 right-0.5 text-[11px] px-1 rounded bg-stone-900/80 text-amber-200">{it.count}</span>
                     )}
@@ -2309,7 +2312,7 @@ export default function Game() {
                 onError={(e)=>{ e.currentTarget.style.display='none' }}
               />
               {invDrag.item.count > 1 && (
-                <span className="absolute bottom-0.5 right-0.5 text-[10px] px-1 rounded bg-stone-900/90 text-amber-200">{invDrag.item.count}</span>
+                <span className="absolute bottom-0.5 right-0.5 text-xs px-1 rounded bg-stone-900/90 text-amber-200">{invDrag.item.count}</span>
               )}
             </div>
           </div>
