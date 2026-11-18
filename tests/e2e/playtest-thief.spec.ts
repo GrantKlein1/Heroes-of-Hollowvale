@@ -133,7 +133,7 @@ test('PT-T thief moves, vanishes on J, and swings daggers on Space', async ({ pa
     const w = window as any
     const anim = w.__hv?.anim?.() || ''
     const p = w.__scene?.player
-    return anim.includes('vanish') || p?.vanishState?.active === true || p?.visible === false
+    return /^thief_vanish_/.test(anim) && p?.visible === true
   })
   const vanished = await sample(page)
   await page.screenshot({ path: path.join(OUT, '05-vanish.png') })
@@ -185,6 +185,8 @@ test('PT-T thief moves, vanishes on J, and swings daggers on Space', async ({ pa
   expect(notes.movedNorth).toBe(true)
   expect(moving.anim).toBe('thief_walk_up')
   expect(vanished.vanishActive).toBe(true)
+  expect(vanished.visible).toBe(true)
+  expect(vanished.anim).toMatch(/^thief_vanish_/)
   expect(vanished.hud).toMatch(/Invisibility: Active/)
   expect(swing.anim).toMatch(/^thief_attack_/)
   expect(swing.projectiles).toBe(0)
