@@ -23,7 +23,6 @@ import {
   collidersWithExitGaps,
   WILDERNESS_ENTRANCE_ID,
 } from '../terrain/wildernessBridge.js'
-import { PAINTED_SCENES } from '../sceneCatalog.js'
 import { session } from '../session.js'
 import { ScreenCamera } from '../screenCamera.js'
 import { DomFxLayer } from '../fxLayer.js'
@@ -54,11 +53,8 @@ import { MapLoader } from '../maps/MapLoader.js'
 import { getAllMaps, resolveMap } from '../maps/mapRegistry.js'
 import { Dragon, DRAGON_PHASE_SHEETS } from '../actors/Dragon.js'
 import {
-  PAINTED_WORLD_W,
-  PAINTED_WORLD_H,
   WILDERNESS_WORLD_W,
   WILDERNESS_WORLD_H,
-  scaleFromReference,
 } from '../worldMetrics.js'
 import { TILESET_CATALOG } from '../terrain/generate.js'
 import {
@@ -76,7 +72,11 @@ import {
   getEnemySpeed,
   getEnemyDamage,
 } from '../combat/balance.js'
-import { isBlendRenderer, isDebug, isTiledMaps } from '../config/flags.js'
+import { isDebug } from '../config/flags.js'
+
+/** Boot playfield until enterScene mounts a map. Same point the first Player construct used. */
+const BOOT_WORLD_W = 1024
+const BOOT_WORLD_H = 1536
 import { Player } from '../actors/Player.js'
 import { Enemy } from '../actors/Enemy.js'
 import { AttackTokenManager } from '../ai/tokens.js'
@@ -144,8 +144,8 @@ export default class HollowvaleScene extends Phaser.Scene {
   constructor() {
     super({ key: 'HollowvaleScene' })
     this.sceneId = 'village'
-    this.worldW = PAINTED_WORLD_W
-    this.worldH = PAINTED_WORLD_H
+    this.worldW = BOOT_WORLD_W
+    this.worldH = BOOT_WORLD_H
     this.unit = this.worldH / 900
     this.saved = {
       village: { nx: 0.5, ny: 0.9 },
@@ -206,7 +206,6 @@ export default class HollowvaleScene extends Phaser.Scene {
     const add = (url) => {
       if (url) urls.add(url)
     }
-    for (const def of Object.values(PAINTED_SCENES)) add(def.bg)
     for (const url of Object.values(CLASS_SPRITES)) add(url)
     for (const url of Object.values(CLASS_ATTACK_SPRITES)) add(url)
     for (const url of Object.values(ENEMY_SPRITES)) add(url)
@@ -220,39 +219,20 @@ export default class HollowvaleScene extends Phaser.Scene {
       if (asset.src) this.load.image(asset.id, asset.src)
     }
 
-    if (isBlendRenderer()) {
-      this.assetRegistry = new AssetRegistry(this)
-      this.assetRegistry.loadGroup('boot')
-      this.assetRegistry.loadGroup('village')
-      this.assetRegistry.loadGroup('wilderness')
-      this.assetRegistry.loadGroup('cavern')
-      this.assetRegistry.loadGroup('interiors')
-    }
+    this.assetRegistry = new AssetRegistry(this)
+    this.assetRegistry.loadGroup('boot')
+    this.assetRegistry.loadGroup('village')
+    this.assetRegistry.loadGroup('wilderness')
+    this.assetRegistry.loadGroup('cavern')
+    this.assetRegistry.loadGroup('interiors')
 
-    if (isTiledMaps()) {
-      for (const map of getAllMaps()) {
-        this.load.tilemapTiledJSON(map.key, map.file)
-      }
-      const tiles = defaultManifest.tiles || {}
-      for (const tileDef of Object.values(tiles)) {
-        if (tileDef.id && tileDef.image && !this.textures.exists(tileDef.id)) {
-          this.load.image(tileDef.id, tileDef.image)
-        }
-      }
-      if (!isBlendRenderer() && !this.textures.exists('village_props')) {
-        this.load.atlas(
-          'village_props',
-          'assets/props/village_props/village_props.png',
-          'assets/props/village_props/village_props.json'
-        )
-      }
-    } else {
-      const tiles = defaultManifest.tiles || {}
-      for (const name of TILESET_CATALOG) {
-        const tileDef = tiles[name.name]
-        if (tileDef?.id && tileDef.image && !this.textures.exists(tileDef.id)) {
-          this.load.image(tileDef.id, tileDef.image)
-        }
+    for (const map of getAllMaps()) {
+      this.load.tilemapTiledJSON(map.key, map.file)
+    }
+    const tiles = defaultManifest.tiles || {}
+    for (const tileDef of Object.values(tiles)) {
+      if (tileDef.id && tileDef.image && !this.textures.exists(tileDef.id)) {
+        this.load.image(tileDef.id, tileDef.image)
       }
     }
   }
@@ -295,23 +275,15 @@ export default class HollowvaleScene extends Phaser.Scene {
     this.consumeGfx = this.add.graphics().setDepth(26000)
     this.hpGfx = this.add.graphics().setDepth(18000)
 
-    if (isBlendRenderer()) {
-      this.player = new Player(
-        this,
-        PAINTED_WORLD_W / 2,
-        PAINTED_WORLD_H * 0.9,
-        session.classId || 'knight'
-      )
-      this.player.setCollideWorldBounds(true)
-      this.player.setVisible(false)
-      if (this.player.body) {
-        this.player.body.setAllowGravity(false)
-      }
-    } else {
-      this.player = this.physics.add.sprite(PAINTED_WORLD_W / 2, PAINTED_WORLD_H * 0.9, '__px')
-      this.player.setOrigin(0.5, 0.5)
-      this.player.setCollideWorldBounds(true)
-      this.player.setVisible(false)
+    this.player = new Player(
+      this,
+      BOOT_WORLD_W / 2,
+      BOOT_WORLD_H * 0.9,
+      session.classId || 'knight'
+    )
+    this.player.setCollideWorldBounds(true)
+    this.player.setVisible(false)
+    if (this.player.body) {
       this.player.body.setAllowGravity(false)
     }
 
@@ -361,7 +333,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       }
     }
 
-    this.enterScene('village', PAINTED_SCENES.village.spawn)
+    this.enterScene('village', { nx: 0.5, ny: 0.9 })
     session.ready = true
     this.time.delayedCall(0, () => {
       eventBus.emit(GameEvents.ASSETS_READY)
@@ -403,7 +375,7 @@ export default class HollowvaleScene extends Phaser.Scene {
     const now = performance.now()
     this._syncSession(now)
     this._drive(now, dt)
-    if (isBlendRenderer() && this.player instanceof Player) {
+    if (this.player instanceof Player) {
       this.player.update(now, delta)
       if (this.player.facing) {
         this._facing = this.player.facing
@@ -427,17 +399,8 @@ export default class HollowvaleScene extends Phaser.Scene {
       this.debugOn = !this.debugOn
       this._redrawStaticDebug()
     }
-    const isBlend = isBlendRenderer() && this.player instanceof Player
-    if (!isBlend) {
-      if (!this._attacking && !this._stealthVisual() && session.spriteUrl !== this._spriteUrl) {
-        this._applySprite(session.spriteUrl)
-      }
-      if (this._attacking && now >= this._attackUntil) {
-        this._attacking = false
-        this._applySprite(session.spriteUrl)
-      }
-    } else {
-      // In blend renderer mode, do not disrupt active non-looping animations (ATTACK / HURT)
+    if (this.player instanceof Player) {
+      // Do not disrupt active non-looping animations (ATTACK / HURT)
       if (!this.player.is(ACTOR_STATES.ATTACK) && !this.player.is(ACTOR_STATES.HURT) && session.spriteUrl !== this._spriteUrl) {
         this._applySprite(session.spriteUrl)
       }
@@ -461,43 +424,26 @@ export default class HollowvaleScene extends Phaser.Scene {
     session.baseSpeed = CLASS_SPEED[id] || 160
     this._publishVitals(true)
     this.player.setVisible(true)
-    if (isBlendRenderer() && this.player instanceof Player) {
+    if (this.player instanceof Player) {
       this.player.setClass(id)
       this.player.setScale(this._playerIntegerScale || 1)
-    } else {
-      this._applySprite(session.spriteUrl || CLASS_SPRITES[id])
     }
   }
 
   _applySprite(url) {
     this._spriteUrl = url || ''
-    if (isBlendRenderer() && this.player instanceof Player) {
-      if (session.classId) {
-        this.player.setClass(session.classId)
-      }
-      this.player.setScale(this._playerIntegerScale || 1)
-      return
+    if (!(this.player instanceof Player)) return
+    if (session.classId) {
+      this.player.setClass(session.classId)
     }
-    if (!url || !this.textures.exists(url)) return
-    const targetH = Math.max(24, Math.round((this._playerScale || 0.13) * this.worldH))
-    this.player.setTexture(url)
-    const src = this.player.texture.getSourceImage()
-    const ar = src && src.height ? src.width / src.height : 1
-    const targetW = Math.max(16, Math.round(targetH * ar))
-    this.player.setDisplaySize(targetW, targetH)
-    this.player.body.setSize(this.player.width, this.player.height, true)
-  }
-
-  _stealthVisual() {
-    const now = performance.now()
-    return session.classId === 'thief' && (now < session.thiefVanishUntil || now < session.thiefSmokeUntil)
+    this.player.setScale(this._playerIntegerScale || 1)
   }
 
   _drive(now, dt) {
     const body = this.player.body
     const blocked = session.blocked || this.dead
     const vanishing = session.classId === 'thief' && now < session.thiefVanishUntil
-    const isPlayerActor = isBlendRenderer() && this.player instanceof Player
+    const isPlayerActor = this.player instanceof Player
     const isDodging = isPlayerActor && this.player.isDodging()
     const isBlocking = isPlayerActor && this.player.isBlocking()
     let vx = 0
@@ -792,7 +738,7 @@ export default class HollowvaleScene extends Phaser.Scene {
     session.thiefVanishUntil = now + 1000
     session.thiefVanishCooldownUntil = now + 10000
     this._vanishArmed = true
-    if (isBlendRenderer() && this.player instanceof Player) {
+    if (this.player instanceof Player) {
       this.player.vanish(now)
     }
   }
@@ -889,7 +835,7 @@ export default class HollowvaleScene extends Phaser.Scene {
   }
 
   _spawnEnemy(type, nx, ny, wave) {
-    if (isBlendRenderer() && (type === 'goblin' || type === 'brute' || type === 'goblin_brute')) {
+    if ((type === 'goblin' || type === 'brute' || type === 'goblin_brute')) {
       const wx = nx > 1 ? nx : nx * this.worldW
       const wy = ny > 1 ? ny : ny * this.worldH
       const enemy = new Enemy(this, wx, wy, type, { wave })
@@ -936,7 +882,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       nx = this.player.x / this.worldW
       ny = this.player.y / this.worldH
     }
-    if (isBlendRenderer() && (type === 'goblin' || type === 'brute' || type === 'goblin_brute')) {
+    if ((type === 'goblin' || type === 'brute' || type === 'goblin_brute')) {
       const wx = (x !== undefined && x > 1) ? x : nx * this.worldW
       const wy = (y !== undefined && y > 1) ? y : ny * this.worldH
       const enemy = new Enemy(this, wx, wy, type, { wave: this.wave || 1 })
@@ -1028,7 +974,7 @@ export default class HollowvaleScene extends Phaser.Scene {
           if (!invincible) {
             let tookDamage = true
             let actualDmg = dmg
-            if (isBlendRenderer() && this.player instanceof Player) {
+            if (this.player instanceof Player) {
               const res = this.player.takeDamage(dmg, now, { attacker: e, fromX: e.x, fromY: e.y, enemyType: e.enemyType })
               if (!res) {
                 tookDamage = false
@@ -1112,13 +1058,7 @@ export default class HollowvaleScene extends Phaser.Scene {
     const { gems, items } = generateSeededLoot(e?.enemyType)
     const had = gems.ruby || gems.sapphire || gems.emerald || items.length
     if (!had) return
-    // Painted sprites (legacy renderer) still grant immediately. The default
-    // blend path always leaves a world pickup; presentLootDrop grants only
-    // ids that have no loot_pickups clip.
-    if (!isBlendRenderer()) {
-      eventBus.emit(GameEvents.LOOT, { gems, items })
-      return
-    }
+    // World pickup. presentLootDrop grants only ids that have no loot_pickups clip.
     presentLootDrop(this, e.x, e.y, gems, items)
   }
 
@@ -1181,7 +1121,7 @@ export default class HollowvaleScene extends Phaser.Scene {
           if (!invincible) {
             this.hp = Math.max(0, this.hp - ARCHER_PROJECTILE.damage)
             onPlayerHurt()
-            if (isBlendRenderer() && this.player instanceof Player) {
+            if (this.player instanceof Player) {
               this.player.transition(ACTOR_STATES.HURT)
             }
           }
@@ -1304,7 +1244,7 @@ export default class HollowvaleScene extends Phaser.Scene {
   _hurtPlayer(amount = 10) {
     this.hp = Math.max(0, this.hp - amount)
     onPlayerHurt()
-    if (isBlendRenderer() && this.player instanceof Player) {
+    if (this.player instanceof Player) {
       if (!this.player.isBlocking()) {
         this.player.transition(ACTOR_STATES.HURT)
       }
@@ -1356,64 +1296,35 @@ export default class HollowvaleScene extends Phaser.Scene {
   }
 
   enterScene(id, spawn, slideMs = 0) {
+    const tiledMapEntry = id === 'wilderness' ? null : resolveMap(id)
+    if (id !== 'wilderness' && !tiledMapEntry) {
+      console.warn(`[HollowvaleScene] No Tiled map for "${id}"`)
+      return
+    }
     this.sceneId = id
     this._areaEntrance = spawn ? { ...spawn } : null
     this._clearTransient()
-    if (id !== 'dungeonInterior') {
-      this._clearEnemies()
-      this.wave = 1
-      this.enemiesSpawned = false
-      this.nextWaveAt = 0
-    } else {
-      this._clearEnemies()
-      this.wave = 1
-      this.enemiesSpawned = false
-      this.nextWaveAt = 0
-    }
-    const tiledMapEntry = isTiledMaps() ? resolveMap(id) : null
+    this._clearEnemies()
+    this.wave = 1
+    this.enemiesSpawned = false
+    this.nextWaveAt = 0
     if (id === 'wilderness') this._showWilderness(spawn, slideMs)
-    else if (tiledMapEntry) {
-      this._showTiledMap(tiledMapEntry.key, spawn, slideMs)
-    }
-    else this._showPainted(id, spawn, slideMs)
+    else this._showTiledMap(tiledMapEntry.key, spawn, slideMs)
     this._skipRest = true
     this._activeLabel = null
     eventBus.emit(GameEvents.PROMPT, { label: '' })
     eventBus.emit(GameEvents.SCENE_CHANGE, { scene: id })
   }
 
-  _showPainted(id, spawn, slideMs) {
-    const def = PAINTED_SCENES[id] || PAINTED_SCENES.village
-    this._clearVisuals()
-    const key = def.bg && this.textures.exists(def.bg) ? def.bg : null
-    let worldW = PAINTED_WORLD_W
-    let worldH = PAINTED_WORLD_H
-    if (key) {
-      const src = this.textures.get(key).getSourceImage()
-      if (src?.width && src?.height) {
-        worldW = src.width
-        worldH = src.height
-      }
-      this.bg = this.add.image(0, 0, key).setOrigin(0, 0).setDepth(0)
-      this.bg.setDisplaySize(worldW, worldH)
-    }
-    this._setPlayfield(0, 0, worldW, worldH, slideMs)
-    this._buildSolids(def.colliders)
-    this._sizePlayer(def.playerScale || 0.13)
-    const sp = spawn || def.spawn
-    this._placePlayer(sp.nx, sp.ny)
-    this._areaEntrance = { x: this.player.x, y: this.player.y, nx: sp?.nx, ny: sp?.ny }
-    this._buildPrompts()
-    if (isBlendRenderer() && this.player instanceof Player) {
-      this.player.updateDepth()
-    } else {
-      this.player.setDepth(10)
-    }
-  }
-
   _showTiledMap(mapKey, spawn, slideMs) {
-    this._clearVisuals()
     const mapEntry = resolveMap(mapKey)
+    const tilemapCache = this.cache?.tilemap?.get(mapKey)
+    const mapData = tilemapCache?.data || tilemapCache
+    if (!mapData) {
+      console.warn(`[HollowvaleScene] Tiled map data not found for "${mapKey}"`)
+      return
+    }
+    this._clearVisuals()
     if (this.assetRegistry && mapEntry?.assetGroups) {
       for (const group of mapEntry.assetGroups) {
         if (!this.assetRegistry.isGroupLoaded(group)) {
@@ -1421,14 +1332,6 @@ export default class HollowvaleScene extends Phaser.Scene {
           this.assetRegistry.createAnims(group)
         }
       }
-    }
-
-    const tilemapCache = this.cache?.tilemap?.get(mapKey)
-    const mapData = tilemapCache?.data || tilemapCache
-    if (!mapData) {
-      console.warn(`[HollowvaleScene] Tiled map data not found for "${mapKey}", falling back to painted`)
-      this._showPainted('village', spawn, slideMs)
-      return
     }
 
     const loader = new MapLoader(mapData, { scene: this, debug: this.debugOn })
@@ -1506,10 +1409,8 @@ export default class HollowvaleScene extends Phaser.Scene {
       this._dragon = dragon
     }
 
-    if (isBlendRenderer() && this.player instanceof Player) {
+    if (this.player instanceof Player) {
       this.player.updateDepth()
-    } else {
-      this.player.setDepth(10)
     }
   }
 
@@ -1709,20 +1610,12 @@ export default class HollowvaleScene extends Phaser.Scene {
 
   _sizePlayer(scale) {
     this._playerScale = scale
-    if (isBlendRenderer() && this.player instanceof Player) {
-      // Package 1-3b calibration: Blend renderer actor is calibrated to native 1x scale
-      // (64x96 px = 2x3 tiles on 32px grid), resolving double magnification.
+    if (this.player instanceof Player) {
+      // Package 1-3b calibration: actor is native 1x scale
+      // (64x96 px = 2x3 tiles on 32px grid).
       const integerScale = 1
       this._playerIntegerScale = integerScale
       this.player.setScale(integerScale)
-      return
-    }
-    const url = this.player.texture?.key
-    if (url && url !== '__px' && url !== '__MISSING') this._applySprite(this._spriteUrl || url)
-    else {
-      const targetH = Math.max(24, Math.round(scale * this.worldH))
-      this.player.setDisplaySize(Math.round(targetH * 0.67), targetH)
-      this.player.body.setSize(this.player.width, this.player.height, true)
     }
   }
 
@@ -1772,46 +1665,6 @@ export default class HollowvaleScene extends Phaser.Scene {
       }
       return
     }
-    const def = PAINTED_SCENES[this.sceneId]
-    if (!def) return
-    const zones = def.zones || []
-    for (let i = 0; i < zones.length; i++) {
-      const z = zones[i]
-      const prompt = this._pushPrompt(z.rect, z.label, z.short, z.kind, z.action)
-      prompt.to = z.to
-      prompt.spawn = z.spawn
-      prompt.save = z.save
-    }
-    if (def.bartender) {
-      const b = def.bartender
-      const bw = b.w * this.unit
-      const bh = b.h * this.unit
-      const pad = b.pad * this.unit
-      const cx = b.nx * this.worldW
-      const cy = b.ny * this.worldH
-      const rect = {
-        x: (cx - bw / 2 - pad) / this.worldW,
-        y: (cy - bh / 2 - pad) / this.worldH,
-        w: (bw + pad * 2) / this.worldW,
-        h: (bh + pad * 2) / this.worldH,
-      }
-      this._pushPrompt(rect, 'Press E to talk', 'Bartender', 'talk', 'bartender')
-    }
-    if (def.chests) {
-      for (let i = 0; i < def.chests.length; i++) {
-        if (this.openedChests.has(i)) continue
-        const c = def.chests[i]
-        const prompt = this._pushPrompt(
-          c.rect,
-          c.locked ? 'Press E to pick the lock' : 'Press E to open the chest',
-          c.locked ? 'Locked' : 'Chest',
-          'loot',
-          'chest',
-        )
-        prompt.chestIndex = i
-        prompt.locked = c.locked
-      }
-    }
   }
 
   _pushPrompt(rect, label, short, kind, action) {
@@ -1848,12 +1701,8 @@ export default class HollowvaleScene extends Phaser.Scene {
     if (now < (this._flashUntil || 0)) this.player.setAlpha(0.5)
     else this.player.setAlpha(1)
     if (this.sceneId === 'wilderness') this.player.setDepth(this.player.body.bottom)
-    else if (this.tiledMapLoader) {
-      if (isBlendRenderer() && this.player instanceof Player) {
-        this.player.updateDepth()
-      } else if (this.player?.body) {
-        this.player.setDepth(this.player.body.bottom)
-      }
+    else if (this.tiledMapLoader && this.player instanceof Player) {
+      this.player.updateDepth()
     }
     this._drawEnemyHp()
 

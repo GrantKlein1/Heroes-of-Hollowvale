@@ -21,7 +21,7 @@ All 13 foundational combat design decisions are locked:
 9. **No Death Penalty:** Dying does not destroy inventory or gold; the player respawns at the area/screen entrance.
 10. **Target Platform:** Desktop browser (keyboard + mouse/WASD controls).
 11. **Boss Flight Cycle:** The Red Dragon flies during aerial attack patterns but must land on the ground after each volley to allow player melee/counterplay.
-12. **Renderer Abstraction:** Support `?renderer=legacy` alongside the modern Blendsmith engine (`?renderer=blend`) until retirement in package 3-4.
+12. **Renderer:** Blendsmith sprites and Tiled maps only. Package 3-4 retired the painted renderer.
 13. **RNG Grounding:** All combat rolls, crits, and variances use seeded PRNG (`client/src/game/rng.js`).
 
 ---

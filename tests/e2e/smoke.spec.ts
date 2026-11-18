@@ -30,9 +30,9 @@ test.describe('Heroes of Hollowvale — E2E Smoke & Visual Regression', () => {
       window.HTMLMediaElement.prototype.play = () => Promise.resolve();
     });
 
-    // Painted-scene baselines. Blend + Tiled are the defaults, so this
-    // regression pins the legacy escape explicitly.
-    await page.goto('/?renderer=legacy&maps=legacy&seed=1&qa=1');
+    // Default path: Blendsmith sprites and Tiled maps. The painted walking-path
+    // scene has no registered Tiled map, so it is not part of this tour.
+    await page.goto('/?seed=1&qa=1');
 
     // Wait for the game canvas and start button
     const canvas = page.locator('canvas');
@@ -72,7 +72,6 @@ test.describe('Heroes of Hollowvale — E2E Smoke & Visual Regression', () => {
     const scenes: Array<{ id: string; screenshot: string }> = [
       { id: 'village', screenshot: 'scene-01-village.png' },
       { id: 'tavern', screenshot: 'scene-02-tavern.png' },
-      { id: 'path', screenshot: 'scene-03-path.png' },
       { id: 'dungeon', screenshot: 'scene-04-dungeon.png' },
       { id: 'market', screenshot: 'scene-05-market.png' },
       { id: 'dungeonInterior', screenshot: 'scene-06-dungeon-interior.png' },

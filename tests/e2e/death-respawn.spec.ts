@@ -9,7 +9,7 @@ test.describe('Package 1b-4: Death & Respawn, Seeded Loot & Critter Flee AI', ()
   });
 
   test('Acceptance Criterion 1: Die -> DIED event -> respawn with HP == max', async ({ page }) => {
-    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
 
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await expect(startButton).toBeVisible();
@@ -72,7 +72,7 @@ test.describe('Package 1b-4: Death & Respawn, Seeded Loot & Critter Flee AI', ()
   });
 
   test('Acceptance Criterion 2: Enemy death clip plays fully before removal', async ({ page }) => {
-    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
 
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await expect(startButton).toBeVisible();
@@ -161,7 +161,7 @@ test.describe('Package 1b-4: Death & Respawn, Seeded Loot & Critter Flee AI', ()
   });
 
   test('LM-1: seed=1 goblin drops an idling emerald that collects on walk-over', async ({ page }) => {
-    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
 
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await expect(startButton).toBeVisible();
@@ -176,12 +176,15 @@ test.describe('Package 1b-4: Death & Respawn, Seeded Loot & Critter Flee AI', ()
       );
     }, null, { timeout: 15000 });
 
-    const playerPos = await page.evaluate(() => (window as any).__hv.player());
-
-    const drop = await page.evaluate(({ x, y }) => {
+    // The village entrance is walled in on the tiled map. Stand on an open
+    // tile and drop the gem a short walk to the right of the sprite origin.
+    // __hv.player() is the physics body, which does not match the collect point.
+    const drop = await page.evaluate(() => {
       const scene = (window as any).__scene;
       const hv = (window as any).__hv;
-      const enemy = scene.spawn('goblin', x + 180, y);
+      scene.player.setPosition(200, 200);
+      scene.player.body.reset(200, 200);
+      const enemy = scene.spawn('goblin', scene.player.x + 48, scene.player.y);
       hv.seed(1);
       enemy.takeDamage(500, performance.now());
       enemy.onAnimationComplete({ key: 'goblin_death_down' });
@@ -197,7 +200,7 @@ test.describe('Package 1b-4: Death & Respawn, Seeded Loot & Critter Flee AI', ()
             originY: pickup.originY,
           }
         : null;
-    }, { x: playerPos.x, y: playerPos.y });
+    });
 
     expect(drop).not.toBeNull();
     expect(drop?.id).toBe('emerald');
@@ -249,7 +252,7 @@ test.describe('Package 1b-4: Death & Respawn, Seeded Loot & Critter Flee AI', ()
   });
 
   test('Acceptance Criterion 4: Ambient critters flee from player with directional clips', async ({ page }) => {
-    await page.goto('/?renderer=blend&maps=legacy&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
 
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await expect(startButton).toBeVisible();
