@@ -125,3 +125,59 @@ describe('Package MX-1: interior exits land on walkable spawns', () => {
     expect(brackenford.checkCollision(knightBody(96, 160))).toBe(true)
   })
 })
+
+describe('Package TAVERN-1: Tharos talk rect and tavern exit mat', () => {
+  const tavern = loadMap('tavern.tmj')
+  const props = tavern.getLayer('props').objects
+  const counter = props.find((prop) => prop.name === 'tavern_bar_counter')
+  const tharos = tavern.getZone('Tharos')
+  const exit = tavern.getZone('exit_village')
+  const spawn = tavern.getZone('spawn_tavern')
+
+  it('overlaps the counter front on the open floor and a reachable knight footprint', () => {
+    expect(counter).toBeTruthy()
+    expect(tharos.type).toBe('npc')
+    expect(tharos.properties.prompt).toBe('Press E to talk to Tharos')
+
+    // Southern edge of the counter sprite: the side facing the room.
+    const counterFront = {
+      x: counter.x,
+      y: counter.y + counter.height - 16,
+      width: counter.width,
+      height: 16,
+    }
+    const openFloor = { x: counter.x, y: 168, width: counter.width, height: 40 }
+
+    expect(rectsOverlap(tharos, counterFront)).toBe(true)
+    expect(rectsOverlap(tharos, openFloor)).toBe(true)
+
+    // Walk-up stops on the south edge of the middle stool. Feet (352, 200)
+    // put the 23x7 footprint on that edge, inside the talk rect, off the solids.
+    const body = knightBody(352, 200)
+    expect(tavern.checkCollision(body)).toBe(false)
+    expect(rectsOverlap(body, tharos)).toBe(true)
+  })
+
+  it('keeps the exit on a 64x32 door mat clear of props and spawn_tavern', () => {
+    expect(exit.properties.targetMap).toBe('brackenford.tmj')
+    expect(exit.properties.targetSpawn).toBe('door_tavern')
+    expect(exit.width).toBeLessThanOrEqual(64)
+    expect(exit.height).toBeLessThanOrEqual(32)
+
+    const doorway = { x: 9 * 32, y: 10 * 32, width: 64, height: 32 }
+    expect(rectsOverlap(exit, doorway)).toBe(true)
+
+    expect(tavern.propFootprints.length).toBeGreaterThan(0)
+    const overlapping = tavern.propFootprints.filter((fp) => rectsOverlap(exit, fp.bounds))
+    expect(overlapping.map((fp) => fp.name)).toEqual([])
+
+    expect(rectsOverlap(spawn, exit)).toBe(false)
+    const spawnFeet = knightBody(spawn.x + spawn.width / 2, spawn.y + spawn.height / 2)
+    expect(rectsOverlap(spawnFeet, exit)).toBe(false)
+
+    // South of the round table, where the old 128x128 mat used to fire the exit prompt.
+    const atTable = knightBody(280, 300)
+    expect(tavern.checkCollision(atTable)).toBe(false)
+    expect(rectsOverlap(atTable, exit)).toBe(false)
+  })
+})

@@ -91,12 +91,42 @@ test.describe('Package 3-1: Interior Maps (Tavern & Market) Integration (?maps=t
     expect(tavernValidation.collisionLayerExists).toBe(true);
     expect(tavernValidation.propSpritesCount).toBeGreaterThanOrEqual(1);
 
-    // 4. Approach Tharos and verify dialogue trigger
+    // 4. Stand at the round table. The exit mat must not reach the dining floor.
     await page.evaluate(() => {
       const scene = (window as any).__scene;
-      scene.player.setPosition(340, 175);
-      scene.player.body.reset(340, 175);
-      scene._tryInteract();
+      scene.player.setPosition(280, 300);
+      scene.player.body.reset(280, 300);
+      scene.player.setVelocity(0, 0);
+    });
+    await page.evaluate(() => new Promise((resolve) => {
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve(undefined)));
+    }));
+    await expect(page.getByText('Press E to exit to Brackenford')).toHaveCount(0);
+
+    // Walk to the open floor in front of the bar and read Tharos's prompt.
+    await page.keyboard.down('ArrowRight');
+    try {
+      await page.waitForFunction(() => (window as any).__scene.player.x >= 352, undefined, { timeout: 5000 });
+    } finally {
+      await page.keyboard.up('ArrowRight');
+    }
+    await page.keyboard.down('ArrowUp');
+    try {
+      await page.waitForFunction(
+        () => String((window as any).__scene._activeLabel || '').includes('Tharos'),
+        undefined,
+        { timeout: 5000 },
+      );
+    } finally {
+      await page.keyboard.up('ArrowUp');
+    }
+    await expect(page.getByText('Press E to talk to Tharos')).toBeVisible();
+
+    await page.keyboard.press('e');
+    await page.waitForTimeout(300);
+    await page.evaluate(() => {
+      const heading = document.body.innerText.includes('Tharos the Bartender');
+      if (!heading) (window as any).__scene._tryInteract();
     });
 
     const tharosHeading = page.locator('text=Tharos the Bartender');
@@ -116,11 +146,15 @@ test.describe('Package 3-1: Interior Maps (Tavern & Market) Integration (?maps=t
     }
     await page.waitForTimeout(300);
 
-    // 5. Walk to exit door at bottom (x: 304, y: 320) and exit back to village
+    // 5. Stand in the south doorway (64x32 at y 320) and exit back to the village.
+    // reset() parks the body on the sprite corner until the next physics step,
+    // so sync it before testing the door mat.
     await page.evaluate(() => {
       const scene = (window as any).__scene;
-      scene.player.setPosition(304, 320);
-      scene.player.body.reset(304, 320);
+      scene.player.setPosition(320, 336);
+      scene.player.body.reset(320, 336);
+      scene.player.setVelocity(0, 0);
+      scene.player.body.updateFromGameObject();
       scene._tryInteract();
     });
 

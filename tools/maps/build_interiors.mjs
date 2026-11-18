@@ -263,9 +263,13 @@ function buildTavernMap() {
     makeProp(30, 'tavern_shield_wall', 440, 8, 40, 56, { x: 0, y: 0, w: 0, h: 0, shape: 'none' }),
   ];
 
-  // Tharos NPC zone behind bar counter:
-  // Counter is at x: 288, y: 96, w: 128 (center X = 352).
-  // Tharos feet at (352, 136). Zone width 64, height 64 -> x: 320, y: 72.
+  // Talk rect on the open floor in front of the bar. The counter footprint
+  // blocks y 154-176, and a walk-up stops on the stools with the body near
+  // y 196, so the old rect (y 40-136) never overlapped. This one covers the
+  // counter's front edge and the floor from y 168 to 208 (bar centre x 352).
+  // NPC feet are the bottom of the zone, so Tharos draws on that floor.
+  // Exit is the south doorway only (row 10, cols 9-10): 64x32 on the door
+  // wall. spawn_tavern occupies y 288-320, so the mat starts below it.
   const zonesObjects = [
     {
       id: 10,
@@ -293,10 +297,10 @@ function buildTavernMap() {
       id: 12,
       name: 'exit_village',
       type: 'exit',
-      x: 8 * TILE_SIZE,
-      y: 7 * TILE_SIZE,
-      width: 4 * TILE_SIZE,
-      height: 4 * TILE_SIZE,
+      x: 9 * TILE_SIZE,
+      y: 10 * TILE_SIZE,
+      width: 2 * TILE_SIZE,
+      height: TILE_SIZE,
       visible: true,
       properties: [
         { name: 'kind', type: 'string', value: 'exit' },
@@ -311,9 +315,9 @@ function buildTavernMap() {
       name: 'Tharos',
       type: 'npc',
       x: 320,
-      y: 40,
+      y: 168,
       width: 64,
-      height: 96,
+      height: 40,
       visible: true,
       properties: [
         { name: 'kind', type: 'string', value: 'npc' },
