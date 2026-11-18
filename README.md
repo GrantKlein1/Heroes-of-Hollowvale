@@ -25,7 +25,7 @@ A small AI-powered, top-down browser game. Explore Brackenford, the Embered Flag
 
 From the repo root, `npm install`, then `npm run dev`. Open http://localhost:5173 (client). The API is Express on port 5051, proxied by Vite at `/api`.
 
-`npm test` runs the unit tests. `npm run build --workspace client` builds the client. CI runs those two commands. Playwright is the separate script `npm run test:e2e`.
+`npm test` runs the unit tests. `npm run build --workspace client` builds the client. CI runs those two commands in one job and `npx playwright test` against the Vite dev server in a parallel Playwright job. Locally, Playwright is `npm run test:e2e`.
 
 ## Lore retrieval flags
 

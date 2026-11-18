@@ -1,5 +1,15 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const chromiumUse = {
+  ...devices['Desktop Chrome'],
+  viewport: { width: 1280, height: 720 },
+};
+
+// CI installs Playwright's bundled Chromium. Do not set channel: 'chrome' there.
+if (process.env.CI) {
+  delete chromiumUse.channel;
+}
+
 export default defineConfig({
   testDir: './tests/e2e',
   timeout: 60 * 1000,
@@ -23,10 +33,7 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-        viewport: { width: 1280, height: 720 },
-      },
+      use: chromiumUse,
     },
   ],
   webServer: {
