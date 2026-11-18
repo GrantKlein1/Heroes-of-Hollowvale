@@ -4231,6 +4231,11 @@
               "name": "tall",
               "type": "bool",
               "value": false
+            },
+            {
+              "name": "mineable",
+              "type": "bool",
+              "value": true
             }
           ]
         },

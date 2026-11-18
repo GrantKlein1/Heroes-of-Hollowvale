@@ -11,7 +11,7 @@
   "version": "1.10",
   "tiledversion": "1.10.2",
   "nextlayerid": 8,
-  "nextobjectid": 20,
+  "nextobjectid": 21,
   "properties": [
     {
       "name": "canonName",
@@ -2051,6 +2051,23 @@
               "name": "prompt",
               "type": "string",
               "value": "Press E to return to Molten Halls"
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "name": "chest_lock",
+          "type": "trigger",
+          "x": 120,
+          "y": 132,
+          "width": 80,
+          "height": 40,
+          "visible": true,
+          "properties": [
+            {
+              "name": "locked",
+              "type": "bool",
+              "value": true
             }
           ]
         }

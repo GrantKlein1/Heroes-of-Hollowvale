@@ -1121,5 +1121,75 @@ describe('Player Actor — Package 1-3', () => {
       consumed.off()
     })
   })
+
+  describe('Tool use clips (Package B10-2)', () => {
+    beforeEach(() => {
+      session.equippedId = null
+      session.hotbarSlot = 0
+    })
+
+    it('starts, cancels, and completes a thief lockpick on the item-use path', () => {
+      const thief = new Player(mockScene, 10, 20, 'thief')
+      const started = thief.beginToolUse({
+        id: 'lockpick',
+        classId: 'thief',
+        itemId: 'lockpicks',
+        clip: 'use_lockpick',
+        sheetKey: 'thief_use_lockpick',
+      }, 5000)
+      expect(started).toBe(thief)
+      expect(thief.itemUseState).toMatchObject({
+        active: true,
+        itemId: 'lockpicks',
+        clip: 'use_lockpick',
+        tool: 'lockpick',
+      })
+      expect(thief.anims.play).toHaveBeenCalledWith('thief_use_lockpick_down', false)
+      thief.anims.currentFrame = { frame: { name: 'thief_use_lockpick_down_1' } }
+      thief._syncItemInHandSprite()
+      expect(thief.itemSprite.visible).toBe(true)
+      expect(thief.itemSprite.texture.key).toBe('items_inhand_b10')
+      expect(thief.itemSprite.frame.name).toBe('lockpicks_down')
+
+      thief.cancelToolUse()
+      expect(thief.itemUseState.active).toBe(false)
+      expect(thief.anims.play).toHaveBeenCalledWith('thief_idle_down', false)
+    })
+
+    it('refuses the wrong class and a second clip, and shows the pickaxe while mining', () => {
+      const dwarf = new Player(mockScene, 4, 8, 'dwarf')
+      expect(dwarf.beginToolUse({
+        id: 'pickaxe',
+        classId: 'thief',
+        itemId: 'dwarf_pickaxe',
+        clip: 'use_pickaxe',
+        sheetKey: 'dwarf_use_pickaxe',
+      }, 1000)).toBeNull()
+      expect(dwarf.itemUseState.active).toBe(false)
+
+      dwarf.beginToolUse({
+        id: 'pickaxe',
+        classId: 'dwarf',
+        itemId: 'dwarf_pickaxe',
+        clip: 'use_pickaxe',
+        sheetKey: 'dwarf_use_pickaxe',
+      }, 1100)
+      expect(dwarf.anims.play).toHaveBeenCalledWith('dwarf_use_pickaxe_down', false)
+      expect(dwarf.beginToolUse({
+        id: 'pickaxe',
+        classId: 'dwarf',
+        itemId: 'dwarf_pickaxe',
+        clip: 'use_pickaxe',
+      }, 1200)).toBeNull()
+      dwarf.anims.currentFrame = { frame: { name: 'dwarf_use_pickaxe_down_4' } }
+      dwarf._syncItemInHandSprite()
+      expect(dwarf.itemSprite.texture.key).toBe('items_inhand_b10')
+      expect(dwarf.itemSprite.frame.name).toBe('dwarf_pickaxe_down')
+
+      dwarf.completeToolUse()
+      expect(dwarf.itemUseState.active).toBe(false)
+      expect(dwarf.cancelToolUse()).toBe(dwarf)
+    })
+  })
 })
 

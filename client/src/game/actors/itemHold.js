@@ -11,6 +11,19 @@ import { CONSUMABLE, CONSUMABLE_EFFECTS } from '../combat/balance.js'
 export const EFFECT_MS = 625
 export const USE_MS = 1000
 
+/** In-hand frames that live on the Batch 10 atlas rather than items_inhand. */
+const B10_INHAND_IDS = new Set(['poison_vial', 'lockpicks', 'dwarf_pickaxe'])
+
+/**
+ * Atlas key for an equipped or in-use item sprite.
+ *
+ * @param {string|null|undefined} itemId
+ * @returns {'items_inhand_b10'|'items_inhand'}
+ */
+export function inhandAtlasKey(itemId) {
+  return B10_INHAND_IDS.has(itemId) ? 'items_inhand_b10' : 'items_inhand'
+}
+
 const anchorModules = import.meta.glob('../assets/itemAnchors/*.json', { eager: true })
 const anchorFramesByHeroClip = new Map()
 

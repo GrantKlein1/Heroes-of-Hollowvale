@@ -46,6 +46,24 @@ import {
   presentLootDrop,
 } from '../combat/death.js'
 import {
+  TOOLS,
+  TOOL_UNLOCK_EVENT,
+  TOOL_MINE_EVENT,
+  animMetaFromTexture,
+  readLockpickTiming,
+  readPickaxeTiming,
+  canUseTool,
+  findToolTarget,
+  locateMineVisual,
+  rollMineLoot,
+  stepLockpick,
+  stepPickaxe,
+  toolShouldCancel,
+  rectsOverlap,
+  expandedRect,
+  entityRect,
+} from '../combat/toolUse.js'
+import {
   Critter,
   ensureCritterAnimations,
 } from '../ai/critter.js'
@@ -501,6 +519,7 @@ export default class HollowvaleScene extends Phaser.Scene {
 
     if (!blocked) this._tryVanish(now)
     this._updateConsume(now, blocked)
+    this._updateToolUse(now, blocked)
     void dt
     void body
   }
@@ -803,6 +822,163 @@ export default class HollowvaleScene extends Phaser.Scene {
     this._consuming = false
     this._consumeNeedsRelease = true
     this.player?.endItemUse?.()
+  }
+
+  /**
+   * Lockpick (hold E on a locked zone) and pickaxe (press E on a mineable).
+   * Timings come from the clip meta. One call site: `_drive`.
+   *
+   * @param {number} now
+   * @param {boolean} blocked
+   */
+  _updateToolUse(now, blocked) {
+    const player = this.player
+    if (!player || typeof player.beginToolUse !== 'function') return
+
+    // Interact already consumes Keyboard.JustDown(E) this frame. Track the
+    // rising edge here so a pickaxe press is still visible.
+    const eDown = Boolean(this.keys?.E?.isDown)
+    const ePressed = eDown && !this._toolEWasDown
+    this._toolEWasDown = eDown
+
+    const active = this._toolUse
+    if (active && active.sceneId !== this.sceneId) {
+      this._toolUse = null
+      if (active.unlocked || active.effectFired) player.completeToolUse()
+      else player.cancelToolUse()
+      return
+    }
+    if (!active && (blocked || this._consuming || player.itemUseState?.active)) return
+
+    if (active) {
+      const box = this._readPlayerBox()
+      const velocityX = player.body?.velocity?.x || 0
+      const velocityY = player.body?.velocity?.y || 0
+      const elapsed = now - active.startedAt
+      const interrupted = toolShouldCancel({
+        hurt: player.is?.(ACTOR_STATES.HURT),
+        dodge: player.is?.(ACTOR_STATES.DODGE),
+        dead: Boolean(this.dead) || player.is?.(ACTOR_STATES.DEAD),
+        attack: player.is?.(ACTOR_STATES.ATTACK),
+        block: player.is?.(ACTOR_STATES.BLOCK),
+        moving: Math.hypot(velocityX, velocityY) > 0.1,
+        elapsed,
+      })
+      const inRange = rectsOverlap(box, expandedRect(entityRect(active.target)))
+
+      if (active.kind === 'lockpick') {
+        const holding = Boolean(this.keys?.E?.isDown) && !blocked
+        const step = stepLockpick({
+          elapsed,
+          timing: active.timing,
+          holding,
+          inRange,
+          interrupted,
+          unlocked: active.unlocked,
+        })
+        if (step.unlock) {
+          active.unlocked = true
+          active.target.opened = true
+          if (active.target.properties) active.target.properties.locked = false
+          const payload = {
+            id: active.target.id,
+            name: active.target.name,
+            startedAt: active.startedAt,
+            at: now,
+            elapsed,
+          }
+          this._lastToolEffect = { kind: 'lockpick', ...payload }
+          eventBus.emit(TOOL_UNLOCK_EVENT, payload)
+        }
+        if (step.action === 'cancel') {
+          this._toolUse = null
+          player.cancelToolUse()
+          return
+        }
+        if (step.action === 'complete') {
+          this._toolUse = null
+          player.completeToolUse()
+          return
+        }
+        active.unlocked = step.unlocked
+        return
+      }
+
+      const step = stepPickaxe({
+        elapsed,
+        timing: active.timing,
+        interrupted,
+        effectFired: active.effectFired,
+      })
+      if (step.effect) {
+        active.effectFired = true
+        const target = active.target
+        target.mined = true
+        target.broken = true
+        const drop = locateMineVisual(this.tiledMapLoader, target)
+        if (typeof drop.sprite?.destroy === 'function') drop.sprite.destroy()
+        if (typeof drop.body?.destroy === 'function') drop.body.destroy()
+        const loot = rollMineLoot(random)
+        presentLootDrop(this, drop.x, drop.y, loot.gems, loot.items)
+        const payload = {
+          id: target.id,
+          name: target.name,
+          startedAt: active.startedAt,
+          at: now,
+          elapsed,
+          lootId: loot.id,
+        }
+        this._lastToolEffect = { kind: 'pickaxe', ...payload }
+        eventBus.emit(TOOL_MINE_EVENT, payload)
+      }
+      if (step.action === 'cancel') {
+        this._toolUse = null
+        player.cancelToolUse()
+        return
+      }
+      if (step.action === 'complete') {
+        this._toolUse = null
+        player.completeToolUse()
+      }
+      return
+    }
+
+    const box = this._readPlayerBox()
+    const loader = this.tiledMapLoader
+    const zones = loader?.getZones?.()?.getAll?.() || []
+    const props = loader?.propObjects || []
+    const classId = player.classId
+    const tryStart = (toolId) => {
+      if (!canUseTool(classId, toolId)) return false
+      const tool = TOOLS[toolId]
+      if (tool.hold) {
+        if (!eDown) return false
+      } else if (!ePressed) {
+        return false
+      }
+      const target = findToolTarget(toolId, zones, props, box)
+      if (!target) return false
+      const texture = this.textures?.get?.(tool.sheetKey)
+      const meta = animMetaFromTexture(texture, tool.animName)
+      const timing = toolId === 'lockpick' ? readLockpickTiming(meta) : readPickaxeTiming(meta)
+      if (!timing) return false
+      const started = player.beginToolUse(tool, now)
+      if (!started) return false
+      if (typeof player.body?.setVelocity === 'function') player.body.setVelocity(0, 0)
+      this._toolUse = {
+        kind: toolId,
+        sceneId: this.sceneId,
+        startedAt: now,
+        timing,
+        target,
+        unlocked: false,
+        effectFired: false,
+      }
+      return true
+    }
+
+    if (tryStart('lockpick')) return
+    tryStart('pickaxe')
   }
 
   _combat(now, dt) {
