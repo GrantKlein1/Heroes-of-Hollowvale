@@ -9,7 +9,7 @@
  * - Target i-frame enforcement and damage deduction
  */
 
-import { MELEE_DMG } from './balance.js'
+import { MELEE_DMG, scaleOutgoingDamage } from './balance.js'
 import {
   applyHitStop,
   applyFlash,
@@ -20,6 +20,7 @@ import {
   ENEMY_PER_SWING_IFRAME_MS,
 } from './feedback.js'
 import { onMeleeHit } from '../MainGameScene.js'
+import { session } from '../session.js'
 
 /**
  * Extracts the 0-based animation frame index from an AnimationFrame object or frame string.
@@ -248,7 +249,7 @@ export function executePlayerMeleeHit(player, frameIndex, now = (typeof performa
     ? enemiesGroup.getChildren()
     : []
 
-  const damage = MELEE_DMG[player.classId] || 12
+  const damage = scaleOutgoingDamage(MELEE_DMG[player.classId] || 12, now, session)
   const swingId = player.currentSwingId || 1
   let hitCount = 0
 

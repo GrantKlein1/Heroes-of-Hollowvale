@@ -203,11 +203,14 @@ test.describe('Package IT-1: Hero Item Hold and Use Animations & Consumables', (
     await page.waitForTimeout(100);
 
     // =========================================================================
-    // Repeat for ale_flask (+15 hp, speedBoostUntil about 5 s ahead)
+    // Repeat for ale_flask (+10 hp, 1.25x damage for about 5 s, no speed boost)
     // =========================================================================
     await page.evaluate(() => {
       (window as any).__scene.hp = 20;
       (window as any).__session.equippedId = 'ale_flask';
+      (window as any).__session.speedBoostUntil = 0;
+      (window as any).__session.damageMult = 1;
+      (window as any).__session.damageBoostUntil = 0;
       (window as any).__consumedEvents = [];
       (window as any).__scene.player.playAnim('idle');
     });
@@ -217,15 +220,21 @@ test.describe('Package IT-1: Hero Item Hold and Use Animations & Consumables', (
     await page.waitForTimeout(100);
     expect(await page.evaluate(() => (window as any).__hv.anim())).toMatch(/^knight_use_drink_/);
 
-    // By ~700 ms, becomes 35 hp (20 + 15) and speedBoostUntil ~5s ahead
-    await page.waitForFunction(() => (window as any).__scene.hp === 35, { timeout: 3000 });
-    const speedBoost = await page.evaluate(() => {
+    // By ~700 ms, becomes 30 hp (20 + 10). Damage buff ~5s ahead. Speed unchanged.
+    await page.waitForFunction(() => (window as any).__scene.hp === 30, { timeout: 3000 });
+    const aleBoost = await page.evaluate(() => {
       const now = performance.now();
-      const boostUntil = (window as any).__session.speedBoostUntil || 0;
-      return { diff: boostUntil - now };
+      const session = (window as any).__session;
+      return {
+        damageDiff: (session.damageBoostUntil || 0) - now,
+        damageMult: session.damageMult,
+        speedDiff: (session.speedBoostUntil || 0) - now,
+      };
     });
-    expect(speedBoost.diff).toBeGreaterThan(3500);
-    expect(speedBoost.diff).toBeLessThan(5500);
+    expect(aleBoost.damageMult).toBe(1.25);
+    expect(aleBoost.damageDiff).toBeGreaterThan(3500);
+    expect(aleBoost.damageDiff).toBeLessThan(5500);
+    expect(aleBoost.speedDiff).toBeLessThanOrEqual(0);
     expect(await page.evaluate(() => (window as any).__consumedEvents.length)).toBe(1);
 
     // Ends at 1000 ms

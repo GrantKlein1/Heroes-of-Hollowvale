@@ -63,6 +63,7 @@ import {
   MELEE_DMG,
   WEAPON,
   CONSUMABLE,
+  applyConsumableEffects,
   FIREBALL_SPEED,
   FIREBALL_DIST,
   FIRE_LINGER_MS,
@@ -780,9 +781,20 @@ export default class HollowvaleScene extends Phaser.Scene {
         this._consumeCommitted = true
         const effect = CONSUMABLE.effects?.[this._consumeId]
         if (effect) {
+          const applied = applyConsumableEffects(effect, {
+            hp: this.hp,
+            hpMax: this.hpMax,
+            mana: this.mana || 0,
+            manaMax: this.manaMax || 0,
+            speedBoostUntil: session.speedBoostUntil || 0,
+            damageMult: session.damageMult || 1,
+            damageBoostUntil: session.damageBoostUntil || 0,
+          }, now)
           if (effect.heal) this._heal(effect.heal)
           if (effect.mana) this._addMana(effect.mana)
-          if (effect.speedMs) session.speedBoostUntil = now + effect.speedMs
+          session.speedBoostUntil = applied.speedBoostUntil
+          session.damageMult = applied.damageMult
+          session.damageBoostUntil = applied.damageBoostUntil
         }
         eventBus.emit(GameEvents.ITEM_CONSUMED, { id: this._consumeId, slot: this._consumeSlot, mode: 'slot' })
       }
