@@ -758,6 +758,7 @@ export default class HollowvaleScene extends Phaser.Scene {
     session.thiefVanishUntil = now + 1000
     session.thiefVanishCooldownUntil = now + 10000
     this._vanishArmed = true
+    eventBus.emit(GameEvents.ABILITY, { id: 'vanish' })
     if (this.player instanceof Player) {
       this.player.vanish(now)
     }
