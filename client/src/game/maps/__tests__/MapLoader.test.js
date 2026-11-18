@@ -493,6 +493,7 @@ describe('Package 2-1: MapLoader & Tiled TMJ Architecture', () => {
       }
       loader.tilemapLayers.set('ground', mockGroundLayer)
       loader._initWaterAnimation({})
+      const waterFirstGid = brackenfordData.tilesets.find((ts) => ts.name === 'water').firstgid
 
       expect(loader.waterTiles.length).toBeGreaterThan(0)
       expect(loader.waterFrame).toBe(0)
@@ -502,25 +503,25 @@ describe('Package 2-1: MapLoader & Tiled TMJ Architecture', () => {
       loader.stepWaterAnimation()
       expect(loader.waterFrame).toBe(1)
       expect(putTiles.length).toBe(loader.waterTiles.length)
-      expect(putTiles[0].gid).toBe(41 + loader.waterTiles[0].baseTileId + 16)
+      expect(putTiles[0].gid).toBe(waterFirstGid + loader.waterTiles[0].baseTileId + 16)
 
       // Step 2: frame 2 (+32 GID offset)
       putTiles.length = 0
       loader.stepWaterAnimation()
       expect(loader.waterFrame).toBe(2)
-      expect(putTiles[0].gid).toBe(41 + loader.waterTiles[0].baseTileId + 32)
+      expect(putTiles[0].gid).toBe(waterFirstGid + loader.waterTiles[0].baseTileId + 32)
 
       // Step 3: frame 3 (+48 GID offset)
       putTiles.length = 0
       loader.stepWaterAnimation()
       expect(loader.waterFrame).toBe(3)
-      expect(putTiles[0].gid).toBe(41 + loader.waterTiles[0].baseTileId + 48)
+      expect(putTiles[0].gid).toBe(waterFirstGid + loader.waterTiles[0].baseTileId + 48)
 
       // Step 4: cycles back to frame 0 (0 offset)
       putTiles.length = 0
       loader.stepWaterAnimation()
       expect(loader.waterFrame).toBe(0)
-      expect(putTiles[0].gid).toBe(41 + loader.waterTiles[0].baseTileId)
+      expect(putTiles[0].gid).toBe(waterFirstGid + loader.waterTiles[0].baseTileId)
     })
 
     it('documents and verifies AABB approximation for ellipse footprints', () => {

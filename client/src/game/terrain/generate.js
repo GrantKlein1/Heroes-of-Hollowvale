@@ -6,6 +6,11 @@
  * biome base (`forest_floor` or AS-2 `grass`), masks 1–14 are `ash_ground`,
  * and mask 15 is an `ash_fill` interior. Roads stay on AS-2 `dirt_road`.
  *
+ * Batch 11 package B (TILES-VARIANTS): an Emberwood cell whose corners touch
+ * grass (another biome, or the grass ring of a dirt road) uses the
+ * `forest_floor` forest to grass corner blend (ids 8-22, id = 7 + grassMask).
+ * Straight dirt road edges pick one of three art variants (tileVariants.js).
+ *
  * Ground gids are a pure function of world-cell coordinates, so a screen edge
  * does not depend on the visit seed. Exit mouths are hashed from the shared
  * edge key, which keeps neighbouring gaps and boundary corners identical.
@@ -20,6 +25,7 @@
  *   frame: number,
  *   gid: number,
  *   ashMask: number,
+ *   forestMask: number,
  *   roadMask: number,
  *   corners: CornerBits
  * }} TerrainTileCell
@@ -58,6 +64,7 @@ import wildProps4bAtlas from '../../../public/assets/env/wild_props_4b/wild_prop
 import emberVentAtlas from '../../../public/assets/env/ember_vent/ember_vent.json' with { type: 'json' }
 import { getBiome } from './biomes.js'
 import { createRng, hashSeed } from './rng.js'
+import { forestGrassId, straightVariantId } from './tileVariants.js'
 import { biomeFor, nodeIdAt } from './worldGraph.js'
 
 /** Native Blendsmith tile size. 24×36 fills the 768×1152 wilderness world. */
@@ -71,10 +78,10 @@ export const GRID_ROWS = 36
  */
 export const TILESET_CATALOG = [
   { name: 'grass', firstgid: 1, count: 8, margin: 1, spacing: 2 },
-  { name: 'dirt_road', firstgid: 9, count: 16, margin: 1, spacing: 2 },
-  { name: 'forest_floor', firstgid: 25, count: 8, margin: 1, spacing: 2 },
-  { name: 'ash_ground', firstgid: 41, count: 16, margin: 1, spacing: 2 },
-  { name: 'ash_fill', firstgid: 57, count: 5, margin: 1, spacing: 2 },
+  { name: 'dirt_road', firstgid: 9, count: 24, margin: 1, spacing: 2 },
+  { name: 'forest_floor', firstgid: 33, count: 23, margin: 1, spacing: 2 },
+  { name: 'ash_ground', firstgid: 56, count: 16, margin: 1, spacing: 2 },
+  { name: 'ash_fill', firstgid: 72, count: 5, margin: 1, spacing: 2 },
 ]
 
 const ATLASES = {
@@ -254,6 +261,14 @@ function buildLayout(recipe, exits, rng, at, skipObstacles) {
   if (mouths.east != null) stampMouth(mask, cols, rows, 'east', mouths.east, hubCol, hubRow)
 
   const roadAt = (x, y) => isRoad(mask, cols, rows, exits, mouths, x, y)
+  /** Road Wang mask of any cell, in screen coordinates (cells just off screen included). */
+  const roadBitsAt = (x, y) =>
+    wangMask(
+      roadCorner(x, y, roadAt),
+      roadCorner(x + 1, y, roadAt),
+      roadCorner(x, y + 1, roadAt),
+      roadCorner(x + 1, y + 1, roadAt),
+    )
   const ox = at ? at.col * cols : 0
   const oy = at ? at.row * rows : 0
 
@@ -268,26 +283,32 @@ function buildLayout(recipe, exits, rng, at, skipObstacles) {
       const ashSW = ashCorner(wx, wy + 1, self)
       const ashSE = ashCorner(wx + 1, wy + 1, self)
       const ashBits = wangMask(ashNW, ashNE, ashSW, ashSE)
-      const roadBits = wangMask(
-        roadCorner(wx, wy, roadAt),
-        roadCorner(wx + 1, wy, roadAt),
-        roadCorner(wx, wy + 1, roadAt),
-        roadCorner(wx + 1, wy + 1, roadAt),
-      )
+      const roadBits = roadBitsAt(col, row)
       const onPath = mask[row * cols + col] === 1
       const ownBiome = biomeAt(wx, wy, self)
       // Wang frames are painted on Ashen cells. Neighbours keep their own base
       // so plains stay on AS-2 grass and Emberwood stays on forest_floor.
       const displayAsh = ownBiome === 'ashen_wastes' ? ashBits : 0
       const baseName = baseTileset(ownBiome)
-      const ashTile = tileForAshMask(
-        displayAsh,
-        baseName,
-        variantOf(baseName, wx, wy),
-        variantOf('ash_fill', wx, wy),
-      )
+      const forestBits =
+        roadBits === 0 && ownBiome === 'emberwood_forest'
+          ? forestGrassBits(col, row, ox, oy, self, roadBitsAt)
+          : 0
+      let baseFrame = variantOf(baseName, wx, wy)
+      let baseSet = baseName
+      if (forestBits === 15) {
+        // A forest cell squeezed between road rings: plain grass keeps every edge matched.
+        baseSet = 'grass'
+        baseFrame = variantOf('grass', wx, wy)
+      } else if (forestBits > 0) {
+        baseFrame = forestGrassId(forestBits)
+      }
+      const ashTile = tileForAshMask(displayAsh, baseSet, baseFrame, variantOf('ash_fill', wx, wy))
       const tileset = roadBits > 0 ? 'dirt_road' : ashTile.tileset
-      const frame = roadBits > 0 ? roadBits : ashTile.frame
+      const frame =
+        roadBits > 0
+          ? straightVariantId('dirt_road', roadBits, variantRoll('road', wx, wy))
+          : ashTile.frame
       const kind = onPath ? 'path' : ashTile.kind
       cells[row * cols + col] = {
         kind,
@@ -295,6 +316,7 @@ function buildLayout(recipe, exits, rng, at, skipObstacles) {
         frame,
         gid: gidFor(tileset, frame),
         ashMask: ashBits,
+        forestMask: forestBits,
         roadMask: roadBits,
         corners: { nw: ashNW, ne: ashNE, sw: ashSW, se: ashSE },
       }
@@ -388,6 +410,45 @@ function fade(t) {
 /** @param {number} ix @param {number} iy */
 function hash01(ix, iy) {
   return hashSeed(`n:${ix}:${iy}`) / 4294967296
+}
+
+/**
+ * Uniform [0, 1) roll for a tile art variant. A pure function of the world cell
+ * (never the visit seed, like every other ground choice here), so neighbouring
+ * screens agree on a shared edge and a revisit looks the same.
+ * @param {string} salt
+ * @param {number} wx
+ * @param {number} wy
+ */
+export function variantRoll(salt, wx, wy) {
+  return hashSeed(`tv:${salt}:${wx}:${wy}`) / 4294967296
+}
+
+/**
+ * Forest to grass corner mask for an Emberwood cell: bit set = that corner is
+ * grass. A corner is forest only when all four cells touching it are Emberwood
+ * and none of them is part of a dirt road tile (those tiles end in a grass
+ * edge), so a biome border and a road fringe both fade the forest into grass.
+ * Depends on world cells only, never on the visit seed.
+ *
+ * @param {number} col cell column on this screen
+ * @param {number} row cell row on this screen
+ * @param {number} ox world column of screen column 0
+ * @param {number} oy world row of screen row 0
+ * @param {{ id: string, biome: string }} self
+ * @param {(col: number, row: number) => number} roadBitsAt
+ * @returns {number} 0..15
+ */
+function forestGrassBits(col, row, ox, oy, self, roadBitsAt) {
+  const forestAt = (c, r) => biomeAt(ox + c, oy + r, self) === 'emberwood_forest' && roadBitsAt(c, r) === 0
+  const corner = (cx, cy) =>
+    forestAt(cx - 1, cy - 1) && forestAt(cx, cy - 1) && forestAt(cx - 1, cy) && forestAt(cx, cy)
+  return wangMask(
+    !corner(col, row),
+    !corner(col + 1, row),
+    !corner(col, row + 1),
+    !corner(col + 1, row + 1),
+  )
 }
 
 /**

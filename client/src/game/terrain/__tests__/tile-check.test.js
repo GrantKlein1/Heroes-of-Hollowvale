@@ -67,7 +67,7 @@ describe('tile swap check (tools/assets/check_tiles.mjs)', () => {
     const { ok, errors } = await checkTiles({ root: ROOT, tilesDir: dir })
     expect(ok).toBe(false)
     const text = errors.join('\n')
-    expect(text).toMatch(/dirt_road: tilecount: baseline 16 -> now 12/)
+    expect(text).toMatch(/dirt_road: tilecount: baseline 24 -> now 12/)
     expect(text).toMatch(/dirt_road: png is/)
   })
 

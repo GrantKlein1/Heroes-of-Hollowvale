@@ -1,6 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { cliffFaceId, straightVariantId } from '../../client/src/game/terrain/tileVariants.js';
+import { hashSeed } from './generate_tmj.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -83,31 +85,35 @@ function buildCavernMouthMap() {
   const collision = new Array(width * height).fill(0);
   const overhead = new Array(width * height).fill(0);
 
-  // Tilesets:
-  // 1. cliff (1..16)
-  // 2. cliff_face (17..20)
-  // 3. dungeon_wall_trim (21..36)
-  // 4. dungeon_floor (37..42)
-  // 5. grass (43..50)
+  // Tilesets, in order (firstgids follow the tilecounts, so a package B tilecount
+  // change moves every later firstgid): cliff, cliff_face, dungeon_wall_trim,
+  // dungeon_floor, grass.
   const tsCliff = loadTileset('cliff', 1);
-  const tsCliffFace = loadTileset('cliff_face', 17);
-  const tsDungeonWallTrim = loadTileset('dungeon_wall_trim', 21);
-  const tsDungeonFloor = loadTileset('dungeon_floor', 37);
-  const tsGrass = loadTileset('grass', 43);
+  const tsCliffFace = loadTileset('cliff_face', tsCliff.firstgid + tsCliff.tilecount);
+  const tsDungeonWallTrim = loadTileset('dungeon_wall_trim', tsCliffFace.firstgid + tsCliffFace.tilecount);
+  const tsDungeonFloor = loadTileset('dungeon_floor', tsDungeonWallTrim.firstgid + tsDungeonWallTrim.tilecount);
+  const tsGrass = loadTileset('grass', tsDungeonFloor.firstgid + tsDungeonFloor.tilecount);
 
-  // gid 16 is cliff local id 15 (wangId 15): all four corners are cliff.
+  // Straight cliff edges (Wang masks 3, 5, 10, 12) pick one of three art variants,
+  // a pure function of the cell, so the map is identical on every run.
+  const cliffRoll = (r, c) => (hashSeed(`cavern_mouth:cliff:${r}:${c}`) % 10000) / 10000;
+  const cliffGid = (r, c, mask) => tsCliff.firstgid + straightVariantId('cliff', mask, cliffRoll(r, c));
+
+  // cliff local id 15 (wangId 15): all four corners are cliff.
   // Rows 0-12 are the prepended mountain. A diagonal cycle of every corner
   // variant puts unmatched edges side by side, so those rows are solid cliff.
-  const SOLID_CLIFF_GID = 16;
+  const SOLID_CLIFF_GID = tsCliff.firstgid + 15;
+  const CLIFF_COLLIDER_GID = tsCliff.firstgid;
   for (let r = 0; r < height; r++) {
     for (let c = 0; c < width; c++) {
       const i = r * width + c;
       if (r <= 12) {
         ground[i] = SOLID_CLIFF_GID;
       } else if (r <= 16) {
-        ground[i] = 1 + ((((r - MOUTH_PREPENDED_ROWS) * 4 + c) % 16) + 16) % 16;
+        const mask = (((r - MOUTH_PREPENDED_ROWS) * 4 + c) % 16 + 16) % 16;
+        ground[i] = cliffGid(r, c, mask);
       } else if (r >= 18) {
-        ground[i] = 43 + ((r + c) % 8);
+        ground[i] = tsGrass.firstgid + ((r + c) % 8);
       }
     }
   }
@@ -115,26 +121,28 @@ function buildCavernMouthMap() {
   // Mountain mass, including the original cliff rows now at 13-16.
   for (let r = 0; r <= 16; r++) {
     for (let c = 0; c < width; c++) {
-      collision[r * width + c] = 1;
+      collision[r * width + c] = CLIFF_COLLIDER_GID;
     }
   }
-  // Cliff face sits on the old row 4, shifted down with the prepended rows.
+  // Cliff face sits on the old row 4, shifted down with the prepended rows. The
+  // run is capped at both ends and sprinkled with the two extra face variants.
   const cliffFaceRow = 4 + MOUTH_PREPENDED_ROWS;
   for (let c = 0; c < width; c++) {
-    walls[cliffFaceRow * width + c] = 17 + (c % 4);
-    collision[cliffFaceRow * width + c] = 17;
+    const roll = (hashSeed(`cavern_mouth:face:${c}`) % 10000) / 10000;
+    walls[cliffFaceRow * width + c] = tsCliffFace.firstgid + cliffFaceId(c, width, roll);
+    collision[cliffFaceRow * width + c] = tsCliffFace.firstgid;
   }
 
   // West and east edges of the grass apron (old rows 5..14).
   for (let r = 5 + MOUTH_PREPENDED_ROWS; r < height - 1; r++) {
-    collision[r * width + 0] = 1;
-    collision[r * width + (width - 1)] = 1;
+    collision[r * width + 0] = CLIFF_COLLIDER_GID;
+    collision[r * width + (width - 1)] = CLIFF_COLLIDER_GID;
   }
 
   // South boundary collision with exit gap (cols 17..20 left open for wilderness exit)
   for (let c = 0; c < width; c++) {
     if (c < 17 || c > 20) {
-      collision[(height - 1) * width + c] = 1;
+      collision[(height - 1) * width + c] = CLIFF_COLLIDER_GID;
     }
   }
 

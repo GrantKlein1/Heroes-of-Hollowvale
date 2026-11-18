@@ -2521,7 +2521,7 @@
       "tsj": "assets/tiles/cliff.tsj",
       "tileWidth": 32,
       "tileHeight": 32,
-      "tileCount": 16,
+      "tileCount": 24,
       "margin": 1,
       "spacing": 2,
       "hasAnimation": false
@@ -2532,7 +2532,7 @@
       "tsj": "assets/tiles/cliff_face.tsj",
       "tileWidth": 32,
       "tileHeight": 32,
-      "tileCount": 4,
+      "tileCount": 8,
       "margin": 1,
       "spacing": 2,
       "hasAnimation": false
@@ -2554,7 +2554,7 @@
       "tsj": "assets/tiles/dirt_road.tsj",
       "tileWidth": 32,
       "tileHeight": 32,
-      "tileCount": 16,
+      "tileCount": 24,
       "margin": 1,
       "spacing": 2,
       "hasAnimation": false
@@ -2598,7 +2598,7 @@
       "tsj": "assets/tiles/forest_floor.tsj",
       "tileWidth": 32,
       "tileHeight": 32,
-      "tileCount": 8,
+      "tileCount": 23,
       "margin": 1,
       "spacing": 2,
       "hasAnimation": false
@@ -2708,7 +2708,7 @@
       "tsj": "assets/tiles/water.tsj",
       "tileWidth": 32,
       "tileHeight": 32,
-      "tileCount": 64,
+      "tileCount": 96,
       "margin": 1,
       "spacing": 2,
       "hasAnimation": true
@@ -2730,7 +2730,7 @@
       "tsj": "assets/tiles/water_shore.tsj",
       "tileWidth": 32,
       "tileHeight": 32,
-      "tileCount": 64,
+      "tileCount": 79,
       "margin": 1,
       "spacing": 2,
       "hasAnimation": true

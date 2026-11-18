@@ -1,12 +1,12 @@
 {
   "columns": 4,
   "image": "forest_floor.png",
-  "imageheight": 68,
+  "imageheight": 204,
   "imagewidth": 136,
   "margin": 1,
   "spacing": 2,
   "name": "forest_floor",
-  "tilecount": 8,
+  "tilecount": 23,
   "tiledversion": "1.10.2",
   "tileheight": 32,
   "tilewidth": 32,
@@ -172,6 +172,381 @@
           "value": false
         }
       ]
+    },
+    {
+      "id": 8,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 8
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 1
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "forest_grass"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 9
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "forest_grass"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 10
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "forest_grass"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 11
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 4
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "forest_grass"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 12
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 5
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "forest_grass"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 13
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 6
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "forest_grass"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 14
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 7
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "forest_grass"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 15
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 8
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "forest_grass"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 16
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 9
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "forest_grass"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 17
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 10
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "forest_grass"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 18
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 11
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "forest_grass"
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 19
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 12
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "forest_grass"
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 20
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 13
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "forest_grass"
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 21
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 14
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "forest_grass"
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 22
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 15
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "forest_grass"
+        }
+      ]
     }
   ],
   "properties": [
@@ -204,6 +579,327 @@
       "name": "note",
       "type": "string",
       "value": "Batch 4b emberwood interior fill variants"
+    }
+  ],
+  "wangsets": [
+    {
+      "name": "forest_floor_blob16",
+      "type": "corner",
+      "colors": [
+        {
+          "name": "forest",
+          "color": "#3a5a2a",
+          "probability": 1,
+          "tile": 0
+        },
+        {
+          "name": "grass",
+          "color": "#559922",
+          "probability": 1,
+          "tile": 22
+        }
+      ],
+      "wangtiles": [
+        {
+          "tileid": 0,
+          "wangid": [
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 1,
+          "wangid": [
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 2,
+          "wangid": [
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 3,
+          "wangid": [
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 4,
+          "wangid": [
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 5,
+          "wangid": [
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 6,
+          "wangid": [
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 7,
+          "wangid": [
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 8,
+          "wangid": [
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            2
+          ]
+        },
+        {
+          "tileid": 9,
+          "wangid": [
+            0,
+            2,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 10,
+          "wangid": [
+            0,
+            2,
+            0,
+            1,
+            0,
+            1,
+            0,
+            2
+          ]
+        },
+        {
+          "tileid": 11,
+          "wangid": [
+            0,
+            1,
+            0,
+            1,
+            0,
+            2,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 12,
+          "wangid": [
+            0,
+            1,
+            0,
+            1,
+            0,
+            2,
+            0,
+            2
+          ]
+        },
+        {
+          "tileid": 13,
+          "wangid": [
+            0,
+            2,
+            0,
+            1,
+            0,
+            2,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 14,
+          "wangid": [
+            0,
+            2,
+            0,
+            1,
+            0,
+            2,
+            0,
+            2
+          ]
+        },
+        {
+          "tileid": 15,
+          "wangid": [
+            0,
+            1,
+            0,
+            2,
+            0,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 16,
+          "wangid": [
+            0,
+            1,
+            0,
+            2,
+            0,
+            1,
+            0,
+            2
+          ]
+        },
+        {
+          "tileid": 17,
+          "wangid": [
+            0,
+            2,
+            0,
+            2,
+            0,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 18,
+          "wangid": [
+            0,
+            2,
+            0,
+            2,
+            0,
+            1,
+            0,
+            2
+          ]
+        },
+        {
+          "tileid": 19,
+          "wangid": [
+            0,
+            1,
+            0,
+            2,
+            0,
+            2,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 20,
+          "wangid": [
+            0,
+            1,
+            0,
+            2,
+            0,
+            2,
+            0,
+            2
+          ]
+        },
+        {
+          "tileid": 21,
+          "wangid": [
+            0,
+            2,
+            0,
+            2,
+            0,
+            2,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 22,
+          "wangid": [
+            0,
+            2,
+            0,
+            2,
+            0,
+            2,
+            0,
+            2
+          ]
+        }
+      ]
     }
   ]
 }

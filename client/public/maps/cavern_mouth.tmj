@@ -48,12 +48,12 @@
     {
       "columns": 4,
       "image": "../assets/tiles/cliff.png",
-      "imageheight": 136,
+      "imageheight": 204,
       "imagewidth": 136,
       "margin": 1,
       "spacing": 2,
       "name": "cliff",
-      "tilecount": 16,
+      "tilecount": 24,
       "tiledversion": "1.10.2",
       "tileheight": 32,
       "tilewidth": 32,
@@ -779,6 +779,446 @@
               "value": false
             }
           ]
+        },
+        {
+          "id": 16,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 16
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1"
+            }
+          ]
+        },
+        {
+          "id": 17,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 17
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1"
+            }
+          ]
+        },
+        {
+          "id": 18,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 18
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1"
+            }
+          ]
+        },
+        {
+          "id": 19,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 19
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1"
+            }
+          ]
+        },
+        {
+          "id": 20,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 20
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2"
+            }
+          ]
+        },
+        {
+          "id": 21,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 21
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2"
+            }
+          ]
+        },
+        {
+          "id": 22,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 22
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2"
+            }
+          ]
+        },
+        {
+          "id": 23,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 23
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2"
+            }
+          ]
         }
       ],
       "properties": [
@@ -1049,6 +1489,110 @@
                 0,
                 2
               ]
+            },
+            {
+              "tileid": 16,
+              "wangid": [
+                0,
+                2,
+                0,
+                1,
+                0,
+                1,
+                0,
+                2
+              ]
+            },
+            {
+              "tileid": 17,
+              "wangid": [
+                0,
+                1,
+                0,
+                1,
+                0,
+                2,
+                0,
+                2
+              ]
+            },
+            {
+              "tileid": 18,
+              "wangid": [
+                0,
+                2,
+                0,
+                2,
+                0,
+                1,
+                0,
+                1
+              ]
+            },
+            {
+              "tileid": 19,
+              "wangid": [
+                0,
+                1,
+                0,
+                2,
+                0,
+                2,
+                0,
+                1
+              ]
+            },
+            {
+              "tileid": 20,
+              "wangid": [
+                0,
+                2,
+                0,
+                1,
+                0,
+                1,
+                0,
+                2
+              ]
+            },
+            {
+              "tileid": 21,
+              "wangid": [
+                0,
+                1,
+                0,
+                1,
+                0,
+                2,
+                0,
+                2
+              ]
+            },
+            {
+              "tileid": 22,
+              "wangid": [
+                0,
+                2,
+                0,
+                2,
+                0,
+                1,
+                0,
+                1
+              ]
+            },
+            {
+              "tileid": 23,
+              "wangid": [
+                0,
+                1,
+                0,
+                2,
+                0,
+                2,
+                0,
+                1
+              ]
             }
           ]
         }
@@ -1059,12 +1603,12 @@
     {
       "columns": 4,
       "image": "../assets/tiles/cliff_face.png",
-      "imageheight": 34,
+      "imageheight": 68,
       "imagewidth": 136,
       "margin": 1,
       "spacing": 2,
       "name": "cliff_face",
-      "tilecount": 4,
+      "tilecount": 8,
       "tiledversion": "1.10.2",
       "tileheight": 32,
       "tilewidth": 32,
@@ -1150,6 +1694,106 @@
               "value": false
             }
           ]
+        },
+        {
+          "id": 4,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "cap_left"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "cap_right"
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "variant"
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "variant"
+            }
+          ]
         }
       ],
       "properties": [
@@ -1189,8 +1833,8 @@
           "value": "Local design: ground-only 12° from vertical; props/characters 12° from horizontal. Shared palette/light. Selected for local generation via coordinating Grok Bot; game integration is NOT approved."
         }
       ],
-      "firstgid": 17,
-      "_baseGid": 17
+      "firstgid": 25,
+      "_baseGid": 25
     },
     {
       "columns": 4,
@@ -1630,8 +2274,8 @@
           "value": 1
         }
       ],
-      "firstgid": 21,
-      "_baseGid": 21
+      "firstgid": 33,
+      "_baseGid": 33
     },
     {
       "columns": 3,
@@ -1806,8 +2450,8 @@
           "value": "Local design: ground-only 12° from vertical; props/characters 12° from horizontal. Shared palette/light. Selected for local generation via coordinating Grok Bot; game integration is NOT approved."
         }
       ],
-      "firstgid": 37,
-      "_baseGid": 37
+      "firstgid": 49,
+      "_baseGid": 49
     },
     {
       "columns": 4,
@@ -2022,8 +2666,8 @@
           "value": "Local design: ground-only 12° from vertical; props/characters 12° from horizontal. Shared palette/light. Selected for local generation via coordinating Grok Bot; game integration is NOT approved."
         }
       ],
-      "firstgid": 43,
-      "_baseGid": 43
+      "firstgid": 55,
+      "_baseGid": 55
     }
   ],
   "layers": [
@@ -2355,12 +2999,52 @@
         3,
         4,
         5,
+        18,
+        7,
+        8,
+        9,
+        10,
+        19,
+        12,
+        24,
+        14,
+        15,
+        16,
+        1,
+        2,
+        3,
+        21,
+        5,
+        18,
+        7,
+        8,
+        5,
         6,
         7,
         8,
         9,
         10,
         11,
+        12,
+        24,
+        14,
+        15,
+        16,
+        1,
+        2,
+        3,
+        4,
+        5,
+        18,
+        7,
+        8,
+        9,
+        10,
+        19,
+        12,
+        9,
+        10,
+        23,
         12,
         13,
         14,
@@ -2371,54 +3055,14 @@
         3,
         4,
         5,
-        6,
-        7,
-        8,
-        5,
-        6,
+        22,
         7,
         8,
         9,
         10,
         11,
         12,
-        13,
-        14,
-        15,
-        16,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15,
-        16,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
+        24,
         14,
         15,
         16,
@@ -2429,14 +3073,14 @@
         1,
         2,
         3,
-        4,
+        21,
         5,
-        6,
+        18,
         7,
         8,
         9,
         10,
-        11,
+        19,
         12,
         13,
         14,
@@ -2445,7 +3089,7 @@
         1,
         2,
         3,
-        4,
+        17,
         0,
         0,
         0,
@@ -2470,270 +3114,270 @@
         0,
         0,
         0,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        43,
-        44,
-        45,
-        46
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        55,
+        56,
+        57,
+        58
       ]
     },
     {
@@ -3864,30 +4508,30 @@
         0,
         0,
         0,
-        17,
-        18,
-        19,
-        20,
-        17,
-        18,
-        19,
-        20,
-        17,
-        18,
-        19,
-        20,
-        17,
-        18,
-        19,
-        20,
-        17,
-        18,
-        19,
-        20,
-        17,
-        18,
-        19,
-        20,
+        29,
+        26,
+        27,
+        31,
+        25,
+        26,
+        27,
+        31,
+        32,
+        26,
+        27,
+        32,
+        25,
+        26,
+        27,
+        32,
+        25,
+        26,
+        27,
+        32,
+        32,
+        26,
+        27,
+        30,
         0,
         0,
         0,
@@ -4726,30 +5370,30 @@
         1,
         1,
         1,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
         1,
         0,
         0,

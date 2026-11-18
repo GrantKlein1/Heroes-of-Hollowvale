@@ -143,11 +143,12 @@ describe('wilderness tile gids', () => {
     let sameNeighbor = 0
     for (let i = 0; i < cells.length; i++) {
       const cell = cells[i]
-      if (cell.tileset !== 'forest_floor') continue
+      // Corner blends (forestMask > 0, ids 8-22) are tested on their own below.
+      if (cell.tileset !== 'forest_floor' || cell.forestMask) continue
       frames.add(cell.frame)
       if (i % cols === cols - 1) continue
       const right = cells[i + 1]
-      if (right.tileset !== 'forest_floor') continue
+      if (right.tileset !== 'forest_floor' || right.forestMask) continue
       compared++
       if (right.frame === cell.frame) sameNeighbor++
     }
