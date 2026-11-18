@@ -7,6 +7,15 @@ export default defineConfig({
   optimizeDeps: {
     include: ['phaser'],
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          phaser: ['phaser'],
+        },
+      },
+    },
+  },
   server: {
     port: 5173,
     strictPort: false,
