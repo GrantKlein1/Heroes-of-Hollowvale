@@ -15,7 +15,7 @@ test('goblin alert and dwarf charged frame 3 show without cell-edge clipping', a
   await page.goto('/?renderer=blend&maps=tiled&qa=1&seed=1')
   await page.getByRole('button', { name: 'Start Game' }).click()
   await expect(page.getByText('Choose Your Class')).toBeVisible()
-  await page.locator('h3', { hasText: 'Dwarf' }).locator('..').getByRole('button', { name: 'Choose' }).click()
+  await page.getByRole('button', { name: 'Choose Dwarf' }).click()
   await page.waitForFunction(() => (window as any).__hv?.scene() === 'village')
 
   const posed = await page.evaluate(() => {

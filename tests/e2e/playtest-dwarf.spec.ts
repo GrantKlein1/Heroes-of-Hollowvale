@@ -70,6 +70,9 @@ test('dwarf walks Brackenford and swings the axe', async ({ page }) => {
   await expect(chooseHeading).toBeVisible();
   const chooseButtons = page.getByRole('button', { name: 'Choose' });
   await expect(chooseButtons).toHaveCount(4);
+  // Redesigned class screen: hovering a Choose button previews that class in the detail panel.
+  await expect(chooseButtons.nth(3)).toHaveText('Choose Dwarf');
+  await chooseButtons.nth(3).hover();
   await expect(page.locator('h3', { hasText: 'Dwarf' })).toBeVisible();
   await page.screenshot({ path: path.join(SHOT_DIR, '02-class-select.png') });
 
