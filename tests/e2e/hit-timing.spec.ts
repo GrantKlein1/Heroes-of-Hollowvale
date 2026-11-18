@@ -66,10 +66,13 @@ test.describe('Heroes of Hollowvale — Hit System & Combat Feedback (Package 1-
     const playerPos = await page.evaluate(() => (window as any).__hv.player());
     expect(playerPos).toBeDefined();
 
-    // Position goblin in front of knight's sword swing (facing right)
-    // Keep goblin stationary as a combat dummy (speed = 0) so it doesn't walk into the player
-    const targetX = playerPos.x + 70;
-    const targetY = playerPos.y - 90;
+    // Right-facing sword box is knight_attack frame 3:
+    // { x: 12, y: -68, w: 56, h: 40 } from body.bottom (feet + 3).
+    // __hv.player() is the physics-body top-left, not the feet.
+    // Goblin hurtbox { x: -16, y: -23, w: 31, h: 23 } sits inside that box at +52, -34.
+    // speed = 0 keeps the dummy still.
+    const targetX = playerPos.x + 52;
+    const targetY = playerPos.y - 34;
 
     await page.evaluate(
       ({ x, y }) => {
@@ -88,9 +91,12 @@ test.describe('Heroes of Hollowvale — Hit System & Combat Feedback (Package 1-
     const goblinBefore = combatBefore.enemies[0];
     expect(goblinBefore.hp).toBe(15);
 
-    // 6. Set timeScale to 0.25 to accurately inspect pre-hitFrame vs post-hitFrame timing
+    // 6. Slow the attack clip so the pre-hitFrame sample stays on frame 1.
+    // __hv.timeScale only scales the scene clock. The swing advances on anim timeScale.
     await page.evaluate(() => {
       (window as any).__hv.timeScale(0.25);
+      const player = (window as any).__scene?.player;
+      if (player?.anims) player.anims.timeScale = 0.25;
     });
 
     // Press attack (Space)
@@ -122,6 +128,8 @@ test.describe('Heroes of Hollowvale — Hit System & Combat Feedback (Package 1-
     // Restore timeScale to 1 to complete the hit
     await page.evaluate(() => {
       (window as any).__hv.timeScale(1.0);
+      const player = (window as any).__scene?.player;
+      if (player?.anims) player.anims.timeScale = 1;
     });
 
     await page.waitForFunction(
