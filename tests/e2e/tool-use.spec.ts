@@ -1,4 +1,8 @@
 import { test, expect, type Page } from '@playwright/test'
+import { markSlow, waitForScene } from './helpers/waits'
+
+/** Longest slice in the 12fps tool clips. The effect lands on the first update at or after the authored time. */
+const CLIP_FRAME_MS = 84
 
 async function boot(page: Page, classIndex: number) {
   const consoleErrors: string[] = []
@@ -21,10 +25,8 @@ async function boot(page: Page, classIndex: number) {
   await page.getByRole('button', { name: 'Choose' }).nth(classIndex).click()
   await expect(page.getByText('Choose Your Class')).toBeHidden()
 
-  await page.waitForFunction(() => {
-    const w = window as any
-    return typeof w.__hv?.scene === 'function' && w.__hv.scene() === 'village' && Boolean(w.__scene?.player)
-  })
+  await waitForScene(page, 'village')
+  await page.waitForFunction(() => Boolean((window as any).__scene?.player))
 
   await page.evaluate(() => {
     const w = window as any
@@ -77,6 +79,10 @@ async function standOn(page: Page, sceneId: string, kind: 'lock' | 'mine') {
 }
 
 test.describe('Package B10-2: lockpick and pickaxe tool use', () => {
+  test.beforeEach(() => {
+    markSlow()
+  })
+
   test('lockpick cancels with no effect, then opens the zone once', async ({ page }) => {
     const { consoleErrors, pageErrors } = await boot(page, 2)
     await standOn(page, 'cavern_treasure', 'lock')
@@ -178,7 +184,7 @@ test.describe('Package B10-2: lockpick and pickaxe tool use', () => {
     expect(opened.locked).toBe(false)
     expect(opened.opened).toBe(true)
     expect(opened.elapsed).toBeGreaterThanOrEqual(833)
-    expect(opened.elapsed).toBeLessThanOrEqual(833 + 34)
+    expect(opened.elapsed).toBeLessThanOrEqual(833 + CLIP_FRAME_MS)
     await page.waitForFunction(() => !(window as any).__scene._toolUse)
     await page.keyboard.up('KeyE')
     await page.waitForTimeout(100)
@@ -261,7 +267,7 @@ test.describe('Package B10-2: lockpick and pickaxe tool use', () => {
     expect(mined.count).toBe(1)
     expect(mined.name).toBe('cavern_rock_large_a')
     expect(mined.elapsed).toBeGreaterThanOrEqual(333)
-    expect(mined.elapsed).toBeLessThanOrEqual(333 + 34)
+    expect(mined.elapsed).toBeLessThanOrEqual(333 + CLIP_FRAME_MS)
     expect(['ruby', 'sapphire', 'emerald']).toContain(mined.lootId)
     expect(mined.loot).toBe(before.loot + 1)
     expect(mined.pickupId).toBe(mined.lootId)

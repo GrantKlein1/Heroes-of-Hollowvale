@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
-import { waitForScene } from './helpers/waits';
+import { markSlow, waitForScene } from './helpers/waits';
 
 test.describe('Package 2-4: Data-Driven Tiled Map Registry, Multi-Atlas Props & Generic Doors', () => {
   test('Data-driven registry routes scenes, resolves generic doors, and spawns at named targetSpawn', async ({
     page,
   }) => {
-    test.setTimeout(120_000);
+    markSlow();
     const consoleErrors: string[] = [];
     const pageErrors: string[] = [];
     const notFoundResponses: string[] = [];

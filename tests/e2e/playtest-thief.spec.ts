@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { expect, test } from '@playwright/test'
-import { ANIM_TIMEOUT, previewClass, waitForScene } from './helpers/waits'
+import { ANIM_TIMEOUT, markSlow, previewClass, waitForScene } from './helpers/waits'
 
 const OUT = path.resolve('docs/playtest/thief')
 
@@ -67,7 +67,7 @@ async function sample(page: import('@playwright/test').Page): Promise<Sample> {
 }
 
 test('PT-T thief moves, vanishes on J, and swings daggers on Space', async ({ page }) => {
-  test.setTimeout(120_000)
+  markSlow()
   fs.mkdirSync(OUT, { recursive: true })
 
   const consoleErrors: string[] = []

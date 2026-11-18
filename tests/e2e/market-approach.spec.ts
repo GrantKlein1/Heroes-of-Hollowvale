@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { waitForScene } from './helpers/waits';
+import { markSlow, waitForScene } from './helpers/waits';
 
 test.describe('Package BF-1: Brackenford Market Approach (Unblocked Bridge Walk)', () => {
   test.beforeEach(async ({ page }) => {
@@ -9,7 +9,7 @@ test.describe('Package BF-1: Brackenford Market Approach (Unblocked Bridge Walk)
   });
 
   test('Knight walks unimpeded from bridge into market without rolling, and spawns reported after exit', async ({ page }) => {
-    test.setTimeout(120_000);
+    markSlow();
     // 1. Boot on default path /?qa=1 (no renderer or maps params)
     await page.goto('/?qa=1');
 

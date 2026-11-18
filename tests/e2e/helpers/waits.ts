@@ -1,9 +1,14 @@
-import { expect, type Page } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 
 /** Scene transitions and first boot can exceed the default 5–10s on the CI runner. */
-export const SCENE_TIMEOUT = 20_000
+export const SCENE_TIMEOUT = 30_000
 /** Attack, cast, and tool clips can take longer than 3s of wall time on a slow runner. */
 export const ANIM_TIMEOUT = 10_000
+
+/** Triples the 60s config timeout to 180s. Do not also call setTimeout; that replaces this. */
+export function markSlow() {
+  test.slow()
+}
 
 export async function stubAudio(page: Page) {
   await page.addInitScript(() => {

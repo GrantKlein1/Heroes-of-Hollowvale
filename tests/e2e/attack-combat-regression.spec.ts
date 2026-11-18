@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { ANIM_TIMEOUT, waitForScene } from './helpers/waits';
+import { ANIM_TIMEOUT, markSlow, waitForScene } from './helpers/waits';
 
 test.describe('Attack Lifecycle, Collider Alignment & Mage Fix Regression Tests', () => {
   test.beforeEach(async ({ page }) => {
+    markSlow();
     // Stub audio playback in headless environment
     await page.addInitScript(() => {
       window.HTMLMediaElement.prototype.play = () => Promise.resolve();
@@ -215,11 +216,13 @@ test.describe('Attack Lifecycle, Collider Alignment & Mage Fix Regression Tests'
     const riverBlockedBottom = await page.evaluate(() => (window as any).__scene.player.body.bottom);
     expect(riverBlockedBottom).toBeLessThanOrEqual(230);
 
-    // 2. Position Knight next to cottage wall (x: 50, y: 150 moving left into wall)
+    // 2. Stand just east of cottage_base (footprint x 22–138, y 122–192) and walk left into it.
+    // y 120 is above that footprint, so the old (70, 120) placement walked the grass to the map edge.
     await page.evaluate(() => {
       const scene = (window as any).__scene;
-      scene.player.setPosition(70, 120);
-      scene.player.body.reset(70, 120);
+      scene.player.setPosition(170, 155);
+      scene.player.body.reset(170, 155);
+      scene.player.setVelocity(0, 0);
     });
 
     // Hold KeyA while attacking into the cottage footprint

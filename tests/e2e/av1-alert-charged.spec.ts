@@ -1,12 +1,12 @@
 import { test, expect } from '@playwright/test'
-import { waitForScene } from './helpers/waits'
+import { markSlow, waitForScene } from './helpers/waits'
 
 /**
  * AV-1: goblin alert frame and dwarf charged-release frame 3, with a clear cell border.
  */
 
 test('goblin alert and dwarf charged frame 3 show without cell-edge clipping', async ({ page }) => {
-  test.setTimeout(120_000)
+  markSlow()
   await page.addInitScript(() => {
     window.HTMLMediaElement.prototype.play = () => Promise.resolve()
   })

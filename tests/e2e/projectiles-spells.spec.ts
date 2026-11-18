@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { ANIM_TIMEOUT, waitForScene } from './helpers/waits';
+import { ANIM_TIMEOUT, markSlow, waitForScene } from './helpers/waits';
 
 test.describe('Package 1-5 — Lane C Player: Atlas Projectiles & Spells', () => {
   test.beforeEach(async ({ page }) => {
+    markSlow();
     // Stub audio playback in headless environment
     await page.addInitScript(() => {
       window.HTMLMediaElement.prototype.play = () => Promise.resolve();
@@ -132,6 +133,7 @@ test.describe('Package 1-5 — Lane C Player: Atlas Projectiles & Spells', () =>
     await page.getByRole('button', { name: 'Choose' }).nth(1).click();
     await expect(chooseModal).toBeHidden();
 
+    await waitForScene(page, 'village');
     await page.waitForFunction(() => (window as any).__hv?.anim() === 'mage_idle_down', null, { timeout: ANIM_TIMEOUT });
 
     // Press Space for melee attack

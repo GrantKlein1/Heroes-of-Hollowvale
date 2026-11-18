@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { ANIM_TIMEOUT, previewClass, waitForScene } from './helpers/waits';
+import { ANIM_TIMEOUT, markSlow, previewClass, waitForScene } from './helpers/waits';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -37,7 +37,7 @@ async function sample(page: import('@playwright/test').Page): Promise<SwingSampl
 }
 
 test('dwarf walks Brackenford and swings the axe', async ({ page }) => {
-  test.setTimeout(120_000);
+  markSlow();
   fs.mkdirSync(SHOT_DIR, { recursive: true });
 
   const consoleErrors: string[] = [];

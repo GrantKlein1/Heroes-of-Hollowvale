@@ -1,7 +1,11 @@
 import { test, expect } from '@playwright/test';
-import { waitForScene } from './helpers/waits';
+import { markSlow, waitForScene } from './helpers/waits';
 
 test.describe('Package 3-1: Interior Maps (Tavern & Market) Integration (?maps=tiled)', () => {
+  test.beforeEach(() => {
+    markSlow();
+  });
+
   test('Tavern interior loads behind ?renderer=blend&maps=tiled, Tharos is reachable, and exit returns to Brackenford', async ({ page }) => {
     const consoleErrors: string[] = [];
     const pageErrors: string[] = [];

@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test'
+import { markSlow } from './helpers/waits'
 import fs from 'fs'
 import path from 'path'
 
@@ -89,7 +90,7 @@ async function walkCardinal(
 
 test.describe('PT-K knight playtest', () => {
   test('knight through Brackenford, the tavern, and wilderness', async ({ page }) => {
-    test.setTimeout(120000)
+    markSlow()
     fs.mkdirSync(SHOTS, { recursive: true })
 
     const consoleErrors: string[] = []
