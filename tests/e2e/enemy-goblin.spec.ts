@@ -36,7 +36,7 @@ test.describe('Package 1b-1: Lane D Enemies — Goblin Base & AI', () => {
 
     const initialCombat = await page.evaluate(() => (window as any).__hv.combat());
     const initialHp = initialCombat.hp;
-    expect(initialHp).toBe(100);
+    expect(initialHp).toBe(120);
 
     const playerPos = await page.evaluate(() => (window as any).__hv.player());
 
@@ -59,7 +59,7 @@ test.describe('Package 1b-1: Lane D Enemies — Goblin Base & AI', () => {
 
     const hpAfterStandingInside = await page.evaluate(() => (window as any).__hv.combat().hp);
     // Contact damage must be completely removed: 0 damage dealt!
-    expect(hpAfterStandingInside, 'Standing inside a goblin must deal 0 damage').toBe(100);
+    expect(hpAfterStandingInside, 'Standing inside a goblin must deal 0 damage').toBe(120);
 
     await page.screenshot({ path: 'tests/e2e/__screenshots__/goblin-no-touch-damage.png' });
   });

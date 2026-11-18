@@ -63,7 +63,7 @@ test.describe('Heroes of Hollowvale — Dodge & Block Mechanics (Package 1-6)', 
     // Ensure player is at full HP
     const initialCombat = await page.evaluate(() => (window as any).__hv.combat());
     const initialHp = initialCombat.hp;
-    expect(initialHp).toBe(100);
+    expect(initialHp).toBe(120);
 
     // Set facing right
     await page.evaluate(() => {
@@ -155,7 +155,7 @@ test.describe('Heroes of Hollowvale — Dodge & Block Mechanics (Package 1-6)', 
 
     // Frontal attack: 10 raw damage reduced by 70% -> only 3 damage taken!
     expect(frontHitResult.lastDamage).toBe(3);
-    expect(frontHitResult.hp).toBe(97); // 100 - 3 = 97
+    expect(frontHitResult.hp).toBe(117); // 120 - 3 = 117
     expect(frontHitResult.anim).toContain('block_hit');
 
     // 4. Attack arrives from BEHIND (to the left of the knight)
@@ -178,7 +178,7 @@ test.describe('Heroes of Hollowvale — Dodge & Block Mechanics (Package 1-6)', 
 
     // Rear attack: 0% reduction -> takes full 10 damage!
     expect(rearHitResult.lastDamage).toBe(10);
-    expect(rearHitResult.hp).toBe(87); // 97 - 10 = 87
+    expect(rearHitResult.hp).toBe(107); // 117 - 10 = 107
     expect(rearHitResult.anim).toContain('hurt');
 
     await page.evaluate(() => (window as any).__hv.unblock());

@@ -104,6 +104,7 @@ vi.mock('phaser', () => {
 })
 
 import { Enemy, ENEMY_SHEETS } from '../Enemy.js'
+import { ENEMY_BASE_DAMAGE, ENEMY_BASE_HP, ENEMY_BASE_SPEED } from '../../combat/balance.js'
 import { ACTOR_STATES } from '../stateMachine.js'
 import { AttackTokenManager } from '../../ai/tokens.js'
 
@@ -204,13 +205,13 @@ describe('Enemy Actor — Package 1b-1', () => {
     mockScene = createMockScene()
   })
 
-  it('initializes goblin archetype with base HP 15, damage 8, and speed 70', () => {
+  it('initializes goblin archetype from the balance table', () => {
     const enemy = new Enemy(mockScene, 200, 200, 'goblin')
     expect(enemy.enemyType).toBe('goblin')
-    expect(enemy.hp).toBe(15)
-    expect(enemy.hpMax).toBe(15)
-    expect(enemy.damage).toBe(8)
-    expect(enemy.speed).toBe(70)
+    expect(enemy.hp).toBe(ENEMY_BASE_HP.goblin)
+    expect(enemy.hpMax).toBe(ENEMY_BASE_HP.goblin)
+    expect(enemy.damage).toBe(ENEMY_BASE_DAMAGE.goblin)
+    expect(enemy.speed).toBe(ENEMY_BASE_SPEED.goblin)
     expect(enemy.isEnemy).toBe(true)
   })
 
@@ -286,7 +287,7 @@ describe('Enemy Actor — Package 1b-1', () => {
 
     const tookDamage = enemy.takeDamage(5, 1100)
     expect(tookDamage).toBe(true)
-    expect(enemy.hp).toBe(10)
+    expect(enemy.hp).toBe(ENEMY_BASE_HP.goblin - 5)
     expect(enemy.is(ACTOR_STATES.HURT)).toBe(true)
     expect(enemy.isAttacking).toBe(false)
     // Token must be freed upon being hurt
@@ -297,7 +298,7 @@ describe('Enemy Actor — Package 1b-1', () => {
     const enemy = new Enemy(mockScene, 200, 200, 'goblin')
     mockScene.attackTokenManager.acquire(enemy)
 
-    enemy.takeDamage(15, 1000)
+    enemy.takeDamage(enemy.hpMax, 1000)
     expect(enemy.hp).toBe(0)
     expect(enemy.is(ACTOR_STATES.DEAD)).toBe(true)
     expect(enemy.active).toBe(true)

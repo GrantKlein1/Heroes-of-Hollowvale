@@ -250,7 +250,7 @@ test.describe('Attack Lifecycle, Collider Alignment & Mage Fix Regression Tests'
     await page.waitForFunction(() => (window as any).__hv?.scene() === 'village');
 
     const initialHp = await page.evaluate(() => (window as any).__scene.hp);
-    expect(initialHp).toBe(100);
+    expect(initialHp).toBe(120);
 
     // Position player and spawn a brute right on top of player while player attacks
     await page.evaluate(() => {
@@ -267,11 +267,11 @@ test.describe('Attack Lifecycle, Collider Alignment & Mage Fix Regression Tests'
 
     // Player attacks
     await page.keyboard.press('Space', { delay: 60 });
-    await page.waitForFunction(() => (window as any).__scene.hp < 100, null, { timeout: 3000 });
+    await page.waitForFunction(() => (window as any).__scene.hp < (window as any).__scene.hpMax, null, { timeout: 3000 });
 
-    // Verify player takes damage (HP decrements below 100)
+    // Verify player takes damage (HP decrements below the knight's pool)
     const currentHp = await page.evaluate(() => (window as any).__scene.hp);
-    expect(currentHp).toBeLessThan(100);
+    expect(currentHp).toBeLessThan(initialHp);
   });
 
   test('Package 4-1: Second attack press inside combo window plays attack_2 and registers a hit on its own hitFrames', async ({ page }) => {

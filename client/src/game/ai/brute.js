@@ -4,7 +4,7 @@
  * Implements:
  * - Patrol: Wanders when target distance > 180 px
  * - Aggro: Triggers at <= 180 px, enters chase
- * - Chase: Moves toward player at base brute speed (55 px/s)
+ * - Chase: Moves toward player at the brute speed from combat/balance.js
  * - Attack: Triggers at <= 44 px if cooldown expired and attack token acquired
  * - Concurrency: Max 2 attack tokens enforced via scene.attackTokenManager
  * - Telegraph: 300 ms wind-up clip before attack swing
@@ -18,6 +18,7 @@ import { random } from '../rng.js'
 import { ACTOR_STATES } from '../actors/stateMachine.js'
 import { resolveAnimWithFallback } from '../combat/fallbacks.js'
 import { isDebug } from '../config/flags.js'
+import { ENEMY_BASE_DAMAGE, ENEMY_BASE_HP, ENEMY_BASE_SPEED } from '../combat/balance.js'
 
 export const BRUTE_AI_MODES = Object.freeze({
   SPAWN: 'SPAWN',
@@ -32,9 +33,9 @@ export const KNOCKBACK_IMPULSE = 260
 export const COOLDOWN_MS = 1600
 export const AGGRO_RADIUS_PX = 180
 export const ATTACK_RANGE_PX = 44
-export const BRUTE_BASE_HP = 25
-export const BRUTE_BASE_SPEED = 55
-export const BRUTE_BASE_DAMAGE = 12
+export const BRUTE_BASE_HP = ENEMY_BASE_HP.brute
+export const BRUTE_BASE_SPEED = ENEMY_BASE_SPEED.brute
+export const BRUTE_BASE_DAMAGE = ENEMY_BASE_DAMAGE.brute
 
 export class BruteAI {
   /**

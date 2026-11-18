@@ -61,6 +61,7 @@ import {
 import {
   calculateBlockMitigation,
 } from '../combat/block.js'
+import { attackAnimTimeScale } from '../combat/balance.js'
 
 export const CLASS_SHEETS = Object.freeze({
   knight: {
@@ -422,6 +423,7 @@ export class Player extends Actor {
 
     if (this.anims && typeof this.anims.play === 'function') {
       this.anims.play(key, ignoreIfPlaying)
+      this.anims.timeScale = attackAnimTimeScale(this.classId, animName)
     }
 
     if (targetSheet) {

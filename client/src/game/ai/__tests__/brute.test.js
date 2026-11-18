@@ -246,7 +246,7 @@ describe('Brute AI & Enemy Integration — Package 1b-2', () => {
     // Player strikes brute while in telegraph
     const hit1 = enemy.takeDamage(5, startTime + 100)
     expect(hit1).toBe(true)
-    expect(enemy.hp).toBe(20)
+    expect(enemy.hp).toBe(BRUTE_BASE_HP - 5)
     // Must NOT cancel attack and must NOT drop token!
     expect(enemy.isAttacking).toBe(true)
     expect(enemy.attackPhase).toBe('telegraph')
@@ -260,7 +260,7 @@ describe('Brute AI & Enemy Integration — Package 1b-2', () => {
     // Player strikes brute mid-swing
     const hit2 = enemy.takeDamage(5, startTime + 400)
     expect(hit2).toBe(true)
-    expect(enemy.hp).toBe(15)
+    expect(enemy.hp).toBe(BRUTE_BASE_HP - 10)
     // Must NOT cancel attack and must NOT drop token!
     expect(enemy.isAttacking).toBe(true)
     expect(enemy.attackPhase).toBe('swing')
@@ -303,7 +303,7 @@ describe('Brute AI & Enemy Integration — Package 1b-2', () => {
     enemy.startAttack(1000)
 
     // Fatal damage
-    enemy.takeDamage(30, 1050)
+    enemy.takeDamage(enemy.hpMax, 1050)
     expect(enemy.hp).toBe(0)
     expect(enemy.is(ACTOR_STATES.DEAD)).toBe(true)
     expect(enemy.active).toBe(true)

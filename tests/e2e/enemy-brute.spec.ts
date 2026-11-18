@@ -147,8 +147,8 @@ test.describe('Package 1b-2: Lane D Enemies — Brute Base & AI', () => {
     });
 
     expect(hitResult).not.toBeNull();
-    expect(hitResult!.hpBefore).toBe(25);
-    expect(hitResult!.hpAfter).toBe(17);
+    expect(hitResult!.hpBefore).toBe(72);
+    expect(hitResult!.hpAfter).toBe(64);
     expect(hitResult!.wasAttacking).toBe(true);
     expect(hitResult!.stillAttacking, 'Brute must continue attacking after taking hit').toBe(true);
     expect(hitResult!.isHurtState, 'Armored brute must not enter HURT state while attacking').toBe(false);

@@ -76,6 +76,7 @@ import {
 } from '../worldMetrics.js'
 import { TILESET_CATALOG } from '../terrain/generate.js'
 import {
+  CLASS_HP,
   CLASS_SPEED,
   ATTACK_MS,
   MELEE_DMG,
@@ -436,8 +437,9 @@ export default class HollowvaleScene extends Phaser.Scene {
       return
     }
     this.dead = false
-    this.hpMax = 100
-    this.hp = 100
+    const hp = CLASS_HP[id] || CLASS_HP.knight
+    this.hpMax = hp
+    this.hp = hp
     this.manaMax = id === 'mage' ? 100 : 0
     this.mana = this.manaMax
     session.baseSpeed = CLASS_SPEED[id] || 160

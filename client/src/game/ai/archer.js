@@ -26,6 +26,7 @@ import { resolveFacing, DEFAULT_FACING } from '../actors/facing.js'
 import { Projectile } from '../actors/Projectile.js'
 import { resolveAnimWithFallback } from '../combat/fallbacks.js'
 import { isDebug } from '../config/flags.js'
+import { ARCHER_PROJECTILE } from '../combat/balance.js'
 
 export const ARCHER_AI_MODES = Object.freeze({
   SPAWN: 'SPAWN',
@@ -186,7 +187,7 @@ export class ArcherAI {
     this.cooldownMs = options.cooldownMs ?? ATTACK_COOLDOWN_MS
     this.arrowSpeed = options.arrowSpeed ?? ARROW_SPEED
     this.arrowRange = options.arrowRange ?? ARROW_RANGE
-    this.damage = options.damage ?? 10
+    this.damage = options.damage ?? ARCHER_PROJECTILE.damage
 
     this.attackCooldownUntil = 0
     this.isAttacking = false
