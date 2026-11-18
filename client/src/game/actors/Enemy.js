@@ -41,6 +41,7 @@ import {
 } from '../combat/balance.js'
 import { GoblinAI } from '../ai/goblin.js'
 import { BruteAI } from '../ai/brute.js'
+import { isDebug } from '../config/flags.js'
 
 export const ENEMY_SHEETS = Object.freeze({
   goblin: {
@@ -234,7 +235,9 @@ export class Enemy extends Actor {
     const key = this.getAnimKey(animName)
     this.lastAnimKey = key
     this.animHistory.push(key)
-    console.log(`[Enemy anim] ${key}`)
+    if (isDebug()) {
+      console.log(`[Enemy anim] ${key}`)
+    }
 
     // Record on scene for debug/test inspection if available
     if (this.scene) {

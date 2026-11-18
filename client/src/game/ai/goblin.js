@@ -14,6 +14,7 @@
 import { random } from '../rng.js'
 import { ACTOR_STATES } from '../actors/stateMachine.js'
 import { resolveAnimWithFallback } from '../combat/fallbacks.js'
+import { isDebug } from '../config/flags.js'
 
 export const GOBLIN_AI_MODES = Object.freeze({
   SPAWN: 'SPAWN',
@@ -137,7 +138,9 @@ export class GoblinAI {
         enemy.animHistory.push(alertKey)
       }
       enemy.lastAnimKey = alertKey
-      console.log(`[Enemy anim] ${alertKey}`)
+      if (isDebug()) {
+        console.log(`[Enemy anim] ${alertKey}`)
+      }
       const clipToPlay = resolveAnimWithFallback(scene, alertKey, enemy.getAnimKey?.('telegraph'))
       if (clipToPlay && scene?.anims?.exists(clipToPlay)) {
         try {
