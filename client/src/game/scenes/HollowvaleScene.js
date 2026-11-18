@@ -26,7 +26,7 @@ import {
 import { session } from '../session.js'
 import { ScreenCamera } from '../screenCamera.js'
 import { DomFxLayer } from '../fxLayer.js'
-import { random } from '../rng.js'
+import { random, getSeed } from '../rng.js'
 import { mountHvApi, teardownHvApi } from '../qa/hvApi.js'
 import { AssetRegistry, defaultManifest } from '../assets/AssetRegistry.js'
 import {
@@ -94,6 +94,7 @@ import {
 } from '../combat/balance.js'
 import { isDebug } from '../config/flags.js'
 import { getEnemyDef, isEnemyType } from '../combat/enemyDefs.js'
+import { planScreenSpawns } from '../terrain/spawnTables.js'
 
 /** Boot playfield until enterScene mounts a map. Same point the first Player construct used. */
 const BOOT_WORLD_W = 1024
@@ -186,6 +187,7 @@ export default class HollowvaleScene extends Phaser.Scene {
     this.nextWaveAt = 0
     this.wildNodeId = WILDERNESS_ENTRANCE_ID
     this.wildLayout = null
+    this._wildSpawnPlan = null
     this.wildLatchUntil = 0
     this.hp = 100
     this.hpMax = 100
@@ -1647,7 +1649,33 @@ export default class HollowvaleScene extends Phaser.Scene {
     }
     this._areaEntrance = { x: this.player.x, y: this.player.y, nx: placed.nx, ny: placed.ny }
     this._buildPrompts()
+    this._spawnWildernessEnemies(layout)
     this.wildLatchUntil = performance.now() + 600
+  }
+
+  /**
+   * Seeded enemies for the screen just mounted. Clears whatever the last
+   * screen left first, so leaving and coming back never stacks spawns.
+   * The plan is kept on this._wildSpawnPlan for the QA API.
+   */
+  _spawnWildernessEnemies(layout) {
+    this._clearEnemies()
+    const nodeId = this.wildNodeId
+    const spawns = planScreenSpawns({
+      sceneId: this.sceneId,
+      worldSeed: getSeed(),
+      nodeId,
+      biome: layout?.biome,
+      worldW: this.worldW,
+      worldH: this.worldH,
+      colliders: collidersWithExitGaps(layout),
+      exitRects: wildernessExitPrompts(layout, nodeId).map((p) => p.rect),
+      player: { x: this.player.x, y: this.player.y },
+    })
+    this._wildSpawnPlan = { nodeId, biome: layout?.biome, seed: getSeed(), spawns }
+    for (let i = 0; i < spawns.length; i++) {
+      this._spawnEnemy(spawns[i].type, spawns[i].x, spawns[i].y, 1)
+    }
   }
 
   _drawWilderness(layout) {

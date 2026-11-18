@@ -163,3 +163,52 @@ test.describe('Package 3-3 wilderness tiles', () => {
     expect(pageErrors, 'wilderness session page errors').toEqual([])
   })
 })
+
+test.describe('SPAWN-TABLES-1 wilderness spawns', () => {
+  test('a goblin appears on an emberwood screen with seed=1, capped, clear of exits and the player, no stacking', async ({ page }) => {
+    test.setTimeout(120000)
+    const pageErrors: string[] = []
+    page.on('pageerror', (err) => pageErrors.push(err.message))
+    await boot(page)
+
+    await enterWild(page, 'wild_2_0')
+    const first = await page.evaluate(() => {
+      const hv = (window as any).__hv
+      const scene = (window as any).__scene
+      const exits = Object.entries(scene.wildLayout.exitBands as Record<string, { start: number; end: number }>)
+      return {
+        biome: scene.wildLayout.biome,
+        enemies: hv.enemies(),
+        plan: hv.wildSpawns(),
+        player: { x: scene.player.x, y: scene.player.y },
+        world: hv.world(),
+        exits: exits.map(([edge, b]) => ({ edge, ...b })),
+      }
+    })
+    expect(first.biome).toBe('emberwood_forest')
+    expect(first.plan.nodeId).toBe('wild_2_0')
+    expect(first.plan.seed).toBe(1)
+    expect(first.enemies.length).toBeGreaterThanOrEqual(1)
+    expect(first.enemies.length).toBeLessThanOrEqual(3)
+    expect(first.enemies.map((e: { type: string }) => e.type)).toContain('goblin')
+    for (const spawn of first.plan.spawns) {
+      expect(Math.hypot(spawn.x - first.player.x, spawn.y - first.player.y)).toBeGreaterThanOrEqual(128)
+    }
+
+    // Leave and come back, twice: the count never grows past the cap or stacks.
+    for (let i = 0; i < 2; i++) {
+      await enterWild(page, 'wild_0_0')
+      await enterWild(page, 'wild_2_0')
+      const again = await page.evaluate(() => (window as any).__hv.enemies())
+      expect(again.length).toBeGreaterThanOrEqual(1)
+      expect(again.length).toBeLessThanOrEqual(3)
+      expect(again.map((e: { type: string }) => e.type)).toEqual(first.enemies.map((e: { type: string }) => e.type))
+    }
+
+    // Town stays empty.
+    await page.evaluate(() => (window as any).__scene.enterScene('village', { nx: 0.5, ny: 0.9 }))
+    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village')
+    expect(await page.evaluate(() => (window as any).__hv.enemies())).toEqual([])
+    expect(pageErrors).toEqual([])
+  })
+})
