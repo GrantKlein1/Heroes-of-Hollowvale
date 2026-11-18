@@ -1486,7 +1486,6 @@ export default class HollowvaleScene extends Phaser.Scene {
   enterScene(id, spawn, slideMs = 0) {
     const tiledMapEntry = id === 'wilderness' ? null : resolveMap(id)
     if (id !== 'wilderness' && !tiledMapEntry) {
-      console.warn(`[HollowvaleScene] No Tiled map for "${id}"`)
       return
     }
     this.sceneId = id
