@@ -96,7 +96,11 @@ test('PT-T thief moves, vanishes on J, and swings daggers on Space', async ({ pa
 
   const choose = page.getByRole('button', { name: 'Choose' })
   await expect(choose).toHaveCount(4)
-  const thiefCardText = await choose.nth(2).locator('xpath=ancestor::div[contains(@class,"rounded-xl")]').innerText()
+  // Third Choose button is the thief; hovering it previews the thief in the detail panel.
+  await expect(choose.nth(2)).toHaveText('Choose Thief')
+  await choose.nth(2).hover()
+  const thiefCardText = await page.getByRole('dialog').innerText()
+  await expect(page.getByRole('dialog').locator('h3')).toHaveText('Thief')
   expect(thiefCardText).toContain('Thief')
   await page.screenshot({ path: path.join(OUT, '02-class-select.png') })
 
@@ -128,12 +132,12 @@ test('PT-T thief moves, vanishes on J, and swings daggers on Space', async ({ pa
   await page.keyboard.up('ArrowUp')
   await page.waitForFunction(() => (window as any).__hv.anim() === 'thief_idle_up')
 
-  await page.keyboard.press('j')
+  await page.keyboard.press('j', { delay: 60 })
   await page.waitForFunction(() => {
     const w = window as any
     const anim = w.__hv?.anim?.() || ''
     const p = w.__scene?.player
-    return anim.includes('vanish') || p?.vanishState?.active === true || p?.visible === false
+    return /^thief_vanish_/.test(anim) && p?.visible === true
   })
   const vanished = await sample(page)
   await page.screenshot({ path: path.join(OUT, '05-vanish.png') })
@@ -147,7 +151,7 @@ test('PT-T thief moves, vanishes on J, and swings daggers on Space', async ({ pa
   const smoke = await sample(page)
   await page.screenshot({ path: path.join(OUT, '06-smoke.png') })
 
-  await page.keyboard.press('Space')
+  await page.keyboard.press('Space', { delay: 60 })
   await page.waitForFunction(() => {
     const anim = (window as any).__hv?.anim?.() || ''
     return anim.includes('attack')
@@ -185,6 +189,8 @@ test('PT-T thief moves, vanishes on J, and swings daggers on Space', async ({ pa
   expect(notes.movedNorth).toBe(true)
   expect(moving.anim).toBe('thief_walk_up')
   expect(vanished.vanishActive).toBe(true)
+  expect(vanished.visible).toBe(true)
+  expect(vanished.anim).toMatch(/^thief_vanish_/)
   expect(vanished.hud).toMatch(/Invisibility: Active/)
   expect(swing.anim).toMatch(/^thief_attack_/)
   expect(swing.projectiles).toBe(0)

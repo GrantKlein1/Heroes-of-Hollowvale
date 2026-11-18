@@ -26,7 +26,7 @@ import {
 import { session } from '../session.js'
 import { ScreenCamera } from '../screenCamera.js'
 import { DomFxLayer } from '../fxLayer.js'
-import { random } from '../rng.js'
+import { random, getSeed } from '../rng.js'
 import { mountHvApi, teardownHvApi } from '../qa/hvApi.js'
 import { AssetRegistry, defaultManifest } from '../assets/AssetRegistry.js'
 import {
@@ -76,6 +76,7 @@ import {
 } from '../worldMetrics.js'
 import { TILESET_CATALOG } from '../terrain/generate.js'
 import {
+  CLASS_HP,
   CLASS_SPEED,
   ATTACK_MS,
   MELEE_DMG,
@@ -92,6 +93,8 @@ import {
   getEnemyDamage,
 } from '../combat/balance.js'
 import { isDebug } from '../config/flags.js'
+import { getEnemyDef, isEnemyType } from '../combat/enemyDefs.js'
+import { planScreenSpawns } from '../terrain/spawnTables.js'
 
 /** Boot playfield until enterScene mounts a map. Same point the first Player construct used. */
 const BOOT_WORLD_W = 1024
@@ -123,10 +126,7 @@ function removeAt(arr, i) {
 }
 
 function enemyLabel(type) {
-  if (type === 'goblin') return 'Goblin'
-  if (type === 'brute') return 'Goblin Brute'
-  if (type === 'archer') return 'Goblin Archer'
-  return 'Unknown'
+  return getEnemyDef(type)?.label || 'Unknown'
 }
 
 function placeholderColor(id) {
@@ -187,6 +187,7 @@ export default class HollowvaleScene extends Phaser.Scene {
     this.nextWaveAt = 0
     this.wildNodeId = WILDERNESS_ENTRANCE_ID
     this.wildLayout = null
+    this._wildSpawnPlan = null
     this.wildLatchUntil = 0
     this.hp = 100
     this.hpMax = 100
@@ -427,6 +428,9 @@ export default class HollowvaleScene extends Phaser.Scene {
     if (now >= session.thiefVanishUntil && this._vanishArmed && session.classId === 'thief') {
       this._vanishArmed = false
       session.thiefSmokeUntil = now + 15000
+      if (this.player instanceof Player) {
+        this.player.reappear(now)
+      }
     }
   }
 
@@ -436,8 +440,9 @@ export default class HollowvaleScene extends Phaser.Scene {
       return
     }
     this.dead = false
-    this.hpMax = 100
-    this.hp = 100
+    const hp = CLASS_HP[id] || CLASS_HP.knight
+    this.hpMax = hp
+    this.hp = hp
     this.manaMax = id === 'mage' ? 100 : 0
     this.mana = this.manaMax
     session.baseSpeed = CLASS_SPEED[id] || 160
@@ -1024,7 +1029,7 @@ export default class HollowvaleScene extends Phaser.Scene {
   }
 
   _spawnEnemy(type, nx, ny, wave) {
-    if ((type === 'goblin' || type === 'brute' || type === 'goblin_brute')) {
+    if (isEnemyType(type)) {
       const wx = nx > 1 ? nx : nx * this.worldW
       const wy = ny > 1 ? ny : ny * this.worldH
       const enemy = new Enemy(this, wx, wy, type, { wave })
@@ -1054,7 +1059,6 @@ export default class HollowvaleScene extends Phaser.Scene {
     spr.dirX = 0
     spr.dirY = 0
     spr.changeAt = 0
-    spr.fireAt = 0
     spr.flashUntil = 0
     spr._deathProcessed = false
     spr.setDepth(ny * this.worldH)
@@ -1071,7 +1075,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       nx = this.player.x / this.worldW
       ny = this.player.y / this.worldH
     }
-    if ((type === 'goblin' || type === 'brute' || type === 'goblin_brute')) {
+    if (isEnemyType(type)) {
       const wx = (x !== undefined && x > 1) ? x : nx * this.worldW
       const wy = (y !== undefined && y > 1) ? y : ny * this.worldH
       const enemy = new Enemy(this, wx, wy, type, { wave: this.wave || 1 })
@@ -1132,30 +1136,6 @@ export default class HollowvaleScene extends Phaser.Scene {
         e.dirY = dy / nlen
         e.changeAt = now + 500 + random() * 900
       }
-      if (e.enemyType === 'archer' && now >= e.fireAt) {
-        let ax = px - e.x
-        let ay = py - e.y
-        const al = Math.hypot(ax, ay) || 1
-        ax /= al
-        ay /= al
-        const prevX = this.facingX
-        const prevY = this.facingY
-        this.facingX = ax
-        this.facingY = ay
-        const saved = this._readPlayerBox()
-        void saved
-        this._launchFrom(e.x, e.y, ax, ay, {
-          speed: ARCHER_PROJECTILE.speed,
-          dist: ARCHER_PROJECTILE.dist,
-          size: ARCHER_PROJECTILE.size,
-          arrow: true,
-          owner: 'enemy',
-          impact: 'arrow',
-        })
-        this.facingX = prevX
-        this.facingY = prevY
-        e.fireAt = now + 1800 + random() * 1200
-      }
       e.setVelocity(e.dirX * e.speed, e.dirY * e.speed)
       if (intersects(this._enemyBox(e), hurtBox)) {
         if (now >= (this._iframeUntil || 0)) {
@@ -1205,42 +1185,6 @@ export default class HollowvaleScene extends Phaser.Scene {
       this.nextWaveAt = now + 2500
     }
     void dt
-  }
-
-  _launchFrom(x, y, dx, dy, spec) {
-    const prevX = this.facingX
-    const prevY = this.facingY
-    this.facingX = dx
-    this.facingY = dy
-    const size = spec.size * this.unit
-    const speed = spec.speed * this.unit
-    const startX = x + dx * 8 * this.unit
-    const startY = y + dy * 8 * this.unit
-    const pr = {
-      x: startX - size / 2,
-      y: startY - size / 2,
-      w: size,
-      h: size,
-      vx: dx * speed,
-      vy: dy * speed,
-      startX,
-      startY,
-      maxDist: spec.dist * this.unit,
-      owner: 'enemy',
-      impact: 'arrow',
-      special: '',
-      lingerMs: 0,
-      sprite: null,
-      dom: null,
-    }
-    const key = this.textures.exists(PATHS.goblinArrow) ? PATHS.goblinArrow : '__px'
-    const spr = this.add.image(startX, startY, key).setDepth(15000)
-    spr.setDisplaySize(size * 2.2, size * 0.7)
-    spr.rotation = Math.atan2(dy, dx)
-    pr.sprite = spr
-    this.projectiles.push(pr)
-    this.facingX = prevX
-    this.facingY = prevY
   }
 
   _dropLoot(e) {
@@ -1705,7 +1649,33 @@ export default class HollowvaleScene extends Phaser.Scene {
     }
     this._areaEntrance = { x: this.player.x, y: this.player.y, nx: placed.nx, ny: placed.ny }
     this._buildPrompts()
+    this._spawnWildernessEnemies(layout)
     this.wildLatchUntil = performance.now() + 600
+  }
+
+  /**
+   * Seeded enemies for the screen just mounted. Clears whatever the last
+   * screen left first, so leaving and coming back never stacks spawns.
+   * The plan is kept on this._wildSpawnPlan for the QA API.
+   */
+  _spawnWildernessEnemies(layout) {
+    this._clearEnemies()
+    const nodeId = this.wildNodeId
+    const spawns = planScreenSpawns({
+      sceneId: this.sceneId,
+      worldSeed: getSeed(),
+      nodeId,
+      biome: layout?.biome,
+      worldW: this.worldW,
+      worldH: this.worldH,
+      colliders: collidersWithExitGaps(layout),
+      exitRects: wildernessExitPrompts(layout, nodeId).map((p) => p.rect),
+      player: { x: this.player.x, y: this.player.y },
+    })
+    this._wildSpawnPlan = { nodeId, biome: layout?.biome, seed: getSeed(), spawns }
+    for (let i = 0; i < spawns.length; i++) {
+      this._spawnEnemy(spawns[i].type, spawns[i].x, spawns[i].y, 1)
+    }
   }
 
   _drawWilderness(layout) {
@@ -1884,7 +1854,9 @@ export default class HollowvaleScene extends Phaser.Scene {
   _present(now) {
     const vanishing = session.classId === 'thief' && now < session.thiefVanishUntil
     const smoke = session.classId === 'thief' && now < session.thiefSmokeUntil
-    const showSprite = !vanishing && (!smoke || this._attacking)
+    // Vanish window keeps the sprite up so thief_vanish_<dir> can play.
+    // Smoke still hides it (no ghost alpha) except during an attack.
+    const showSprite = vanishing || !smoke || this._attacking
     if (session.classId) this.player.setVisible(showSprite)
     if (now < (this._flashUntil || 0)) this.player.setAlpha(0.5)
     else this.player.setAlpha(1)

@@ -208,7 +208,8 @@ test.describe('PT-K knight playtest', () => {
       const scene = (window as any).__scene
       scene.player.body.moves = true
     })
-    await placeFeet(page, 360, 300)
+    // Walk down through the south doorway (x 288-352) onto the exit mat (y 320-352).
+    await placeFeet(page, 320, 300)
     await holdUntil(page, 'ArrowDown', () => {
       const label = (window as any).__scene?._activeLabel || ''
       return label.includes('Brackenford')

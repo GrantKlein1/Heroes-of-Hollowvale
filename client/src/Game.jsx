@@ -10,7 +10,11 @@ import {
   setSfxVolume,
 } from './game/MainGameScene'
 import { session } from './game/session'
+import { CLASS_HP, CLASS_SPEED } from './game/combat/balance'
 import { SCENE_HINTS } from './game/sceneCatalog'
+import ControlsMenu, { ControlsHint } from './components/ControlsMenu'
+import ClassSelect from './components/ClassSelect'
+import FieldGuide from './components/FieldGuide'
 
 // Simple top-down RPG prototype with two scenes: Village and Tavern
 
@@ -39,6 +43,10 @@ export default function Game() {
   const titleOpenRef = useRef(true)
   const [optionsOpen, setOptionsOpen] = useState(false)
   const optionsOpenRef = useRef(false)
+  const [controlsOpen, setControlsOpen] = useState(false)
+  const controlsOpenRef = useRef(false)
+  const [fieldGuideOpen, setFieldGuideOpen] = useState(false)
+  const fieldGuideOpenRef = useRef(false)
   // Market/shop overlay
   const [shopOpen, setShopOpen] = useState(false)
   const shopOpenRef = useRef(false)
@@ -57,6 +65,8 @@ export default function Game() {
   const [chatInput, setChatInput] = useState('')
   const chatScrollRef = useRef(null)
   const chatInputRef = useRef(null)
+  const chatDialogRef = useRef(null)
+  const chatReturnFocusRef = useRef(null)
   const [chatMode, setChatMode] = useState('topics') // 'topics' | 'free'
   // Live refs for overlay states so the game loop sees latest values
   const chatOpenRef = useRef(false)
@@ -141,7 +151,7 @@ export default function Game() {
   }
   // Game over overlay and killer info
   const [gameOver, setGameOver] = useState(false)
-  const [vitals, setVitals] = useState({ hp: 100, hpMax: 100, mana: 0, manaMax: 0 })
+  const [vitals, setVitals] = useState({ hp: CLASS_HP.knight, hpMax: CLASS_HP.knight, mana: 0, manaMax: 0 })
   const [activePrompt, setActivePrompt] = useState('')
   const [abilityNow, setAbilityNow] = useState(0)
   const gameOverRef = useRef(false)
@@ -153,48 +163,12 @@ export default function Game() {
   const [hudTip, setHudTip] = useState({ show: false, text: '', x: 0, y: 0 })
   const [hotbarLabel, setHotbarLabel] = useState({ text: '', show: false })
   const hotbarLabelTimerRef = useRef(null)
-  // Player classes
+  // Sprites for chooseClass and the composite fallback. The calling screen copy lives in classIntro.js.
   const CLASSES = {
-    knight: {
-      id: 'knight',
-      name: 'Knight',
-      sprite: CLASS_SPRITES.knight,
-      description: 'A disciplined warrior clad in steel, sworn to protect and endure. Knights excel in close combat and defense.',
-      strengths: ['High defense', 'Strong melee damage', 'Reliable survivability'],
-      weaknesses: ['Slow movement', 'Limited ranged options', 'Low magic resistance'],
-      abilities: ['Move: WASD or arrows', 'Attack: Space. Dodge: Shift', 'Block: hold C'],
-      items: ['Iron Sword', 'Wooden Shield', 'Chainmail Armor', '1x Healing Potion'],
-    },
-    mage: {
-      id: 'mage',
-      name: 'Mage',
-      sprite: CLASS_SPRITES.mage,
-      description: 'A master of arcane forces, fragile in body but devastating in spellcraft. Mages bend fire, frost, and lightning to their will.',
-      strengths: ['High magic damage', 'Ranged attacks', 'Versatile elemental spells'],
-      weaknesses: ['Low health', 'Weak physical defense', 'Relies on mana'],
-      abilities: ['Move: WASD or arrows', 'Cast: Space. Dodge: Shift or C', 'Spell wheel: hold K with the spellbook'],
-      items: ['Apprentice Staff', 'Spellbook', 'Cloth Robes', '2x Mana Potions'],
-    },
-    thief: {
-      id: 'thief',
-      name: 'Thief',
-      sprite: CLASS_SPRITES.thief,
-      description: 'A cunning rogue who thrives in shadows, striking swiftly and vanishing just as fast. Agile and resourceful.',
-      strengths: ['High speed', 'Critical strikes', 'Stealth abilities'],
-      weaknesses: ['Low defense', 'Weaker against groups', 'Limited durability'],
-      abilities: ['Move: WASD or arrows', 'Attack: Space. Dodge: Shift or C', 'Vanish: J'],
-      items: ['Twin Daggers', 'Leather Armor', 'Lockpicks', '1x Poison Vial'],
-    },
-    dwarf: {
-      id: 'dwarf',
-      name: 'Dwarf',
-      sprite: CLASS_SPRITES.dwarf,
-      description: 'A stout fighter from the mountain halls, tough as stone and skilled with heavy weapons. Dwarves endure where others fall.',
-      strengths: ['High health', 'Strong melee (axes/hammers)', 'Poison resistance'],
-      weaknesses: ['Shorter range', 'Slower speed', 'Limited magic use'],
-      abilities: ['Move: WASD or arrows', 'Attack: Space. Dodge: Shift or C'],
-      items: ['Battle Axe', 'Dwarf Armor', 'Dwarf Pickaxe (utility)', '1x Ale Flask (stamina)'],
-    },
+    knight: { id: 'knight', name: 'Knight', sprite: CLASS_SPRITES.knight },
+    mage: { id: 'mage', name: 'Mage', sprite: CLASS_SPRITES.mage },
+    thief: { id: 'thief', name: 'Thief', sprite: CLASS_SPRITES.thief },
+    dwarf: { id: 'dwarf', name: 'Dwarf', sprite: CLASS_SPRITES.dwarf },
   }
 
   // Item catalog (id -> name + icon path). Icons are expected at /images/<id>.png
@@ -331,15 +305,16 @@ export default function Game() {
   async function chooseClass(id) {
     const def = CLASSES[id]
     if (!def) return
-    const speed = id === 'mage' ? 180 : id === 'thief' ? 200 : 160
+    const speed = CLASS_SPEED[id] || CLASS_SPEED.knight
+    const hp = CLASS_HP[id] || CLASS_HP.knight
     session.classId = id
     session.baseSpeed = speed
     session.spriteUrl = def.sprite
-    session.hp = 100
-    session.hpMax = 100
+    session.hp = hp
+    session.hpMax = hp
     session.manaMax = id === 'mage' ? 100 : 0
     session.mana = session.manaMax
-    setVitals({ hp: 100, hpMax: 100, mana: session.mana, manaMax: session.manaMax })
+    setVitals({ hp, hpMax: hp, mana: session.mana, manaMax: session.manaMax })
     setSelectedClass(id)
     setClassSelectOpen(false)
     setInventory(seedInventoryForClass(id))
@@ -879,6 +854,11 @@ export default function Game() {
   useEffect(() => { activeHotbarRef.current = activeHotbar }, [activeHotbar])
   useEffect(() => { titleOpenRef.current = titleOpen }, [titleOpen])
   useEffect(() => { optionsOpenRef.current = optionsOpen }, [optionsOpen])
+  useEffect(() => { controlsOpenRef.current = controlsOpen }, [controlsOpen])
+  useEffect(() => { fieldGuideOpenRef.current = fieldGuideOpen }, [fieldGuideOpen])
+  useEffect(() => {
+    if (titleOpen || classSelectOpen) setControlsOpen(false)
+  }, [titleOpen, classSelectOpen])
   useEffect(() => { shopOpenRef.current = shopOpen }, [shopOpen])
   useEffect(() => { localStorage.setItem('masterVolume', String(masterVolume)) }, [masterVolume])
   useEffect(() => { localStorage.setItem('musicVillageVol', String(musicVillageVol)) }, [musicVillageVol])
@@ -1250,10 +1230,19 @@ export default function Game() {
     const onKeyDown = (e) => {
       const tag = (e.target?.tagName || '').toLowerCase()
       const typing = tag === 'input' || tag === 'textarea' || (e.target && e.target.isContentEditable)
-      // If Title or Options are open, limit keys (allow Esc to close Options)
-      if (titleOpenRef.current || optionsOpenRef.current) {
+      if (fieldGuideOpenRef.current) {
+        if (e.key === 'Escape') setFieldGuideOpen(false)
+        return
+      }
+      // Title, Options, or Controls swallow gameplay keys. Esc closes Options or Controls; H closes Controls.
+      if (titleOpenRef.current || optionsOpenRef.current || controlsOpenRef.current) {
         if (e.key === 'Escape' && optionsOpenRef.current) {
           setOptionsOpen(false)
+        }
+        if (controlsOpenRef.current && (e.key === 'Escape' || e.key === 'h' || e.key === 'H')) {
+          if (e.key !== 'Escape' && e.repeat) return
+          e.preventDefault()
+          setControlsOpen(false)
         }
         return
       }
@@ -1275,6 +1264,11 @@ export default function Game() {
       // those keys so the page does not scroll. PhaserGame starts the game in a
       // microtask, which registers its listener after this one. preventDefault
       // here would swallow movement and attacks.
+      // H toggles the controls menu during play. It stays closed on the title and class-select screens.
+      if (!typing && !e.repeat && !classSelectOpenRef.current && (e.key === 'h' || e.key === 'H')) {
+        e.preventDefault()
+        setControlsOpen((open) => !open)
+      }
       // Toggle inventory with 'v' (blocked during thief vanish animation)
       if (!typing && (e.key === 'v' || e.key === 'V')) {
         if (session.classId === 'thief' && performance.now() < session.thiefVanishUntil) return
@@ -1333,7 +1327,7 @@ export default function Game() {
       // Scroll to cycle hotbar like Minecraft (when not typing and no overlays)
       const tag = (e.target?.tagName || '').toLowerCase()
       const typing = tag === 'input' || tag === 'textarea' || (e.target && e.target.isContentEditable)
-  if (typing || titleOpenRef.current || optionsOpenRef.current || inventoryOpenRef.current || chatOpenRef.current || shopOpenRef.current) return
+  if (typing || titleOpenRef.current || optionsOpenRef.current || controlsOpenRef.current || fieldGuideOpenRef.current || inventoryOpenRef.current || chatOpenRef.current || shopOpenRef.current) return
       const delta = e.deltaY
       if (delta === 0) return
       e.preventDefault()
@@ -1356,8 +1350,8 @@ export default function Game() {
   useEffect(() => { sceneRef.current = scene }, [scene])
 
   useEffect(() => {
-    session.blocked = titleOpen || optionsOpen || classSelectOpen || chatOpen || inventoryOpen || shopOpen || gameOver
-  }, [titleOpen, optionsOpen, classSelectOpen, chatOpen, inventoryOpen, shopOpen, gameOver])
+    session.blocked = titleOpen || optionsOpen || controlsOpen || fieldGuideOpen || classSelectOpen || chatOpen || inventoryOpen || shopOpen || gameOver
+  }, [titleOpen, optionsOpen, controlsOpen, fieldGuideOpen, classSelectOpen, chatOpen, inventoryOpen, shopOpen, gameOver])
 
   useEffect(() => {
     if (selectedClass !== 'thief' && selectedClass !== 'mage') return undefined
@@ -1528,8 +1522,8 @@ export default function Game() {
       if (ttsEnabled && reply && !turnAudioStarted) {
         eventBus.emit(GameEvents.NPC_SPEAK, { npc: 'bartender', text: reply })
       }
-    } catch (err) {
-      setChatMessages(msgs => [...msgs, { role: 'assistant', content: `Bartender (annoyed): ${err.message}` }])
+    } catch {
+      setChatMessages(msgs => [...msgs, { role: 'assistant', content: 'The bartender could not answer.' }])
     } finally {
       setChatLoading(false)
     }
@@ -1573,6 +1567,21 @@ export default function Game() {
     }
   }, [chatMessages, chatLoading, chatOpen])
 
+  // Move focus into the bartender dialog when it opens, and return it on close.
+  useEffect(() => {
+    if (!chatOpen) return undefined
+    const previous = document.activeElement
+    if (previous instanceof HTMLElement && previous !== chatDialogRef.current) {
+      chatReturnFocusRef.current = previous
+    }
+    chatDialogRef.current?.focus()
+    return () => {
+      const back = chatReturnFocusRef.current
+      chatReturnFocusRef.current = null
+      if (back && back.isConnected) back.focus()
+    }
+  }, [chatOpen])
+
   // Auto-focus the input once free-typing is enabled
   useEffect(() => {
     if (chatOpen && chatTurns >= 1) {
@@ -1587,11 +1596,10 @@ export default function Game() {
       <div className="relative h-screen w-full overflow-hidden">
         <PhaserGame />
         {!titleOpen && !classSelectOpen && (
-          <div className="pointer-events-none absolute left-2 top-2 z-10 max-w-[calc(100%-5.5rem)] rounded bg-black/50 px-2 py-1.5 text-xs text-white sm:left-3 sm:top-3 sm:max-w-md sm:px-3 sm:py-2 sm:text-sm">
-            <div>WASD: Move · Space: Attack · Shift: Dodge</div>
-            <div>E: Interact · V: Inventory · F2: Collision</div>
-            <div className="text-stone-200">{SCENE_HINTS[scene] || ''}</div>
-          </div>
+          <ControlsHint
+            sceneHint={SCENE_HINTS[scene] || ''}
+            onOpen={() => setControlsOpen(true)}
+          />
         )}
         {activePrompt && !titleOpen && !chatOpen && !shopOpen && (
           <div className="pointer-events-none absolute left-1/2 top-[14%] z-20 -translate-x-1/2 rounded-lg border-2 border-amber-300/95 bg-slate-950/90 px-4 py-2 text-lg font-bold text-amber-100">
@@ -1705,10 +1713,17 @@ export default function Game() {
         </div>
         {chatOpen && (
           <div className="absolute inset-0 flex items-end md:items-center justify-center p-4 md:p-6 z-20">
-            <div className="w-full max-w-2xl bg-stone-900/90 backdrop-blur rounded-xl border border-amber-900/40 shadow-lg shadow-black/50">
+            <div
+              ref={chatDialogRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="bartender-dialog-title"
+              tabIndex={-1}
+              className="w-full max-w-2xl bg-stone-900/90 backdrop-blur rounded-xl border border-amber-900/40 shadow-lg shadow-black/50"
+            >
               <div className="px-4 py-3 border-b border-amber-900/40 flex items-center justify-between">
                 <div>
-                  <h3 className="font-display text-2xl text-amber-200">Tharos the Bartender</h3>
+                  <h3 id="bartender-dialog-title" className="font-display text-2xl text-amber-200">Tharos the Bartender</h3>
                   <p className="text-stone-300/80 text-sm">Speak your business, traveler.</p>
                 </div>
                 <button
@@ -1765,7 +1780,8 @@ export default function Game() {
                       value={chatInput}
                       onChange={(e) => setChatInput(e.target.value)}
                       placeholder="Ask a quick follow-up…"
-                      className="flex-1 px-3 py-2 rounded-lg bg-stone-800 text-stone-100 placeholder-stone-400 border border-amber-900/40 focus:outline-none focus:ring-2 focus:ring-amber-600"
+                      aria-label="Message to the bartender"
+                      className="flex-1 px-3 py-2 rounded-lg bg-stone-800 text-stone-100 placeholder-stone-400 border border-amber-900/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400"
                       disabled={chatLoading}
                     />
                     <button
@@ -1974,10 +1990,10 @@ export default function Game() {
               {/* Animated sword on left-middle */}
               <AnimatedSprite
                 frames={ANIMATED_SWORD_FRAMES}
-                fps={12}
+                fps={8}
                 playing={titleOpen}
                 alt="Animated Sword"
-                className="absolute left-[70%] top-1/2 -translate-y-0 w-[300px] h-auto drop-shadow-[0_4px_18px_rgba(0,0,0,0.6)]"
+                className="absolute left-[62%] top-[46%] -translate-y-1/2 w-[420px] h-auto drop-shadow-[0_4px_18px_rgba(0,0,0,0.6)]"
               />
               {/* Replace text with provided title image */}
               <img
@@ -1988,6 +2004,7 @@ export default function Game() {
               <div className="flex gap-4">
                 <button
                   onClick={() => {
+                    setFieldGuideOpen(false)
                     setTitleOpen(false)
                     setClassSelectOpen(true)
                     // Unlock AudioContext + preload SFX on the user gesture
@@ -1995,6 +2012,11 @@ export default function Game() {
                   }}
                   className="px-6 py-3 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-900 font-semibold shadow-lg shadow-amber-900/30"
                 >Start Game</button>
+                <button
+                  type="button"
+                  onClick={() => setFieldGuideOpen(true)}
+                  className="px-6 py-3 rounded-lg bg-stone-800/90 hover:bg-stone-700 text-amber-200 border border-amber-900/40 shadow"
+                >Field Guide</button>
                 <button
                   onClick={() => setOptionsOpen(true)}
                   className="px-6 py-3 rounded-lg bg-stone-800/90 hover:bg-stone-700 text-amber-200 border border-amber-900/40 shadow"
@@ -2126,11 +2148,24 @@ export default function Game() {
           </div>
         )}
 
+        {controlsOpen && !titleOpen && !classSelectOpen && (
+          <ControlsMenu classId={selectedClass} onClose={() => setControlsOpen(false)} />
+        )}
+
+        <FieldGuide open={fieldGuideOpen} onClose={() => setFieldGuideOpen(false)} />
+
         {/* Dungeon scene uses E-interact zone; no overlay button needed */}
 
         {/* Global Options button on all non-intro screens */}
         {!titleOpen && (
-          <div className="absolute top-3 right-3 z-30">
+          <div className="absolute top-3 right-3 z-30 flex gap-2">
+            <button
+              type="button"
+              onClick={() => setFieldGuideOpen(true)}
+              className="px-3 py-1.5 rounded-lg bg-stone-800/90 hover:bg-stone-700 text-amber-200 border border-amber-900/40 shadow"
+              aria-label="Field Guide"
+              title="Field Guide"
+            >Field Guide</button>
             <button
               onClick={() => setOptionsOpen(true)}
               className="px-3 py-1.5 rounded-lg bg-stone-800/90 hover:bg-stone-700 text-amber-200 border border-amber-900/40 shadow"
@@ -2339,7 +2374,7 @@ export default function Game() {
                   session.spriteUrl = ''
                   session.equippedId = null
                   session.api?.resetRun()
-                  setVitals({ hp: 100, hpMax: 100, mana: 0, manaMax: 0 })
+                  setVitals({ hp: CLASS_HP.knight, hpMax: CLASS_HP.knight, mana: 0, manaMax: 0 })
                   setTitleOpen(true)
                   titleOpenRef.current = true
                   setClassSelectOpen(false)
@@ -2364,54 +2399,13 @@ export default function Game() {
         )}
 
         {classSelectOpen && (
-          <div className="absolute inset-0 z-30 flex items-center justify-center p-4">
-            <div className="w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-stone-900/95 backdrop-blur border border-amber-900/40 rounded-2xl p-5 shadow-xl shadow-black/50">
-              <div className="mb-4 flex items-center justify-between">
-                <div>
-                  <h2 className="font-display text-3xl text-amber-200">Choose Your Class</h2>
-                  <p className="text-stone-300/80">Select a class to begin your adventure.</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {Object.values(CLASSES).map(c => (
-                  <div key={c.id} className="rounded-xl border border-amber-900/40 bg-stone-800/70 p-4 flex gap-4">
-                    <img src={c.sprite} alt={c.name} className="w-24 h-24 object-contain rounded-lg border border-stone-700 bg-stone-900/60" />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-xl font-semibold text-amber-200">{c.name}</h3>
-                        <button onClick={() => chooseClass(c.id)} className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-900 font-semibold">Choose</button>
-                      </div>
-                      <p className="text-sm text-stone-200 mt-1">{c.description}</p>
-                      <div className="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm">
-                        <div>
-                          <div className="text-amber-300 font-medium">Strengths</div>
-                          <ul className="list-disc list-inside text-stone-200/90">
-                            {c.strengths.map((s,i)=>(<li key={i}>{s}</li>))}
-                          </ul>
-                        </div>
-                        <div>
-                          <div className="text-amber-300 font-medium">Weaknesses</div>
-                          <ul className="list-disc list-inside text-stone-200/90">
-                            {c.weaknesses.map((w,i)=>(<li key={i}>{w}</li>))}
-                          </ul>
-                        </div>
-                        <div>
-                          <div className="text-amber-300 font-medium">Abilities</div>
-                          <ul className="list-disc list-inside text-stone-200/90">
-                            {c.abilities.map((a,i)=>(<li key={i}>{a}</li>))}
-                          </ul>
-                        </div>
-                      </div>
-                      <div className="mt-2">
-                        <div className="text-amber-300 font-medium">Starting Items</div>
-                        <div className="text-stone-200/90">{c.items.join(', ')}</div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <ClassSelect
+            onChoose={chooseClass}
+            onBack={() => {
+              setClassSelectOpen(false)
+              setTitleOpen(true)
+            }}
+          />
         )}
       </div>
     </div>

@@ -80,6 +80,7 @@ vi.mock('phaser', () => {
 import {
   FIREBALL_SPAWN_OFFSETS,
   FIREBALL_MANA_COST,
+  LIGHTNING_MANA_COST,
   MANA_REGEN_PER_SEC,
   MANA_MAX,
   LEECH_COOLDOWN_MS,
@@ -270,6 +271,89 @@ describe('Spells & Projectile Mechanics (Package 1-5)', () => {
       expect(proj).toBeNull()
       expect(mockScene.mana).toBe(10)
       expect(mockScene._notices).toContain('Not enough mana.')
+    })
+  })
+
+  describe('MANA-1: Lightning pays before the cast', () => {
+    it('cast with 100 mana leaves 90 and keeps bolt damage at 15', () => {
+      expect(LIGHTNING_MANA_COST).toBe(10)
+      mockScene.mana = 100
+      session.mana = 100
+
+      const proj = castLightning(mockScene, mockPlayer, 1000)
+      expect(proj).not.toBeNull()
+      expect(proj.damage).toBe(15)
+      expect(mockScene.mana).toBe(90)
+      expect(session.mana).toBe(90)
+      expect(mockScene._publishVitals).toHaveBeenCalledWith(false)
+      expect(mockScene.mana).toBeGreaterThanOrEqual(0)
+
+      mockPlayer._v2Cast = null
+      mockScene.projectiles = []
+      mockScene.mana = 100
+      session.mana = 100
+      const pending = armMageV2Cast(mockScene, mockPlayer, 'lightning', 2000)
+      expect(pending).not.toBeNull()
+      expect(mockPlayer._v2Cast).toBe(pending)
+      expect(mockScene.projectiles).toHaveLength(0)
+      expect(mockScene.mana).toBe(90)
+      expect(session.mana).toBe(90)
+    })
+
+    it('with 5 mana casts nothing and notices, and mana never goes below 0', () => {
+      mockScene.mana = 5
+      session.mana = 5
+      mockScene._publishVitals.mockClear()
+
+      expect(castLightning(mockScene, mockPlayer, 1000)).toBeNull()
+      expect(mockScene.projectiles).toHaveLength(0)
+      expect(mockScene.mana).toBe(5)
+      expect(session.mana).toBe(5)
+      expect(mockScene._notices).toContain('Not enough mana.')
+      expect(mockScene._publishVitals).not.toHaveBeenCalled()
+
+      mockScene._notices = []
+      expect(armMageV2Cast(mockScene, mockPlayer, 'lightning', 2000)).toBeNull()
+      expect(mockPlayer._v2Cast).toBeUndefined()
+      expect(mockScene.mana).toBe(5)
+      expect(session.lifeLeechCooldownUntil).toBe(0)
+      expect(mockScene._notices).toEqual(['Not enough mana.'])
+
+      mockScene.mana = 0
+      session.mana = 0
+      mockScene._notices = []
+      expect(castLightning(mockScene, mockPlayer, 3000)).toBeNull()
+      expect(mockScene.mana).toBe(0)
+      expect(session.mana).toBe(0)
+
+      mockScene.mana = 10
+      session.mana = 10
+      const exact = castLightning(mockScene, mockPlayer, 4000)
+      expect(exact).not.toBeNull()
+      expect(exact.damage).toBe(15)
+      expect(mockScene.mana).toBe(0)
+      expect(session.mana).toBe(0)
+      expect(mockScene.mana).toBeGreaterThanOrEqual(0)
+    })
+
+    it('does not charge leech, shield, or blink', () => {
+      mockScene.mana = 100
+      session.mana = 100
+      const leech = castLeech(mockScene, mockPlayer, 1000)
+      expect(leech).not.toBeNull()
+      expect(mockScene.mana).toBe(100)
+      expect(session.mana).toBe(100)
+
+      session.lifeLeechCooldownUntil = 0
+      mockPlayer._v2Cast = null
+      const armed = armMageV2Cast(mockScene, mockPlayer, 'leech', 2000)
+      expect(armed).not.toBeNull()
+      expect(mockScene.mana).toBe(100)
+
+      expect(castShield(mockScene, mockPlayer, 3000)).toBeTruthy()
+      expect(castBlink(mockScene, mockPlayer, 4000)).toBe(true)
+      expect(mockScene.mana).toBe(100)
+      expect(session.mana).toBe(100)
     })
   })
 
@@ -650,6 +734,8 @@ describe('Spells & Projectile Mechanics (Package 1-5)', () => {
       const lightningArm = armMageV2Cast(scene, player, 'lightning', 1000)
       expect(lightningArm).toBeNull()
       expect(scene._notices).toContain('Spells are still loading')
+      expect(scene.mana).toBeUndefined()
+      expect(session.mana).toBe(100)
 
       const leechArm = armMageV2Cast(scene, player, 'leech', 1000)
       expect(leechArm).toBeNull()

@@ -1,4 +1,4 @@
-# Heroes of Hollowvale — rules for Google Antigravity agents
+    # Heroes of Hollowvale — rules for Google Antigravity agents
 Drop this file at the repo root as `AGENTS.md` (it replaces the old Cursor-oriented one). Antigravity loads it automatically, always on, no frontmatter.
 
 ## Stack

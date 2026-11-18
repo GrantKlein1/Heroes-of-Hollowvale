@@ -41,67 +41,38 @@ import {
 } from '../combat/balance.js'
 import { GoblinAI } from '../ai/goblin.js'
 import { BruteAI } from '../ai/brute.js'
+import { ArcherAI } from '../ai/archer.js'
 import { isDebug } from '../config/flags.js'
+import { ENEMY_DEFS, resolveEnemyDef } from '../combat/enemyDefs.js'
 
-export const ENEMY_SHEETS = Object.freeze({
-  goblin: {
-    defaultSheet: 'goblin',
-    walkSheet: 'goblin',
-    hurtSheet: 'goblin',
-    attackSheet: 'goblin',
-    telegraphSheet: 'goblin_telegraph',
-    deathSheet: 'goblin_death',
-    spawnSheet: 'goblin_spawn',
-    alertSheet: 'goblin_alert',
-    initialFrame: 'goblin_idle_down',
-  },
-  archer: {
-    assetId: 'goblin_archer',
-    defaultSheet: 'goblin_archer',
-    walkSheet: 'goblin_archer',
-    hurtSheet: 'goblin_archer',
-    attackSheet: 'goblin_archer',
-    deathSheet: 'goblin_archer_death',
-    spawnSheet: 'goblin_archer_spawn',
-    alertSheet: 'goblin_archer_alert',
-    initialFrame: 'goblin_archer_idle_down',
-  },
-  goblin_archer: {
-    assetId: 'goblin_archer',
-    defaultSheet: 'goblin_archer',
-    walkSheet: 'goblin_archer',
-    hurtSheet: 'goblin_archer',
-    attackSheet: 'goblin_archer',
-    deathSheet: 'goblin_archer_death',
-    spawnSheet: 'goblin_archer_spawn',
-    alertSheet: 'goblin_archer_alert',
-    initialFrame: 'goblin_archer_idle_down',
-  },
-  brute: {
-    assetId: 'goblin_brute',
-    defaultSheet: 'goblin_brute',
-    walkSheet: 'goblin_brute',
-    hurtSheet: 'goblin_brute',
-    attackSheet: 'goblin_brute',
-    telegraphSheet: 'goblin_brute_telegraph',
-    deathSheet: 'goblin_brute_death',
-    spawnSheet: 'goblin_brute_spawn',
-    alertSheet: 'goblin_brute_alert',
-    initialFrame: 'goblin_brute_idle_down',
-  },
-  goblin_brute: {
-    assetId: 'goblin_brute',
-    defaultSheet: 'goblin_brute',
-    walkSheet: 'goblin_brute',
-    hurtSheet: 'goblin_brute',
-    attackSheet: 'goblin_brute',
-    telegraphSheet: 'goblin_brute_telegraph',
-    deathSheet: 'goblin_brute_death',
-    spawnSheet: 'goblin_brute_spawn',
-    alertSheet: 'goblin_brute_alert',
-    initialFrame: 'goblin_brute_idle_down',
-  },
-})
+/**
+ * AI controller classes, by the name a def uses in its `ai` field.
+ * A new enemy that reuses one of these needs no edit here. A brand-new AI
+ * class is one extra line (or registerEnemyAI in a test).
+ */
+export const ENEMY_AI_CLASSES = {
+  GoblinAI,
+  BruteAI,
+  ArcherAI,
+}
+
+/**
+ * @param {string} name
+ * @param {Function} AiClass
+ */
+export function registerEnemyAI(name, AiClass) {
+  ENEMY_AI_CLASSES[name] = AiClass
+}
+
+/**
+ * Sheet keys per enemy type, built from enemyDefs. Includes alias keys
+ * ('goblin_archer', 'goblin_brute'). Snapshot of the built-in defs.
+ */
+export const ENEMY_SHEETS = Object.freeze(
+  Object.fromEntries(
+    Object.values(ENEMY_DEFS).flatMap((def) => [def.id, ...(def.aliases || [])].map((key) => [key, def.sheets])),
+  ),
+)
 
 export class Enemy extends Actor {
   /**
@@ -116,7 +87,8 @@ export class Enemy extends Actor {
    * @param {number} [options.damage] - Explicit damage override
    */
   constructor(scene, x = 0, y = 0, enemyType = 'goblin', options = {}) {
-    const sheetDef = ENEMY_SHEETS[enemyType] || ENEMY_SHEETS.goblin
+    const def = resolveEnemyDef(enemyType)
+    const sheetDef = def?.sheets || ENEMY_DEFS.goblin.sheets
     const initialSheet = sheetDef.defaultSheet
     const initialFrame = sheetDef.initialFrame || ''
 
@@ -150,7 +122,7 @@ export class Enemy extends Actor {
     this.animHistory = []
     this.lastAnimKey = null
 
-    this.isArmored = options.isArmored ?? (enemyType === 'brute' || enemyType === 'goblin_brute')
+    this.isArmored = options.isArmored ?? !!def?.armored
     this.telegraphDuration = options.telegraphDuration ?? (this.isArmored ? 300 : 375)
     this.baseCooldown = options.baseCooldown ?? (this.isArmored ? 1600 : 900)
     this.knockbackImpulse = options.knockbackImpulse ?? (this.isArmored ? 260 : 100)
@@ -168,11 +140,12 @@ export class Enemy extends Actor {
       }
     }
 
-    // Attach archetype AI controller
-    if (enemyType === 'goblin') {
-      this.ai = new GoblinAI(this)
-    } else if (enemyType === 'brute' || enemyType === 'goblin_brute') {
-      this.ai = new BruteAI(this)
+    this._readAtlasCombatMeta()
+
+    // Attach archetype AI controller from the def
+    const AiClass = typeof def?.ai === 'function' ? def.ai : ENEMY_AI_CLASSES[def?.ai]
+    if (AiClass) {
+      this.ai = def.projectile ? new AiClass(this, { damage: def.projectile.damage }) : new AiClass(this)
     }
 
     // Listen for animation completion events to chain telegraph -> attack -> idle
@@ -188,13 +161,36 @@ export class Enemy extends Actor {
   }
 
   /**
+   * Hit frames and arrow spawn offsets come from the attack sheet meta.
+   * Anchor stays on Actor.resolveAnchor (atlas meta / registry), never a fixed origin.
+   */
+  _readAtlasCombatMeta() {
+    const sheetKey = this.getSheetForAnim('attack')
+    const meta = this.scene?.textures?.get?.(sheetKey)?.customData?.meta
+    const attack = meta?.anims?.attack
+    if (!attack) return
+
+    if (Array.isArray(attack.hitFrames) && attack.hitFrames.length > 0) {
+      this.hitFrames = attack.hitFrames.map((frame) => Number(frame))
+    } else if (Number.isFinite(Number(attack.releaseFrame))) {
+      this.hitFrames = [Number(attack.releaseFrame)]
+    } else if (Number.isFinite(Number(attack.spawnFrame))) {
+      this.hitFrames = [Number(attack.spawnFrame)]
+    }
+
+    if (attack.spawnOffsetFromFeet && typeof attack.spawnOffsetFromFeet === 'object') {
+      this.spawnOffsetFromFeet = attack.spawnOffsetFromFeet
+    }
+  }
+
+  /**
    * Resolves the texture atlas sheet key for a given animation action.
    *
    * @param {string} animName
    * @returns {string}
    */
   getSheetForAnim(animName) {
-    const sheetDef = ENEMY_SHEETS[this.enemyType] || ENEMY_SHEETS.goblin
+    const sheetDef = resolveEnemyDef(this.enemyType)?.sheets || ENEMY_DEFS.goblin.sheets
     if (animName === 'telegraph') {
       return sheetDef.telegraphSheet
     }
@@ -462,18 +458,23 @@ export class Enemy extends Actor {
       return true
     }
 
+    const aiAttacking = Boolean(this.ai?.isAttacking)
+
     // Armored enemies mid-swing ignore hurt interruption and do not drop attack token
-    if (this.isArmored && this.isAttacking) {
+    if (this.isArmored && (this.isAttacking || aiAttacking)) {
       return true
     }
 
     // If currently attacking, interrupt and release token
-    if (this.isAttacking) {
+    if (this.isAttacking || aiAttacking) {
       if (this.scene?.attackTokenManager) {
         this.scene.attackTokenManager.release(this)
       }
       this.isAttacking = false
       this.attackPhase = 'none'
+      if (typeof this.ai?.interruptAttack === 'function') {
+        this.ai.interruptAttack(now)
+      }
     }
 
     this.transition(ACTOR_STATES.HURT, { force: true })
@@ -652,17 +653,22 @@ export class Enemy extends Actor {
       return
     }
 
+    // Ranged controllers (ArcherAI) own their wind-up. Melee uses this.isAttacking.
+    const rangedAttack = Boolean(this.ai?.isAttacking)
+
     // 1. Manage active attack phase and timing fallbacks
-    if (this.isAttacking) {
+    if (this.isAttacking && !rangedAttack) {
       if (this.attackPhase === 'telegraph') {
         if (time >= this.telegraphUntil) {
           this.transitionToSwing(time)
         }
       } else if (this.attackPhase === 'swing') {
-        // Frame-accurate hit detection: frame 3 or timing fallback (~390 ms)
+        // Frame-accurate hit detection from atlas hitFrames, else the swing timing window
         const frameIdx = getAnimationFrameIndex(this.anims?.currentFrame)
-        const hitFrames = getHitFrames(this.scene, this.getSheetForAnim('attack'), 'attack')
-        const targetHitFrame = hitFrames.length > 0 ? hitFrames[0] : 3
+        const metaHitFrames = Array.isArray(this.hitFrames) && this.hitFrames.length > 0
+          ? this.hitFrames
+          : getHitFrames(this.scene, this.getSheetForAnim('attack'), 'attack')
+        const targetHitFrame = metaHitFrames.length > 0 ? metaHitFrames[0] : 3
 
         const isHitFrame = frameIdx === targetHitFrame || (time >= this.swingStartTime + 390 && time < this.swingStartTime + 550)
 

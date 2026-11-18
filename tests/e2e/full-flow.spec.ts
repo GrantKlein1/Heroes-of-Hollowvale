@@ -333,7 +333,8 @@ test.describe('QA-1 full shipped path', () => {
       await expect(page.getByText(prompt)).toBeVisible()
 
       await waitPlaying(page, 'tavern')
-      await placeFeet(page, 320, 304)
+      // Exit door mat is the south doorway (288,320,64x32 in tavern.tmj); stand inside it.
+      await placeFeet(page, 320, 336)
       await pressEUntilScene(page, 'village', 'Brackenford')
       await assertOutsideAndMobile(page, 'ArrowDown')
     })
@@ -464,7 +465,8 @@ test.describe('QA-1 full shipped path', () => {
           return enemy.hp
         })
         if (hp <= 0) break
-        if (hp <= 3) await page.evaluate((seed) => (window as any).__hv.seed(seed), LOOT_SEED)
+        // Seed the loot roll just before the killing blow (a sword hit does 12).
+        if (hp <= 12) await page.evaluate((seed) => (window as any).__hv.seed(seed), LOOT_SEED)
         await waitPlaying(page, 'village')
         await page.keyboard.press('Space', { delay: 60 })
         try {

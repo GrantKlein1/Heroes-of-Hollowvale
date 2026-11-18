@@ -85,11 +85,12 @@ test.describe('Heroes of Hollowvale — Hit System & Combat Feedback (Package 1-
       { x: targetX, y: targetY }
     );
 
-    // Verify goblin spawned with initial HP 15
+    // Verify goblin spawned at the first-wave health from combat/balance.js
     const combatBefore = await page.evaluate(() => (window as any).__hv.combat());
     expect(combatBefore.enemies.length).toBeGreaterThanOrEqual(1);
     const goblinBefore = combatBefore.enemies[0];
-    expect(goblinBefore.hp).toBe(15);
+    const startHp = goblinBefore.hp;
+    expect(startHp).toBe(36);
 
     // 6. Slow the attack clip so the pre-hitFrame sample stays on frame 1.
     // __hv.timeScale only scales the scene clock. The swing advances on anim timeScale.
@@ -112,17 +113,17 @@ test.describe('Heroes of Hollowvale — Hit System & Combat Feedback (Package 1-
       return c.enemies[0]?.hp;
     });
     // Acceptance criterion 1: goblin HP does NOT drop instantly
-    expect(goblinImmediate, 'Goblin HP should not drop instantly on attack start').toBe(15);
+    expect(goblinImmediate, 'Goblin HP should not drop instantly on attack start').toBe(startHp);
 
     // In game time, hitFrame 3 at 11 fps occurs at 272.7 ms.
     // At timeScale 0.25, 273 ms game time = ~1090 ms wall clock time.
-    // At ~400 ms wall clock time (~100 ms game time): still frame 1, goblin still alive at 15 HP!
+    // At ~400 ms wall clock time (~100 ms game time): still frame 1, goblin still at full HP.
     await page.waitForTimeout(400);
     const goblinMidway = await page.evaluate(() => {
       const c = (window as any).__hv.combat();
       return c.enemies[0]?.hp;
     });
-    expect(goblinMidway, 'Goblin HP should still be 15 before hitFrame 3').toBe(15);
+    expect(goblinMidway, 'Goblin HP should still be full before hitFrame 3').toBe(startHp);
 
     // Advance to post-hitFrame (wait until hitFrame 3 triggers damage)
     // Restore timeScale to 1 to complete the hit
@@ -133,11 +134,11 @@ test.describe('Heroes of Hollowvale — Hit System & Combat Feedback (Package 1-
     });
 
     await page.waitForFunction(
-      () => {
+      (hp) => {
         const c = (window as any).__hv.combat();
-        return c.enemies[0]?.hp <= 3;
+        return c.enemies[0]?.hp < hp;
       },
-      null,
+      startHp,
       { timeout: 5000 }
     );
 
@@ -145,7 +146,7 @@ test.describe('Heroes of Hollowvale — Hit System & Combat Feedback (Package 1-
       const c = (window as any).__hv.combat();
       return c.enemies[0]?.hp;
     });
-    expect(goblinAfter, 'Goblin HP should drop to 3 after knight attack hitFrame').toBe(3);
+    expect(goblinAfter, 'Goblin HP should drop by one sword hit after hitFrame').toBe(startHp - 12);
 
     // Acceptance criterion 3: hit_spark anim plays on hit (__hv shows the key)
     const lastFx = await page.evaluate(() => {
@@ -180,7 +181,7 @@ test.describe('Heroes of Hollowvale — Hit System & Combat Feedback (Package 1-
     });
 
     const initialHp = await page.evaluate(() => (window as any).__hv.combat().hp);
-    expect(initialHp).toBe(100);
+    expect(initialHp).toBe(120);
 
     // First hit: deals 10 damage
     await page.evaluate(() => {
@@ -188,7 +189,7 @@ test.describe('Heroes of Hollowvale — Hit System & Combat Feedback (Package 1-
     });
 
     const hpAfterFirst = await page.evaluate(() => (window as any).__hv.combat().hp);
-    expect(hpAfterFirst).toBe(90);
+    expect(hpAfterFirst).toBe(110);
 
     // Second hit 200 ms later (< 600 ms window): must be blocked by I-frames!
     await page.waitForTimeout(200);
@@ -198,7 +199,7 @@ test.describe('Heroes of Hollowvale — Hit System & Combat Feedback (Package 1-
 
     const hpAfterSecond = await page.evaluate(() => (window as any).__hv.combat().hp);
     // Acceptance criterion 2: No second player hit within 600 ms
-    expect(hpAfterSecond, 'Second hit within 600 ms must deal zero damage').toBe(90);
+    expect(hpAfterSecond, 'Second hit within 600 ms must deal zero damage').toBe(110);
 
     // Wait until 600 ms I-frame expires (total > 650 ms)
     await page.waitForTimeout(500);
@@ -209,7 +210,7 @@ test.describe('Heroes of Hollowvale — Hit System & Combat Feedback (Package 1-
     });
 
     const hpAfterThird = await page.evaluate(() => (window as any).__hv.combat().hp);
-    expect(hpAfterThird, 'Hit after 600 ms I-frame window must deal damage').toBe(80);
+    expect(hpAfterThird, 'Hit after 600 ms I-frame window must deal damage').toBe(100);
   });
 });
 

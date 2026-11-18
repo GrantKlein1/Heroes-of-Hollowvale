@@ -1,9 +1,14 @@
 import { describe, it, expect } from 'vitest'
 import {
+  CLASS_HP,
   CLASS_SPEED,
   ATTACK_MS,
+  ATTACK_CLIP_MS,
+  ATTACK_PLAYBACK,
+  attackAnimTimeScale,
   MELEE_DMG,
   WEAPON,
+  WEAPON_STATS,
   CONSUMABLE,
   CONSUMABLE_EFFECTS,
   FIREBALL_SPEED,
@@ -22,39 +27,73 @@ import {
 
 describe('Combat Balance Constants & Formulas', () => {
   describe('Player Class Constants', () => {
-    it('preserves exact class movement speed constants', () => {
+    it('gives each hero a different job from the same weapon table', () => {
+      expect(CLASS_HP).toEqual({
+        knight: 120,
+        mage: 70,
+        thief: 85,
+        dwarf: 95,
+      })
       expect(CLASS_SPEED).toEqual({
         knight: 160,
-        dwarf: 160,
+        dwarf: 120,
         mage: 180,
-        thief: 200,
+        thief: 210,
       })
-    })
-
-    it('preserves exact class attack duration constants', () => {
+      expect(ATTACK_CLIP_MS).toEqual({
+        knight: 636,
+        dwarf: 636,
+        thief: 636,
+        mage: 583,
+      })
+      expect(ATTACK_PLAYBACK).toEqual({
+        knight: 1,
+        mage: 1,
+        thief: 1.5,
+        dwarf: 0.75,
+      })
+      expect(WEAPON_STATS).toEqual({
+        iron_sword: { damage: 12, swingMs: 636 },
+        apprentice_staff: { damage: 8, swingMs: 583 },
+        twin_daggers: { damage: 7, swingMs: 424 },
+        battle_axe: { damage: 22, swingMs: 848 },
+      })
+      expect(attackAnimTimeScale('dwarf', 'attack')).toBe(0.75)
+      expect(attackAnimTimeScale('thief', 'attack_2')).toBe(1.5)
+      expect(attackAnimTimeScale('knight', 'walk')).toBe(1)
+      expect(attackAnimTimeScale('mage', 'cast')).toBe(1)
       expect(ATTACK_MS).toEqual({
-        mage: 650,
-        thief: 300,
-        knight: 450,
-        dwarf: 600,
+        knight: WEAPON_STATS.iron_sword.swingMs,
+        mage: WEAPON_STATS.apprentice_staff.swingMs,
+        thief: WEAPON_STATS.twin_daggers.swingMs,
+        dwarf: WEAPON_STATS.battle_axe.swingMs,
       })
-    })
-
-    it('preserves exact melee damage constants', () => {
       expect(MELEE_DMG).toEqual({
-        thief: 8,
-        knight: 12,
-        dwarf: 15,
+        knight: WEAPON_STATS.iron_sword.damage,
+        mage: WEAPON_STATS.apprentice_staff.damage,
+        thief: WEAPON_STATS.twin_daggers.damage,
+        dwarf: WEAPON_STATS.battle_axe.damage,
       })
-    })
-
-    it('preserves exact starting weapon mappings', () => {
       expect(WEAPON).toEqual({
         knight: 'iron_sword',
         mage: 'apprentice_staff',
         thief: 'twin_daggers',
         dwarf: 'battle_axe',
       })
+
+      expect(CLASS_HP.knight).toBe(Math.max(...Object.values(CLASS_HP)))
+      expect(CLASS_HP.mage).toBe(Math.min(...Object.values(CLASS_HP)))
+      expect(CLASS_SPEED.dwarf).toBe(Math.min(...Object.values(CLASS_SPEED)))
+      expect(CLASS_SPEED.thief).toBe(Math.max(...Object.values(CLASS_SPEED)))
+      expect(MELEE_DMG.dwarf).toBe(Math.max(...Object.values(MELEE_DMG)))
+      expect(MELEE_DMG.thief).toBe(Math.min(...Object.values(MELEE_DMG)))
+      expect(ATTACK_MS.dwarf).toBe(Math.max(...Object.values(ATTACK_MS)))
+      expect(ATTACK_MS.thief).toBe(Math.min(...Object.values(ATTACK_MS)))
+
+      expect(ATTACK_MS.knight).toBe(Math.round(ATTACK_CLIP_MS.knight / ATTACK_PLAYBACK.knight))
+      expect(ATTACK_MS.dwarf).toBe(Math.round(ATTACK_CLIP_MS.dwarf / ATTACK_PLAYBACK.dwarf))
+      expect(ATTACK_MS.thief).toBe(Math.round(ATTACK_CLIP_MS.thief / ATTACK_PLAYBACK.thief))
+      expect(ATTACK_MS.mage).toBe(Math.round(ATTACK_CLIP_MS.mage / ATTACK_PLAYBACK.mage))
     })
 
     it('preserves consumable items set and effect table', () => {
@@ -112,7 +151,7 @@ describe('Combat Balance Constants & Formulas', () => {
         speed: 300,
         dist: 400,
         size: 12,
-        damage: 7,
+        damage: 10,
       })
     })
   })
@@ -120,26 +159,34 @@ describe('Combat Balance Constants & Formulas', () => {
   describe('Enemy Base Stats & Scaling Constants', () => {
     it('preserves enemy base HP values', () => {
       expect(ENEMY_BASE_HP).toEqual({
-        brute: 25,
-        archer: 10,
-        goblin: 15,
+        brute: 72,
+        archer: 24,
+        goblin: 36,
       })
+      expect(ENEMY_BASE_HP.goblin).toBe(MELEE_DMG.knight * 3)
+      expect(ENEMY_BASE_HP.brute).toBe(MELEE_DMG.knight * 6)
+      expect(ENEMY_BASE_HP.archer).toBe(MELEE_DMG.knight * 2)
     })
 
     it('preserves enemy base speeds', () => {
       expect(ENEMY_BASE_SPEED).toEqual({
-        brute: 55,
+        brute: 50,
         archer: 80,
-        goblin: 70,
+        goblin: 100,
       })
+      expect(ENEMY_BASE_SPEED.brute).toBeLessThan(ENEMY_BASE_SPEED.archer)
+      expect(ENEMY_BASE_SPEED.archer).toBeLessThan(ENEMY_BASE_SPEED.goblin)
+      expect(ENEMY_BASE_SPEED.goblin).toBeLessThan(CLASS_SPEED.knight)
     })
 
     it('preserves enemy base contact damage', () => {
       expect(ENEMY_BASE_DAMAGE).toEqual({
-        brute: 12,
+        brute: 16,
         archer: 6,
-        goblin: 8,
+        goblin: 10,
       })
+      expect(ENEMY_BASE_DAMAGE.brute).toBeGreaterThan(ENEMY_BASE_DAMAGE.goblin)
+      expect(ENEMY_BASE_DAMAGE.archer).toBeLessThan(ARCHER_PROJECTILE.damage)
     })
 
     it('preserves wave scaling rate constants', () => {
@@ -161,53 +208,49 @@ describe('Combat Balance Constants & Formulas', () => {
   })
 
   describe('Dynamic Enemy Formula Helpers', () => {
-    it('calculates enemy HP at wave 1 identically to old constants', () => {
-      expect(getEnemyHp('brute', 1)).toBe(25)
-      expect(getEnemyHp('archer', 1)).toBe(10)
-      expect(getEnemyHp('goblin', 1)).toBe(15)
-      // default fallback
-      expect(getEnemyHp('unknown', 1)).toBe(15)
+    it('calculates enemy HP at wave 1 from the base table', () => {
+      expect(getEnemyHp('brute', 1)).toBe(ENEMY_BASE_HP.brute)
+      expect(getEnemyHp('archer', 1)).toBe(ENEMY_BASE_HP.archer)
+      expect(getEnemyHp('goblin', 1)).toBe(ENEMY_BASE_HP.goblin)
+      expect(getEnemyHp('unknown', 1)).toBe(ENEMY_BASE_HP.goblin)
     })
 
     it('scales enemy HP across higher waves correctly', () => {
-      // wave 2: Math.round(base * (1 + 0.12 * 1))
-      expect(getEnemyHp('brute', 2)).toBe(Math.round(25 * 1.12)) // 28
-      expect(getEnemyHp('archer', 2)).toBe(Math.round(10 * 1.12)) // 11
-      expect(getEnemyHp('goblin', 2)).toBe(Math.round(15 * 1.12)) // 17
+      expect(getEnemyHp('brute', 2)).toBe(Math.round(ENEMY_BASE_HP.brute * 1.12))
+      expect(getEnemyHp('archer', 2)).toBe(Math.round(ENEMY_BASE_HP.archer * 1.12))
+      expect(getEnemyHp('goblin', 2)).toBe(Math.round(ENEMY_BASE_HP.goblin * 1.12))
 
-      // wave 4: Math.round(base * (1 + 0.12 * 3)) = base * 1.36
-      expect(getEnemyHp('brute', 4)).toBe(Math.round(25 * 1.36)) // 34
-      expect(getEnemyHp('archer', 4)).toBe(Math.round(10 * 1.36)) // 14
-      expect(getEnemyHp('goblin', 4)).toBe(Math.round(15 * 1.36)) // 20
+      expect(getEnemyHp('brute', 4)).toBe(Math.round(ENEMY_BASE_HP.brute * 1.36))
+      expect(getEnemyHp('archer', 4)).toBe(Math.round(ENEMY_BASE_HP.archer * 1.36))
+      expect(getEnemyHp('goblin', 4)).toBe(Math.round(ENEMY_BASE_HP.goblin * 1.36))
     })
 
-    it('calculates enemy speed at wave 1 with unit scaling identically to old logic', () => {
-      expect(getEnemySpeed('brute', 1, 1)).toBe(55)
-      expect(getEnemySpeed('archer', 1, 1)).toBe(80)
-      expect(getEnemySpeed('goblin', 1, 1)).toBe(70)
+    it('calculates enemy speed at wave 1 with unit scaling from the base table', () => {
+      expect(getEnemySpeed('brute', 1, 1)).toBe(ENEMY_BASE_SPEED.brute)
+      expect(getEnemySpeed('archer', 1, 1)).toBe(ENEMY_BASE_SPEED.archer)
+      expect(getEnemySpeed('goblin', 1, 1)).toBe(ENEMY_BASE_SPEED.goblin)
 
       const unit = 1.25
-      expect(getEnemySpeed('brute', 1, unit)).toBe(55 * 1.25)
-      expect(getEnemySpeed('archer', 1, unit)).toBe(80 * 1.25)
-      expect(getEnemySpeed('goblin', 1, unit)).toBe(70 * 1.25)
+      expect(getEnemySpeed('brute', 1, unit)).toBe(ENEMY_BASE_SPEED.brute * unit)
+      expect(getEnemySpeed('archer', 1, unit)).toBe(ENEMY_BASE_SPEED.archer * unit)
+      expect(getEnemySpeed('goblin', 1, unit)).toBe(ENEMY_BASE_SPEED.goblin * unit)
     })
 
     it('scales enemy speed across higher waves correctly', () => {
-      // wave 3: base * (1 + 0.05 * 2) = base * 1.10
-      expect(getEnemySpeed('brute', 3, 1)).toBeCloseTo(55 * 1.1)
-      expect(getEnemySpeed('archer', 3, 1)).toBeCloseTo(80 * 1.1)
-      expect(getEnemySpeed('goblin', 3, 1)).toBeCloseTo(70 * 1.1)
+      expect(getEnemySpeed('brute', 3, 1)).toBeCloseTo(ENEMY_BASE_SPEED.brute * 1.1)
+      expect(getEnemySpeed('archer', 3, 1)).toBeCloseTo(ENEMY_BASE_SPEED.archer * 1.1)
+      expect(getEnemySpeed('goblin', 3, 1)).toBeCloseTo(ENEMY_BASE_SPEED.goblin * 1.1)
     })
 
-    it('calculates enemy contact damage across waves identically to old logic', () => {
-      expect(getEnemyDamage('brute', 1)).toBe(12)
-      expect(getEnemyDamage('archer', 1)).toBe(6)
-      expect(getEnemyDamage('goblin', 1)).toBe(8)
+    it('calculates enemy contact damage across waves from the base table', () => {
+      expect(getEnemyDamage('brute', 1)).toBe(ENEMY_BASE_DAMAGE.brute)
+      expect(getEnemyDamage('archer', 1)).toBe(ENEMY_BASE_DAMAGE.archer)
+      expect(getEnemyDamage('goblin', 1)).toBe(ENEMY_BASE_DAMAGE.goblin)
+      expect(getEnemyDamage('unknown', 1)).toBe(ENEMY_BASE_DAMAGE.goblin)
 
-      // wave 3: Math.round(base * (1 + 0.05 * 2)) = Math.round(base * 1.10)
-      expect(getEnemyDamage('brute', 3)).toBe(Math.round(12 * 1.1)) // 13
-      expect(getEnemyDamage('archer', 3)).toBe(Math.round(6 * 1.1)) // 7
-      expect(getEnemyDamage('goblin', 3)).toBe(Math.round(8 * 1.1)) // 9
+      expect(getEnemyDamage('brute', 3)).toBe(Math.round(ENEMY_BASE_DAMAGE.brute * 1.1))
+      expect(getEnemyDamage('archer', 3)).toBe(Math.round(ENEMY_BASE_DAMAGE.archer * 1.1))
+      expect(getEnemyDamage('goblin', 3)).toBe(Math.round(ENEMY_BASE_DAMAGE.goblin * 1.1))
     })
   })
 })

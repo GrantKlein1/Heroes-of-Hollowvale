@@ -820,6 +820,9 @@ describe('Player Actor — Package 1-3', () => {
     it('plays the lightning v2 clip and withholds the bolt until 312.5 ms', () => {
       const mage = new Player(mockScene, 200, 350, 'mage', { facing: 'down' })
       expect(mage.cast('lightning', 1000)).toBe(true)
+      expect(mockScene.mana).toBe(90)
+      expect(session.mana).toBe(90)
+      expect(mockScene.mana).toBeGreaterThanOrEqual(0)
       expect(mockScene.projectiles).toHaveLength(0)
       expect(mage.anims.currentAnim.key).toBe('mage_cast_lightning_v2_down')
       expect(mage.anims.play).not.toHaveBeenCalledWith('mage_cast_down', expect.anything())
@@ -847,6 +850,8 @@ describe('Player Actor — Package 1-3', () => {
     it('plays the leech v2 clip for another facing and spawns the orb on release', () => {
       const mage = new Player(mockScene, 80, 120, 'mage', { facing: 'right' })
       expect(mage.cast('leech', 4000)).toBe(true)
+      expect(mockScene.mana).toBe(100)
+      expect(session.mana).toBe(100)
       expect(mage.anims.currentAnim.key).toBe('mage_cast_leech_v2_right')
       expect(mage.anims.play).not.toHaveBeenCalledWith('mage_cast_right', expect.anything())
       expect(mockScene.projectiles).toHaveLength(0)
@@ -863,6 +868,45 @@ describe('Player Actor — Package 1-3', () => {
       expect(proj.absorbAnim).toBe('leech_absorb_v2')
       expect(Math.abs(proj.x - (mage.x + offset.x))).toBeLessThanOrEqual(2)
       expect(Math.abs(proj.y - (mage.y + offset.y))).toBeLessThanOrEqual(2)
+    })
+
+    it('with 5 mana lightning casts nothing, notices, and never drops mana below 0', () => {
+      mockScene._notices = []
+      mockScene._notice = (msg) => {
+        mockScene._notices.push(msg)
+      }
+      mockScene._attackUntil = 0
+      mockScene.mana = 5
+      session.mana = 5
+      session.lifeLeechCooldownUntil = 0
+
+      const mage = new Player(mockScene, 200, 350, 'mage', { facing: 'down' })
+      expect(mage.cast('lightning', 1000)).toBe(false)
+      expect(mockScene.mana).toBe(5)
+      expect(session.mana).toBe(5)
+      expect(mockScene._notices).toContain('Not enough mana.')
+      expect(mockScene.projectiles).toHaveLength(0)
+      expect(mage._v2Cast).toBeFalsy()
+      expect(mage.currentAttackType).toBeNull()
+      expect(mage.is(ACTOR_STATES.ATTACK)).toBe(false)
+      expect(mockScene._attackUntil).toBe(0)
+      expect(session.lifeLeechCooldownUntil).toBe(0)
+      expect(mage.anims.play.mock.calls.some((call) => String(call[0]).includes('lightning'))).toBe(false)
+
+      mockScene.mana = 0
+      session.mana = 0
+      mockScene._notices = []
+      expect(mage.cast('lightning', 2000)).toBe(false)
+      expect(mockScene.mana).toBe(0)
+      expect(session.mana).toBe(0)
+      expect(mage.is(ACTOR_STATES.ATTACK)).toBe(false)
+
+      mockScene.mana = 10
+      session.mana = 10
+      expect(mage.cast('lightning', 3000)).toBe(true)
+      expect(mockScene.mana).toBe(0)
+      expect(session.mana).toBe(0)
+      expect(mockScene.mana).toBeGreaterThanOrEqual(0)
     })
 
     it('still fires fireball immediately on the generic cast clip', () => {
@@ -1193,3 +1237,45 @@ describe('Player Actor — Package 1-3', () => {
   })
 })
 
+
+describe('Player Actor — attack anim timeScale composition', () => {
+  const swing = (classId, name = 'attack') => {
+    const player = new Player(createMockScene(), 100, 200, classId)
+    player.anims.timeScale = 1
+    player.playAnim(name, false)
+    return player
+  }
+
+  it.each([
+    ['knight', 'attack', 1],
+    ['dwarf', 'attack', 0.75],
+    ['thief', 'attack', 1.5],
+    ['thief', 'attack_2', 1.5],
+    ['dwarf', 'walk', 1],
+  ])('keeps normal %s %s timing at %sx', (classId, name, expected) => {
+    expect(swing(classId, name).anims.timeScale).toBeCloseTo(expected, 10)
+  })
+
+  it('composes the class multiplier with an external slow-down instead of overwriting it', () => {
+    const player = new Player(createMockScene(), 100, 200, 'knight')
+    player.anims.timeScale = 0.25
+    player.playAnim('attack', false)
+    expect(player.anims.timeScale).toBeCloseTo(0.25, 10)
+
+    const dwarf = new Player(createMockScene(), 100, 200, 'dwarf')
+    dwarf.anims.timeScale = 0.25
+    dwarf.playAnim('attack', false)
+    expect(dwarf.anims.timeScale).toBeCloseTo(0.25 * 0.75, 10)
+  })
+
+  it('does not stack the class multiplier across repeated plays and removes it for non-attack clips', () => {
+    const player = new Player(createMockScene(), 100, 200, 'thief')
+    player.anims.timeScale = 0.5
+    player.playAnim('attack', false)
+    player.playAnim('attack_2', false)
+    player.playAnim('attack', false)
+    expect(player.anims.timeScale).toBeCloseTo(0.5 * 1.5, 10)
+    player.playAnim('walk', false)
+    expect(player.anims.timeScale).toBeCloseTo(0.5, 10)
+  })
+})

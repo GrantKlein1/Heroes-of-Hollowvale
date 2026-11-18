@@ -206,4 +206,91 @@ test.describe('Package L-5: Chat SSE Streaming & Subtitle Increments', () => {
 
     await page.screenshot({ path: 'tests/e2e/__screenshots__/l8-superseding-abort.png' });
   });
+
+  test('UI-3: dialog name, focus restore, hidden API errors, and keyboard focus ring', async ({ page }) => {
+    await page.addInitScript(() => {
+      window.HTMLMediaElement.prototype.play = () => Promise.resolve();
+    });
+
+    const leakedBody = 'RAW_API_BODY_SHOULD_NOT_LEAK';
+    await page.route('**/api/chat/stream', async (route) => {
+      await route.fulfill({ status: 500, body: leakedBody });
+    });
+    await page.route('**/api/chat', async (route) => {
+      await route.fulfill({ status: 500, body: `API error: 500 ${leakedBody}` });
+    });
+
+    await page.goto('/?seed=1&qa=1');
+
+    const startButton = page.getByRole('button', { name: 'Start Game' });
+    await expect(startButton).toBeVisible();
+    await page.waitForTimeout(600);
+    await startButton.click();
+
+    const classModalHeading = page.getByText('Choose Your Class');
+    await expect(classModalHeading).toBeVisible();
+    const chooseButtons = page.getByRole('button', { name: 'Choose' });
+    await chooseButtons.first().click();
+    await expect(classModalHeading).toBeHidden();
+
+    await page.waitForFunction(() => typeof (window as any).__chatEventBus?.emit === 'function');
+
+    await page.evaluate(() => {
+      const sentinel = document.createElement('button');
+      sentinel.id = 'ui3-focus-sentinel';
+      sentinel.type = 'button';
+      sentinel.textContent = 'Focus sentinel';
+      document.body.appendChild(sentinel);
+      sentinel.focus();
+      (window as any).__chatEventBus.emit('npc:interact', { npc: 'bartender' });
+    });
+
+    const dialog = page.getByRole('dialog', { name: 'Tharos the Bartender' });
+    await expect(dialog).toBeVisible({ timeout: 5000 });
+    await expect(dialog).toHaveAttribute('aria-modal', 'true');
+    await expect.poll(async () => page.evaluate(() => {
+      const panel = document.querySelector('[role="dialog"]');
+      const active = document.activeElement;
+      return !!(panel && active && (active === panel || panel.contains(active)));
+    })).toBe(true);
+
+    const dragonBtn = page.getByRole('button', { name: 'Ask about the Dragon Quest' });
+    await expect(dragonBtn).toBeVisible();
+    await dragonBtn.click();
+
+    await expect(page.getByText('The bartender could not answer.')).toBeVisible({ timeout: 5000 });
+    const transcript = await dialog.innerText();
+    expect(transcript).not.toContain('API error');
+    expect(transcript).not.toContain(leakedBody);
+    expect(transcript).not.toContain('Chat stream error');
+
+    const input = page.getByRole('textbox', { name: 'Message to the bartender' });
+    await expect(input).toBeVisible();
+    await expect(input).toBeEnabled();
+    await page.getByRole('button', { name: 'Close', exact: true }).focus();
+    await page.keyboard.press('Tab');
+    await expect(input).toBeFocused();
+
+    const ring = await input.evaluate((el) => {
+      const style = getComputedStyle(el);
+      return {
+        focusVisible: el.matches(':focus-visible'),
+        outlineStyle: style.outlineStyle,
+        outlineWidth: style.outlineWidth,
+        outlineColor: style.outlineColor,
+        boxShadow: style.boxShadow,
+      };
+    });
+    expect(ring.focusVisible).toBe(true);
+    const outlineVisible = ring.outlineStyle !== 'none'
+      && parseFloat(ring.outlineWidth) > 0
+      && ring.outlineColor !== 'rgba(0, 0, 0, 0)'
+      && ring.outlineColor !== 'transparent';
+    const shadowVisible = !!ring.boxShadow && ring.boxShadow !== 'none';
+    expect(outlineVisible || shadowVisible).toBe(true);
+
+    await page.getByRole('button', { name: 'Close', exact: true }).click();
+    await expect(dialog).toBeHidden();
+    await expect(page.locator('#ui3-focus-sentinel')).toBeFocused();
+  });
 });

@@ -104,8 +104,11 @@ vi.mock('phaser', () => {
 })
 
 import { Enemy, ENEMY_SHEETS } from '../Enemy.js'
+import { ENEMY_BASE_DAMAGE, ENEMY_BASE_HP, ENEMY_BASE_SPEED } from '../../combat/balance.js'
 import { ACTOR_STATES } from '../stateMachine.js'
 import { AttackTokenManager } from '../../ai/tokens.js'
+import { ArcherAI } from '../../ai/archer.js'
+import { ARCHER_PROJECTILE } from '../../combat/balance.js'
 
 function createMockScene() {
   const metadataMap = {
@@ -158,6 +161,49 @@ function createMockScene() {
       },
       frameDef: { w: 80, h: 72, pivot: { x: 0.5, y: 0.8333 } },
     },
+    goblin_archer: {
+      meta: {
+        origin: { x: 0.5, y: 0.9125 },
+        footprint: { x: -13, y: -4, w: 25, h: 8, shape: 'ellipse' },
+        hurtbox: { x: -15, y: -24, w: 30, h: 24 },
+        anims: {
+          idle: { fps: 1, loop: true, frameNames: 'goblin_archer_idle_<dir>' },
+          attack: {
+            frames: 8,
+            releaseFrame: 4,
+            spawnFrame: 4,
+            spawnOffsetFromFeet: {
+              down: { x: -1.5, y: -20 },
+              right: { x: 21, y: -22 },
+              up: { x: 2, y: -30 },
+              left: { x: -11.25, y: -18.5 },
+            },
+          },
+        },
+      },
+      frameDef: { w: 64, h: 64, pivot: { x: 0.5, y: 0.9125 } },
+    },
+    goblin_archer_alert: {
+      meta: {
+        origin: { x: 0.5, y: 0.9125 },
+        anims: { alert: { frames: 4, fps: 8 } },
+      },
+      frameDef: { w: 64, h: 64, pivot: { x: 0.5, y: 0.9125 } },
+    },
+    goblin_archer_death: {
+      meta: {
+        origin: { x: 0.5, y: 0.8333 },
+        anims: { death: { frames: 8, fps: 10 } },
+      },
+      frameDef: { w: 80, h: 72, pivot: { x: 0.5, y: 0.8333 } },
+    },
+    goblin_archer_spawn: {
+      meta: {
+        origin: { x: 0.5, y: 0.875 },
+        anims: { spawn: { frames: 6, fps: 10 } },
+      },
+      frameDef: { w: 64, h: 64, pivot: { x: 0.5, y: 0.875 } },
+    },
   }
 
   const textureManager = {
@@ -185,6 +231,8 @@ function createMockScene() {
     textures: textureManager,
     anims: animsManager,
     attackTokenManager: tokenManager,
+    projectiles: [],
+    add: { existing: vi.fn((obj) => obj) },
     player: {
       x: 100,
       y: 100,
@@ -204,13 +252,13 @@ describe('Enemy Actor — Package 1b-1', () => {
     mockScene = createMockScene()
   })
 
-  it('initializes goblin archetype with base HP 15, damage 8, and speed 70', () => {
+  it('initializes goblin archetype from the balance table', () => {
     const enemy = new Enemy(mockScene, 200, 200, 'goblin')
     expect(enemy.enemyType).toBe('goblin')
-    expect(enemy.hp).toBe(15)
-    expect(enemy.hpMax).toBe(15)
-    expect(enemy.damage).toBe(8)
-    expect(enemy.speed).toBe(70)
+    expect(enemy.hp).toBe(ENEMY_BASE_HP.goblin)
+    expect(enemy.hpMax).toBe(ENEMY_BASE_HP.goblin)
+    expect(enemy.damage).toBe(ENEMY_BASE_DAMAGE.goblin)
+    expect(enemy.speed).toBe(ENEMY_BASE_SPEED.goblin)
     expect(enemy.isEnemy).toBe(true)
   })
 
@@ -286,7 +334,7 @@ describe('Enemy Actor — Package 1b-1', () => {
 
     const tookDamage = enemy.takeDamage(5, 1100)
     expect(tookDamage).toBe(true)
-    expect(enemy.hp).toBe(10)
+    expect(enemy.hp).toBe(ENEMY_BASE_HP.goblin - 5)
     expect(enemy.is(ACTOR_STATES.HURT)).toBe(true)
     expect(enemy.isAttacking).toBe(false)
     // Token must be freed upon being hurt
@@ -297,12 +345,54 @@ describe('Enemy Actor — Package 1b-1', () => {
     const enemy = new Enemy(mockScene, 200, 200, 'goblin')
     mockScene.attackTokenManager.acquire(enemy)
 
-    enemy.takeDamage(15, 1000)
+    enemy.takeDamage(enemy.hpMax, 1000)
     expect(enemy.hp).toBe(0)
     expect(enemy.is(ACTOR_STATES.DEAD)).toBe(true)
     expect(enemy.active).toBe(true)
     expect(enemy.body.enable).toBe(false)
     expect(enemy.lastAnimKey).toBe('goblin_death_down')
     expect(mockScene.attackTokenManager.has(enemy)).toBe(false)
+  })
+
+  it('attaches ArcherAI and plays goblin_archer clips from atlas meta', () => {
+    const enemy = new Enemy(mockScene, 100, 140, 'archer')
+
+    expect(enemy.ai).toBeInstanceOf(ArcherAI)
+    expect(enemy.ai.damage).toBe(ARCHER_PROJECTILE.damage)
+    expect(enemy.assetId).toBe('goblin_archer')
+    expect(enemy.originX).toBe(0.5)
+    expect(enemy.originY).toBe(0.9125)
+    expect(enemy.footprint.w).toBe(25)
+    expect(enemy.hitFrames).toEqual([4])
+    expect(enemy.spawnOffsetFromFeet.left).toEqual({ x: -11.25, y: -18.5 })
+
+    expect(enemy.getSheetForAnim('attack')).toBe('goblin_archer')
+    expect(enemy.getSheetForAnim('alert')).toBe('goblin_archer_alert')
+    expect(enemy.getSheetForAnim('death')).toBe('goblin_archer_death')
+    expect(enemy.getSheetForAnim('spawn')).toBe('goblin_archer_spawn')
+    expect(enemy.getAnimKey('idle')).toBe('goblin_archer_idle_down')
+    expect(enemy.getAnimKey('attack')).toBe('goblin_archer_attack_down')
+    expect(enemy.getAnimKey('alert')).toBe('goblin_archer_alert_down')
+    expect(enemy.getAnimKey('death')).toBe('goblin_archer_death_down')
+    expect(enemy.getAnimKey('spawn')).toBe('goblin_archer_spawn_down')
+    expect(enemy.animHistory).toEqual(expect.arrayContaining([
+      'goblin_archer_spawn_down',
+      'goblin_archer_idle_down',
+    ]))
+
+    enemy.facing = 'left'
+    enemy.anims.currentFrame = { index: 4 }
+    enemy.ai.hasSpawned = true
+    enemy.ai.hasAlerted = true
+    enemy.ai.startAttack(1000)
+    enemy.ai.update(1100, 16)
+
+    expect(mockScene.projectiles).toHaveLength(1)
+    const arrow = mockScene.projectiles[0]
+    expect(arrow.x).toBeCloseTo(100 - 11.25)
+    expect(arrow.y).toBeCloseTo(140 - 18.5)
+    expect(arrow.texture.key).toBe('goblin_archer')
+    expect(arrow.frame.name).toBe('goblin_archer_arrow_left')
+    expect(arrow.damage).toBe(ARCHER_PROJECTILE.damage)
   })
 })

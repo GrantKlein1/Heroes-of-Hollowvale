@@ -77,13 +77,17 @@ test.describe('Package 2-4: Data-Driven Tiled Map Registry, Multi-Atlas Props & 
     expect(tavernMetrics.w).toBe(640);
     expect(tavernMetrics.h).toBe(384);
 
-    // 4. Return through generic exit to Brackenford
+    // 4. Return through generic exit to Brackenford (south doorway mat 288,320,64x32)
     await page.evaluate(() => {
       const scene = (window as any).__scene;
-      scene.player.setPosition(304, 320);
-      scene.player.body.reset(304, 320);
-      scene._tryInteract();
+      scene.player.setPosition(320, 336);
+      scene.player.body.reset(320, 336);
     });
+    // Let the scene refresh the active exit prompt before interacting.
+    await page.evaluate(() => new Promise((resolve) => {
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve(undefined)));
+    }));
+    await page.evaluate(() => (window as any).__scene._tryInteract());
 
     await page.waitForFunction(() => (window as any).__hv?.scene() === 'village', { timeout: 10000 });
     expect(await page.evaluate(() => (window as any).__hv.scene())).toBe('village');

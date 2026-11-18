@@ -32,7 +32,7 @@ test.describe('Package 1b-4: Death & Respawn, Seeded Loot & Critter Flee AI', ()
     }, null, { timeout: 15000 });
 
     const initialCombat = await page.evaluate(() => (window as any).__hv.combat());
-    expect(initialCombat.hp).toBe(100);
+    expect(initialCombat.hp).toBe(120);
     expect(initialCombat.dead).toBe(false);
 
     // Trigger lethal player damage
@@ -61,7 +61,7 @@ test.describe('Package 1b-4: Death & Respawn, Seeded Loot & Critter Flee AI', ()
     const postRespawnCombat = await page.evaluate(() => (window as any).__hv.combat());
     expect(postRespawnCombat.dead).toBe(false);
     expect(postRespawnCombat.hp).toBe(postRespawnCombat.hpMax);
-    expect(postRespawnCombat.hp).toBe(100);
+    expect(postRespawnCombat.hp).toBe(120);
     expect(postRespawnCombat.mana).toBe(postRespawnCombat.manaMax);
 
     // Save screenshot of player respawned with full HP

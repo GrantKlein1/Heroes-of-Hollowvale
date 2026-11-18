@@ -127,27 +127,6 @@ export const COMPOSITE_SPRITES = {
 
 // Animated sprite frames (intro screen sword)
 // Ordered sequence for smooth animation
-export const ANIMATED_SWORD_FRAMES = [
-  `${IMAGES_BASE}/animatedSword/animatedSword1.png`,
-  `${IMAGES_BASE}/animatedSword/animatedSword2.png`,
-  `${IMAGES_BASE}/animatedSword/animatedSword3.png`,
-  `${IMAGES_BASE}/animatedSword/animatedSword4.png`,
-  `${IMAGES_BASE}/animatedSword/animatedSword5.png`,
-  `${IMAGES_BASE}/animatedSword/animatedSword6.png`,
-  `${IMAGES_BASE}/animatedSword/animatedSword7.png`,
-  `${IMAGES_BASE}/animatedSword/animatedSword8.png`,
-  `${IMAGES_BASE}/animatedSword/animatedSword9.png`,
-  `${IMAGES_BASE}/animatedSword/animatedSword10.png`,
-  `${IMAGES_BASE}/animatedSword/animatedSword11.png`,
-  `${IMAGES_BASE}/animatedSword/animatedSword12.png`,
-  `${IMAGES_BASE}/animatedSword/animatedSword13.png`,
-  `${IMAGES_BASE}/animatedSword/animatedSword14.png`,
-  `${IMAGES_BASE}/animatedSword/animatedSword15.png`,
-  `${IMAGES_BASE}/animatedSword/animatedSword16.png`,
-  `${IMAGES_BASE}/animatedSword/animatedSword17.png`,
-  `${IMAGES_BASE}/animatedSword/animatedSword18.png`,
-  `${IMAGES_BASE}/animatedSword/animatedSword19.png`,
-  `${IMAGES_BASE}/animatedSword/animatedSword20.png`,
-  `${IMAGES_BASE}/animatedSword/animatedSword21.png`,
-  `${IMAGES_BASE}/animatedSword/animatedSword22.png`,
-]
+export const ANIMATED_SWORD_FRAMES = Array.from({ length: 22 }, (_, i) =>
+  `${IMAGES_BASE}/animatedSword/animatedSword${i + 1}.png?v=5`
+)

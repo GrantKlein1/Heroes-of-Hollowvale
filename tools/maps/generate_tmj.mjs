@@ -811,10 +811,14 @@ export function buildBrackenfordMap(tilesets, seed = DEFAULT_SEED) {
       properties: [{ name: 'kind', type: 'string', value: 'spawn' }],
     },
     {
+      // HollowvaleScene._drawBeacons shows an exit prompt when the hero body
+      // intersects the exit rect (no extra radius). The hero stands on the
+      // spawn centre, so that point stays at least 48px outside exit_south.
+      // Tile row 8 centres this spawn 48px north of the south gate.
       name: 'spawn_south',
       type: 'spawn',
       x: 9 * TILE_SIZE,
-      y: 9 * TILE_SIZE,
+      y: 8 * TILE_SIZE,
       width: TILE_SIZE,
       height: TILE_SIZE,
       properties: [{ name: 'kind', type: 'string', value: 'spawn' }],

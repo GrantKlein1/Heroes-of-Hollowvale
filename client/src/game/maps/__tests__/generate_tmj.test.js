@@ -256,6 +256,37 @@ describe('Package MM-1: Tiled TMJ Map Generator', () => {
       expect(lost).toEqual([]);
     });
 
+    it('keeps Brackenford spawns outside exit prompts, except the preserved points', () => {
+      // HollowvaleScene._drawBeacons uses rectangle intersection and no radius.
+      const promptRadius = 0
+      const clearance = promptRadius + 48
+      const kept = new Set(['spawn_default', 'spawn_from_market'])
+      const map = buildBrackenfordMap(tilesets, DEFAULT_SEED)
+      const zones = map.layers.find((layer) => layer.name === 'zones').objects
+      const spawns = zones.filter((zone) => zone.type === 'spawn')
+      const exits = zones.filter((zone) => zone.type === 'exit')
+      const exitSouth = zones.find((zone) => zone.name === 'exit_south')
+
+      expect(exitSouth).toMatchObject({ x: 288, y: 320, width: 64, height: 32 })
+      expect(zones.find((zone) => zone.name === 'spawn_default')).toMatchObject({ x: 320, y: 192 })
+      expect(zones.find((zone) => zone.name === 'spawn_from_market')).toMatchObject({ x: 128, y: 192 })
+
+      const checked = []
+      for (const spawn of spawns) {
+        if (kept.has(spawn.name)) continue
+        const px = spawn.x + spawn.width / 2
+        const py = spawn.y + spawn.height / 2
+        for (const exit of exits) {
+          const nearestX = Math.max(exit.x, Math.min(px, exit.x + exit.width))
+          const nearestY = Math.max(exit.y, Math.min(py, exit.y + exit.height))
+          const distance = Math.hypot(px - nearestX, py - nearestY)
+          expect(distance, `${spawn.name} to ${exit.name}`).toBeGreaterThanOrEqual(clearance)
+        }
+        checked.push(spawn.name)
+      }
+      expect(checked).toEqual(['spawn_south'])
+    });
+
     it('autotiles Wang 2x2 corners deterministically', () => {
       const grid = [
         [false, false, false],
