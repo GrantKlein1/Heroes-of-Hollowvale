@@ -8,6 +8,8 @@ You are working in GrantKlein1/Heroes-of-Hollowvale. Follow AGENTS.md and `.agen
 
 **Goal:** In `client/src/Game.jsx`, the `ASSETS` object still lists painted backdrop keys that nothing reads. Only `ASSETS.titleBg` and `ASSETS.titleLogo` are used (the title screen). Delete the unused keys: `villageBg`, `tavernBg`, `marketBg`, `pathBg`, `dungeonBg`, `dungeonInteriorBg`, `treasureBg`, and `player`. Do not delete `titleBg` or `titleLogo`.
 
+PR #89 already removed `PATHS.villageBg`, `PATHS.tavernBg`, `PATHS.marketBg`, `PATHS.walkingPath`, `PATHS.dungeonEntrance`, `PATHS.dungeonInterior`, and `PATHS.hiddenTreasureRoom` from `client/src/config/paths.js`. Those `ASSETS` values are undefined. Do not add the fields back, and do not edit `paths.js`. The image files are in `art-source/legacy-public/`, not in `client/public`.
+
 Loot notices build "Ruby" + (`count > 1` ? `"ies"` : `""`), so two rubies read "Rubyies". Make the plural "Rubies". Leave Sapphire and Emerald plurals correct (Sapphires, Emeralds).
 
 If `ready` is still false 12 seconds after mount, replace the forever "Loading assets…" line with one sentence that the assets are still loading and the player can refresh. Do not add a spinner library.

@@ -2,7 +2,7 @@
 
 Planning only. No game code in this branch. Launch one grok-4.7 cloud agent per package. Each agent opens one PR from `hv/<ID>`. Grant's bot reviews and merges. Agents never merge.
 
-Audit date: 2026-11-18 (workspace clock). Base: `origin/main` at `64f103c`.
+Audit date: 2026-11-18 (workspace clock). Package premises rechecked against `origin/main` at `09f6eca` (`[3-4] Remove the painted renderer and maps opt-out`, PR #89). The test and Playwright counts below were run on `64f103c`, before that merge.
 
 ## Do not overlap work already running
 
@@ -11,7 +11,7 @@ Audit date: 2026-11-18 (workspace clock). Base: `origin/main` at `64f103c`.
 | B10-2 | `Player.js` tool-use, `HollowvaleScene.js` `_updateToolUse`, new `client/src/game/combat/toolUse.js`, cavern maps | `FLAGS-1` and `PATH-1` wait until B10-2 is on `origin/main`. Nobody else touches those files. |
 | 4-2 (PR #90, being merged) | `scaleOutgoingDamage` in `balance.js`, called from melee in `hitSystem.js`. Ale is +10 HP and 1.25x for 5s. Fireball, lightning, and the poison vial are not scaled yet. | `4-2b` waits until #90 is on `origin/main`, then calls that helper from `Projectile._applyPlayerHit`. Nobody else edits `balance.js`, `hitSystem.js`, or the consume path. |
 
-`?renderer=legacy` and `?maps=legacy` stay until a later removal (old package 3-4). `FLAGS-1` dedupes the wrappers. It does not delete the legacy opt-out.
+PR #89 removed the painted renderer and both URL opt-outs. `parseFlags` always returns blend and tiled. `FLAGS-1` deletes `getRenderer`, `isBlendRenderer`, `getMaps`, `isTiledMaps`, and `isTiledMapsEnabled`. It does not keep `?renderer=legacy` or `?maps=legacy`.
 
 ## Audit (this run)
 
@@ -53,14 +53,14 @@ Run a wave together. Do not start the next wave until the previous wave's PRs ar
 | UI-3 | Bartender dialog: name, focus, and errors that are not raw HTTP bodies | 3 | `client/src/Game.jsx` | low | UI-2 merged |
 | STRICT-1 | One Phaser game under React StrictMode | 3 | `client/src/main.jsx`, `client/src/components/PhaserGame.jsx` | med | none |
 | ERR-1 | Production API errors do not echo internal messages | 3 | `server/src/middleware/errorHandler.js`, `server/src/__tests__/errorHandler.test.js` | low | none |
-| PUBLIC-1 | Delete the unreferenced `client/public/images` files from the 2026-11-17 audit | 3 | the MOVE list in `PUBLIC-1.md`, `docs/public-audit-2026-11-17.md` | med | none |
+| PUBLIC-1 | Correct the public-image audit; the old MOVE files are already gone | 3 | `docs/public-audit-2026-11-17.md` | low | none. Do not delete `client/public` files. |
 | UI-4 | Death is a short notice, then the existing entrance respawn | 4 | `client/src/Game.jsx`, `tests/e2e/death-respawn.spec.ts` only if that spec requires the old menu | low | UI-3 merged. Do not edit `death.js` or balance. |
-| PT-K | Playtest knight: Brackenford, tavern, path | 4 | `docs/playtest/2026-11-17-knight.md`, `docs/playtest/knight/**`, `tests/e2e/playtest-knight.spec.ts`, `client/src/game/sceneCatalog.js` (`SCENE_HINTS` strings only) | low | none |
+| PT-K | Playtest knight: Brackenford, tavern, wilderness | 4 | `docs/playtest/2026-11-17-knight.md`, `docs/playtest/knight/**`, `tests/e2e/playtest-knight.spec.ts`, `client/src/game/sceneCatalog.js` (`SCENE_HINTS` strings only) | low | none. South from Brackenford is wilderness, not `path`. |
 | PT-M | Playtest mage: spell wheel and one cast | 4 | `docs/playtest/2026-11-17-mage.md`, `docs/playtest/mage/**`, `tests/e2e/playtest-mage.spec.ts`, `client/src/game/fxLayer.js` | low | none |
 | PT-T | Playtest thief: move, vanish, dagger swing | 4 | `docs/playtest/2026-11-17-thief.md`, `docs/playtest/thief/**`, `tests/e2e/playtest-thief.spec.ts`, `client/src/game/combat/dodge.js` | low | none. Do not edit Player tool-use (B10-2). |
 | PT-D | Playtest dwarf: axe swing in Brackenford | 4 | `docs/playtest/2026-11-17-dwarf.md`, `docs/playtest/dwarf/**`, `tests/e2e/playtest-dwarf.spec.ts`, `client/src/game/combat/fallbacks.js` | low | none. Do not edit ale damage (4-2). |
-| FLAGS-1 | One maps-flag function; keep both legacy opt-outs | 5 | `client/src/game/config/flags.js`, `client/src/game/config/__tests__/flags.test.js`, `client/src/game/maps/MapLoader.js`, `client/src/game/maps/__tests__/MapLoader.test.js`, `client/src/game/actors/Player.js` (the `isBlendRenderer` import and its two guards only) | med | **Wait for B10-2** on `origin/main`. Do not edit `HollowvaleScene.js` (`PATH-1`). |
-| PATH-1 | A missing tiled map must not dump the player in Brackenford; `path` stays painted | 5 | `client/src/game/scenes/HollowvaleScene.js` (enter/show fallback only), `client/src/game/maps/__tests__/mapRegistry.test.js` | med | **Wait for B10-2** on `origin/main`. Do not edit `Player.js`, `flags.js`, or `MapLoader.js` (`FLAGS-1`). |
+| FLAGS-1 | Remove the constant renderer and maps wrappers | 5 | `client/src/game/config/flags.js`, `client/src/game/config/__tests__/flags.test.js`, `client/src/game/maps/MapLoader.js`, `client/src/game/maps/__tests__/MapLoader.test.js`, `client/src/game/actors/Player.js` (the `isBlendRenderer` import and its two hooks only) | med | **Wait for B10-2** on `origin/main`. Do not edit `HollowvaleScene.js` (`PATH-1`). Do not keep the legacy opt-outs. |
+| PATH-1 | An unknown scene id stays put, with no warning | 5 | `client/src/game/scenes/HollowvaleScene.js` (`enterScene` no-map branch only) | low | **Wait for B10-2** on `origin/main`. Do not edit `Player.js`, `flags.js`, `MapLoader.js`, or `sceneCatalog.js`. |
 | COPY-1 | Bartender prompt: "gravelly", not "gravely" | 5 | `server/src/npcData.js` and a test only if it snapshots that sentence | low | none (wave 5 only so the wave stays disjoint) |
 | SESSION-1 | Session ids do not use `Math.random` | 5 | `client/src/lib/api.js`, `client/src/lib/__tests__/apiStream.test.js` only if that test breaks | low | none (wave 5 only so the wave stays disjoint) |
 | 4-2b | Ale damage boost on fireball, lightning, and poison vial hits | 5 | `client/src/game/actors/Projectile.js` (`_applyPlayerHit` flat-damage branch only), `client/src/game/actors/__tests__/playerHitBuff.test.js` | low | **Wait for PR #90** on `origin/main`. Do not edit `balance.js` or `hitSystem.js`. |

@@ -10,7 +10,7 @@ You are working in GrantKlein1/Heroes-of-Hollowvale. Follow AGENTS.md and `.agen
 
 `README.md` says lore comes from `newLore.txt`, the stack is React + Tailwind with no Phaser, and the world is only Village → Path → Dungeon. Canon for place names is `newLore_expanded.txt` (do not edit it). The client is React 18 + Vite + Tailwind + Phaser 3. The server is Express on port 5051. Dev is `npm install` then `npm run dev` (client 5173, API proxied). `npm test` runs Vitest and `node --test`. CI (`.github/workflows/ci.yml`, read-only) runs `npm test` and `npm run build --workspace client`. It does not run Playwright.
 
-`docs/art-pipeline.md` still says Grant exports 16×16 Aseprite sheets into `client/public/images/` and the scene calls `this.load.aseprite`. The shipped path is Blendsmith atlases via `tools/assets/import_blendsmith.mjs`, 32 px tiles, 4 facings, anchors read from atlas meta. Point readers at `docs/ASSET_SPEC.md`. Keep a short note that `?renderer=legacy` still paints the old backdrops. Do not invent a new pipeline.
+`docs/art-pipeline.md` still says Grant exports 16×16 Aseprite sheets into `client/public/images/` and the scene calls `this.load.aseprite`. The shipped path is Blendsmith atlases via `tools/assets/import_blendsmith.mjs`, 32 px tiles, 4 facings, anchors read from atlas meta. Point readers at `docs/ASSET_SPEC.md`. Package 3-4 (PR #89, `09f6eca`) removed the painted renderer and both `?renderer=legacy` and `?maps=legacy`. Painted images now live in `art-source/legacy-public/`. Do not tell readers those query flags still work. The README route Village → Path → Dungeon is gone: Brackenford's south door targets wilderness, and there is no `path` scene. Do not invent a new pipeline or a new route.
 
 Do not add place names that are not already in `newLore_expanded.txt`. You may name Brackenford, the Embered Flagon, the Cavern of Embers, Emberwood, and the Ashen Wastes only if you need examples, and only because they are already in that file.
 
@@ -35,8 +35,9 @@ Do not add place names that are not already in `newLore_expanded.txt`. You may n
 **Acceptance criteria:**
 
 1. README names Phaser, the two ports, `npm test`, and `newLore_expanded.txt` as the place-name canon. It does not claim `newLore.txt` is the only lore source.
-2. `docs/art-pipeline.md` no longer tells the reader to call `this.load.aseprite` as the current path. It points at `docs/ASSET_SPEC.md` and the importer.
-3. No code files in the diff. No new place names.
+2. `docs/art-pipeline.md` no longer tells the reader to call `this.load.aseprite` as the current path, and it does not say `?renderer=legacy` or `?maps=legacy` still paints. It points at `docs/ASSET_SPEC.md` and the importer.
+3. README does not list a Path scene between the village and the dungeon.
+4. No code files in the diff. No new place names.
 
 **Verify with:**
 

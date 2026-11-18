@@ -1,4 +1,4 @@
-# PT-K — Playtest knight: Brackenford, tavern, path
+# PT-K — Playtest knight: Brackenford, tavern, wilderness
 
 You are working in GrantKlein1/Heroes-of-Hollowvale. Follow AGENTS.md and `.agents/rules/hollowvale-guardrails.md`. Do ONLY package **PT-K**.
 
@@ -8,7 +8,9 @@ You are working in GrantKlein1/Heroes-of-Hollowvale. Follow AGENTS.md and `.agen
 
 **Goal:** Play the knight headlessly and write a bug report. Fix only a trivial bug inside the whitelist. Everything else is a report, not a code change.
 
-**Route:** `?qa=1&seed=1`. Title screen, first Choose (knight), Brackenford village, walk to the tavern and press E, confirm the bartender panel opens, leave, walk south onto `path`. Do not enter the dragon lair. Do not rename the bartender label "Tharos". Do not invent place names. Names you may use are already in the game and in `newLore_expanded.txt`: Hollowvale, Brackenford, the Embered Flagon, the Cavern of Embers, Emberwood, the Ashen Wastes, Veyrath.
+**Route:** `?qa=1&seed=1`. Title screen, first Choose (knight), Brackenford village, walk to the tavern and press E, confirm the bartender panel opens, leave, then take Brackenford's south exit. That door targets `wilderness.tmj`. There is no `path` scene: `enterScene('path')` stays put. Do not walk a path scene, and do not enter the dragon lair. Do not rename the bartender label "Tharos". Do not invent place names. Names you may use are already in the game and in `newLore_expanded.txt`: Hollowvale, Brackenford, the Embered Flagon, the Cavern of Embers, Emberwood, the Ashen Wastes, Veyrath.
+
+`SCENE_HINTS` still has a `path` key, and the dungeon hint still says "Path". Those strings name a scene the game cannot enter. Deleting the `path` key and the word Path in the dungeon hint is the allowed trivial fix. Do not edit any other hint unless it is a typo. `PATH-1` does not own this file.
 
 **Report:** `docs/playtest/2026-11-17-knight.md`. What you did, what broke, screenshots saved under `docs/playtest/knight/`.
 
@@ -36,7 +38,7 @@ You are working in GrantKlein1/Heroes-of-Hollowvale. Follow AGENTS.md and `.agen
 
 **Acceptance criteria:**
 
-1. `playtest-knight.spec.ts` boots the knight, reaches the tavern, and reaches `path` without asserting dragon HP.
+1. `playtest-knight.spec.ts` boots the knight, reaches the tavern, and reaches wilderness without asserting dragon HP. It does not call `enterScene('path')`.
 2. The markdown report exists and names each bug or says none.
 3. Any code change outside `SCENE_HINTS` is absent from `git diff origin/main --stat`.
 
@@ -52,6 +54,6 @@ Paste the output into the PR body. Never start a dev server by hand or use watch
 
 **Evidence:** paste the command output and `git diff origin/main --stat` in the PR body.
 
-**Process:** short plan at the top of the PR, small commits, ONE PR titled `[PT-K] Knight playtest through Brackenford, the tavern, and the path`. Stop after CI is green. No polish rounds. CI is `npm test` and `npm run build --workspace client` only.
+**Process:** short plan at the top of the PR, small commits, ONE PR titled `[PT-K] Knight playtest through Brackenford, the tavern, and wilderness`. Stop after CI is green. No polish rounds. CI is `npm test` and `npm run build --workspace client` only.
 
 **Stop** after that PR is open and CI is green. Do not start another package.
