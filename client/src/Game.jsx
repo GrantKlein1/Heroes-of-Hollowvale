@@ -155,13 +155,9 @@ export default function Game() {
     session.spellId = id
     showNotice(`Selected ${found ? found.name : id}`)
   }
-  // Game over overlay and killer info
-  const [gameOver, setGameOver] = useState(false)
   const [vitals, setVitals] = useState({ hp: CLASS_HP.knight, hpMax: CLASS_HP.knight, mana: 0, manaMax: 0 })
   const [activePrompt, setActivePrompt] = useState('')
   const [abilityNow, setAbilityNow] = useState(0)
-  const gameOverRef = useRef(false)
-  const killerRef = useRef(null)
   const setPlayerImageAsync = (src) => {
     session.spriteUrl = src || ''
   }
@@ -1276,8 +1272,8 @@ export default function Game() {
   useEffect(() => { sceneRef.current = scene }, [scene])
 
   useEffect(() => {
-    session.blocked = titleOpen || optionsOpen || controlsOpen || fieldGuideOpen || classSelectOpen || chatOpen || inventoryOpen || shopOpen || gameOver
-  }, [titleOpen, optionsOpen, controlsOpen, fieldGuideOpen, classSelectOpen, chatOpen, inventoryOpen, shopOpen, gameOver])
+    session.blocked = titleOpen || optionsOpen || controlsOpen || fieldGuideOpen || classSelectOpen || chatOpen || inventoryOpen || shopOpen
+  }, [titleOpen, optionsOpen, controlsOpen, fieldGuideOpen, classSelectOpen, chatOpen, inventoryOpen, shopOpen])
 
   useEffect(() => {
     if (selectedClass !== 'thief' && selectedClass !== 'mage') return undefined
@@ -1301,7 +1297,12 @@ export default function Game() {
       setVitals({ hp: v.hp, hpMax: v.hpMax, mana: v.mana, manaMax: v.manaMax })
     }
     const onPrompt = ({ label } = {}) => setActivePrompt(label || '')
-    const onNotice = ({ text } = {}) => { if (text) showNotice(text) }
+    const onNotice = ({ text } = {}) => {
+      if (!text) return
+      // death.js also emits this string; the wake notice is shown from onRespawn.
+      if (text === 'Respawned at area entrance') return
+      showNotice(text)
+    }
     const onLoot = ({ gems, items } = {}) => {
       const overflow = grantLoot(gems || {}, items || [])
       const gemParts = []
@@ -1330,14 +1331,8 @@ export default function Game() {
         return next
       })
     }
-    const onDied = ({ killer } = {}) => {
-      killerRef.current = killer || 'Unknown'
-      gameOverRef.current = true
-      setGameOver(true)
-    }
     const onRespawn = () => {
-      gameOverRef.current = false
-      setGameOver(false)
+      showNotice('You wake at the area entrance.', 2000)
     }
     const onWheel = ({ open } = {}) => setSpellWheelOpen(!!open)
     const onAbility = () => setAbilityNow(performance.now())
@@ -1355,7 +1350,6 @@ export default function Game() {
       eventBus.on(GameEvents.NOTICE, onNotice),
       eventBus.on(GameEvents.LOOT, onLoot),
       eventBus.on(GameEvents.ITEM_CONSUMED, onConsumed),
-      eventBus.on(GameEvents.DIED, onDied),
       eventBus.on(GameEvents.RESPAWN, onRespawn),
       eventBus.on(GameEvents.SPELL_WHEEL, onWheel),
       eventBus.on(GameEvents.ABILITY, onAbility),
@@ -2286,48 +2280,6 @@ export default function Game() {
         {notice.show && (
           <div className="absolute top-6 left-1/2 -translate-x-1/2 z-30 px-3 py-1.5 rounded bg-stone-900/80 border border-amber-900/50 text-amber-200 shadow">
             {notice.text}
-          </div>
-        )}
-
-        {/* Death Screen Overlay */}
-        {gameOver && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center">
-            <div className="absolute inset-0 bg-black/70" />
-            <div className="relative z-10 w-[90%] max-w-lg rounded-2xl border border-red-900/50 bg-stone-900/95 shadow-2xl p-6 flex flex-col items-center gap-4">
-              <h2 className="text-3xl font-display text-red-400 drop-shadow">You Died</h2>
-              <p className="text-stone-300 text-center">Slain by <span className="text-red-300 font-semibold">{killerRef.current}</span>.</p>
-              <div className="w-full h-1 bg-stone-700 rounded overflow-hidden">
-                <div className="h-full bg-red-600 animate-pulse" style={{ width: '100%' }} />
-              </div>
-              <button
-                onClick={() => {
-                  setGameOver(false)
-                  gameOverRef.current = false
-                  session.classId = null
-                  session.spriteUrl = ''
-                  session.equippedId = null
-                  session.api?.resetRun()
-                  setVitals({ hp: CLASS_HP.knight, hpMax: CLASS_HP.knight, mana: 0, manaMax: 0 })
-                  setTitleOpen(true)
-                  titleOpenRef.current = true
-                  setClassSelectOpen(false)
-                  classSelectOpenRef.current = false
-                  setSelectedClass(null)
-                  selectedClassRef.current = null
-                  const emptyInv = {
-                    armor: { head: null, chest: null, legs: null, boots: null, offhand: null },
-                    storage: Array(27).fill(null),
-                    hotbar: Array(9).fill(null),
-                  }
-                  setInventory(emptyInv)
-                  inventoryRef.current = emptyInv
-                  setScene('village')
-                  sceneRef.current = 'village'
-                }}
-                className="mt-2 px-6 py-3 rounded-lg bg-red-600 hover:bg-red-500 text-stone-900 font-semibold shadow-lg shadow-red-900/30"
-              >Return to Main Menu</button>
-              <p className="text-xs text-stone-400">Your adventure can begin anew.</p>
-            </div>
           </div>
         )}
 
