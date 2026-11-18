@@ -1,6 +1,4 @@
 import { test, expect } from '@playwright/test'
-import fs from 'fs'
-import path from 'path'
 
 /**
  * Package 3-3. Emberwood and Ashen screens, the cavern-mouth link, and a FPS sample.
@@ -118,9 +116,10 @@ test.describe('Package 3-3 wilderness tiles', () => {
       const sample = (window as any).__hv?.fps?.()
       return typeof sample === 'number' ? sample : 0
     })
-    const fpsPath = path.resolve('/opt/cursor/artifacts/wilderness-fps.txt')
-    fs.mkdirSync(path.dirname(fpsPath), { recursive: true })
-    fs.writeFileSync(fpsPath, `wilderness fps (this VM, not Iris Xe): ${fps}\n`)
+    await test.info().attach('wilderness-fps', {
+      body: `wilderness fps (this VM, not Iris Xe): ${fps}\n`,
+      contentType: 'text/plain',
+    })
     expect(fps).toBeGreaterThan(0)
 
     // Cross the north exit the way walking does: body in the open mouth, latch clear.
