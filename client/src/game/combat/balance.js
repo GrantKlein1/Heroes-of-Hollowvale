@@ -11,6 +11,8 @@
  * that on-screen length, and the next swing waits until the clip finishes.
  */
 
+import { builtinTable, getEnemyDef } from './enemyDefs.js'
+
 /**
  * Health for the body, not the weapon.
  * Knight is the toughest. The mage is the frailest. The dwarf is stout
@@ -200,29 +202,19 @@ export const FIREBALL_DIST = 220
 export const FIRE_LINGER_MS = 2000
 
 /**
- * First-wave bodies. Later waves grow from WAVE_SCALING.
+ * First-wave bodies. The numbers live in enemyDefs.js; these tables are
+ * snapshots of the built-in defs. The get* helpers below read live defs.
+ * Later waves grow from WAVE_SCALING.
  * A knight's sword is 12, so these health totals are whole swings:
  * goblin three, brute six, archer two.
  * The brute is the slow heavy hitter. The goblin is quicker and lighter.
  * The archer's jab is weak; the arrow below is the real hit.
  */
-export const ENEMY_BASE_HP = Object.freeze({
-  brute: 72,
-  archer: 24,
-  goblin: 36,
-})
+export const ENEMY_BASE_HP = builtinTable((def) => def.hp)
 
-export const ENEMY_BASE_SPEED = Object.freeze({
-  brute: 50,
-  archer: 80,
-  goblin: 100,
-})
+export const ENEMY_BASE_SPEED = builtinTable((def) => def.speed)
 
-export const ENEMY_BASE_DAMAGE = Object.freeze({
-  brute: 16,
-  archer: 6,
-  goblin: 10,
-})
+export const ENEMY_BASE_DAMAGE = builtinTable((def) => def.damage)
 
 /** Wave scaling rates */
 export const WAVE_SCALING = Object.freeze({
@@ -232,12 +224,7 @@ export const WAVE_SCALING = Object.freeze({
 })
 
 /** Enemy archer projectile parameters */
-export const ARCHER_PROJECTILE = Object.freeze({
-  speed: 300,
-  dist: 400,
-  size: 12,
-  damage: 10,
-})
+export const ARCHER_PROJECTILE = Object.freeze({ ...getEnemyDef('archer').projectile })
 
 /** Base dungeon wave spawn positions: [enemyType, nx, ny] */
 export const BASE_WAVE_SPAWNS = Object.freeze([
@@ -256,7 +243,7 @@ export const BASE_WAVE_SPAWNS = Object.freeze([
  * @returns {number}
  */
 export function getEnemyHp(type, wave = 1) {
-  const base = ENEMY_BASE_HP[type] ?? ENEMY_BASE_HP.goblin
+  const base = (getEnemyDef(type) ?? getEnemyDef('goblin')).hp
   return Math.round(base * (1 + WAVE_SCALING.hpPerWave * Math.max(0, wave - 1)))
 }
 
@@ -270,7 +257,7 @@ export function getEnemyHp(type, wave = 1) {
  * @returns {number}
  */
 export function getEnemySpeed(type, wave = 1, unit = 1) {
-  const base = ENEMY_BASE_SPEED[type] ?? ENEMY_BASE_SPEED.goblin
+  const base = (getEnemyDef(type) ?? getEnemyDef('goblin')).speed
   return base * (1 + WAVE_SCALING.speedPerWave * Math.max(0, wave - 1)) * unit
 }
 
@@ -283,7 +270,7 @@ export function getEnemySpeed(type, wave = 1, unit = 1) {
  * @returns {number}
  */
 export function getEnemyDamage(type, wave = 1) {
-  const base = ENEMY_BASE_DAMAGE[type] ?? ENEMY_BASE_DAMAGE.goblin
+  const base = (getEnemyDef(type) ?? getEnemyDef('goblin')).damage
   return Math.round(base * (1 + WAVE_SCALING.damagePerWave * Math.max(0, wave - 1)))
 }
 

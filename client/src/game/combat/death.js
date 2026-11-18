@@ -12,6 +12,7 @@ import { getRng, random } from '../rng.js'
 import { eventBus, GameEvents } from '../../lib/eventBus.js'
 import { ACTOR_STATES } from '../actors/stateMachine.js'
 import { buildAnimKey } from '../assets/animKeys.js'
+import { ENEMY_DEFS, builtinTable, getEnemyDef } from './enemyDefs.js'
 
 /** World-drop atlas imported in AS-3. Idle cells use the sheet anchor; collect is centred. */
 export const LOOT_PICKUP_ATLAS = 'loot_pickups'
@@ -51,7 +52,8 @@ export function lootHasSprite(id) {
  */
 export function seededLootIds() {
   const ids = []
-  for (const table of Object.values(LOOT_TABLES)) {
+  for (const def of Object.values(ENEMY_DEFS)) {
+    const table = def.loot || {}
     for (const gem of table.gems || []) {
       if (gem?.type && !ids.includes(gem.type)) ids.push(gem.type)
     }
@@ -108,35 +110,9 @@ export function listLootDrops(gems, items) {
 
 /**
  * Loot drop probability definitions per enemy archetype.
+ * Snapshot of the built-in defs in enemyDefs.js; drops read live defs.
  */
-export const LOOT_TABLES = Object.freeze({
-  goblin: {
-    gems: [
-      { type: 'ruby', chance: 0.35, count: 1 },
-      { type: 'emerald', chance: 0.15, count: 1 },
-    ],
-    items: [
-      { id: 'speed_potion', chance: 0.15, count: 1 },
-    ],
-  },
-  brute: {
-    gems: [
-      { type: 'ruby', chance: 0.60, count: 1 },
-      { type: 'sapphire', chance: 0.50, count: 1 },
-    ],
-    items: [
-      { id: 'healing_potion', chance: 0.25, count: 1 },
-    ],
-  },
-  archer: {
-    gems: [
-      { type: 'sapphire', chance: 0.30, count: 1 },
-    ],
-    items: [
-      { id: 'mana_potion', chance: 0.25, count: 1 },
-    ],
-  },
-})
+export const LOOT_TABLES = builtinTable((def) => def.loot)
 
 /**
  * Maps enemy archetype identifier to user-facing display label.
@@ -145,10 +121,7 @@ export const LOOT_TABLES = Object.freeze({
  * @returns {string}
  */
 export function enemyLabel(type) {
-  if (type === 'goblin') return 'Goblin'
-  if (type === 'brute') return 'Goblin Brute'
-  if (type === 'archer') return 'Goblin Archer'
-  return type || 'Unknown'
+  return getEnemyDef(type)?.label || type || 'Unknown'
 }
 
 /**
@@ -166,7 +139,7 @@ export function generateSeededLoot(enemyType, rng) {
   const gems = { ruby: 0, sapphire: 0, emerald: 0 }
   const items = []
 
-  const table = LOOT_TABLES[enemyType]
+  const table = getEnemyDef(enemyType)?.loot
   if (!table) {
     return { gems, items }
   }

@@ -93,6 +93,7 @@ import {
   getEnemyDamage,
 } from '../combat/balance.js'
 import { isDebug } from '../config/flags.js'
+import { getEnemyDef, isEnemyType } from '../combat/enemyDefs.js'
 
 /** Boot playfield until enterScene mounts a map. Same point the first Player construct used. */
 const BOOT_WORLD_W = 1024
@@ -124,10 +125,7 @@ function removeAt(arr, i) {
 }
 
 function enemyLabel(type) {
-  if (type === 'goblin') return 'Goblin'
-  if (type === 'brute') return 'Goblin Brute'
-  if (type === 'archer') return 'Goblin Archer'
-  return 'Unknown'
+  return getEnemyDef(type)?.label || 'Unknown'
 }
 
 function placeholderColor(id) {
@@ -1029,7 +1027,7 @@ export default class HollowvaleScene extends Phaser.Scene {
   }
 
   _spawnEnemy(type, nx, ny, wave) {
-    if (type === 'goblin' || type === 'brute' || type === 'goblin_brute' || type === 'archer' || type === 'goblin_archer') {
+    if (isEnemyType(type)) {
       const wx = nx > 1 ? nx : nx * this.worldW
       const wy = ny > 1 ? ny : ny * this.worldH
       const enemy = new Enemy(this, wx, wy, type, { wave })
@@ -1075,7 +1073,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       nx = this.player.x / this.worldW
       ny = this.player.y / this.worldH
     }
-    if (type === 'goblin' || type === 'brute' || type === 'goblin_brute' || type === 'archer' || type === 'goblin_archer') {
+    if (isEnemyType(type)) {
       const wx = (x !== undefined && x > 1) ? x : nx * this.worldW
       const wy = (y !== undefined && y > 1) ? y : ny * this.worldH
       const enemy = new Enemy(this, wx, wy, type, { wave: this.wave || 1 })
