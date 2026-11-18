@@ -1,7 +1,6 @@
 /**
- * Field Guide catalog. Numbers are read from combat modules.
- * Short sentences are the only hand-written copy.
- * Item names and market prices match Game.jsx.
+ * Field Guide catalog. Numbers are read from combat modules, enemyDefs.js,
+ * and the item registry. Short sentences are the only hand-written copy.
  */
 
 import {
@@ -11,15 +10,13 @@ import {
   MELEE_DMG,
   WEAPON,
   CONSUMABLE_EFFECTS,
-  ENEMY_BASE_HP,
-  ENEMY_BASE_SPEED,
-  ENEMY_BASE_DAMAGE,
-  ARCHER_PROJECTILE,
   DRAGON_BASE_HP,
   DRAGON_DAMAGE,
   DRAGON_PHASE_THRESHOLDS,
   FIRE_LINGER_MS,
 } from '../combat/balance.js'
+import { ENEMY_DEFS } from '../combat/enemyDefs.js'
+import { getItem, listItems } from '../items/registry.js'
 import {
   FIREBALL_MANA_COST,
   MANA_REGEN_PER_SEC,
@@ -28,7 +25,6 @@ import {
 } from '../combat/spells.js'
 import { BLOCK_DAMAGE_REDUCTION } from '../combat/block.js'
 import { DODGE_COOLDOWN_MS } from '../combat/dodge.js'
-import { LOOT_TABLES } from '../combat/death.js'
 import { CRITTER_CONFIGS } from '../ai/critter.js'
 import { CLASS_SPRITES, DEFAULT_ITEM_ICON, ENEMY_SPRITES, ITEM_ICONS } from '../../config/paths.js'
 
@@ -57,51 +53,91 @@ export const POISON_LINGER_MS = 2000
 
 const KNIGHT_PACE = CLASS_SPEED.knight
 
-const ITEM_NAMES = Object.freeze({
-  iron_sword: 'Iron Sword',
-  wooden_shield: 'Wooden Shield',
-  chainmail_armor: 'Chainmail Armor',
-  healing_potion: 'Healing Potion',
-  apprentice_staff: 'Apprentice Staff',
-  spellbook: 'Spellbook',
-  cloth_robes: 'Cloth Robes',
-  mana_potion: 'Mana Potion',
-  twin_daggers: 'Twin Daggers',
-  leather_armor: 'Leather Armor',
-  lockpicks: 'Lockpicks',
-  poison_vial: 'Poison Vial',
-  battle_axe: 'Battle Axe',
-  dwarf_armor: 'Dwarf Armor',
-  dwarf_pickaxe: 'Dwarf Pickaxe',
-  ale_flask: 'Ale Flask',
-  speed_potion: 'Speed Potion',
-  apple: 'Apple',
-  ruby: 'Ruby',
-  sapphire: 'Sapphire',
-  emerald: 'Emerald',
+const CATEGORY_ORDER = ['Weapons', 'Armor', 'Magic', 'Potions', 'Food', 'Tools', 'Gems', 'Quest']
+
+/** Hand-written blurbs for registered foes. Future defs fall back by AI. */
+const ENEMY_BLURBS = Object.freeze({
+  goblin: 'Closes in to strike, then falls back when badly hurt.',
+  brute: 'Winds up a heavy swing you can see coming, then knocks you back.',
+  archer: 'Keeps its distance and shoots.',
+  shadowfang_wolf: 'Moves like smoke, then lunges in and bites.',
+  ashen_cultist: 'Keeps its distance and looses ember bolts.',
+  ashen_revenant: 'A slow, armored heavy hitter, said to be a ghost of the Last Flame.',
 })
 
-/** Same prices as Game.jsx MARKET_PRICES. Absent ids are not sold. */
-const MARKET_PRICES = Object.freeze({
-  healing_potion: { ruby: 1, sapphire: 0, emerald: 0 },
-  mana_potion: { ruby: 0, sapphire: 1, emerald: 0 },
-  speed_potion: { ruby: 0, sapphire: 0, emerald: 2 },
-  apprentice_staff: { ruby: 5, sapphire: 2, emerald: 0 },
-  spellbook: { ruby: 1, sapphire: 3, emerald: 0 },
-  apple: { ruby: 1, sapphire: 0, emerald: 0 },
-  ale_flask: { ruby: 0, sapphire: 0, emerald: 2 },
-  iron_sword: { ruby: 4, sapphire: 0, emerald: 2 },
-  twin_daggers: { ruby: 3, sapphire: 3, emerald: 0 },
-  battle_axe: { ruby: 0, sapphire: 4, emerald: 2 },
-  chainmail_armor: { ruby: 4, sapphire: 0, emerald: 1 },
-  leather_armor: { ruby: 1, sapphire: 0, emerald: 2 },
-  dwarf_armor: { ruby: 5, sapphire: 1, emerald: 0 },
-  cloth_robes: { ruby: 1, sapphire: 2, emerald: 0 },
-  lockpicks: { ruby: 1, sapphire: 2, emerald: 1 },
-  dwarf_pickaxe: { ruby: 2, sapphire: 0, emerald: 2 },
+const AI_BLURBS = Object.freeze({
+  GoblinAI: 'Closes in to strike.',
+  BruteAI: 'Winds up a heavy swing you can see coming.',
+  ArcherAI: 'Keeps its distance and shoots.',
+  WolfAI: 'Lunges in and bites.',
+  CultistAI: 'Keeps its distance and looses bolts.',
 })
 
-const CATEGORY_ORDER = ['Weapons', 'Armor', 'Magic', 'Potions', 'Food', 'Tools', 'Gems']
+/**
+ * Atlas crops for foes that have no standalone portrait in ENEMY_SPRITES.
+ * Frame is the idle-down cell on the existing runtime sheet.
+ */
+const ENEMY_ATLAS_PORTRAITS = Object.freeze({
+  shadowfang_wolf: Object.freeze({
+    src: '/assets/enemies/shadowfang_wolf/shadowfang_wolf.png',
+    frame: Object.freeze({ x: 1024, y: 0, w: 128, h: 128 }),
+    sheet: Object.freeze({ w: 2688, h: 512 }),
+  }),
+  ashen_cultist: Object.freeze({
+    src: '/assets/enemies/ashen_cultist/ashen_cultist.png',
+    frame: Object.freeze({ x: 768, y: 0, w: 96, h: 96 }),
+    sheet: Object.freeze({ w: 2016, h: 384 }),
+  }),
+  ashen_revenant: Object.freeze({
+    src: '/assets/enemies/ashen_revenant/ashen_revenant.png',
+    frame: Object.freeze({ x: 768, y: 0, w: 96, h: 96 }),
+    sheet: Object.freeze({ w: 2016, h: 384 }),
+  }),
+})
+
+/**
+ * Hand-written category and blurb for each item. Categories are kept as they
+ * were, even when the registry kind differs (the wooden shield stays under
+ * Weapons). Future items get a category from the registry and a short fallback
+ * line, so they still appear.
+ */
+const ITEM_COPY = Object.freeze({
+  iron_sword: Object.freeze({ category: 'Weapons', blurb: 'The knight’s sword.' }),
+  twin_daggers: Object.freeze({ category: 'Weapons', blurb: 'The thief’s blades.' }),
+  battle_axe: Object.freeze({ category: 'Weapons', blurb: 'The dwarf’s axe.' }),
+  wooden_shield: Object.freeze({ category: 'Weapons', blurb: 'The knight’s off-hand shield. It is not a weapon of its own.' }),
+  poison_vial: Object.freeze({ category: 'Weapons', blurb: 'A vial the thief throws with Space while it is in hand.' }),
+  chainmail_armor: Object.freeze({ category: 'Armor', blurb: 'Worn by the knight. It has no separate defense rating.' }),
+  leather_armor: Object.freeze({ category: 'Armor', blurb: 'Worn by the thief. It has no separate defense rating.' }),
+  dwarf_armor: Object.freeze({ category: 'Armor', blurb: 'Worn by the dwarf. It has no separate defense rating.' }),
+  cloth_robes: Object.freeze({ category: 'Armor', blurb: 'Worn by the mage. They have no separate defense rating.' }),
+  apprentice_staff: Object.freeze({ category: 'Magic', blurb: 'The mage’s weapon. Spells are chosen from the spellbook.' }),
+  spellbook: Object.freeze({ category: 'Magic', blurb: 'The mage’s spell list: Lightning Bolt, Blink, Life Leech, and Mana Shield.' }),
+  healing_potion: Object.freeze({ category: 'Potions', blurb: 'A drink that restores health. Hold K to use it.' }),
+  mana_potion: Object.freeze({ category: 'Potions', blurb: 'A drink that restores mana. Hold K to use it.' }),
+  speed_potion: Object.freeze({ category: 'Potions', blurb: 'A drink that makes you move faster. Hold K to use it.' }),
+  apple: Object.freeze({ category: 'Food', blurb: 'A quick bite of health. Hold K to eat it.' }),
+  ale_flask: Object.freeze({ category: 'Food', blurb: 'A drink that heals a little and strengthens your hits. Hold K to use it.' }),
+  lockpicks: Object.freeze({ category: 'Tools', blurb: 'The thief’s tool for a locked chest.' }),
+  dwarf_pickaxe: Object.freeze({ category: 'Tools', blurb: 'The dwarf’s tool for a mineable spot. A break can drop one gem.' }),
+  ruby: Object.freeze({ category: 'Gems', blurb: 'Market currency, red.' }),
+  sapphire: Object.freeze({ category: 'Gems', blurb: 'Market currency, blue.' }),
+  emerald: Object.freeze({ category: 'Gems', blurb: 'Market currency, green.' }),
+  nightfang_dagger: Object.freeze({ category: 'Weapons', blurb: 'A thief’s dagger, forged from a dragon’s tooth.' }),
+  stonehollow_hammer: Object.freeze({ category: 'Weapons', blurb: 'A dwarf’s hammer. Its strikes carry the weight of dwarven wrath.' }),
+  healing_charm: Object.freeze({ category: 'Magic', blurb: 'A charm that restores health. Hold K to use it.' }),
+  seranyas_tear: Object.freeze({ category: 'Quest', blurb: 'A crystal said to be a tear of the goddess. It cannot be used or sold.' }),
+  ember_chalice: Object.freeze({ category: 'Quest', blurb: 'A chalice once used to seal dragon-blood pacts. It cannot be used or sold.' }),
+})
+
+const KIND_CATEGORY = Object.freeze({
+  weapon: 'Weapons',
+  armor: 'Armor',
+  tool: 'Tools',
+  trinket: 'Magic',
+  quest: 'Quest',
+  currency: 'Gems',
+})
 
 /**
  * @param {number} ms
@@ -169,8 +205,12 @@ function article(name) {
   return /^[aeiou]/i.test(name) ? 'an' : 'a'
 }
 
+function itemName(id) {
+  return getItem(id)?.name || id
+}
+
 function gemLabel(type, count) {
-  const name = ITEM_NAMES[type] || type
+  const name = itemName(type)
   if (count === 1) return name
   if (name === 'Ruby') return `${count} Rubies`
   return `${count} ${name}s`
@@ -190,9 +230,12 @@ export function priceLine(price) {
   return `Market price: ${parts.join(', ')}.`
 }
 
-function dropLine(enemyType) {
-  const table = LOOT_TABLES[enemyType]
-  if (!table) return null
+/**
+ * @param {{ gems?: Array<{ type: string, chance: number }>, items?: Array<{ id: string, chance: number }> } | undefined} loot
+ * @returns {string|null}
+ */
+function dropLine(loot) {
+  if (!loot) return null
   const groups = new Map()
   const add = (chance, name) => {
     const word = chanceWord(chance)
@@ -200,8 +243,8 @@ function dropLine(enemyType) {
     list.push(name)
     groups.set(word, list)
   }
-  for (const gem of table.gems || []) add(gem.chance, ITEM_NAMES[gem.type] || gem.type)
-  for (const item of table.items || []) add(item.chance, ITEM_NAMES[item.id] || item.id)
+  for (const gem of loot.gems || []) add(gem.chance, itemName(gem.type))
+  for (const item of loot.items || []) add(item.chance, itemName(item.id))
   const sentences = []
   for (const word of ['Often', 'Sometimes', 'Rarely']) {
     const names = groups.get(word)
@@ -212,7 +255,7 @@ function dropLine(enemyType) {
       : `${listed.slice(0, -1).join(', ')} or ${listed[listed.length - 1]}`
     sentences.push(`${word} ${joined}.`)
   }
-  return sentences.join(' ')
+  return sentences.join(' ') || null
 }
 
 function phaseWord(ratio) {
@@ -227,7 +270,19 @@ function stat(label, value) {
 
 /** Same icon path as Game.jsx ITEMS and the inventory fallback. */
 function itemIcon(id) {
-  return ITEM_ICONS[id] || DEFAULT_ITEM_ICON(id)
+  return getItem(id)?.icon || ITEM_ICONS[id] || DEFAULT_ITEM_ICON(id)
+}
+
+function enemyImage(def) {
+  if (ENEMY_SPRITES[def.id]) return { src: ENEMY_SPRITES[def.id] }
+  if (ENEMY_ATLAS_PORTRAITS[def.id]) return ENEMY_ATLAS_PORTRAITS[def.id]
+  const assetId = def.sheets?.assetId || def.id
+  const sheet = def.sheets?.defaultSheet || def.id
+  return { src: `/assets/enemies/${assetId}/${sheet}.png` }
+}
+
+function enemyBlurb(def) {
+  return ENEMY_BLURBS[def.id] || AI_BLURBS[def.ai] || 'A foe of Hollowvale.'
 }
 
 /**
@@ -329,48 +384,32 @@ function buildHeroes() {
   ]
 }
 
-function buildEnemies() {
-  const foes = [
-    {
-      id: 'goblin',
-      name: 'Goblin',
-      blurb: 'Closes in to strike, then falls back when badly hurt.',
-      damage: ENEMY_BASE_DAMAGE.goblin,
-    },
-    {
-      id: 'brute',
-      name: 'Goblin Brute',
-      blurb: 'Winds up a heavy swing you can see coming, then knocks you back.',
-      damage: ENEMY_BASE_DAMAGE.brute,
-    },
-    {
-      id: 'archer',
-      name: 'Goblin Archer',
-      blurb: 'Keeps its distance and shoots.',
-      damage: ENEMY_BASE_DAMAGE.archer,
-    },
-  ]
-
-  const cards = foes.map((foe) => {
+function buildRegisteredEnemies() {
+  return Object.values(ENEMY_DEFS).map((def) => {
     const stats = [
-      stat('Health', healthLine(ENEMY_BASE_HP[foe.id])),
-      stat('Pace', paceWord(ENEMY_BASE_SPEED[foe.id])),
-      stat('Strike', damageLine(foe.damage)),
+      stat('Health', healthLine(def.hp)),
+      stat('Pace', paceWord(def.speed)),
+      stat('Strike', damageLine(def.damage)),
     ]
-    if (foe.id === 'archer') {
-      stats.push(stat('Arrow', damageLine(ARCHER_PROJECTILE.damage)))
+    if (def.projectile) {
+      const label = def.id === 'archer' ? 'Arrow' : 'Bolt'
+      stats.push(stat(label, damageLine(def.projectile.damage)))
     }
-    const drops = dropLine(foe.id)
+    const drops = dropLine(def.loot)
     if (drops) stats.push(stat('Drops', drops))
     return {
-      id: foe.id,
-      name: foe.name,
+      id: def.id,
+      name: def.label,
       category: 'Foes',
-      blurb: foe.blurb,
-      image: { src: ENEMY_SPRITES[foe.id] },
+      blurb: enemyBlurb(def),
+      image: enemyImage(def),
       stats,
     }
   })
+}
+
+function buildEnemies() {
+  const cards = buildRegisteredEnemies()
 
   cards.push({
     id: 'dragon',
@@ -403,9 +442,10 @@ function buildEnemies() {
   return cards
 }
 
-function itemStats(id) {
+function itemStats(item) {
+  const id = item.id
   const lines = []
-  const effect = CONSUMABLE_EFFECTS[id]
+  const effect = item.effect || CONSUMABLE_EFFECTS[id]
   if (effect?.heal) lines.push(stat('Heal', `Restores ${effect.heal} health.`))
   if (effect?.mana) lines.push(stat('Mana', `Restores ${effect.mana} mana.`))
   if (effect?.speedMs) lines.push(stat('Effect', `You move faster for ${secondsLabel(effect.speedMs)}.`))
@@ -419,6 +459,12 @@ function itemStats(id) {
     const melee = MELEE_DMG[classId]
     if (typeof melee === 'number') {
       lines.push(stat('Strike', damageLine(melee)))
+      lines.push(stat('Swing', `Every ${secondsLabel(ATTACK_MS[classId])}`))
+    }
+  } else if (item.weapon && typeof item.weapon.damage === 'number') {
+    lines.push(stat('Strike', damageLine(item.weapon.damage)))
+    const classId = item.classes?.[0]
+    if (classId && typeof ATTACK_MS[classId] === 'number') {
       lines.push(stat('Swing', `Every ${secondsLabel(ATTACK_MS[classId])}`))
     }
   }
@@ -437,43 +483,40 @@ function itemStats(id) {
   if (id === 'ruby' || id === 'sapphire' || id === 'emerald') {
     lines.push(stat('Pocket', 'You begin with 2.'))
   }
+  if (item.kind === 'quest') {
+    lines.push(stat('Quest', 'Cannot be used or sold.'))
+  }
 
-  lines.push(stat('Price', priceLine(MARKET_PRICES[id])))
+  const price = item.market ? item.price : undefined
+  lines.push(stat('Price', priceLine(price)))
   return lines
 }
 
-const ITEM_COPY = [
-  ['iron_sword', 'Weapons', 'The knight’s sword.'],
-  ['twin_daggers', 'Weapons', 'The thief’s blades.'],
-  ['battle_axe', 'Weapons', 'The dwarf’s axe.'],
-  ['wooden_shield', 'Weapons', 'The knight’s off-hand shield. It is not a weapon of its own.'],
-  ['poison_vial', 'Weapons', 'A vial the thief throws with Space while it is in hand.'],
-  ['chainmail_armor', 'Armor', 'Worn by the knight. It has no separate defense rating.'],
-  ['leather_armor', 'Armor', 'Worn by the thief. It has no separate defense rating.'],
-  ['dwarf_armor', 'Armor', 'Worn by the dwarf. It has no separate defense rating.'],
-  ['cloth_robes', 'Armor', 'Worn by the mage. They have no separate defense rating.'],
-  ['apprentice_staff', 'Magic', 'The mage’s weapon. Spells are chosen from the spellbook.'],
-  ['spellbook', 'Magic', 'The mage’s spell list: Lightning Bolt, Blink, Life Leech, and Mana Shield.'],
-  ['healing_potion', 'Potions', 'A drink that restores health. Hold K to use it.'],
-  ['mana_potion', 'Potions', 'A drink that restores mana. Hold K to use it.'],
-  ['speed_potion', 'Potions', 'A drink that makes you move faster. Hold K to use it.'],
-  ['apple', 'Food', 'A quick bite of health. Hold K to eat it.'],
-  ['ale_flask', 'Food', 'A drink that heals a little and strengthens your hits. Hold K to use it.'],
-  ['lockpicks', 'Tools', 'The thief’s tool for a locked chest.'],
-  ['dwarf_pickaxe', 'Tools', 'The dwarf’s tool for a mineable spot. A break can drop one gem.'],
-  ['ruby', 'Gems', 'Market currency, red.'],
-  ['sapphire', 'Gems', 'Market currency, blue.'],
-  ['emerald', 'Gems', 'Market currency, green.'],
-]
+function itemCategory(item) {
+  if (ITEM_COPY[item.id]) return ITEM_COPY[item.id].category
+  if (item.market === 'Weaponry') return 'Weapons'
+  if (item.market) return item.market
+  return KIND_CATEGORY[item.kind] || 'Tools'
+}
+
+function itemBlurb(item) {
+  if (ITEM_COPY[item.id]) return ITEM_COPY[item.id].blurb
+  if (item.kind === 'quest') return 'A quest item. It cannot be used or sold.'
+  if (item.kind === 'weapon') return 'A weapon.'
+  if (item.kind === 'armor') return 'Worn armor. It has no separate defense rating.'
+  if (item.kind === 'consumable') return 'Hold K to use it.'
+  if (item.kind === 'currency') return 'Market currency.'
+  return 'A found item.'
+}
 
 function buildItems() {
-  return ITEM_COPY.map(([id, category, blurb]) => ({
-    id,
-    name: ITEM_NAMES[id],
-    category,
-    blurb,
-    image: { src: itemIcon(id) },
-    stats: itemStats(id),
+  return listItems().map((item) => ({
+    id: item.id,
+    name: item.name,
+    category: itemCategory(item),
+    blurb: itemBlurb(item),
+    image: { src: itemIcon(item.id) },
+    stats: itemStats(item),
   })).sort((a, b) => {
     const cat = CATEGORY_ORDER.indexOf(a.category) - CATEGORY_ORDER.indexOf(b.category)
     if (cat !== 0) return cat
@@ -499,4 +542,10 @@ export function buildFieldGuide() {
   }
 }
 
-export const FIELD_GUIDE_ITEM_IDS = Object.freeze(Object.keys(ITEM_NAMES))
+/** Live list of every registered item id, in registry order. */
+export function fieldGuideItemIds() {
+  return listItems().map((item) => item.id)
+}
+
+/** Snapshot of built-in item ids at load. Prefer fieldGuideItemIds() for the live list. */
+export const FIELD_GUIDE_ITEM_IDS = Object.freeze(fieldGuideItemIds())
