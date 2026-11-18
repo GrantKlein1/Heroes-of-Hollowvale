@@ -41,11 +41,64 @@ export const CONSUMABLE_EFFECTS = Object.freeze({
   mana_potion: Object.freeze({ heal: 0, mana: 75, speedMs: 0, clip: 'use_drink' }),
   speed_potion: Object.freeze({ heal: 0, mana: 0, speedMs: 10000, clip: 'use_drink' }),
   apple: Object.freeze({ heal: 25, mana: 0, speedMs: 0, clip: 'use_eat' }), // Grant-tunable: modest first-pass values
-  ale_flask: Object.freeze({ heal: 15, mana: 0, speedMs: 5000, clip: 'use_drink' }), // Grant-tunable: modest first-pass values
+  ale_flask: Object.freeze({
+    heal: 10, // 4-2: "make it 10hp and 5 second damage/strength boost"
+    mana: 0,
+    damageMult: 1.25, // 4-2: "make it 10hp and 5 second damage/strength boost"
+    durationMs: 5000, // 4-2: "make it 10hp and 5 second damage/strength boost"
+    clip: 'use_drink',
+  }),
 })
 
 export const CONSUMABLE = new Set(Object.keys(CONSUMABLE_EFFECTS))
 CONSUMABLE.effects = CONSUMABLE_EFFECTS
+
+/**
+ * Applies one consumable onto a copy of player vitals.
+ * A damage boost replaces damageMult and damageBoostUntil. A second drink
+ * refreshes that timer; it does not multiply the multiplier again.
+ * Heal and mana use the same clamp as HollowvaleScene._heal / _addMana.
+ *
+ * @param {object|null|undefined} effect
+ * @param {{ hp?: number, hpMax?: number, mana?: number, manaMax?: number, speedBoostUntil?: number, damageMult?: number, damageBoostUntil?: number }} state
+ * @param {number} now
+ * @returns {{ hp: number, hpMax: number, mana: number, manaMax: number, speedBoostUntil: number, damageMult: number, damageBoostUntil: number }}
+ */
+export function applyConsumableEffects(effect, state, now) {
+  const hpMax = state?.hpMax || 0
+  const manaMax = state?.manaMax || 0
+  let hp = state?.hp || 0
+  let mana = state?.mana || 0
+  let speedBoostUntil = state?.speedBoostUntil || 0
+  let damageMult = state?.damageMult || 1
+  let damageBoostUntil = state?.damageBoostUntil || 0
+  if (effect) {
+    if (effect.heal && hpMax > 0) hp = Math.min(hpMax, hp + effect.heal)
+    if (effect.mana && manaMax > 0) mana = Math.min(manaMax, mana + effect.mana)
+    if (effect.speedMs) speedBoostUntil = now + effect.speedMs
+    if (effect.damageMult && effect.durationMs) {
+      damageMult = effect.damageMult
+      damageBoostUntil = now + effect.durationMs
+    }
+  }
+  return { hp, hpMax, mana, manaMax, speedBoostUntil, damageMult, damageBoostUntil }
+}
+
+/**
+ * Multiplies one outgoing damage amount by an active damage buff.
+ * Active while now < damageBoostUntil. Math.round matches getEnemyDamage.
+ *
+ * @param {number} baseDamage
+ * @param {number} now
+ * @param {{ damageMult?: number, damageBoostUntil?: number } | null | undefined} buffState
+ * @returns {number}
+ */
+export function scaleOutgoingDamage(baseDamage, now, buffState) {
+  const mult = buffState?.damageMult
+  const until = buffState?.damageBoostUntil || 0
+  if (typeof mult !== 'number' || !(mult > 0) || mult === 1 || !(now < until)) return baseDamage
+  return Math.round(baseDamage * mult)
+}
 
 /** Projectile speed, travel distance, and lingering duration */
 export const FIREBALL_SPEED = 420
