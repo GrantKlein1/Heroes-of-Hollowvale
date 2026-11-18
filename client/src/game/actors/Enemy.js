@@ -38,9 +38,11 @@ import {
   getEnemyHp,
   getEnemySpeed,
   getEnemyDamage,
+  ARCHER_PROJECTILE,
 } from '../combat/balance.js'
 import { GoblinAI } from '../ai/goblin.js'
 import { BruteAI } from '../ai/brute.js'
+import { ArcherAI } from '../ai/archer.js'
 import { isDebug } from '../config/flags.js'
 
 export const ENEMY_SHEETS = Object.freeze({
@@ -168,11 +170,15 @@ export class Enemy extends Actor {
       }
     }
 
+    this._readAtlasCombatMeta()
+
     // Attach archetype AI controller
     if (enemyType === 'goblin') {
       this.ai = new GoblinAI(this)
     } else if (enemyType === 'brute' || enemyType === 'goblin_brute') {
       this.ai = new BruteAI(this)
+    } else if (enemyType === 'archer' || enemyType === 'goblin_archer') {
+      this.ai = new ArcherAI(this, { damage: ARCHER_PROJECTILE.damage })
     }
 
     // Listen for animation completion events to chain telegraph -> attack -> idle
@@ -185,6 +191,29 @@ export class Enemy extends Actor {
 
     // Initial idle animation
     this.playAnim('idle')
+  }
+
+  /**
+   * Hit frames and arrow spawn offsets come from the attack sheet meta.
+   * Anchor stays on Actor.resolveAnchor (atlas meta / registry), never a fixed origin.
+   */
+  _readAtlasCombatMeta() {
+    const sheetKey = this.getSheetForAnim('attack')
+    const meta = this.scene?.textures?.get?.(sheetKey)?.customData?.meta
+    const attack = meta?.anims?.attack
+    if (!attack) return
+
+    if (Array.isArray(attack.hitFrames) && attack.hitFrames.length > 0) {
+      this.hitFrames = attack.hitFrames.map((frame) => Number(frame))
+    } else if (Number.isFinite(Number(attack.releaseFrame))) {
+      this.hitFrames = [Number(attack.releaseFrame)]
+    } else if (Number.isFinite(Number(attack.spawnFrame))) {
+      this.hitFrames = [Number(attack.spawnFrame)]
+    }
+
+    if (attack.spawnOffsetFromFeet && typeof attack.spawnOffsetFromFeet === 'object') {
+      this.spawnOffsetFromFeet = attack.spawnOffsetFromFeet
+    }
   }
 
   /**
@@ -462,18 +491,23 @@ export class Enemy extends Actor {
       return true
     }
 
+    const aiAttacking = Boolean(this.ai?.isAttacking)
+
     // Armored enemies mid-swing ignore hurt interruption and do not drop attack token
-    if (this.isArmored && this.isAttacking) {
+    if (this.isArmored && (this.isAttacking || aiAttacking)) {
       return true
     }
 
     // If currently attacking, interrupt and release token
-    if (this.isAttacking) {
+    if (this.isAttacking || aiAttacking) {
       if (this.scene?.attackTokenManager) {
         this.scene.attackTokenManager.release(this)
       }
       this.isAttacking = false
       this.attackPhase = 'none'
+      if (typeof this.ai?.interruptAttack === 'function') {
+        this.ai.interruptAttack(now)
+      }
     }
 
     this.transition(ACTOR_STATES.HURT, { force: true })
@@ -652,17 +686,22 @@ export class Enemy extends Actor {
       return
     }
 
+    // Ranged controllers (ArcherAI) own their wind-up. Melee uses this.isAttacking.
+    const rangedAttack = Boolean(this.ai?.isAttacking)
+
     // 1. Manage active attack phase and timing fallbacks
-    if (this.isAttacking) {
+    if (this.isAttacking && !rangedAttack) {
       if (this.attackPhase === 'telegraph') {
         if (time >= this.telegraphUntil) {
           this.transitionToSwing(time)
         }
       } else if (this.attackPhase === 'swing') {
-        // Frame-accurate hit detection: frame 3 or timing fallback (~390 ms)
+        // Frame-accurate hit detection from atlas hitFrames, else the swing timing window
         const frameIdx = getAnimationFrameIndex(this.anims?.currentFrame)
-        const hitFrames = getHitFrames(this.scene, this.getSheetForAnim('attack'), 'attack')
-        const targetHitFrame = hitFrames.length > 0 ? hitFrames[0] : 3
+        const metaHitFrames = Array.isArray(this.hitFrames) && this.hitFrames.length > 0
+          ? this.hitFrames
+          : getHitFrames(this.scene, this.getSheetForAnim('attack'), 'attack')
+        const targetHitFrame = metaHitFrames.length > 0 ? metaHitFrames[0] : 3
 
         const isHitFrame = frameIdx === targetHitFrame || (time >= this.swingStartTime + 390 && time < this.swingStartTime + 550)
 

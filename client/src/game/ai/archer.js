@@ -147,7 +147,10 @@ export function hasLineOfSight(x1, y1, x2, y2, solids = []) {
  * @returns {{ x: number, y: number }}
  */
 export function getArrowSpawnPosition(archer, facing = 'down') {
-  const offset = SPAWN_OFFSETS[facing] || SPAWN_OFFSETS.down
+  const fromMeta = archer?.spawnOffsetFromFeet?.[facing]
+  const offset = (fromMeta && typeof fromMeta.x === 'number' && typeof fromMeta.y === 'number')
+    ? fromMeta
+    : (SPAWN_OFFSETS[facing] || SPAWN_OFFSETS.down)
   return {
     x: (archer?.x || 0) + offset.x,
     y: (archer?.y || 0) + offset.y,
@@ -479,10 +482,12 @@ export class ArcherAI {
       enemy.body.setVelocity(0, 0)
     }
 
-    // Check for frame 6 release:
-    // Either by current animation frame index === 6, or by elapsed time >= RELEASE_ELAPSED_MS (760 ms)
+    // Release on the atlas hit frame, or once RELEASE_ELAPSED_MS (760 ms) has passed.
     const currentFrameIdx = enemy.anims?.currentFrame?.index ?? -1
-    const isReleaseFrame = currentFrameIdx === RELEASE_FRAME || elapsed >= RELEASE_ELAPSED_MS
+    const releaseFrame = Array.isArray(enemy.hitFrames) && Number.isFinite(enemy.hitFrames[0])
+      ? enemy.hitFrames[0]
+      : RELEASE_FRAME
+    const isReleaseFrame = currentFrameIdx === releaseFrame || elapsed >= RELEASE_ELAPSED_MS
 
     if (isReleaseFrame && !this._arrowSpawned) {
       this._arrowSpawned = true
