@@ -32,8 +32,10 @@ test.describe('MS-1 — Mage Lightning and Leech release on the v2 cast frame', 
       player.setPosition(240, 280);
       player.setFacing('down');
       const before = (scene.projectiles || []).length;
+      const manaBefore = scene.mana;
       const started = performance.now();
       const castOk = (window as any).__hv.cast('lightning');
+      const manaAfter = scene.mana;
       const anim = (window as any).__hv.anim();
       const immediate = (scene.projectiles || []).length;
 
@@ -63,10 +65,12 @@ test.describe('MS-1 — Mage Lightning and Leech release on the v2 cast frame', 
         requestAnimationFrame(step);
       });
 
-      return { castOk, anim, immediate, before, spawned, flipX: player.flipX };
+      return { castOk, anim, immediate, before, spawned, flipX: player.flipX, manaBefore, manaAfter };
     });
 
     expect(result.castOk).toBe(true);
+    expect(result.manaBefore).toBe(100);
+    expect(result.manaAfter).toBe(90);
     expect(result.anim).toBe('mage_cast_lightning_v2_down');
     expect(result.immediate).toBe(result.before);
     expect(result.flipX).not.toBe(true);
@@ -139,5 +143,34 @@ test.describe('MS-1 — Mage Lightning and Leech release on the v2 cast frame', 
     expect(result.spawned.absorb).toBe('leech_absorb_v2');
     expect(Math.abs(result.spawned.x - (result.spawned.playerX + 36))).toBeLessThanOrEqual(2);
     expect(Math.abs(result.spawned.y - (result.spawned.playerY - 71))).toBeLessThanOrEqual(2);
+  });
+
+  test('Lightning with 5 mana does not cast and leaves mana unchanged', async ({ page }) => {
+    await startMage(page);
+
+    const result = await page.evaluate(() => {
+      const scene = (window as any).__scene;
+      const session = (window as any).__session;
+      const player = scene.player;
+      player.setFacing('down');
+      scene.mana = 5;
+      if (session) session.mana = 5;
+      const before = (scene.projectiles || []).length;
+      const castOk = (window as any).__hv.cast('lightning');
+      return {
+        castOk,
+        mana: scene.mana,
+        sessionMana: session ? session.mana : null,
+        projectiles: (scene.projectiles || []).length,
+        before,
+        anim: (window as any).__hv.anim(),
+      };
+    });
+
+    expect(result.castOk).toBe(false);
+    expect(result.mana).toBe(5);
+    expect(result.sessionMana).toBe(5);
+    expect(result.projectiles).toBe(result.before);
+    expect(result.anim).not.toBe('mage_cast_lightning_v2_down');
   });
 });

@@ -820,6 +820,9 @@ describe('Player Actor — Package 1-3', () => {
     it('plays the lightning v2 clip and withholds the bolt until 312.5 ms', () => {
       const mage = new Player(mockScene, 200, 350, 'mage', { facing: 'down' })
       expect(mage.cast('lightning', 1000)).toBe(true)
+      expect(mockScene.mana).toBe(90)
+      expect(session.mana).toBe(90)
+      expect(mockScene.mana).toBeGreaterThanOrEqual(0)
       expect(mockScene.projectiles).toHaveLength(0)
       expect(mage.anims.currentAnim.key).toBe('mage_cast_lightning_v2_down')
       expect(mage.anims.play).not.toHaveBeenCalledWith('mage_cast_down', expect.anything())
@@ -847,6 +850,8 @@ describe('Player Actor — Package 1-3', () => {
     it('plays the leech v2 clip for another facing and spawns the orb on release', () => {
       const mage = new Player(mockScene, 80, 120, 'mage', { facing: 'right' })
       expect(mage.cast('leech', 4000)).toBe(true)
+      expect(mockScene.mana).toBe(100)
+      expect(session.mana).toBe(100)
       expect(mage.anims.currentAnim.key).toBe('mage_cast_leech_v2_right')
       expect(mage.anims.play).not.toHaveBeenCalledWith('mage_cast_right', expect.anything())
       expect(mockScene.projectiles).toHaveLength(0)
@@ -863,6 +868,45 @@ describe('Player Actor — Package 1-3', () => {
       expect(proj.absorbAnim).toBe('leech_absorb_v2')
       expect(Math.abs(proj.x - (mage.x + offset.x))).toBeLessThanOrEqual(2)
       expect(Math.abs(proj.y - (mage.y + offset.y))).toBeLessThanOrEqual(2)
+    })
+
+    it('with 5 mana lightning casts nothing, notices, and never drops mana below 0', () => {
+      mockScene._notices = []
+      mockScene._notice = (msg) => {
+        mockScene._notices.push(msg)
+      }
+      mockScene._attackUntil = 0
+      mockScene.mana = 5
+      session.mana = 5
+      session.lifeLeechCooldownUntil = 0
+
+      const mage = new Player(mockScene, 200, 350, 'mage', { facing: 'down' })
+      expect(mage.cast('lightning', 1000)).toBe(false)
+      expect(mockScene.mana).toBe(5)
+      expect(session.mana).toBe(5)
+      expect(mockScene._notices).toContain('Not enough mana.')
+      expect(mockScene.projectiles).toHaveLength(0)
+      expect(mage._v2Cast).toBeFalsy()
+      expect(mage.currentAttackType).toBeNull()
+      expect(mage.is(ACTOR_STATES.ATTACK)).toBe(false)
+      expect(mockScene._attackUntil).toBe(0)
+      expect(session.lifeLeechCooldownUntil).toBe(0)
+      expect(mage.anims.play.mock.calls.some((call) => String(call[0]).includes('lightning'))).toBe(false)
+
+      mockScene.mana = 0
+      session.mana = 0
+      mockScene._notices = []
+      expect(mage.cast('lightning', 2000)).toBe(false)
+      expect(mockScene.mana).toBe(0)
+      expect(session.mana).toBe(0)
+      expect(mage.is(ACTOR_STATES.ATTACK)).toBe(false)
+
+      mockScene.mana = 10
+      session.mana = 10
+      expect(mage.cast('lightning', 3000)).toBe(true)
+      expect(mockScene.mana).toBe(0)
+      expect(session.mana).toBe(0)
+      expect(mockScene.mana).toBeGreaterThanOrEqual(0)
     })
 
     it('still fires fireball immediately on the generic cast clip', () => {
