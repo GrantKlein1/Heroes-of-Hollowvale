@@ -257,9 +257,13 @@ export class Enemy extends Actor {
       this.anims.play(key, ignoreIfPlaying)
     }
 
-    if (targetSheet) {
+    // Origin and footprint only change when the sheet does. Re-applying the
+    // footprint every frame (playAnim runs each frame from the AI) re-syncs the
+    // physics body from the sprite and cancels its velocity, so enemies never moved.
+    if (targetSheet && targetSheet !== this._footprintSheet) {
       this.applySheetOrigin(targetSheet)
       this.applyFootprint(targetSheet)
+      this._footprintSheet = targetSheet
     }
 
     return this
