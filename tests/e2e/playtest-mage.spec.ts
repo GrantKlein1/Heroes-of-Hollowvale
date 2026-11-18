@@ -5,8 +5,8 @@ import path from 'path'
 /**
  * PT-M — play the mage on the shipped route (`?qa=1&seed=1`).
  * Second Choose button is the mage. Spellbook starts in storage; the staff
- * is on the hotbar. Try a real drag onto an empty hotbar slot, then the
- * click-to-place the inventory already implements if the drop does not land.
+ * is on the hotbar. A real mouse drag must land the spellbook on hotbar
+ * slot 3 with no ghost left behind (DRAG-1).
  * Hold K for the spell wheel and cast once with Space.
  * Screenshots go to docs/playtest/mage/, never tests/e2e/__screenshots__/.
  */
@@ -86,16 +86,20 @@ test('mage spell wheel and one cast', async ({ page }) => {
   expect(bookBox).toBeTruthy()
   const slots = inUse.locator(':scope > div')
   const slotCount = await slots.count()
-  let emptyIndex = -1
-  for (let i = 0; i < slotCount; i++) {
-    if ((await slots.nth(i).getByRole('img').count()) === 0) {
-      emptyIndex = i
-      break
-    }
-  }
-  expect(emptyIndex).toBeGreaterThanOrEqual(0)
+  // Hotbar slot 3 (index 2) must start empty for the mage.
+  const emptyIndex = 2
+  expect(await slots.nth(emptyIndex).getByRole('img').count()).toBe(0)
+  expect(slotCount).toBeGreaterThan(emptyIndex)
   const destBox = await slots.nth(emptyIndex).boundingBox()
   expect(destBox).toBeTruthy()
+
+  // Release outside the panel first: the spellbook goes back to storage, no ghost.
+  await page.mouse.move(bookBox!.x + bookBox!.width / 2, bookBox!.y + bookBox!.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(4, 4, { steps: 8 })
+  await page.mouse.up()
+  await expect(storage.getByRole('img', { name: 'Spellbook' })).toHaveCount(1)
+  await expect(page.locator('.fixed').getByRole('img', { name: 'Spellbook' })).toHaveCount(0)
 
   await page.mouse.move(bookBox!.x + bookBox!.width / 2, bookBox!.y + bookBox!.height / 2)
   await page.mouse.down()
@@ -109,12 +113,13 @@ test('mage spell wheel and one cast', async ({ page }) => {
     ghost: await page.locator('.fixed').getByRole('img', { name: 'Spellbook' }).count(),
   }
   const dragPlaced = afterDrag.hotbar > 0
+  const clickPlaced = false
 
-  let clickPlaced = false
-  if (!dragPlaced) {
-    await slots.nth(emptyIndex).click()
-    clickPlaced = (await inUse.getByRole('img', { name: 'Spellbook' }).count()) > 0
-  }
+  // DRAG-1: a real mouse down, move, up drops on pointer-up and clears the ghost.
+  expect(afterDrag.ghost).toBe(0)
+  expect(afterDrag.storage).toBe(0)
+  await expect(slots.nth(emptyIndex).getByRole('img', { name: 'Spellbook' })).toHaveCount(1)
+  expect(dragPlaced).toBe(true)
   const hotbarAfter = await slotAlts(inUse)
   await page.screenshot({ path: path.join(SHOTS, '06-inventory-after-equip.png') })
 

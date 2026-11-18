@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react'
 import { sendChat as apiSendChat, sendChatWithFallback } from './lib/api'
 import { PATHS, CLASS_SPRITES, COMPOSITE_SPRITES, ANIMATED_SWORD_FRAMES } from './config/paths'
-import { getItemDef, marketItems, marketPrice, isQuestItem } from './game/items/registry'
+import { getItem, getItemDef, marketItems, marketPrice, isQuestItem } from './game/items/registry'
+import { placeHeld, dropHeld, returnHeld, makeIsStackable, slotId, parseSlotId, sameSlot } from './lib/inventoryDrag'
 import AnimatedSprite from './components/AnimatedSprite'
 import PhaserGame from './components/PhaserGame'
 import { eventBus, GameEvents } from './lib/eventBus'
@@ -126,6 +127,10 @@ export default function Game() {
   })
   // Inventory drag state
   const [invDrag, setInvDrag] = useState(null) // { item:{id,count}, from:{ section:'armor'|'storage'|'hotbar', key:string|number } | null }
+  // Refs mirror inventory and the held stack so window-level pointerup reads current values (DRAG-1).
+  const invDragRef = useRef(null)
+  const invPressRef = useRef(null) // { x, y, from } while a pointer press started a pickup
+  const isStackableItem = useMemo(() => makeIsStackable(getItem), [])
   const [invMouse, setInvMouse] = useState({ x: 0, y: 0 })
   // Hotbar HUD state
   const [activeHotbar, setActiveHotbar] = useState(0) // 0..8 like Minecraft
@@ -639,43 +644,55 @@ export default function Game() {
     })
   }
 
-  const handleSlotMouseDown = (e, section, key) => {
-    // Left button only
+  // Commit an inventory and held-stack change together and keep the refs current.
+  const commitInventory = (nextInv, heldItem, from) => {
+    inventoryRef.current = nextInv
+    setInventory(nextInv)
+    const nextHeld = heldItem ? { item: heldItem, from } : null
+    invDragRef.current = nextHeld
+    setInvDrag(nextHeld)
+  }
+
+  // Pointer down: pick up from a slot, or (already holding) place the held stack there.
+  const handleSlotPointerDown = (e, section, key) => {
     if (e.button !== 0) return
     e.preventDefault()
-    setInventory((inv) => {
-      // If dragging, attempt to place the whole stack
-      if (invDrag && invDrag.item) {
-        const target = getSlot(inv, section, key)
-        // Swap if different item present
-        if (target && !sameItem(target, invDrag.item)) {
-          const placed = setSlot(inv, section, key, invDrag.item)
-          // New drag becomes the previous target
-          setInvDrag({ item: target, from: invDrag.from })
-          return placed
-        }
-        // Merge if same id
-        if (sameItem(target, invDrag.item)) {
-          const merged = setSlot(inv, section, key, { id: target.id, count: (target.count || 0) + (invDrag.item.count || 0) })
-          setInvDrag(null)
-          return merged
-        }
-        // Place into empty
-        if (!target) {
-          const placed = setSlot(inv, section, key, invDrag.item)
-          setInvDrag(null)
-          return placed
-        }
-        return inv
-      }
+    const inv = inventoryRef.current || inventory
+    const held = invDragRef.current
+    const ref = { section, key }
+    if (held && held.item) {
+      // Click-to-place: the displaced item (if any) stays on the cursor.
+      invPressRef.current = null
+      const res = placeHeld(inv, held.item, held.from, ref, { isStackable: isStackableItem, swapTo: 'hold' })
+      commitInventory(res.inventory, res.held, held.from)
+      return
+    }
+    const it = getSlot(inv, section, key)
+    if (!it) return
+    invPressRef.current = { x: e.clientX, y: e.clientY, from: ref }
+    commitInventory(setSlot(inv, section, key, null), it, ref)
+  }
 
-      // Not dragging: pick up from this slot if any
-      const it = getSlot(inv, section, key)
-      if (!it) return inv
-      const next = setSlot(inv, section, key, null)
-      setInvDrag({ item: it, from: { section, key } })
-      return next
-    })
+  // Pointer up (window-level, so it fires even outside the panel): finish a drag.
+  const finishInventoryDrag = (e, cancelled) => {
+    const press = invPressRef.current
+    if (!press) return
+    invPressRef.current = null
+    const held = invDragRef.current
+    if (!held || !held.item) return
+    const inv = inventoryRef.current
+    if (!inv) return
+    let target = null
+    if (!cancelled) {
+      const el = typeof document !== 'undefined' ? document.elementFromPoint(e.clientX, e.clientY) : null
+      const slotEl = el && el.closest ? el.closest('[data-inv-slot]') : null
+      target = slotEl ? parseSlotId(slotEl.getAttribute('data-inv-slot')) : null
+      const moved = Math.hypot(e.clientX - press.x, e.clientY - press.y) > 4
+      // A plain click on the origin slot keeps the stack on the cursor for click-to-place.
+      if (!moved && (!target || sameSlot(target, press.from))) return
+    }
+    const res = dropHeld(inv, held.item, held.from, target, { isStackable: isStackableItem })
+    commitInventory(res.inventory, res.held, held.from)
   }
 
   const handleSlotContextMenu = (e, section, key) => {
@@ -729,43 +746,11 @@ export default function Game() {
 
   // Place dragged stack back into inventory (used when closing)
   const returnDraggedToInventory = () => {
-    if (!invDrag?.item) return
-    setInventory((inv) => {
-      // Try original slot first if empty
-      if (invDrag.from) {
-        const cur = getSlot(inv, invDrag.from.section, invDrag.from.key)
-        if (!cur) {
-          const next = setSlot(inv, invDrag.from.section, invDrag.from.key, invDrag.item)
-          setInvDrag(null)
-          return next
-        }
-      }
-      // Find first empty in storage, then hotbar, then any armor slot
-      for (let i = 0; i < inv.storage.length; i++) {
-        if (!inv.storage[i]) {
-          const next = setSlot(inv, 'storage', i, invDrag.item)
-          setInvDrag(null)
-          return next
-        }
-      }
-      for (let i = 0; i < inv.hotbar.length; i++) {
-        if (!inv.hotbar[i]) {
-          const next = setSlot(inv, 'hotbar', i, invDrag.item)
-          setInvDrag(null)
-          return next
-        }
-      }
-      const armorSlots = ['head','chest','legs','boots','offhand']
-      for (const s of armorSlots) {
-        if (!inv.armor[s]) {
-          const next = setSlot(inv, 'armor', s, invDrag.item)
-          setInvDrag(null)
-          return next
-        }
-      }
-      // If nowhere to place, keep dragging (should be rare)
-      return inv
-    })
+    const held = invDragRef.current
+    if (!held?.item) return
+    invPressRef.current = null
+    const res = returnHeld(inventoryRef.current || inventory, held.item, held.from, { isStackable: isStackableItem })
+    commitInventory(res.inventory, res.held, held.from)
   }
 
   const closeInventory = () => {
@@ -802,6 +787,7 @@ export default function Game() {
   // Keep selectedClass/inventory refs in sync for non-reactive event handlers
   useEffect(() => { selectedClassRef.current = selectedClass }, [selectedClass])
   useEffect(() => { inventoryRef.current = inventory }, [inventory])
+  useEffect(() => { invDragRef.current = invDrag }, [invDrag])
 
   // EventBus: NPC interact → open dialogue; npc:speak → stream ElevenLabs TTS via Web Audio
   useEffect(() => {
@@ -1120,6 +1106,20 @@ export default function Game() {
     window.addEventListener('mousemove', onMove)
     return () => window.removeEventListener('mousemove', onMove)
   }, [hudTip.show])
+
+  // Drag drop completes on pointerup anywhere in the window (DRAG-1).
+  useEffect(() => {
+    const onUp = (e) => finishInventoryDrag(e, false)
+    const onCancel = (e) => finishInventoryDrag(e, true)
+    window.addEventListener('pointerup', onUp)
+    window.addEventListener('pointercancel', onCancel)
+    return () => {
+      window.removeEventListener('pointerup', onUp)
+      window.removeEventListener('pointercancel', onCancel)
+    }
+    // finishInventoryDrag only reads refs and stable helpers
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Track inactivity in the shop to trigger SpeedUp vendor lines
   const lastVendorActivityRef = useRef(Date.now())
@@ -1754,7 +1754,8 @@ export default function Game() {
                         <div
                           key={slot}
                           className="relative select-none w-20 h-20 rounded-lg border border-amber-900/40 bg-stone-800/60 flex items-center justify-center"
-                          onMouseDown={(e) => handleSlotMouseDown(e, 'armor', slot)}
+                          data-inv-slot={slotId('armor', slot)}
+                          onPointerDown={(e) => handleSlotPointerDown(e, 'armor', slot)}
                           onContextMenu={(e) => handleSlotContextMenu(e, 'armor', slot)}
                         >
                           {it ? (
@@ -1785,7 +1786,8 @@ export default function Game() {
                       <div
                         key={idx}
                         className="relative select-none w-16 h-16 rounded-md border border-amber-900/40 bg-stone-800/60 flex items-center justify-center"
-                        onMouseDown={(e) => handleSlotMouseDown(e, 'storage', idx)}
+                        data-inv-slot={slotId('storage', idx)}
+                        onPointerDown={(e) => handleSlotPointerDown(e, 'storage', idx)}
                         onContextMenu={(e) => handleSlotContextMenu(e, 'storage', idx)}
                       >
                         {it ? (
@@ -1813,7 +1815,8 @@ export default function Game() {
                       <div
                         key={idx}
                         className="relative select-none w-16 h-16 rounded-md border border-amber-600/50 bg-stone-800/80 flex items-center justify-center"
-                        onMouseDown={(e) => handleSlotMouseDown(e, 'hotbar', idx)}
+                        data-inv-slot={slotId('hotbar', idx)}
+                        onPointerDown={(e) => handleSlotPointerDown(e, 'hotbar', idx)}
                         onContextMenu={(e) => handleSlotContextMenu(e, 'hotbar', idx)}
                       >
                         {it ? (
@@ -1834,7 +1837,7 @@ export default function Game() {
                 </div>
               </div>
               <div className="px-5 pb-5 flex justify-between items-center">
-                <div className="text-stone-400 text-xs">Left-click: drag/swap/merge • Right-click: split stack or place one</div>
+                <div className="text-stone-400 text-xs">Drag or click: move/swap/merge • Right-click: split stack or place one</div>
                 <button onClick={closeInventory} className="px-3 py-2 rounded-lg bg-stone-700 hover:bg-stone-600 text-amber-200">Close</button>
               </div>
             </div>
@@ -2189,7 +2192,8 @@ export default function Game() {
               {/* Offhand slot on the left */}
               <div
                 className="relative w-14 h-14 rounded-md border border-amber-900/50 bg-stone-900/60 backdrop-blur-sm flex items-center justify-center"
-                onMouseDown={(e)=>handleSlotMouseDown(e,'armor','offhand')}
+                data-inv-slot={slotId('armor', 'offhand')}
+                onPointerDown={(e)=>handleSlotPointerDown(e,'armor','offhand')}
                 onContextMenu={(e)=>handleSlotContextMenu(e,'armor','offhand')}
                 onMouseEnter={(e)=>{
                   const it = inventory.armor.offhand
@@ -2223,7 +2227,8 @@ export default function Game() {
                       'relative w-14 h-14 rounded-md flex items-center justify-center border',
                       idx === activeHotbar ? 'border-amber-400 ring-2 ring-amber-400/60 bg-stone-800/80' : 'border-amber-900/40 bg-stone-800/50',
                     ].join(' ')}
-                    onMouseDown={(e)=>handleSlotMouseDown(e,'hotbar',idx)}
+                    data-inv-slot={slotId('hotbar', idx)}
+                    onPointerDown={(e)=>handleSlotPointerDown(e,'hotbar',idx)}
                     onContextMenu={(e)=>handleSlotContextMenu(e,'hotbar',idx)}
                     onMouseEnter={(e)=>{
                       setHudTip({ show: true, text: it ? getItemDef(it.id).name : 'Empty', x: e.clientX + 8, y: e.clientY + 8 })
