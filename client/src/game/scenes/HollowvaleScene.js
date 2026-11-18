@@ -1024,7 +1024,7 @@ export default class HollowvaleScene extends Phaser.Scene {
   }
 
   _spawnEnemy(type, nx, ny, wave) {
-    if ((type === 'goblin' || type === 'brute' || type === 'goblin_brute')) {
+    if (type === 'goblin' || type === 'brute' || type === 'goblin_brute' || type === 'archer' || type === 'goblin_archer') {
       const wx = nx > 1 ? nx : nx * this.worldW
       const wy = ny > 1 ? ny : ny * this.worldH
       const enemy = new Enemy(this, wx, wy, type, { wave })
@@ -1054,7 +1054,6 @@ export default class HollowvaleScene extends Phaser.Scene {
     spr.dirX = 0
     spr.dirY = 0
     spr.changeAt = 0
-    spr.fireAt = 0
     spr.flashUntil = 0
     spr._deathProcessed = false
     spr.setDepth(ny * this.worldH)
@@ -1071,7 +1070,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       nx = this.player.x / this.worldW
       ny = this.player.y / this.worldH
     }
-    if ((type === 'goblin' || type === 'brute' || type === 'goblin_brute')) {
+    if (type === 'goblin' || type === 'brute' || type === 'goblin_brute' || type === 'archer' || type === 'goblin_archer') {
       const wx = (x !== undefined && x > 1) ? x : nx * this.worldW
       const wy = (y !== undefined && y > 1) ? y : ny * this.worldH
       const enemy = new Enemy(this, wx, wy, type, { wave: this.wave || 1 })
@@ -1132,30 +1131,6 @@ export default class HollowvaleScene extends Phaser.Scene {
         e.dirY = dy / nlen
         e.changeAt = now + 500 + random() * 900
       }
-      if (e.enemyType === 'archer' && now >= e.fireAt) {
-        let ax = px - e.x
-        let ay = py - e.y
-        const al = Math.hypot(ax, ay) || 1
-        ax /= al
-        ay /= al
-        const prevX = this.facingX
-        const prevY = this.facingY
-        this.facingX = ax
-        this.facingY = ay
-        const saved = this._readPlayerBox()
-        void saved
-        this._launchFrom(e.x, e.y, ax, ay, {
-          speed: ARCHER_PROJECTILE.speed,
-          dist: ARCHER_PROJECTILE.dist,
-          size: ARCHER_PROJECTILE.size,
-          arrow: true,
-          owner: 'enemy',
-          impact: 'arrow',
-        })
-        this.facingX = prevX
-        this.facingY = prevY
-        e.fireAt = now + 1800 + random() * 1200
-      }
       e.setVelocity(e.dirX * e.speed, e.dirY * e.speed)
       if (intersects(this._enemyBox(e), hurtBox)) {
         if (now >= (this._iframeUntil || 0)) {
@@ -1205,42 +1180,6 @@ export default class HollowvaleScene extends Phaser.Scene {
       this.nextWaveAt = now + 2500
     }
     void dt
-  }
-
-  _launchFrom(x, y, dx, dy, spec) {
-    const prevX = this.facingX
-    const prevY = this.facingY
-    this.facingX = dx
-    this.facingY = dy
-    const size = spec.size * this.unit
-    const speed = spec.speed * this.unit
-    const startX = x + dx * 8 * this.unit
-    const startY = y + dy * 8 * this.unit
-    const pr = {
-      x: startX - size / 2,
-      y: startY - size / 2,
-      w: size,
-      h: size,
-      vx: dx * speed,
-      vy: dy * speed,
-      startX,
-      startY,
-      maxDist: spec.dist * this.unit,
-      owner: 'enemy',
-      impact: 'arrow',
-      special: '',
-      lingerMs: 0,
-      sprite: null,
-      dom: null,
-    }
-    const key = this.textures.exists(PATHS.goblinArrow) ? PATHS.goblinArrow : '__px'
-    const spr = this.add.image(startX, startY, key).setDepth(15000)
-    spr.setDisplaySize(size * 2.2, size * 0.7)
-    spr.rotation = Math.atan2(dy, dx)
-    pr.sprite = spr
-    this.projectiles.push(pr)
-    this.facingX = prevX
-    this.facingY = prevY
   }
 
   _dropLoot(e) {
