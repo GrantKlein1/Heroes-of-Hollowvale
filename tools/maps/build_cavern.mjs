@@ -61,6 +61,9 @@ function formatPropProperties(meta, instance = {}, isOverhead = false) {
   if (typeof instance.rotation === 'number' && instance.rotation !== 0) {
     props.push({ name: 'rotation', type: 'float', value: instance.rotation });
   }
+  if (instance.mineable === true) {
+    props.push({ name: 'mineable', type: 'bool', value: true });
+  }
   return props;
 }
 
@@ -182,7 +185,7 @@ function buildCavernMouthMap() {
     width: rockAW,
     height: rockAH,
     visible: true,
-    properties: formatPropProperties(dungeonPropsMeta.props['cavern_rock_large_a']),
+    properties: formatPropProperties(dungeonPropsMeta.props['cavern_rock_large_a'], { mineable: true }),
   });
 
   const rockBW = 64;
@@ -813,6 +816,19 @@ function buildCavernTreasureMap() {
       ],
     },
   ];
+
+  // Cinder Vault wood chest: a trigger in front of the chest, not an exit.
+  zonesObjects.push({
+    id: nextObjId++,
+    name: 'chest_lock',
+    type: 'trigger',
+    x: 5 * TILE_SIZE - 40,
+    y: 4 * TILE_SIZE + 4,
+    width: 80,
+    height: 40,
+    visible: true,
+    properties: [{ name: 'locked', type: 'bool', value: true }],
+  });
 
   return {
     compressionlevel: -1,
