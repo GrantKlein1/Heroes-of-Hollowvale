@@ -32,6 +32,7 @@ export default function Game() {
   const vendorAudioRef = useRef(null)
   const sceneRef = useRef('village') // 'village' | 'tavern'
   const [ready, setReady] = useState(false)
+  const [loadSlow, setLoadSlow] = useState(false)
   const [scene, setScene] = useState('village')
   // Title and options overlays
   const [titleOpen, setTitleOpen] = useState(true)
@@ -1364,6 +1365,12 @@ export default function Game() {
   }, [selectedClass])
 
   useEffect(() => {
+    if (ready) return undefined
+    const timer = window.setTimeout(() => setLoadSlow(true), 12000)
+    return () => window.clearTimeout(timer)
+  }, [ready])
+
+  useEffect(() => {
     const onReady = () => setReady(true)
     const onScene = ({ scene: next } = {}) => {
       if (next) setScene(next)
@@ -1948,7 +1955,9 @@ export default function Game() {
         )}
         {!ready && (
           <div className="absolute inset-0 flex items-center justify-center text-stone-200">
-            Loading assets…
+            {loadSlow
+              ? 'Assets are still loading, so refresh the page to try again.'
+              : 'Loading assets…'}
           </div>
         )}
 
