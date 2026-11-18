@@ -11,6 +11,10 @@ import path from 'path'
  * Cavern of Embers), so the return from the first wilderness screen uses
  * enterScene. Later long crossings use enterScene the same way. Door entry
  * itself is a real E press.
+ *
+ * Every input waits for a visible condition first: the start button, a hidden
+ * class modal, `__hv.scene()` for the scene this step is in, and the door
+ * prompt on screen before E. No single waitForFunction timeout is over 30s.
  */
 
 const SHOTS = path.resolve('tests/e2e/__screenshots__')
@@ -32,8 +36,43 @@ function kept(lines: string[], patterns: RegExp[]) {
   return lines.filter((line) => !patterns.some((pattern) => pattern.test(line)))
 }
 
+function sceneIs(id: string) {
+  return (window as any).__hv?.scene() === id
+}
+
+// The banner's text is the live prompt. The HUD hint is a different string, so
+// an exact match is the on-screen prompt and not the always-visible hint.
+function promptIsVisible(needle: string) {
+  const label = String((window as any).__scene?._activeLabel || '').trim()
+  if (!label.toLowerCase().includes(String(needle).toLowerCase())) return false
+  const nodes = document.querySelectorAll('div')
+  for (const el of nodes) {
+    const text = (el.textContent || '').replace(/\s+/g, ' ').trim()
+    if (text !== label) continue
+    const rect = el.getBoundingClientRect()
+    if (rect.width > 0 && rect.height > 0) return true
+  }
+  return false
+}
+
 async function waitScene(page: Page, id: string) {
-  await page.waitForFunction((sceneId) => (window as any).__hv?.scene() === sceneId, id, { timeout: 15000 })
+  await page.waitForFunction(sceneIs, id, { timeout: 15000 })
+}
+
+// Title and class overlays sit on top of a village scene that is already
+// running, so scene() alone can race those screens. Wait until both overlays
+// are gone and the knight is actually on the scene we mean to play.
+async function waitPlaying(page: Page, sceneId: string) {
+  await expect(page.getByRole('button', { name: 'Start Game' })).toBeHidden()
+  await expect(page.getByText('Choose Your Class')).toBeHidden()
+  await page.waitForFunction((id) => {
+    const player = (window as any).__scene?.player
+    return (window as any).__hv?.scene() === id && Boolean(player?.body) && player.visible === true
+  }, sceneId, { timeout: 15000 })
+}
+
+async function waitPrompt(page: Page, needle: string, timeout = 15000) {
+  await page.waitForFunction(promptIsVisible, needle, { timeout })
 }
 
 async function placeFeet(page: Page, x: number, y: number) {
@@ -45,12 +84,23 @@ async function placeFeet(page: Page, x: number, y: number) {
   }, { x, y })
 }
 
+async function settle(page: Page) {
+  await page.evaluate(() => {
+    const player = (window as any).__scene?.player
+    if (!player) return
+    player.setVelocity?.(0, 0)
+    player.body?.setVelocity?.(0, 0)
+    if (player.body) player.body.reset(player.x, player.y)
+  })
+}
+
 async function holdUntil(page: Page, key: string, ready: () => boolean, timeout = 8000) {
   await page.keyboard.down(key)
   try {
     await page.waitForFunction(ready, null, { timeout })
   } finally {
     await page.keyboard.up(key)
+    await settle(page)
   }
 }
 
@@ -59,20 +109,56 @@ async function pressE(page: Page) {
 }
 
 // One press can land between Phaser updates and miss JustDown. Press again
-// while the prompt is still showing.
-async function pressEUntilScene(page: Page, id: string) {
+// while the prompt is still showing. Never press E for a door until that
+// prompt is on screen.
+async function pressEUntilScene(page: Page, id: string, prompt: string) {
+  await waitPrompt(page, prompt)
   for (let attempt = 0; attempt < 5; attempt++) {
-    const there = await page.evaluate((sceneId) => (window as any).__hv?.scene() === sceneId, id)
-    if (there) return
+    if (await page.evaluate(sceneIs, id)) return
+    if (!(await page.evaluate(promptIsVisible, prompt))) {
+      try {
+        await waitPrompt(page, prompt, 5000)
+      } catch {
+        break
+      }
+    }
+    await settle(page)
+    if (!(await page.evaluate(promptIsVisible, prompt))) continue
     await pressE(page)
     try {
-      await page.waitForFunction((sceneId) => (window as any).__hv?.scene() === sceneId, id, { timeout: 2000 })
+      await page.waitForFunction(sceneIs, id, { timeout: 2000 })
       return
     } catch {
       // try the key again
     }
   }
   await waitScene(page, id)
+}
+
+async function beginRun(page: Page) {
+  const start = page.getByRole('button', { name: 'Start Game' })
+  const heading = page.getByText('Choose Your Class')
+  const choose = page.getByRole('button', { name: 'Choose' }).first()
+
+  await expect(start).toBeVisible()
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      if (await start.isVisible().catch(() => false)) {
+        await start.click()
+        await expect(heading).toBeVisible({ timeout: 15000 })
+      }
+      await expect(choose).toBeVisible()
+      await choose.click()
+      await expect(heading).toBeHidden({ timeout: 15000 })
+      await waitPlaying(page, 'village')
+      return
+    } catch {
+      // The click raced the title or class screen. Wait until one is back.
+      await expect(start.or(heading)).toBeVisible({ timeout: 15000 })
+    }
+  }
+  await expect(heading).toBeHidden()
+  await waitPlaying(page, 'village')
 }
 
 async function enterScene(page: Page, id: string) {
@@ -106,6 +192,7 @@ async function sampleFps(page: Page, label: string) {
 }
 
 async function assertOutsideAndMobile(page: Page, direction: 'ArrowRight' | 'ArrowDown') {
+  await waitPlaying(page, 'village')
   await page.waitForFunction(() => {
     const scene = (window as any).__scene
     const player = scene?.player
@@ -170,12 +257,7 @@ test.describe('QA-1 full shipped path', () => {
 
     await test.step('title, knight, Brackenford blend map', async () => {
       await page.goto(`/?qa=1&seed=${SEED}`)
-      await expect(page.getByRole('button', { name: 'Start Game' })).toBeVisible()
-      await page.getByRole('button', { name: 'Start Game' }).click()
-      await expect(page.getByText('Choose Your Class')).toBeVisible()
-      await page.getByRole('button', { name: 'Choose' }).first().click()
-      await expect(page.getByText('Choose Your Class')).toBeHidden()
-      await waitScene(page, 'village')
+      await beginRun(page)
 
       const village = await page.evaluate(() => {
         const scene = (window as any).__scene
@@ -207,35 +289,35 @@ test.describe('QA-1 full shipped path', () => {
 
     await test.step('market door, exit outside the cottage', async () => {
       // Bridge north end, then walk west into door_market. The last steps are the interaction.
+      await waitPlaying(page, 'village')
       await placeFeet(page, 192, 220)
       await holdUntil(page, 'ArrowLeft', () => {
         const label = (window as any).__scene?._activeLabel || ''
         return label.includes('Market')
       })
-      await pressEUntilScene(page, 'market')
+      await pressEUntilScene(page, 'market', 'Market')
       const market = await page.evaluate(() => (window as any).__hv.world())
       expect(market).toEqual({ w: 640, h: 384 })
 
       // Market spawn sits on exit_village, so E is the exit itself.
-      await page.waitForFunction(() => {
-        const label = (window as any).__scene?._activeLabel || ''
-        return label.includes('Brackenford')
-      })
-      await pressEUntilScene(page, 'village')
+      await waitPlaying(page, 'market')
+      await pressEUntilScene(page, 'village', 'Brackenford')
       await page.screenshot({ path: path.join(SHOTS, 'qa1-market-exit.png') })
       await assertOutsideAndMobile(page, 'ArrowRight')
     })
 
     await test.step('The Flagon, Tharos prompt, exit', async () => {
+      await waitPlaying(page, 'village')
       await placeFeet(page, 288, 200)
       await holdUntil(page, 'ArrowUp', () => {
         const label = (window as any).__scene?._activeLabel || ''
         return label.includes('The Flagon')
       })
-      await pressEUntilScene(page, 'tavern')
+      await pressEUntilScene(page, 'tavern', 'The Flagon')
       const tavern = await page.evaluate(() => (window as any).__hv.world())
       expect(tavern).toEqual({ w: 640, h: 384 })
 
+      await waitPlaying(page, 'tavern')
       const prompt = await page.evaluate(() => {
         const scene = (window as any).__scene
         const zone = (scene.prompts || []).find((p: { label?: string }) => (p.label || '').includes('Tharos'))
@@ -250,22 +332,20 @@ test.describe('QA-1 full shipped path', () => {
       expect(prompt).toContain('Tharos')
       await expect(page.getByText(prompt)).toBeVisible()
 
+      await waitPlaying(page, 'tavern')
       await placeFeet(page, 320, 304)
-      await page.waitForFunction(() => {
-        const label = (window as any).__scene?._activeLabel || ''
-        return label.includes('Brackenford')
-      })
-      await pressEUntilScene(page, 'village')
+      await pressEUntilScene(page, 'village', 'Brackenford')
       await assertOutsideAndMobile(page, 'ArrowDown')
     })
 
     await test.step('south exit, wilderness, back, cavern mouth door', async () => {
+      await waitPlaying(page, 'village')
       await placeFeet(page, 320, 280)
       await holdUntil(page, 'ArrowDown', () => {
         const label = (window as any).__scene?._activeLabel || ''
         return label.toLowerCase().includes('wilderness')
       })
-      await pressEUntilScene(page, 'wilderness')
+      await pressEUntilScene(page, 'wilderness', 'wilderness')
       const wild = await page.evaluate(() => {
         const scene = (window as any).__scene
         return {
@@ -296,6 +376,7 @@ test.describe('QA-1 full shipped path', () => {
 
       // Walk from the grass into the mouth. Collision stops the feet on the lip;
       // the interact rect is the door, so finish standing inside it and press E.
+      await waitPlaying(page, 'dungeon')
       await placeFeet(page, 384, 816)
       await page.keyboard.down('ArrowUp')
       try {
@@ -318,9 +399,9 @@ test.describe('QA-1 full shipped path', () => {
         body.reset(x, y)
         scene.player.setVelocity(0, 0)
       })
-      await page.waitForFunction(() => ((window as any).__scene._activeLabel || '').includes('Molten Halls'), null, { timeout: 3000 })
+      await waitPrompt(page, 'Molten Halls')
       await page.screenshot({ path: path.join(SHOTS, 'qa1-cavern-mouth.png') })
-      await pressEUntilScene(page, 'dungeonInterior')
+      await pressEUntilScene(page, 'dungeonInterior', 'Molten Halls')
       expect(await page.evaluate(() => (window as any).__hv.world())).toEqual({ w: 896, h: 512 })
     })
 
@@ -344,6 +425,7 @@ test.describe('QA-1 full shipped path', () => {
     })
 
     await test.step('goblin basic attack drops a pickup; K drinks a potion', async () => {
+      await waitPlaying(page, 'village')
       // Chase treats speed 0 as 70 (`speed || 70`), so a dummy has to stop its AI.
       // Sword reach is the offset attack-combat-regression already lands: feet + (35, -15).
       await page.evaluate(() => {
@@ -383,6 +465,7 @@ test.describe('QA-1 full shipped path', () => {
         })
         if (hp <= 0) break
         if (hp <= 3) await page.evaluate((seed) => (window as any).__hv.seed(seed), LOOT_SEED)
+        await waitPlaying(page, 'village')
         await page.keyboard.press('Space', { delay: 60 })
         try {
           await page.waitForFunction((before) => {
@@ -425,10 +508,12 @@ test.describe('QA-1 full shipped path', () => {
         scene._publishVitals(true)
         scene.player.setVelocity(0, 0)
       })
+      await waitPlaying(page, 'village')
       await page.keyboard.press('2')
       await page.waitForFunction(() => (window as any).__session?.equippedId === 'healing_potion', null, { timeout: 3000 })
       const before = await page.evaluate(() => (window as any).__hv.combat().hp)
       expect(before).toBe(30)
+      await waitPlaying(page, 'village')
       await page.keyboard.down('KeyK')
       try {
         await page.waitForFunction(() => (window as any).__hv.combat().hp >= 100, null, { timeout: 3000 })
