@@ -35,7 +35,7 @@ import {
   PLAYER_IFRAME_DURATION_MS,
 } from '../combat/feedback.js'
 import { session } from '../session.js'
-import { getHeldItemId, holdClipFor, useClipFor, getItemAnchor } from './itemHold.js'
+import { getHeldItemId, holdClipFor, useClipFor, getItemAnchor, inhandAtlasKey } from './itemHold.js'
 import {
   castFireball,
   castLightning,
@@ -1162,6 +1162,72 @@ export class Player extends Actor {
   }
 
   /**
+   * Starts a tool clip (lockpick or pickaxe) on the same item-use path as a consumable.
+   * The scene decides when the effect lands; this only plays and tracks the clip.
+   *
+   * @param {{ id?: string, classId?: string, itemId?: string, clip?: string, sheetKey?: string }} spec
+   * @param {number} [now]
+   * @returns {Player|null}
+   */
+  beginToolUse(spec, now = (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
+    if (!spec?.itemId || !spec?.clip) return null
+    if (spec.classId && spec.classId !== this.classId) return null
+    if (
+      this.is(ACTOR_STATES.DEAD) ||
+      this.is(ACTOR_STATES.HURT) ||
+      this.is(ACTOR_STATES.DODGE) ||
+      this.is(ACTOR_STATES.ATTACK) ||
+      this.is(ACTOR_STATES.BLOCK)
+    ) {
+      return null
+    }
+    if (this.itemUseState?.active) return null
+
+    this.itemUseState = {
+      active: true,
+      itemId: spec.itemId,
+      startTime: now,
+      clip: spec.clip,
+      tool: spec.id || true,
+    }
+    const key = `${this.classId}_${spec.clip}_${this.facing}`
+    const sheetKey = spec.sheetKey || `${this.classId}_${spec.clip}`
+
+    if (this.scene?.anims && typeof this.scene.anims.exists === 'function' && !this.scene.anims.exists(key)) {
+      console.warn(`[Player] Animation key "${key}" not found in scene anims.`)
+    }
+
+    this.applySheetOrigin(sheetKey)
+    if (this.anims && typeof this.anims.play === 'function') {
+      this.anims.play(key, false)
+    }
+    this.applySheetOrigin(sheetKey)
+    this.applyFootprint(sheetKey)
+    this._syncItemInHandSprite()
+    return this
+  }
+
+  /**
+   * Stops a tool clip before its effect. Leaves a non-tool item use alone.
+   *
+   * @returns {Player}
+   */
+  cancelToolUse() {
+    if (!this.itemUseState?.active || !this.itemUseState.tool) return this
+    return this.endItemUse()
+  }
+
+  /**
+   * Ends a tool clip after its effect has been applied.
+   *
+   * @returns {Player}
+   */
+  completeToolUse() {
+    if (!this.itemUseState?.active || !this.itemUseState.tool) return this
+    return this.endItemUse()
+  }
+
+  /**
    * Destroys this actor and its associated item sprite.
    *
    * @param {boolean} [fromScene]
@@ -1187,7 +1253,7 @@ export class Player extends Actor {
     if (!this.itemSprite && this.scene) {
       const activeItemId = this.itemUseState?.active ? this.itemUseState.itemId : getHeldItemId(session)
       const frameName = activeItemId ? `${activeItemId}_${this.facing}` : 'healing_potion_down'
-      const atlasKey = activeItemId === 'poison_vial' ? 'items_inhand_b10' : 'items_inhand'
+      const atlasKey = inhandAtlasKey(activeItemId)
       if (this.scene.add && typeof this.scene.add.image === 'function') {
         this.itemSprite = this.scene.add.image(this.x, this.y, atlasKey, frameName)
       } else {
@@ -1246,7 +1312,7 @@ export class Player extends Actor {
     if (!sprite) return
 
     const itemFrameName = `${activeItemId}_${this.facing}`
-    const atlasKey = activeItemId === 'poison_vial' ? 'items_inhand_b10' : 'items_inhand'
+    const atlasKey = inhandAtlasKey(activeItemId)
     if (sprite.texture?.key !== atlasKey && typeof sprite.setTexture === 'function') {
       sprite.setTexture(atlasKey, itemFrameName)
     } else if (typeof sprite.setFrame === 'function') {

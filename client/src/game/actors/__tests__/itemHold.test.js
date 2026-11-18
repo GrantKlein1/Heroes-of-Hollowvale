@@ -6,6 +6,7 @@ import {
   holdClipFor,
   useClipFor,
   getItemAnchor,
+  inhandAtlasKey,
 } from '../itemHold.js'
 
 describe('itemHold pure module (Package IT-1)', () => {
@@ -109,6 +110,16 @@ describe('itemHold pure module (Package IT-1)', () => {
       expect(getItemAnchor('thief', 'use_lockpick', 'thief_use_lockpick_down_0')).toBeTruthy()
       expect(getItemAnchor('dwarf', 'use_pickaxe', 'dwarf_use_pickaxe_down_0')).toBeTruthy()
       expect(getItemAnchor('dwarf', 'use_pickaxe', 'dwarf_use_pickaxe_up_4').layer).toBe('front')
+    })
+  })
+
+  describe('inhandAtlasKey', () => {
+    it('sends Batch 10 tool and vial frames to items_inhand_b10', () => {
+      expect(inhandAtlasKey('lockpicks')).toBe('items_inhand_b10')
+      expect(inhandAtlasKey('dwarf_pickaxe')).toBe('items_inhand_b10')
+      expect(inhandAtlasKey('poison_vial')).toBe('items_inhand_b10')
+      expect(inhandAtlasKey('healing_potion')).toBe('items_inhand')
+      expect(inhandAtlasKey(null)).toBe('items_inhand')
     })
   })
 })
