@@ -40,6 +40,12 @@ export class GoblinAI {
     this.enemy = enemy
     this.hasSpawned = options.hasSpawned ?? false
     this.mode = this.hasSpawned ? GOBLIN_AI_MODES.PATROL : GOBLIN_AI_MODES.SPAWN
+
+    // Ranges are per-instance so a subclass (WolfAI) can reuse this controller
+    // with its own numbers. The defaults are the goblin's.
+    this.aggroRadius = options.aggroRadius ?? AGGRO_RADIUS_PX
+    this.attackRange = options.attackRange ?? ATTACK_RANGE_PX
+    this.retreatHpRatio = options.retreatHpRatio ?? RETREAT_HP_RATIO
     this.patrolDirX = 0
     this.patrolDirY = 0
     this.nextPatrolChangeAt = 0
@@ -106,7 +112,7 @@ export class GoblinAI {
 
     // 1. Retreat check: HP < 25%
     const hpRatio = enemy.hp / (enemy.hpMax || 1)
-    if (hpRatio < RETREAT_HP_RATIO) {
+    if (hpRatio < this.retreatHpRatio) {
       this.mode = GOBLIN_AI_MODES.RETREAT
       this.doRetreat(player, time)
       return
@@ -118,7 +124,7 @@ export class GoblinAI {
     const dist = Math.hypot(dx, dy)
 
     // 3. Patrol check: distance > 160 px
-    if (dist > AGGRO_RADIUS_PX) {
+    if (dist > this.aggroRadius) {
       this.mode = GOBLIN_AI_MODES.PATROL
       this.doPatrol(time)
       return
@@ -151,7 +157,7 @@ export class GoblinAI {
     }
 
     // 5. Aggro engagement: attack or chase
-    if (dist <= ATTACK_RANGE_PX) {
+    if (dist <= this.attackRange) {
       this.mode = GOBLIN_AI_MODES.ATTACK
       this.doAttackOrWait(player, dx, dy, time)
     } else {

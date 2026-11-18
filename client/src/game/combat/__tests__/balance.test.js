@@ -158,7 +158,8 @@ describe('Combat Balance Constants & Formulas', () => {
 
   describe('Enemy Base Stats & Scaling Constants', () => {
     it('preserves enemy base HP values', () => {
-      expect(ENEMY_BASE_HP).toEqual({
+      // Original three only; the Batch 11 enemies are pinned in enemyNew.test.js.
+      expect(ENEMY_BASE_HP).toMatchObject({
         brute: 72,
         archer: 24,
         goblin: 36,
@@ -169,7 +170,8 @@ describe('Combat Balance Constants & Formulas', () => {
     })
 
     it('preserves enemy base speeds', () => {
-      expect(ENEMY_BASE_SPEED).toEqual({
+      // Original three only; the Batch 11 enemies are pinned in enemyNew.test.js.
+      expect(ENEMY_BASE_SPEED).toMatchObject({
         brute: 50,
         archer: 80,
         goblin: 100,
@@ -180,7 +182,8 @@ describe('Combat Balance Constants & Formulas', () => {
     })
 
     it('preserves enemy base contact damage', () => {
-      expect(ENEMY_BASE_DAMAGE).toEqual({
+      // Original three only; the Batch 11 enemies are pinned in enemyNew.test.js.
+      expect(ENEMY_BASE_DAMAGE).toMatchObject({
         brute: 16,
         archer: 6,
         goblin: 10,

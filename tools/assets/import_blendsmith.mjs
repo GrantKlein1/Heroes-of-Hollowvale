@@ -77,7 +77,7 @@ export function importBlendsmith() {
     groups: {
       boot: ['fx_common', 'critters', 'knight'],
       village: ['knight', 'thief', 'dwarf', 'mage', 'critters', 'fx_common'],
-      wilderness: ['knight', 'thief', 'dwarf', 'mage', 'goblin', 'goblin_archer', 'goblin_brute', 'critters', 'fx_common'],
+      wilderness: ['knight', 'thief', 'dwarf', 'mage', 'goblin', 'goblin_archer', 'goblin_brute', 'ashen_cultist', 'shadowfang_wolf', 'ashen_revenant', 'critters', 'fx_common'],
       boss: ['knight', 'thief', 'dwarf', 'mage', 'fx_common', 'dragon_fx_v2'],
       boss_p1: ['red_dragon_p1_a', 'red_dragon_p1_b'],
       boss_p2: ['red_dragon_p2_a', 'red_dragon_p2_b', 'red_dragon_p2_land'],
@@ -345,7 +345,7 @@ export function importBlendsmith() {
   }
 
   // 3. Process enemies
-  const enemies = ['goblin', 'goblin_archer', 'goblin_brute'];
+  const enemies = ['goblin', 'goblin_archer', 'goblin_brute', 'ashen_cultist', 'shadowfang_wolf', 'ashen_revenant'];
   for (const enemyName of enemies) {
     const entry = processAssetDirectory({
       srcSubdir: enemyName,

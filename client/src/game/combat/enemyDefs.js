@@ -15,14 +15,15 @@
  *   id:          'goblin'                 // table key, also Enemy.enemyType
  *   aliases:     ['goblin_brute']         // optional: other type strings that use these sheets and AI
  *   label:       'Goblin'                 // display name (kill feed, death notice)
- *   ai:          'GoblinAI'               // key into ENEMY_AI_CLASSES ('GoblinAI' | 'BruteAI' | 'ArcherAI'), or an AI class itself
+ *   ai:          'GoblinAI'               // key into ENEMY_AI_CLASSES ('GoblinAI' | 'BruteAI' | 'ArcherAI' | 'WolfAI' | 'CultistAI'), or an AI class itself
  *   armored:     false                    // heavy tuning: slower telegraph, longer cooldown, big knockback
  *   hp:          36                       // wave-1 max HP
  *   speed:       100                      // wave-1 walk speed
  *   damage:      10                       // wave-1 contact / melee damage
- *   projectile:  { speed, dist, size, damage }   // optional, ranged enemies only
+ *   projectile:  { speed, dist, size, damage }   // optional, ranged enemies only (ArcherAI, CultistAI)
  *   sheets:      { assetId?, defaultSheet, walkSheet, hurtSheet, attackSheet,
- *                  telegraphSheet?, deathSheet, spawnSheet, alertSheet, initialFrame }
+ *                  telegraphSheet?, deathSheet, spawnSheet?, alertSheet?, initialFrame }
+ *                (no telegraphSheet: the attack clip's first frames are the wind-up)
  *   loot:        { gems: [{ type, chance, count }], items: [{ id, chance, count }] }
  *   spawnWeight: 6                        // relative weight for weighted spawn tables
  * }
@@ -113,6 +114,85 @@ const BUILTIN_ENEMY_DEFS = [
       items: [{ id: 'mana_potion', chance: 0.25, count: 1 }],
     },
     spawnWeight: 2,
+  },
+  // --- Batch 11 enemies (lore: newLore.txt Part X). ---
+  // Stats, loot and spawn weights below are placeholders picked to sit next to the
+  // goblin family. Grant-tunable: change the numbers here and nowhere else.
+  {
+    id: 'shadowfang_wolf',
+    label: 'Shadowfang Wolf',
+    ai: 'WolfAI',
+    armored: false,
+    hp: 30,
+    speed: 130,
+    damage: 7,
+    sheets: {
+      assetId: 'shadowfang_wolf',
+      defaultSheet: 'shadowfang_wolf',
+      walkSheet: 'shadowfang_wolf',
+      hurtSheet: 'shadowfang_wolf',
+      attackSheet: 'shadowfang_wolf',
+      deathSheet: 'shadowfang_wolf_death',
+      initialFrame: 'shadowfang_wolf_idle_down',
+    },
+    loot: {
+      gems: [{ type: 'emerald', chance: 0.2, count: 1 }],
+      items: [{ id: 'speed_potion', chance: 0.2, count: 1 }],
+    },
+    spawnWeight: 2,
+  },
+  {
+    id: 'ashen_cultist',
+    label: 'Ashen Cultist',
+    ai: 'CultistAI',
+    armored: false,
+    hp: 28,
+    speed: 70,
+    damage: 6,
+    projectile: { speed: 220, dist: 420, size: 14, damage: 10 },
+    sheets: {
+      assetId: 'ashen_cultist',
+      defaultSheet: 'ashen_cultist',
+      walkSheet: 'ashen_cultist',
+      hurtSheet: 'ashen_cultist',
+      attackSheet: 'ashen_cultist',
+      deathSheet: 'ashen_cultist_death',
+      initialFrame: 'ashen_cultist_idle_down',
+    },
+    loot: {
+      gems: [
+        { type: 'ruby', chance: 0.3, count: 1 },
+        { type: 'sapphire', chance: 0.2, count: 1 },
+      ],
+      items: [{ id: 'mana_potion', chance: 0.3, count: 1 }],
+    },
+    spawnWeight: 1,
+  },
+  {
+    id: 'ashen_revenant',
+    label: 'Ashen Revenant',
+    ai: 'BruteAI',
+    armored: true,
+    hp: 90,
+    speed: 40,
+    damage: 20,
+    sheets: {
+      assetId: 'ashen_revenant',
+      defaultSheet: 'ashen_revenant',
+      walkSheet: 'ashen_revenant',
+      hurtSheet: 'ashen_revenant',
+      attackSheet: 'ashen_revenant',
+      deathSheet: 'ashen_revenant_death',
+      initialFrame: 'ashen_revenant_idle_down',
+    },
+    loot: {
+      gems: [
+        { type: 'ruby', chance: 0.5, count: 1 },
+        { type: 'sapphire', chance: 0.4, count: 1 },
+      ],
+      items: [{ id: 'healing_potion', chance: 0.3, count: 1 }],
+    },
+    spawnWeight: 1,
   },
 ]
 

@@ -42,6 +42,8 @@ import {
 import { GoblinAI } from '../ai/goblin.js'
 import { BruteAI } from '../ai/brute.js'
 import { ArcherAI } from '../ai/archer.js'
+import { WolfAI } from '../ai/wolf.js'
+import { CultistAI } from '../ai/cultist.js'
 import { isDebug } from '../config/flags.js'
 import { ENEMY_DEFS, resolveEnemyDef } from '../combat/enemyDefs.js'
 
@@ -54,6 +56,8 @@ export const ENEMY_AI_CLASSES = {
   GoblinAI,
   BruteAI,
   ArcherAI,
+  WolfAI,
+  CultistAI,
 }
 
 /**
@@ -145,7 +149,14 @@ export class Enemy extends Actor {
     // Attach archetype AI controller from the def
     const AiClass = typeof def?.ai === 'function' ? def.ai : ENEMY_AI_CLASSES[def?.ai]
     if (AiClass) {
-      this.ai = def.projectile ? new AiClass(this, { damage: def.projectile.damage }) : new AiClass(this)
+      this.ai = def.projectile
+        ? new AiClass(this, {
+            damage: def.projectile.damage,
+            arrowSpeed: def.projectile.speed,
+            arrowRange: def.projectile.dist,
+            projectileSize: def.projectile.size,
+          })
+        : new AiClass(this)
     }
 
     // Listen for animation completion events to chain telegraph -> attack -> idle
@@ -257,9 +268,13 @@ export class Enemy extends Actor {
       this.anims.play(key, ignoreIfPlaying)
     }
 
-    if (targetSheet) {
+    // Origin and footprint only change when the sheet does. Re-applying the
+    // footprint every frame (playAnim runs each frame from the AI) re-syncs the
+    // physics body from the sprite and cancels its velocity, so enemies never moved.
+    if (targetSheet && targetSheet !== this._footprintSheet) {
       this.applySheetOrigin(targetSheet)
       this.applyFootprint(targetSheet)
+      this._footprintSheet = targetSheet
     }
 
     return this
@@ -315,6 +330,13 @@ export class Enemy extends Actor {
     // Halt physics velocity during telegraph and attack
     if (this.body && typeof this.body.setVelocity === 'function') {
       this.body.setVelocity(0, 0)
+    }
+
+    // No telegraph sheet (Ashen Cultist, Shadowfang Wolf, Ashen Revenant): the
+    // first frames of the attack clip are the wind-up, so go straight to the swing.
+    if (!this.getSheetForAnim('telegraph')) {
+      this.transitionToSwing(now)
+      return true
     }
 
     // Telegraph duration: 300 ms for brute, 375 ms for standard goblin
@@ -683,9 +705,11 @@ export class Enemy extends Actor {
         }
       }
 
-      // Attacking locks velocity and facing
+      // Attacking locks velocity and facing. An AI may script a burst of motion
+      // inside the swing (the wolf's lunge) through attackVelocity().
       if (this.body && typeof this.body.setVelocity === 'function') {
-        this.body.setVelocity(0, 0)
+        const burst = typeof this.ai?.attackVelocity === 'function' ? this.ai.attackVelocity(time) : null
+        this.body.setVelocity(burst?.x ?? 0, burst?.y ?? 0)
       }
     } else if (!this.is(ACTOR_STATES.HURT)) {
       // 2. Run AI update when not attacking or stunned in HURT

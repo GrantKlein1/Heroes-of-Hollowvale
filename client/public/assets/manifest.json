@@ -25,6 +25,9 @@
       "goblin",
       "goblin_archer",
       "goblin_brute",
+      "ashen_cultist",
+      "shadowfang_wolf",
+      "ashen_revenant",
       "critters",
       "fx_common",
       "village_props",
@@ -1169,6 +1172,93 @@
       "sidecars": [
         "attack_hit.json"
       ]
+    },
+    "ashen_cultist": {
+      "id": "ashen_cultist",
+      "kind": "enemies",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9271
+      },
+      "sheets": {
+        "ashen_cultist": {
+          "key": "ashen_cultist",
+          "image": "assets/enemies/ashen_cultist/ashen_cultist.png",
+          "json": "assets/enemies/ashen_cultist/ashen_cultist.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "ashen_cultist_death": {
+          "key": "ashen_cultist_death",
+          "image": "assets/enemies/ashen_cultist/ashen_cultist_death.png",
+          "json": "assets/enemies/ashen_cultist/ashen_cultist_death.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        }
+      },
+      "sidecars": []
+    },
+    "shadowfang_wolf": {
+      "id": "shadowfang_wolf",
+      "kind": "enemies",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9062
+      },
+      "sheets": {
+        "shadowfang_wolf": {
+          "key": "shadowfang_wolf",
+          "image": "assets/enemies/shadowfang_wolf/shadowfang_wolf.png",
+          "json": "assets/enemies/shadowfang_wolf/shadowfang_wolf.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9062
+          }
+        },
+        "shadowfang_wolf_death": {
+          "key": "shadowfang_wolf_death",
+          "image": "assets/enemies/shadowfang_wolf/shadowfang_wolf_death.png",
+          "json": "assets/enemies/shadowfang_wolf/shadowfang_wolf_death.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9062
+          }
+        }
+      },
+      "sidecars": []
+    },
+    "ashen_revenant": {
+      "id": "ashen_revenant",
+      "kind": "enemies",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9271
+      },
+      "sheets": {
+        "ashen_revenant": {
+          "key": "ashen_revenant",
+          "image": "assets/enemies/ashen_revenant/ashen_revenant.png",
+          "json": "assets/enemies/ashen_revenant/ashen_revenant.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "ashen_revenant_death": {
+          "key": "ashen_revenant_death",
+          "image": "assets/enemies/ashen_revenant/ashen_revenant_death.png",
+          "json": "assets/enemies/ashen_revenant/ashen_revenant_death.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        }
+      },
+      "sidecars": []
     },
     "critters": {
       "id": "critters",
