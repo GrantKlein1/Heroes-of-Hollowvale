@@ -15,12 +15,13 @@ const MAX_PAGE_DIMENSION = 4096;
 
 /**
  * Determines whether a sheet is an FX sheet or effect projectile.
+ * `<hero>_use_charm_glow` style glow overlays count as FX: they carry no footprint or hurtbox.
  */
 export function isFxAtlas(sheetKey = '', jsonPath = '', kind = '') {
   if (kind === 'fx') return true;
   const lowerKey = sheetKey.toLowerCase();
   const lowerPath = jsonPath.toLowerCase().replace(/\\/g, '/');
-  if (lowerKey.includes('_fx') || lowerKey === 'fx' || lowerKey === 'fireball' || lowerKey === 'spell_fx' || lowerKey.startsWith('dfx_')) {
+  if (lowerKey.includes('_fx') || lowerKey.endsWith('_glow') || lowerKey === 'fx' || lowerKey === 'fireball' || lowerKey === 'spell_fx' || lowerKey.startsWith('dfx_')) {
     return true;
   }
   if (lowerPath.includes('/fx/') || lowerPath.includes('/fx_v2/')) {

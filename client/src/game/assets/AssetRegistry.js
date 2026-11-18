@@ -75,6 +75,7 @@ export class AssetRegistry {
           anchor: sheetObj.anchor || fallbackAnchor,
           assetId,
           kind,
+          ...(sheetObj.animAliases ? { animAliases: sheetObj.animAliases } : {}),
         })
       }
     } else if (assetDef.image && assetDef.json) {
@@ -209,8 +210,11 @@ export class AssetRegistry {
 
         if (!animsDict) continue
 
-        for (const [animName, animDef] of Object.entries(animsDict)) {
+        for (const [metaAnimName, animDef] of Object.entries(animsDict)) {
           if (!animDef || typeof animDef !== 'object') continue
+          // A sheet can republish a clip under another name (manifest `animAliases`),
+          // so two sheets that both ship `hold_idle` do not collide on one anim key.
+          const animName = sheet.animAliases?.[metaAnimName] || metaAnimName
 
           const fps = typeof animDef.fps === 'number' && animDef.fps > 0
             ? animDef.fps

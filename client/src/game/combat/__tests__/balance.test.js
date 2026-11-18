@@ -102,7 +102,9 @@ describe('Combat Balance Constants & Formulas', () => {
       expect(CONSUMABLE.has('speed_potion')).toBe(true)
       expect(CONSUMABLE.has('apple')).toBe(true)
       expect(CONSUMABLE.has('ale_flask')).toBe(true)
-      expect(CONSUMABLE.size).toBe(5)
+      // ITEM-NEW-1 adds healing_charm to the five ITEMS/IT-1 consumables.
+      expect(CONSUMABLE.has('healing_charm')).toBe(true)
+      expect(CONSUMABLE.size).toBe(6)
 
       expect(CONSUMABLE_EFFECTS.healing_potion).toEqual({
         heal: 70,

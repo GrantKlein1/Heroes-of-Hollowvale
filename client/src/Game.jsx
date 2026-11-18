@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react'
 import { sendChat as apiSendChat, sendChatWithFallback } from './lib/api'
-import { PATHS, CLASS_SPRITES, ITEM_ICONS, DEFAULT_ITEM_ICON, COMPOSITE_SPRITES, ANIMATED_SWORD_FRAMES } from './config/paths'
+import { PATHS, CLASS_SPRITES, COMPOSITE_SPRITES, ANIMATED_SWORD_FRAMES } from './config/paths'
+import { getItemDef, marketItems, marketPrice, isQuestItem } from './game/items/registry'
 import AnimatedSprite from './components/AnimatedSprite'
 import PhaserGame from './components/PhaserGame'
 import { eventBus, GameEvents } from './lib/eventBus'
@@ -171,87 +172,12 @@ export default function Game() {
     dwarf: { id: 'dwarf', name: 'Dwarf', sprite: CLASS_SPRITES.dwarf },
   }
 
-  // Item catalog (id -> name + icon path). Icons are expected at /images/<id>.png
-  const ITEMS = {
-    iron_sword: { name: 'Iron Sword', icon: ITEM_ICONS.iron_sword },
-    wooden_shield: { name: 'Wooden Shield', icon: ITEM_ICONS.wooden_shield },
-    chainmail_armor: { name: 'Chainmail Armor', icon: ITEM_ICONS.chainmail_armor },
-    healing_potion: { name: 'Healing Potion', icon: ITEM_ICONS.healing_potion },
-
-    apprentice_staff: { name: 'Apprentice Staff', icon: ITEM_ICONS.apprentice_staff },
-    spellbook: { name: 'Spellbook', icon: ITEM_ICONS.spellbook },
-    cloth_robes: { name: 'Cloth Robes', icon: ITEM_ICONS.cloth_robes },
-    mana_potion: { name: 'Mana Potion', icon: ITEM_ICONS.mana_potion },
-
-    twin_daggers: { name: 'Twin Daggers', icon: ITEM_ICONS.twin_daggers },
-    leather_armor: { name: 'Leather Armor', icon: ITEM_ICONS.leather_armor },
-    lockpicks: { name: 'Lockpicks', icon: ITEM_ICONS.lockpicks },
-    poison_vial: { name: 'Poison Vial', icon: ITEM_ICONS.poison_vial },
-
-    battle_axe: { name: 'Battle Axe', icon: ITEM_ICONS.battle_axe },
-    dwarf_armor: { name: 'Dwarf Armor', icon: ITEM_ICONS.dwarf_armor },
-    dwarf_pickaxe: { name: 'Dwarf Pickaxe', icon: ITEM_ICONS.dwarf_pickaxe },
-    ale_flask: { name: 'Ale Flask', icon: ITEM_ICONS.ale_flask },
-    speed_potion: { name: 'Speed Potion', icon: ITEM_ICONS.speed_potion || DEFAULT_ITEM_ICON('speedPotion') },
-    apple: { name: 'Apple', icon: ITEM_ICONS.apple || DEFAULT_ITEM_ICON('apple') },
-    // Gem loot (fallback to default icon if specific icon not provided)
-    ruby: { name: 'Ruby', icon: ITEM_ICONS.ruby || DEFAULT_ITEM_ICON('ruby') },
-    sapphire: { name: 'Sapphire', icon: ITEM_ICONS.sapphire || DEFAULT_ITEM_ICON('sapphire') },
-    emerald: { name: 'Emerald', icon: ITEM_ICONS.emerald || DEFAULT_ITEM_ICON('emerald') },
-  }
-
+  // Item catalog, market rows and prices all come from the item registry
+  // (game/items/registry.js). Icons live at /images/<id>.png unless the registry says otherwise.
   const makeItem = (id, count = 1) => ({ id, count })
-  const getItemDef = (id) => ITEMS[id] || { name: id, icon: DEFAULT_ITEM_ICON(id) }
 
-  // Market catalog and easy-to-edit pricing
-  const MARKET_ITEMS = [
-    // Potions
-    { id: 'healing_potion', category: 'Potions' },
-    { id: 'mana_potion', category: 'Potions' },
-    { id: 'speed_potion', category: 'Potions' },
-    // Magic
-    { id: 'apprentice_staff', category: 'Magic' },
-    { id: 'spellbook', category: 'Magic' },
-    // Food
-    { id: 'apple', category: 'Food' },
-    { id: 'ale_flask', category: 'Food' },
-    // Weaponry
-    { id: 'iron_sword', category: 'Weaponry' },
-    { id: 'twin_daggers', category: 'Weaponry' },
-    { id: 'battle_axe', category: 'Weaponry' },
-    // Armor
-    { id: 'chainmail_armor', category: 'Armor' },
-    { id: 'leather_armor', category: 'Armor' },
-    { id: 'dwarf_armor', category: 'Armor' },
-    { id: 'cloth_robes', category: 'Armor' },
-    // Tools
-    { id: 'lockpicks', category: 'Tools' },
-    { id: 'dwarf_pickaxe', category: 'Tools' },
-  ]
-  const MARKET_PRICES = {
-    // Potions
-    healing_potion: { ruby: 1, sapphire: 0, emerald: 0 },
-    mana_potion:    { ruby: 0, sapphire: 1, emerald: 0 },
-    speed_potion:   { ruby: 0, sapphire: 0, emerald: 2 },
-    // Magic
-    apprentice_staff: { ruby: 5, sapphire: 2, emerald: 0 },
-    spellbook:        { ruby: 1, sapphire: 3, emerald: 0 },
-    // Food
-    apple:     { ruby: 1, sapphire: 0, emerald: 0 },
-    ale_flask: { ruby: 0, sapphire: 0, emerald: 2 },
-    // Weaponry
-    iron_sword:   { ruby: 4, sapphire: 0, emerald: 2 },
-    twin_daggers: { ruby: 3, sapphire: 3, emerald: 0 },
-    battle_axe:   { ruby: 0, sapphire: 4, emerald: 2 },
-    // Armor
-    chainmail_armor: { ruby: 4, sapphire: 0, emerald: 1 },
-    leather_armor:   { ruby: 1, sapphire: 0, emerald: 2 },
-    dwarf_armor:     { ruby: 5, sapphire: 1, emerald: 0 },
-    cloth_robes:     { ruby: 1, sapphire: 2, emerald: 0 },
-    // Tools
-    lockpicks:     { ruby: 1, sapphire: 2, emerald: 1 },
-    dwarf_pickaxe: { ruby: 2, sapphire: 0, emerald: 2 },
-  }
+  // Market catalog: every registry item with a market category, in registry order.
+  const MARKET_ITEMS = marketItems()
 
   function seedInventoryForClass(id) {
     const base = {
@@ -698,7 +624,7 @@ export default function Game() {
 
   // Market purchase handler
   const tryBuy = (id) => {
-    const price = MARKET_PRICES[id] || { ruby: 0, sapphire: 0, emerald: 0 }
+    const price = marketPrice(id)
     markVendorActivity()
     setInventory((inv) => {
       if (!canAfford(inv, price)) { showNotice('Not enough gems.'); playVendor('NotEnoughMoney'); return inv }
@@ -1392,6 +1318,8 @@ export default function Game() {
     }
     const onConsumed = ({ id, slot, mode } = {}) => {
       if (!id) return
+      // Quest items are never consumed.
+      if (isQuestItem(id)) return
       setInventory((inv) => {
         if (mode === 'search') return consumeOneItem(inv, id).next
         const cur = inv.hotbar[slot]
@@ -1944,7 +1872,7 @@ export default function Game() {
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                 {MARKET_ITEMS.filter(it => it.category === shopCategory).map((it) => {
                   const def = getItemDef(it.id)
-                  const price = MARKET_PRICES[it.id] || { ruby:0,sapphire:0,emerald:0 }
+                  const price = marketPrice(it.id)
                   const afford = canAfford(inventory, price)
                   const space = hasSpaceForItem(inventory, it.id)
                   return (

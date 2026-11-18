@@ -643,4 +643,45 @@ describe('AssetRegistry — AS-3 Groups Loading (Interiors, Cavern, Loot, Boss F
     )
     expect(markerCall[0].frames).toHaveLength(7)
   })
+
+  it('republishes a clip under its manifest animAliases name (dwarf charm hold vs tool hold)', () => {
+    registry.loadGroup('village')
+    const holdMeta = {
+      anims: {
+        hold_idle: { frames: 1, fps: 1, loop: true, directions: ['down'], frameNames: 'dwarf_hold_idle_<dir>_<i>' },
+      },
+    }
+    mockScene.textures._addTexture('dwarf_hold_idle', { key: 'dwarf_hold_idle', customData: { meta: holdMeta } })
+    mockScene.textures._addTexture('dwarf_charm_hold_idle', { key: 'dwarf_charm_hold_idle', customData: { meta: holdMeta } })
+
+    const created = registry.createAnims('dwarf')
+    expect(created).toContain('dwarf_hold_idle_down')
+    expect(created).toContain('dwarf_charm_hold_idle_down')
+    const charm = mockScene.anims.create.mock.calls.find((c) => c[0].key === 'dwarf_charm_hold_idle_down')[0]
+    expect(charm.frames[0]).toMatchObject({ key: 'dwarf_charm_hold_idle', frame: 'dwarf_hold_idle_down_0' })
+    const tool = mockScene.anims.create.mock.calls.find((c) => c[0].key === 'dwarf_hold_idle_down')[0]
+    expect(tool.frames[0]).toMatchObject({ key: 'dwarf_hold_idle' })
+  })
+
+  it('loads the Batch 11 in-hand and loot atlases with the loot group, and creates the 4 fps quest glow', () => {
+    const keys = registry.loadGroup('wilderness')
+    expect(keys).toContain('items_inhand_b11')
+    expect(keys).toContain('loot_pickups_b11')
+    const lootMeta = {
+      anims: {
+        loot_seranyas_tear_idle: {
+          frames: 6, fps: 4, loop: true, directions: ['down'], frameNames: 'loot_seranyas_tear_idle_down_<i>',
+        },
+        loot_healing_charm_idle: {
+          frames: 6, fps: 8, loop: true, directions: ['down'], frameNames: 'loot_healing_charm_idle_down_<i>',
+        },
+      },
+    }
+    mockScene.textures._addTexture('loot_pickups_b11', { key: 'loot_pickups_b11', customData: { meta: lootMeta } })
+    registry.createAnims('loot')
+    const tear = mockScene.anims.create.mock.calls.find((c) => c[0].key === 'loot_pickups_b11_loot_seranyas_tear_idle_down')[0]
+    const charm = mockScene.anims.create.mock.calls.find((c) => c[0].key === 'loot_pickups_b11_loot_healing_charm_idle_down')[0]
+    expect(tear.frameRate).toBe(4)
+    expect(charm.frameRate).toBe(8)
+  })
 })

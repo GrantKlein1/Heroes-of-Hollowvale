@@ -100,18 +100,27 @@ describe('enemyDefs: built-in numbers are unchanged', () => {
           { type: 'ruby', chance: 0.35, count: 1 },
           { type: 'emerald', chance: 0.15, count: 1 },
         ],
-        items: [{ id: 'speed_potion', chance: 0.15, count: 1 }],
+        items: [
+          { id: 'speed_potion', chance: 0.15, count: 1 },
+          { id: 'healing_charm', chance: 0.06, count: 1 },
+        ],
       },
       brute: {
         gems: [
           { type: 'ruby', chance: 0.6, count: 1 },
           { type: 'sapphire', chance: 0.5, count: 1 },
         ],
-        items: [{ id: 'healing_potion', chance: 0.25, count: 1 }],
+        items: [
+          { id: 'healing_potion', chance: 0.25, count: 1 },
+          { id: 'stonehollow_hammer', chance: 0.04, count: 1 },
+        ],
       },
       archer: {
         gems: [{ type: 'sapphire', chance: 0.3, count: 1 }],
-        items: [{ id: 'mana_potion', chance: 0.25, count: 1 }],
+        items: [
+          { id: 'mana_potion', chance: 0.25, count: 1 },
+          { id: 'nightfang_dagger', chance: 0.04, count: 1 },
+        ],
       },
     })
   })

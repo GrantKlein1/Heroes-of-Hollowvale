@@ -79,9 +79,8 @@ import {
   CLASS_HP,
   CLASS_SPEED,
   ATTACK_MS,
-  MELEE_DMG,
-  WEAPON,
-  CONSUMABLE,
+  isWieldedWeapon,
+  meleeDamageFor,
   applyConsumableEffects,
   FIREBALL_SPEED,
   FIREBALL_DIST,
@@ -95,6 +94,7 @@ import {
 import { isDebug } from '../config/flags.js'
 import { getEnemyDef, isEnemyType } from '../combat/enemyDefs.js'
 import { planScreenSpawns } from '../terrain/spawnTables.js'
+import { consumableEffect, isConsumable } from '../items/registry.js'
 
 /** Boot playfield until enterScene mounts a map. Same point the first Player construct used. */
 const BOOT_WORLD_W = 1024
@@ -649,8 +649,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       this._notice('Cast Life Leech')
       return
     }
-    const needed = WEAPON[cls]
-    if (!needed || item !== needed) return
+    if (!isWieldedWeapon(cls, item)) return
     if (cls === 'mage' && (this.mana || 0) < 15) {
       this._notice('Not enough mana.')
       return
@@ -675,7 +674,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       return
     }
     onMeleeSwing()
-    const dmg = MELEE_DMG[cls] || 0
+    const dmg = meleeDamageFor(cls, item)
     if (dmg <= 0) return
     this._fillAttackBox()
     let hit = false
@@ -783,7 +782,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       eventBus.emit(GameEvents.SPELL_WHEEL, { open: false })
     }
     if (!kDown && this._consumeNeedsRelease) this._consumeNeedsRelease = false
-    const canConsume = !blocked && !isBook && equipped && CONSUMABLE.has(equipped)
+    const canConsume = !blocked && !isBook && equipped && isConsumable(equipped)
     if (!this._consuming) {
       if (kDown && !this._consumeNeedsRelease && canConsume) {
         this._consuming = true
@@ -804,7 +803,7 @@ export default class HollowvaleScene extends Phaser.Scene {
       }
       if (now - this._consumeStart >= 625) {
         this._consumeCommitted = true
-        const effect = CONSUMABLE.effects?.[this._consumeId]
+        const effect = consumableEffect(this._consumeId)
         if (effect) {
           const applied = applyConsumableEffects(effect, {
             hp: this.hp,

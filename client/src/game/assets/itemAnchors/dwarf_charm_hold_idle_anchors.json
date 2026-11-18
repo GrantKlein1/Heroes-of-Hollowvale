@@ -1,0 +1,55 @@
+{
+ "actor": "dwarf",
+ "clip": "hold_idle",
+ "cell": [
+  64,
+  80
+ ],
+ "origin": {
+  "x": 0.5,
+  "y": 0.9125
+ },
+ "pivotPx": [
+  32.0,
+  73.0
+ ],
+ "hand": "hand.R",
+ "units": "px from feet origin, +y down",
+ "rotation": "degrees, 0=item upright (cork/stem up), positive clockwise on screen",
+ "layer": "front|behind, relative to the body sprite. Up is forced front so the item reads (true depth hides it behind the body).",
+ "format": "{x, y, rotation, layer}",
+ "layerLock": {
+  "down": "front",
+  "left": "behind",
+  "right": "front",
+  "up": "front"
+ },
+ "frames": {
+  "dwarf_hold_idle_down_0": {
+   "x": -6.15,
+   "y": -30.79,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_idle_left_0": {
+   "x": -10.23,
+   "y": -34.2,
+   "rotation": -0.0,
+   "layer": "behind"
+  },
+  "dwarf_hold_idle_right_0": {
+   "x": 10.23,
+   "y": -31.64,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "dwarf_hold_idle_up_0": {
+   "x": 6.15,
+   "y": -35.04,
+   "rotation": 0.0,
+   "layer": "front"
+  }
+ },
+ "fps": 1,
+ "framesCount": 1
+}

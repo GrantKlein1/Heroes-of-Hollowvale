@@ -6,22 +6,38 @@
  * Pure module with zero Phaser dependency.
  */
 
-import { CONSUMABLE, CONSUMABLE_EFFECTS } from '../combat/balance.js'
+import {
+  getItem,
+  consumableEffect,
+  holdClipsFor,
+  inhandFor,
+  itemUsableBy,
+  useClipNames,
+} from '../items/registry.js'
 
 export const EFFECT_MS = 625
 export const USE_MS = 1000
 
-/** In-hand frames that live on the Batch 10 atlas rather than items_inhand. */
-const B10_INHAND_IDS = new Set(['poison_vial', 'lockpicks', 'dwarf_pickaxe'])
-
 /**
- * Atlas key for an equipped or in-use item sprite.
+ * Atlas key for an equipped or in-use item sprite (from the item registry:
+ * items_inhand, items_inhand_b10 or items_inhand_b11).
  *
  * @param {string|null|undefined} itemId
- * @returns {'items_inhand_b10'|'items_inhand'}
+ * @returns {string}
  */
 export function inhandAtlasKey(itemId) {
-  return B10_INHAND_IDS.has(itemId) ? 'items_inhand_b10' : 'items_inhand'
+  return inhandFor(itemId).atlas
+}
+
+/**
+ * Normalised grip origin of an item's in-hand cell. Existing items keep the
+ * 12/24, 15.61/24 origin; Batch 11 items carry their own pivot.
+ *
+ * @param {string|null|undefined} itemId
+ * @returns {readonly [number, number]}
+ */
+export function inhandOriginFor(itemId) {
+  return inhandFor(itemId).origin
 }
 
 const anchorModules = import.meta.glob('../assets/itemAnchors/*.json', { eager: true })
@@ -39,8 +55,10 @@ for (const [filePath, mod] of Object.entries(anchorModules)) {
 }
 
 /**
- * Resolves the currently equipped consumable item ID from session.
- * Returns null if no consumable is equipped or if mage is holding a spellbook.
+ * Resolves the currently equipped item that has a hold clip (consumables and
+ * the Batch 11 weapons) from session.
+ * Returns null if nothing holdable is equipped, the hero cannot hold it, or
+ * if mage is holding a spellbook.
  *
  * @param {object} session
  * @returns {string|null}
@@ -50,28 +68,70 @@ export function getHeldItemId(session) {
   const equipped = session.equippedId
   const cls = session.classId || session.heroClass || session.characterClass
   if (cls === 'mage' && equipped === 'spellbook') return null
-  if (equipped && CONSUMABLE.has(equipped)) return equipped
-  return null
+  if (!equipped) return null
+  const item = getItem(equipped)
+  if (!item?.hold || !itemUsableBy(equipped, cls)) return null
+  if (item.kind === 'consumable' && !consumableEffect(equipped)) return null
+  return equipped
 }
 
 /**
- * Returns the appropriate hold clip based on movement.
+ * Returns the appropriate hold clip based on movement. With an item and hero
+ * it resolves the registry's per-hero clip (the dwarf charm uses its own
+ * `charm_hold_*` sheets); without them it is `hold_idle` / `hold_run`.
  *
  * @param {boolean} moving - True if walking or running
- * @returns {'hold_run' | 'hold_idle'}
+ * @param {string|null} [itemId]
+ * @param {string} [classId]
+ * @returns {string}
  */
-export function holdClipFor(moving) {
+export function holdClipFor(moving, itemId = null, classId = undefined) {
+  const clips = itemId ? holdClipsFor(itemId, classId) : null
+  if (clips) return moving ? clips.run : clips.idle
   return moving ? 'hold_run' : 'hold_idle'
+}
+
+/**
+ * Frame-name stem of a clip. A republished clip (`charm_hold_idle`) keeps the
+ * frame names of the clip it copies (`<hero>_hold_idle_<dir>_<i>`).
+ *
+ * @param {string} clip
+ * @returns {string}
+ */
+export function clipFrameStem(clip) {
+  return clip.startsWith('charm_') ? clip.slice('charm_'.length) : clip
 }
 
 /**
  * Returns the animation clip for using the given consumable item.
  *
  * @param {string} itemId
- * @returns {'use_drink' | 'use_eat' | null}
+ * @returns {string|null} e.g. 'use_drink', 'use_eat', 'use_charm'
  */
 export function useClipFor(itemId) {
-  return CONSUMABLE_EFFECTS[itemId]?.clip || null
+  return consumableEffect(itemId)?.clip || null
+}
+
+/**
+ * Glow overlay clip drawn above the hero while the item is used (healing charm).
+ *
+ * @param {string} itemId
+ * @returns {string|null}
+ */
+export function useGlowClipFor(itemId) {
+  return getItem(itemId)?.use?.glow || null
+}
+
+/**
+ * True when an animation key is one of the registry's item-use clips.
+ *
+ * @param {string} key
+ * @returns {boolean}
+ */
+export function isItemUseAnimKey(key) {
+  if (!key) return false
+  for (const clip of useClipNames()) if (key.includes(clip)) return true
+  return false
 }
 
 /**
