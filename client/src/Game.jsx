@@ -15,14 +15,6 @@ import { SCENE_HINTS } from './game/sceneCatalog'
 // Simple top-down RPG prototype with two scenes: Village and Tavern
 
 const ASSETS = {
-  villageBg: PATHS.villageBg,
-  tavernBg: PATHS.tavernBg,
-  marketBg: PATHS.marketBg,
-  pathBg: PATHS.walkingPath,
-  dungeonBg: PATHS.dungeonEntrance,
-  dungeonInteriorBg: PATHS.dungeonInterior,
-  treasureBg: PATHS.hiddenTreasureRoom,
-  player: CLASS_SPRITES.knight,
   // Title background image (place in client/public/images)
   titleBg: PATHS.titleBg,
   // Title logo image (with spaces in filename)
