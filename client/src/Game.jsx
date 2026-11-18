@@ -65,6 +65,8 @@ export default function Game() {
   const [chatInput, setChatInput] = useState('')
   const chatScrollRef = useRef(null)
   const chatInputRef = useRef(null)
+  const chatDialogRef = useRef(null)
+  const chatReturnFocusRef = useRef(null)
   const [chatMode, setChatMode] = useState('topics') // 'topics' | 'free'
   // Live refs for overlay states so the game loop sees latest values
   const chatOpenRef = useRef(false)
@@ -1520,8 +1522,8 @@ export default function Game() {
       if (ttsEnabled && reply && !turnAudioStarted) {
         eventBus.emit(GameEvents.NPC_SPEAK, { npc: 'bartender', text: reply })
       }
-    } catch (err) {
-      setChatMessages(msgs => [...msgs, { role: 'assistant', content: `Bartender (annoyed): ${err.message}` }])
+    } catch {
+      setChatMessages(msgs => [...msgs, { role: 'assistant', content: 'The bartender could not answer.' }])
     } finally {
       setChatLoading(false)
     }
@@ -1564,6 +1566,21 @@ export default function Game() {
       el.scrollTop = el.scrollHeight
     }
   }, [chatMessages, chatLoading, chatOpen])
+
+  // Move focus into the bartender dialog when it opens, and return it on close.
+  useEffect(() => {
+    if (!chatOpen) return undefined
+    const previous = document.activeElement
+    if (previous instanceof HTMLElement && previous !== chatDialogRef.current) {
+      chatReturnFocusRef.current = previous
+    }
+    chatDialogRef.current?.focus()
+    return () => {
+      const back = chatReturnFocusRef.current
+      chatReturnFocusRef.current = null
+      if (back && back.isConnected) back.focus()
+    }
+  }, [chatOpen])
 
   // Auto-focus the input once free-typing is enabled
   useEffect(() => {
@@ -1696,10 +1713,17 @@ export default function Game() {
         </div>
         {chatOpen && (
           <div className="absolute inset-0 flex items-end md:items-center justify-center p-4 md:p-6 z-20">
-            <div className="w-full max-w-2xl bg-stone-900/90 backdrop-blur rounded-xl border border-amber-900/40 shadow-lg shadow-black/50">
+            <div
+              ref={chatDialogRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="bartender-dialog-title"
+              tabIndex={-1}
+              className="w-full max-w-2xl bg-stone-900/90 backdrop-blur rounded-xl border border-amber-900/40 shadow-lg shadow-black/50"
+            >
               <div className="px-4 py-3 border-b border-amber-900/40 flex items-center justify-between">
                 <div>
-                  <h3 className="font-display text-2xl text-amber-200">Tharos the Bartender</h3>
+                  <h3 id="bartender-dialog-title" className="font-display text-2xl text-amber-200">Tharos the Bartender</h3>
                   <p className="text-stone-300/80 text-sm">Speak your business, traveler.</p>
                 </div>
                 <button
@@ -1756,7 +1780,8 @@ export default function Game() {
                       value={chatInput}
                       onChange={(e) => setChatInput(e.target.value)}
                       placeholder="Ask a quick follow-up…"
-                      className="flex-1 px-3 py-2 rounded-lg bg-stone-800 text-stone-100 placeholder-stone-400 border border-amber-900/40 focus:outline-none focus:ring-2 focus:ring-amber-600"
+                      aria-label="Message to the bartender"
+                      className="flex-1 px-3 py-2 rounded-lg bg-stone-800 text-stone-100 placeholder-stone-400 border border-amber-900/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400"
                       disabled={chatLoading}
                     />
                     <button
