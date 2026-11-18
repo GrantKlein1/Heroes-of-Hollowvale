@@ -1378,7 +1378,7 @@ export default function Game() {
       const overflow = grantLoot(gems || {}, items || [])
       const gemParts = []
       const g = gems || {}
-      if (g.ruby) gemParts.push(`${g.ruby} Ruby${g.ruby > 1 ? 'ies' : ''}`)
+      if (g.ruby) gemParts.push(`${g.ruby} ${g.ruby > 1 ? 'Rubies' : 'Ruby'}`)
       if (g.sapphire) gemParts.push(`${g.sapphire} Sapphire${g.sapphire > 1 ? 's' : ''}`)
       if (g.emerald) gemParts.push(`${g.emerald} Emerald${g.emerald > 1 ? 's' : ''}`)
       const itemNames = (items || []).map((it) => getItemDef(it.id).name)
