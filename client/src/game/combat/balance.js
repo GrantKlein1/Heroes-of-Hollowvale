@@ -12,6 +12,7 @@
  */
 
 import { builtinTable, getEnemyDef } from './enemyDefs.js'
+import { consumableEffects, getItem, itemUsableBy } from '../items/registry.js'
 
 /**
  * Health for the body, not the weapon.
@@ -131,20 +132,42 @@ export const MELEE_DMG = Object.freeze({
   dwarf: WEAPON_STATS.battle_axe.damage,
 })
 
-/** Supported consumable items and effects */
-export const CONSUMABLE_EFFECTS = Object.freeze({
-  healing_potion: Object.freeze({ heal: 70, mana: 0, speedMs: 0, clip: 'use_drink' }),
-  mana_potion: Object.freeze({ heal: 0, mana: 75, speedMs: 0, clip: 'use_drink' }),
-  speed_potion: Object.freeze({ heal: 0, mana: 0, speedMs: 10000, clip: 'use_drink' }),
-  apple: Object.freeze({ heal: 25, mana: 0, speedMs: 0, clip: 'use_eat' }), // Grant-tunable: modest first-pass values
-  ale_flask: Object.freeze({
-    heal: 10, // 4-2: "make it 10hp and 5 second damage/strength boost"
-    mana: 0,
-    damageMult: 1.25, // 4-2: "make it 10hp and 5 second damage/strength boost"
-    durationMs: 5000, // 4-2: "make it 10hp and 5 second damage/strength boost"
-    clip: 'use_drink',
-  }),
-})
+/**
+ * Registry weapons a hero can swing in place of the class weapon
+ * (nightfang_dagger for the thief, stonehollow_hammer for the dwarf).
+ *
+ * @param {string} classId
+ * @param {string|null|undefined} itemId
+ * @returns {boolean}
+ */
+export function isWieldedWeapon(classId, itemId) {
+  if (!classId || !itemId) return false
+  if (WEAPON[classId] === itemId) return true
+  const item = getItem(itemId)
+  return Boolean(item?.weapon && item.classes && itemUsableBy(itemId, classId))
+}
+
+/**
+ * Base melee damage for the hero with this item in hand. A registry weapon
+ * brings its own damage; anything else keeps the class number.
+ *
+ * @param {string} classId
+ * @param {string|null|undefined} itemId
+ * @returns {number}
+ */
+export function meleeDamageFor(classId, itemId) {
+  const item = itemId && WEAPON[classId] !== itemId ? getItem(itemId) : null
+  if (item?.weapon && item.classes && itemUsableBy(itemId, classId)) return item.weapon.damage
+  return MELEE_DMG[classId] || 0
+}
+
+/**
+ * Supported consumable items and effects, read from the item registry
+ * (items/registry.js). Frozen snapshot of the built-ins; the live consume path
+ * asks the registry (`consumableEffect`, `isConsumable`) so a later
+ * `registerItem` is picked up too.
+ */
+export const CONSUMABLE_EFFECTS = consumableEffects()
 
 export const CONSUMABLE = new Set(Object.keys(CONSUMABLE_EFFECTS))
 CONSUMABLE.effects = CONSUMABLE_EFFECTS

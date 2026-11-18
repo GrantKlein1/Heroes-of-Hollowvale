@@ -1,0 +1,406 @@
+{
+ "frames": {
+  "nightfang_dagger_down": {
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.6958333333333333
+   }
+  },
+  "nightfang_dagger_left": {
+   "frame": {
+    "x": 24,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.6958333333333333
+   }
+  },
+  "nightfang_dagger_right": {
+   "frame": {
+    "x": 48,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.6958333333333333
+   }
+  },
+  "nightfang_dagger_up": {
+   "frame": {
+    "x": 72,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.6958333333333333
+   }
+  },
+  "stonehollow_hammer_down": {
+   "frame": {
+    "x": 0,
+    "y": 24,
+    "w": 32,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7653125
+   }
+  },
+  "stonehollow_hammer_left": {
+   "frame": {
+    "x": 32,
+    "y": 24,
+    "w": 32,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7653125
+   }
+  },
+  "stonehollow_hammer_right": {
+   "frame": {
+    "x": 64,
+    "y": 24,
+    "w": 32,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7653125
+   }
+  },
+  "stonehollow_hammer_up": {
+   "frame": {
+    "x": 96,
+    "y": 24,
+    "w": 32,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.7653125
+   }
+  },
+  "healing_charm_down": {
+   "frame": {
+    "x": 0,
+    "y": 56,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.44
+   }
+  },
+  "healing_charm_left": {
+   "frame": {
+    "x": 24,
+    "y": 56,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.44
+   }
+  },
+  "healing_charm_right": {
+   "frame": {
+    "x": 48,
+    "y": 56,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.44
+   }
+  },
+  "healing_charm_up": {
+   "frame": {
+    "x": 72,
+    "y": 56,
+    "w": 24,
+    "h": 24
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 24
+   },
+   "sourceSize": {
+    "w": 24,
+    "h": 24
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.44
+   }
+  }
+ },
+ "meta": {
+  "app": "items_b11/scripts/pack_items.py",
+  "version": "1.0",
+  "image": "items_inhand_b11.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 128,
+   "h": 80
+  },
+  "scale": "1",
+  "pxPerUnit": 36.923,
+  "propCameraDegFromHorizontal": 12,
+  "cell": "per-item; see itemCells",
+  "itemCells": {
+   "nightfang_dagger": [
+    24,
+    24
+   ],
+   "stonehollow_hammer": [
+    32,
+    32
+   ],
+   "healing_charm": [
+    24,
+    24
+   ]
+  },
+  "rows": [
+   "nightfang_dagger",
+   "stonehollow_hammer",
+   "healing_charm"
+  ],
+  "cols": [
+   "down",
+   "left",
+   "right",
+   "up"
+  ],
+  "pivotNote": "frame.pivot = grip point in cell-normalized units; meta.pivots = same point in cell px (rotation origin when composited on a hand anchor)",
+  "pivots": {
+   "nightfang_dagger_down": {
+    "x": 12.0,
+    "y": 16.7
+   },
+   "nightfang_dagger_left": {
+    "x": 12.0,
+    "y": 16.7
+   },
+   "nightfang_dagger_right": {
+    "x": 12.0,
+    "y": 16.7
+   },
+   "nightfang_dagger_up": {
+    "x": 12.0,
+    "y": 16.7
+   },
+   "stonehollow_hammer_down": {
+    "x": 16.0,
+    "y": 24.49
+   },
+   "stonehollow_hammer_left": {
+    "x": 16.0,
+    "y": 24.49
+   },
+   "stonehollow_hammer_right": {
+    "x": 16.0,
+    "y": 24.49
+   },
+   "stonehollow_hammer_up": {
+    "x": 16.0,
+    "y": 24.49
+   },
+   "healing_charm_down": {
+    "x": 12.0,
+    "y": 10.56
+   },
+   "healing_charm_left": {
+    "x": 12.0,
+    "y": 10.56
+   },
+   "healing_charm_right": {
+    "x": 12.0,
+    "y": 10.56
+   },
+   "healing_charm_up": {
+    "x": 12.0,
+    "y": 10.56
+   }
+  },
+  "ids": [
+   "nightfang_dagger",
+   "stonehollow_hammer",
+   "healing_charm"
+  ],
+  "icons": {
+   "dir": "runtime/icons",
+   "size": [
+    1024,
+    1024
+   ],
+   "format": "PNG RGBA",
+   "nativeCell": 64,
+   "native": "frames/icons/<id>_64.png",
+   "upscale": "nearest x16 then gaussian alpha sigma 0.82 (soft edge like main)",
+   "ids": [
+    "nightfang_dagger",
+    "stonehollow_hammer",
+    "healing_charm",
+    "seranyas_tear",
+    "ember_chalice"
+   ]
+  },
+  "pipeline": "EEVEE 1-sample toon + inverted-hull, same camera and PPU as the heroes (B9/B10)"
+ }
+}

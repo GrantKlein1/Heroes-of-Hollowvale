@@ -34,7 +34,17 @@ import {
   PLAYER_IFRAME_DURATION_MS,
 } from '../combat/feedback.js'
 import { session } from '../session.js'
-import { getHeldItemId, holdClipFor, useClipFor, getItemAnchor, inhandAtlasKey } from './itemHold.js'
+import {
+  getHeldItemId,
+  holdClipFor,
+  useClipFor,
+  useGlowClipFor,
+  isItemUseAnimKey,
+  clipFrameStem,
+  getItemAnchor,
+  inhandAtlasKey,
+  inhandOriginFor,
+} from './itemHold.js'
 import {
   castFireball,
   castLightning,
@@ -158,6 +168,7 @@ export class Player extends Actor {
     // Item hold and use states (Package IT-1)
     this.itemUseState = { active: false, itemId: null, startTime: 0, clip: null }
     this.itemSprite = null
+    this.glowSprite = null
     this._vialThrow = null
     this._vialCooldownUntil = 0
 
@@ -236,6 +247,7 @@ export class Player extends Actor {
       }
       this.itemSprite = null
     }
+    this._destroyGlowSprite()
     this.classId = classId
     this.assetId = classId
     if (this.classId === 'mage') {
@@ -410,7 +422,7 @@ export class Player extends Actor {
     let key
 
     if (heldItem && (animName === 'idle' || animName === 'walk' || animName === 'run')) {
-      const clip = holdClipFor(animName === 'walk' || animName === 'run')
+      const clip = holdClipFor(animName === 'walk' || animName === 'run', heldItem, this.classId)
       targetSheet = `${this.classId}_${clip}`
       key = `${this.classId}_${clip}_${this.facing}`
     } else {
@@ -911,7 +923,7 @@ export class Player extends Actor {
    */
   onAnimationComplete(anim) {
     const key = anim?.key || this.anims?.currentAnim?.key || ''
-    if (key.includes('use_drink') || key.includes('use_eat') || key.includes('use_throw')) {
+    if (isItemUseAnimKey(key) || key.includes('use_throw')) {
       if (this.itemUseState?.active) {
         this.itemUseState = { active: false, itemId: null, startTime: 0, clip: null }
         this._refreshCurrentAnim()
@@ -1253,6 +1265,7 @@ export class Player extends Actor {
       }
       this.itemSprite = null
     }
+    this._destroyGlowSprite()
     if (typeof super.destroy === 'function') {
       super.destroy(fromScene)
     }
@@ -1312,6 +1325,7 @@ export class Player extends Actor {
     const activeItemId = isUsing ? this.itemUseState.itemId : getHeldItemId(session)
 
     if (!activeItemId || (isBusy && !isUsing)) {
+      this._hideGlowSprite()
       if (this.itemSprite) {
         if (typeof this.itemSprite.setVisible === 'function') {
           this.itemSprite.setVisible(false)
@@ -1340,15 +1354,17 @@ export class Player extends Actor {
       clip = this.itemUseState.clip || 'use_drink'
     } else {
       const isMoving = this.is(ACTOR_STATES.WALK) || this.isAtRunSpeed() || this.isRunning
-      clip = holdClipFor(isMoving)
+      clip = holdClipFor(isMoving, activeItemId, this.classId)
     }
 
     let playerFrameName = this.anims?.currentFrame?.frame?.name
     if (!playerFrameName) {
       playerFrameName = this.frame?.name
     }
-    if (!playerFrameName || !playerFrameName.startsWith(`${this.classId}_${clip}`)) {
-      playerFrameName = `${this.classId}_${clip}_${this.facing}_0`
+    // A republished clip (dwarf charm_hold_*) keeps the frame names of the clip it copies.
+    const frameStem = `${this.classId}_${clipFrameStem(clip)}`
+    if (!playerFrameName || !playerFrameName.startsWith(frameStem)) {
+      playerFrameName = `${frameStem}_${this.facing}_0`
     }
 
     const anchor = getItemAnchor(this.classId, clip, playerFrameName) || {
@@ -1360,6 +1376,7 @@ export class Player extends Actor {
     this._lastAnchor = anchor
 
     if (anchor.layer === 'none') {
+      this._hideGlowSprite()
       if (typeof sprite.setVisible === 'function') {
         sprite.setVisible(false)
       } else {
@@ -1368,8 +1385,7 @@ export class Player extends Actor {
       return
     }
 
-    const ox = 12.0 / 24
-    const oy = 15.61 / 24
+    const [ox, oy] = inhandOriginFor(activeItemId)
     if (typeof sprite.setOrigin === 'function') {
       sprite.setOrigin(ox, oy)
     } else {
@@ -1410,6 +1426,78 @@ export class Player extends Actor {
     } else {
       sprite.visible = true
     }
+
+    const glowClip = isUsing ? useGlowClipFor(activeItemId) : null
+    if (glowClip) {
+      this._syncGlowSprite(glowClip, playerFrameName, scale)
+    } else {
+      this._hideGlowSprite()
+    }
+  }
+
+  /**
+   * Glow overlay for an item-use clip (healing charm). It is a second sheet
+   * `<hero>_<glowClip>` with the same grid and frame names as the body clip, so
+   * it takes the body's current frame name and is drawn above body and item.
+   *
+   * @param {string} glowClip - e.g. 'use_charm_glow'
+   * @param {string} bodyFrameName - current body frame, e.g. 'knight_use_charm_down_10'
+   * @param {number} scale
+   */
+  _syncGlowSprite(glowClip, bodyFrameName, scale) {
+    const textureKey = `${this.classId}_${glowClip}`
+    const textures = this.scene?.textures
+    if (typeof textures?.exists === 'function' && !textures.exists(textureKey)) {
+      this._hideGlowSprite()
+      return
+    }
+    if (!this.glowSprite && this.scene) {
+      if (this.scene.add && typeof this.scene.add.image === 'function') {
+        this.glowSprite = this.scene.add.image(this.x, this.y, textureKey, bodyFrameName)
+      } else {
+        this.glowSprite = {
+          x: this.x, y: this.y, visible: false, depth: 0, originX: 0.5, originY: 0.5,
+          scaleX: 1, scaleY: 1, texture: { key: textureKey }, frame: { name: bodyFrameName },
+          setTexture(key, fn) { this.texture = { key }; this.frame = { name: fn }; return this },
+          setFrame(fn) { this.frame = { name: fn }; return this },
+          setOrigin(ox, oy) { this.originX = ox; this.originY = oy; return this },
+          setScale(sx, sy) { this.scaleX = sx; this.scaleY = sy ?? sx; return this },
+          setPosition(px, py) { this.x = px; this.y = py; return this },
+          setDepth(d) { this.depth = d; return this },
+          setVisible(v) { this.visible = v; return this },
+          destroy() { this.visible = false },
+        }
+      }
+    }
+    const glow = this.glowSprite
+    if (!glow) return
+    if (glow.texture?.key !== textureKey && typeof glow.setTexture === 'function') {
+      glow.setTexture(textureKey, bodyFrameName)
+    } else if (typeof glow.setFrame === 'function') {
+      glow.setFrame(bodyFrameName)
+    }
+    if (typeof glow.setOrigin === 'function') glow.setOrigin(this.originX ?? 0.5, this.originY ?? 0.5)
+    if (typeof glow.setScale === 'function') glow.setScale(scale)
+    if (typeof glow.setPosition === 'function') glow.setPosition(this.x, this.y)
+    else { glow.x = this.x; glow.y = this.y }
+    // Above the body (depth) and above the item layer (depth + 1 when in front).
+    if (typeof glow.setDepth === 'function') glow.setDepth((this.depth ?? 0) + 2)
+    else glow.depth = (this.depth ?? 0) + 2
+    if (typeof glow.setVisible === 'function') glow.setVisible(true)
+    else glow.visible = true
+  }
+
+  _hideGlowSprite() {
+    const glow = this.glowSprite
+    if (!glow) return
+    if (typeof glow.setVisible === 'function') glow.setVisible(false)
+    else glow.visible = false
+  }
+
+  _destroyGlowSprite() {
+    if (!this.glowSprite) return
+    if (typeof this.glowSprite.destroy === 'function') this.glowSprite.destroy()
+    this.glowSprite = null
   }
 
   /**

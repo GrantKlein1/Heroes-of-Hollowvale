@@ -1067,6 +1067,78 @@ describe('Player Actor — Package 1-3', () => {
       expect(destroySpy2).toHaveBeenCalled()
       expect(knight.itemSprite).toBeNull()
     })
+
+    it.each(['knight', 'mage', 'thief', 'dwarf'])('plays %s use_charm and draws the glow overlay frame-for-frame above the body', (hero) => {
+      const player = new Player(mockScene, 100, 200, hero)
+      session.classId = hero
+      session.equippedId = 'healing_charm'
+      player.beginItemUse('healing_charm', 1000)
+      expect(player.itemUseState.clip).toBe('use_charm')
+      expect(player.anims.play).toHaveBeenCalledWith(`${hero}_use_charm_down`, false)
+
+      for (const frame of [0, 4, 10, 15]) {
+        player.anims.currentFrame = { frame: { name: `${hero}_use_charm_down_${frame}` } }
+        player._syncItemInHandSprite()
+        expect(player.glowSprite.visible).toBe(true)
+        expect(player.glowSprite.texture.key).toBe(`${hero}_use_charm_glow`)
+        expect(player.glowSprite.frame.name).toBe(`${hero}_use_charm_down_${frame}`)
+        expect(player.glowSprite.x).toBe(player.x)
+        expect(player.glowSprite.y).toBe(player.y)
+        expect(player.glowSprite.depth).toBeGreaterThan(player.itemSprite.depth)
+        expect(player.glowSprite.depth).toBeGreaterThan(player.depth)
+      }
+      // the charm is drawn from the Batch 11 atlas with its own grip origin
+      expect(player.itemSprite.texture.key).toBe('items_inhand_b11')
+      expect(player.itemSprite.frame.name).toBe('healing_charm_down')
+      expect(player.itemSprite.originY).toBeCloseTo(10.56 / 24, 3)
+
+      // the glow follows a facing change at the same frame index
+      player.anims.currentFrame = { frame: { name: `${hero}_use_charm_down_10` } }
+      player.setFacing('left')
+      player.anims.currentFrame = { frame: { name: `${hero}_use_charm_left_10` } }
+      player._syncItemInHandSprite()
+      expect(player.glowSprite.frame.name).toBe(`${hero}_use_charm_left_10`)
+
+      // glow is hidden once the use ends and destroyed with the player
+      player.endItemUse()
+      expect(player.glowSprite.visible).toBe(false)
+      const glow = player.glowSprite
+      player.destroy()
+      expect(player.glowSprite).toBeNull()
+      expect(glow.visible).toBe(false)
+    })
+
+    it('uses the potion-grip charm_hold sheets for the dwarf charm and the tool grip for the hammer', () => {
+      const dwarf = new Player(mockScene, 100, 100, 'dwarf')
+      session.equippedId = 'healing_charm'
+      dwarf.playAnim('idle')
+      expect(dwarf.anims.play).toHaveBeenCalledWith('dwarf_charm_hold_idle_down', true)
+      dwarf._syncItemInHandSprite()
+      expect(dwarf._lastAnchor).toEqual(expect.objectContaining({ layer: expect.any(String) }))
+      expect(dwarf._lastAnchor.x).not.toBeUndefined()
+
+      session.equippedId = 'stonehollow_hammer'
+      dwarf.playAnim('idle', false)
+      expect(dwarf.anims.play).toHaveBeenCalledWith('dwarf_hold_idle_down', false)
+      dwarf._syncItemInHandSprite()
+      expect(dwarf.itemSprite.texture.key).toBe('items_inhand_b11')
+      expect(dwarf.itemSprite.frame.name).toBe('stonehollow_hammer_down')
+      expect(dwarf.itemSprite.originY).toBeCloseTo(24.49 / 32, 3)
+      expect(dwarf.itemSprite.visible).toBe(true)
+    })
+
+    it('holds the nightfang dagger for the thief with the shared thief hold clips', () => {
+      const thief = new Player(mockScene, 100, 100, 'thief')
+      session.classId = 'thief'
+      session.equippedId = 'nightfang_dagger'
+      thief.playAnim('idle')
+      expect(thief.anims.play).toHaveBeenCalledWith('thief_hold_idle_down', true)
+      thief._syncItemInHandSprite()
+      expect(thief.itemSprite.texture.key).toBe('items_inhand_b11')
+      expect(thief.itemSprite.frame.name).toBe('nightfang_dagger_down')
+      expect(thief.itemSprite.visible).toBe(true)
+      expect(thief.glowSprite).toBeNull()
+    })
   })
 
   describe('Thief poison vial wind-up (Package B10-1)', () => {

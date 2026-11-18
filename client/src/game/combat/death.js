@@ -13,8 +13,13 @@ import { eventBus, GameEvents } from '../../lib/eventBus.js'
 import { ACTOR_STATES } from '../actors/stateMachine.js'
 import { buildAnimKey } from '../assets/animKeys.js'
 import { ENEMY_DEFS, builtinTable, getEnemyDef } from './enemyDefs.js'
+import { lootPickupIds, lootAtlasFor, isQuestItem } from '../items/registry.js'
 
-/** World-drop atlas imported in AS-3. Idle cells use the sheet anchor; collect is centred. */
+/**
+ * World-drop atlas imported in AS-3. Idle cells use the sheet anchor; collect is centred.
+ * The Batch 11 pickups live on a second atlas (`loot_pickups_b11`); the item registry
+ * names the atlas per item and `loot_collect` is always read from this one.
+ */
 export const LOOT_PICKUP_ATLAS = 'loot_pickups'
 
 /** 32×32 collect area centred on the drop. */
@@ -24,26 +29,19 @@ export const LOOT_COLLECT_SIZE = 32
 export const LOOT_PICKUP_SPACING = 36
 
 /**
- * Seeded-table ids that have a `loot_{id}_idle` clip on loot_pickups.
- * Anything else keeps the pre-Batch-7 behaviour: grant immediately, no world sprite.
+ * Ids that have a `loot_{id}_idle` clip on a loot atlas, read from the item
+ * registry (items/registry.js). Anything else keeps the pre-Batch-7 behaviour:
+ * grant immediately, no world sprite. Snapshot of the built-ins; `lootHasSprite`
+ * asks the registry live.
  */
-export const LOOT_PICKUP_IDS = Object.freeze([
-  'ruby',
-  'sapphire',
-  'emerald',
-  'healing_potion',
-  'mana_potion',
-  'speed_potion',
-])
-
-const LOOT_PICKUP_ID_SET = new Set(LOOT_PICKUP_IDS)
+export const LOOT_PICKUP_IDS = Object.freeze(lootPickupIds())
 
 /**
  * @param {string} id
  * @returns {boolean}
  */
 export function lootHasSprite(id) {
-  return LOOT_PICKUP_ID_SET.has(id)
+  return lootAtlasFor(id) !== null
 }
 
 /**
@@ -77,7 +75,7 @@ export function seededLootIdsWithoutSprites() {
  * @returns {string}
  */
 export function lootIdleAnimKey(id) {
-  return buildAnimKey(LOOT_PICKUP_ATLAS, `loot_${id}_idle`, 'down')
+  return buildAnimKey(lootAtlasFor(id) || LOOT_PICKUP_ATLAS, `loot_${id}_idle`, 'down')
 }
 
 /**
@@ -151,7 +149,9 @@ export function generateSeededLoot(enemyType, rng) {
   }
 
   for (const itemDef of table.items) {
-    if (nextVal() < itemDef.chance) {
+    // Quest items are granted by a quest, never rolled. The roll above still
+    // consumes its random number so the seeded sequence does not shift.
+    if (nextVal() < itemDef.chance && !isQuestItem(itemDef.id)) {
       items.push({ id: itemDef.id, count: itemDef.count || 1 })
     }
   }
@@ -166,10 +166,11 @@ export function generateSeededLoot(enemyType, rng) {
  * @param {object} scene
  * @param {string} animName - meta.anims key, e.g. `loot_ruby_idle` or `loot_collect`
  * @param {{ x: number, y: number }} fallback
+ * @param {string} [atlas] - atlas holding the clip (default the main loot atlas)
  * @returns {{ x: number, y: number }}
  */
-export function lootAnimOrigin(scene, animName, fallback) {
-  const texture = scene?.textures?.get?.(LOOT_PICKUP_ATLAS)
+export function lootAnimOrigin(scene, animName, fallback, atlas = LOOT_PICKUP_ATLAS) {
+  const texture = scene?.textures?.get?.(atlas)
   const animOrigin = texture?.customData?.meta?.anims?.[animName]?.origin
   if (typeof animOrigin?.x === 'number' && typeof animOrigin?.y === 'number') {
     return { x: animOrigin.x, y: animOrigin.y }
@@ -178,7 +179,7 @@ export function lootAnimOrigin(scene, animName, fallback) {
   if (animName !== 'loot_collect' && typeof sheetOrigin?.x === 'number' && typeof sheetOrigin?.y === 'number') {
     return { x: sheetOrigin.x, y: sheetOrigin.y }
   }
-  const anchor = scene?.assetRegistry?.getAnchor?.(LOOT_PICKUP_ATLAS)
+  const anchor = scene?.assetRegistry?.getAnchor?.(atlas)
   if (animName !== 'loot_collect' && typeof anchor?.x === 'number' && typeof anchor?.y === 'number') {
     return { x: anchor.x, y: anchor.y }
   }
@@ -326,8 +327,9 @@ export function presentLootDrop(scene, x, y, gems, items) {
     const px = x + (index - (count - 1) / 2) * LOOT_PICKUP_SPACING
     const py = y
     const idleName = `loot_${drop.id}_idle`
-    const origin = lootAnimOrigin(scene, idleName, { x: 0.5, y: 0.875 })
-    const sprite = scene.add.sprite(px, py, LOOT_PICKUP_ATLAS, `${idleName}_down_0`)
+    const atlas = lootAtlasFor(drop.id) || LOOT_PICKUP_ATLAS
+    const origin = lootAnimOrigin(scene, idleName, { x: 0.5, y: 0.875 }, atlas)
+    const sprite = scene.add.sprite(px, py, atlas, `${idleName}_down_0`)
     if (typeof sprite.setOrigin === 'function') sprite.setOrigin(origin.x, origin.y)
     if (typeof sprite.setDepth === 'function') sprite.setDepth(Math.round(py) - 1)
     sprite.lootPickup = true

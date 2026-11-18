@@ -6,7 +6,9 @@
  */
 
 import { getSeed, setSeed } from '../rng.js'
-import { respawnPlayer, handlePlayerDeath } from '../combat/death.js'
+import { respawnPlayer, handlePlayerDeath, presentLootDrop } from '../combat/death.js'
+import { eventBus, GameEvents } from '../../lib/eventBus.js'
+import { getItem, listItems } from '../items/registry.js'
 import { Dragon, DRAGON_PHASE_SHEETS } from '../actors/Dragon.js'
 
 /**
@@ -381,6 +383,49 @@ export function createHvApi(scene) {
         }
       }
       return scene?.time?.timeScale ?? scene?.physics?.world?.timeScale ?? 1
+    },
+
+    /**
+     * Lists every registered item: id, name, kind (QA helper for item work).
+     *
+     * @returns {Array<{ id: string, name: string, kind: string }>}
+     */
+    items: () => listItems().map((it) => ({ id: it.id, name: it.name, kind: it.kind })),
+
+    /**
+     * Gives the player an item through the normal loot path (the same LOOT
+     * event chests and enemies use), so it lands in the hotbar or packs.
+     * This is how a QA run or a future quest hands out a quest item.
+     *
+     * @param {string} id - registry item id, e.g. 'healing_charm' or 'seranyas_tear'
+     * @param {number} [count=1]
+     * @returns {{ ok: boolean, id: string, count: number, error?: string }}
+     */
+    giveItem: (id, count = 1) => {
+      const n = Math.max(1, Math.floor(Number(count) || 1))
+      if (!getItem(id)) return { ok: false, id, count: n, error: 'unknown item' }
+      eventBus.emit(GameEvents.LOOT, {
+        gems: { ruby: 0, sapphire: 0, emerald: 0 },
+        items: [{ id, count: n }],
+      })
+      return { ok: true, id, count: n }
+    },
+
+    /**
+     * Drops an item as a world pickup beside the player (plays the pickup's
+     * idle clip until the player walks over it).
+     *
+     * @param {string} id
+     * @param {number} [dx=64] - horizontal offset from the player
+     * @param {number} [dy=0]
+     * @returns {{ ok: boolean, id: string, error?: string }}
+     */
+    dropItem: (id, dx = 64, dy = 0) => {
+      if (!getItem(id)) return { ok: false, id, error: 'unknown item' }
+      const p = scene?.player
+      if (!p) return { ok: false, id, error: 'no player' }
+      presentLootDrop(scene, (p.x || 0) + dx, (p.y || 0) + dy, {}, [{ id, count: 1 }])
+      return { ok: true, id }
     },
 
     // --- Legacy __hv inspection & navigation methods ---

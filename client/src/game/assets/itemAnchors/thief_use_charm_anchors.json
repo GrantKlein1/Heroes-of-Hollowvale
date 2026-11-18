@@ -1,0 +1,416 @@
+{
+ "actor": "thief",
+ "clip": "use_charm",
+ "cell": [
+  64,
+  96
+ ],
+ "origin": {
+  "x": 0.5,
+  "y": 0.9271
+ },
+ "pivotPx": [
+  32.0,
+  89.0016
+ ],
+ "hand": "hand.R",
+ "units": "px from feet origin, +y down",
+ "rotation": "degrees, 0=item upright (cork/stem up), positive clockwise on screen",
+ "layer": "front|behind, relative to the body sprite. Up is forced front so the item reads (true depth hides it behind the body).",
+ "format": "{x, y, rotation, layer}",
+ "layerLock": {
+  "down": "front",
+  "left": "front",
+  "right": "front",
+  "up": "front"
+ },
+ "frames": {
+  "thief_use_charm_down_0": {
+   "x": -4.17,
+   "y": -37.42,
+   "rotation": -0.0,
+   "layer": "front"
+  },
+  "thief_use_charm_down_1": {
+   "x": -3.79,
+   "y": -38.97,
+   "rotation": -2.75,
+   "layer": "front"
+  },
+  "thief_use_charm_down_2": {
+   "x": -3.14,
+   "y": -42.92,
+   "rotation": -10.07,
+   "layer": "front"
+  },
+  "thief_use_charm_down_3": {
+   "x": -2.86,
+   "y": -47.86,
+   "rotation": -20.61,
+   "layer": "front"
+  },
+  "thief_use_charm_down_4": {
+   "x": -3.06,
+   "y": -51.93,
+   "rotation": -31.11,
+   "layer": "front"
+  },
+  "thief_use_charm_down_5": {
+   "x": -3.26,
+   "y": -53.56,
+   "rotation": -35.91,
+   "layer": "front"
+  },
+  "thief_use_charm_down_6": {
+   "x": -3.26,
+   "y": -53.56,
+   "rotation": -35.91,
+   "layer": "front"
+  },
+  "thief_use_charm_down_7": {
+   "x": -3.26,
+   "y": -53.56,
+   "rotation": -35.91,
+   "layer": "front"
+  },
+  "thief_use_charm_down_8": {
+   "x": -3.26,
+   "y": -53.56,
+   "rotation": -35.91,
+   "layer": "front"
+  },
+  "thief_use_charm_down_9": {
+   "x": -3.26,
+   "y": -53.56,
+   "rotation": -35.91,
+   "layer": "front"
+  },
+  "thief_use_charm_down_10": {
+   "x": -3.26,
+   "y": -53.56,
+   "rotation": -35.91,
+   "layer": "front"
+  },
+  "thief_use_charm_down_11": {
+   "x": -3.26,
+   "y": -53.56,
+   "rotation": -35.91,
+   "layer": "front"
+  },
+  "thief_use_charm_down_12": {
+   "x": -3.26,
+   "y": -53.56,
+   "rotation": -35.91,
+   "layer": "front"
+  },
+  "thief_use_charm_down_13": {
+   "x": -2.89,
+   "y": -49.4,
+   "rotation": -24.37,
+   "layer": "front"
+  },
+  "thief_use_charm_down_14": {
+   "x": -3.34,
+   "y": -41.41,
+   "rotation": -7.19,
+   "layer": "front"
+  },
+  "thief_use_charm_down_15": {
+   "x": -4.17,
+   "y": -37.42,
+   "rotation": -0.0,
+   "layer": "front"
+  },
+  "thief_use_charm_left_0": {
+   "x": -15.48,
+   "y": -41.51,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "thief_use_charm_left_1": {
+   "x": -15.65,
+   "y": -43.02,
+   "rotation": 4.62,
+   "layer": "front"
+  },
+  "thief_use_charm_left_2": {
+   "x": -15.39,
+   "y": -46.77,
+   "rotation": 14.45,
+   "layer": "front"
+  },
+  "thief_use_charm_left_3": {
+   "x": -13.89,
+   "y": -51.34,
+   "rotation": 24.05,
+   "layer": "front"
+  },
+  "thief_use_charm_left_4": {
+   "x": -11.71,
+   "y": -55.0,
+   "rotation": 30.46,
+   "layer": "front"
+  },
+  "thief_use_charm_left_5": {
+   "x": -10.58,
+   "y": -56.44,
+   "rotation": 32.73,
+   "layer": "front"
+  },
+  "thief_use_charm_left_6": {
+   "x": -10.58,
+   "y": -56.44,
+   "rotation": 32.73,
+   "layer": "front"
+  },
+  "thief_use_charm_left_7": {
+   "x": -10.58,
+   "y": -56.44,
+   "rotation": 32.73,
+   "layer": "front"
+  },
+  "thief_use_charm_left_8": {
+   "x": -10.58,
+   "y": -56.44,
+   "rotation": 32.73,
+   "layer": "front"
+  },
+  "thief_use_charm_left_9": {
+   "x": -10.58,
+   "y": -56.44,
+   "rotation": 32.73,
+   "layer": "front"
+  },
+  "thief_use_charm_left_10": {
+   "x": -10.58,
+   "y": -56.44,
+   "rotation": 32.73,
+   "layer": "front"
+  },
+  "thief_use_charm_left_11": {
+   "x": -10.58,
+   "y": -56.44,
+   "rotation": 32.73,
+   "layer": "front"
+  },
+  "thief_use_charm_left_12": {
+   "x": -10.58,
+   "y": -56.44,
+   "rotation": 32.73,
+   "layer": "front"
+  },
+  "thief_use_charm_left_13": {
+   "x": -13.17,
+   "y": -52.74,
+   "rotation": 26.62,
+   "layer": "front"
+  },
+  "thief_use_charm_left_14": {
+   "x": -15.59,
+   "y": -45.35,
+   "rotation": 10.97,
+   "layer": "front"
+  },
+  "thief_use_charm_left_15": {
+   "x": -15.48,
+   "y": -41.51,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "thief_use_charm_right_0": {
+   "x": 15.48,
+   "y": -39.78,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "thief_use_charm_right_1": {
+   "x": 15.65,
+   "y": -41.44,
+   "rotation": -4.72,
+   "layer": "front"
+  },
+  "thief_use_charm_right_2": {
+   "x": 15.39,
+   "y": -45.47,
+   "rotation": -15.56,
+   "layer": "front"
+  },
+  "thief_use_charm_right_3": {
+   "x": 13.89,
+   "y": -50.15,
+   "rotation": -27.94,
+   "layer": "front"
+  },
+  "thief_use_charm_right_4": {
+   "x": 11.71,
+   "y": -53.73,
+   "rotation": -38.11,
+   "layer": "front"
+  },
+  "thief_use_charm_right_5": {
+   "x": 10.58,
+   "y": -55.08,
+   "rotation": -42.42,
+   "layer": "front"
+  },
+  "thief_use_charm_right_6": {
+   "x": 10.58,
+   "y": -55.08,
+   "rotation": -42.42,
+   "layer": "front"
+  },
+  "thief_use_charm_right_7": {
+   "x": 10.58,
+   "y": -55.08,
+   "rotation": -42.42,
+   "layer": "front"
+  },
+  "thief_use_charm_right_8": {
+   "x": 10.58,
+   "y": -55.08,
+   "rotation": -42.42,
+   "layer": "front"
+  },
+  "thief_use_charm_right_9": {
+   "x": 10.58,
+   "y": -55.08,
+   "rotation": -42.42,
+   "layer": "front"
+  },
+  "thief_use_charm_right_10": {
+   "x": 10.58,
+   "y": -55.08,
+   "rotation": -42.42,
+   "layer": "front"
+  },
+  "thief_use_charm_right_11": {
+   "x": 10.58,
+   "y": -55.08,
+   "rotation": -42.42,
+   "layer": "front"
+  },
+  "thief_use_charm_right_12": {
+   "x": 10.58,
+   "y": -55.08,
+   "rotation": -42.42,
+   "layer": "front"
+  },
+  "thief_use_charm_right_13": {
+   "x": 13.17,
+   "y": -51.54,
+   "rotation": -31.75,
+   "layer": "front"
+  },
+  "thief_use_charm_right_14": {
+   "x": 15.59,
+   "y": -43.96,
+   "rotation": -11.57,
+   "layer": "front"
+  },
+  "thief_use_charm_right_15": {
+   "x": 15.48,
+   "y": -39.78,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "thief_use_charm_up_0": {
+   "x": 4.17,
+   "y": -43.86,
+   "rotation": 0.0,
+   "layer": "front"
+  },
+  "thief_use_charm_up_1": {
+   "x": 3.79,
+   "y": -45.48,
+   "rotation": 2.84,
+   "layer": "front"
+  },
+  "thief_use_charm_up_2": {
+   "x": 3.14,
+   "y": -49.32,
+   "rotation": 11.23,
+   "layer": "front"
+  },
+  "thief_use_charm_up_3": {
+   "x": 2.86,
+   "y": -53.63,
+   "rotation": 24.72,
+   "layer": "front"
+  },
+  "thief_use_charm_up_4": {
+   "x": 3.06,
+   "y": -56.8,
+   "rotation": 38.65,
+   "layer": "front"
+  },
+  "thief_use_charm_up_5": {
+   "x": 3.26,
+   "y": -57.96,
+   "rotation": 44.82,
+   "layer": "front"
+  },
+  "thief_use_charm_up_6": {
+   "x": 3.26,
+   "y": -57.96,
+   "rotation": 44.82,
+   "layer": "front"
+  },
+  "thief_use_charm_up_7": {
+   "x": 3.26,
+   "y": -57.96,
+   "rotation": 44.82,
+   "layer": "front"
+  },
+  "thief_use_charm_up_8": {
+   "x": 3.26,
+   "y": -57.96,
+   "rotation": 44.82,
+   "layer": "front"
+  },
+  "thief_use_charm_up_9": {
+   "x": 3.26,
+   "y": -57.96,
+   "rotation": 44.82,
+   "layer": "front"
+  },
+  "thief_use_charm_up_10": {
+   "x": 3.26,
+   "y": -57.96,
+   "rotation": 44.82,
+   "layer": "front"
+  },
+  "thief_use_charm_up_11": {
+   "x": 3.26,
+   "y": -57.96,
+   "rotation": 44.82,
+   "layer": "front"
+  },
+  "thief_use_charm_up_12": {
+   "x": 3.26,
+   "y": -57.96,
+   "rotation": 44.82,
+   "layer": "front"
+  },
+  "thief_use_charm_up_13": {
+   "x": 2.89,
+   "y": -54.87,
+   "rotation": 29.72,
+   "layer": "front"
+  },
+  "thief_use_charm_up_14": {
+   "x": 3.34,
+   "y": -47.9,
+   "rotation": 7.8,
+   "layer": "front"
+  },
+  "thief_use_charm_up_15": {
+   "x": 4.17,
+   "y": -43.86,
+   "rotation": 0.0,
+   "layer": "front"
+  }
+ },
+ "fps": 16,
+ "framesCount": 16,
+ "effectFrame": 10
+}

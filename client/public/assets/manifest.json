@@ -32,7 +32,8 @@
       "wild_props_4b",
       "ember_vent",
       "items_inhand",
-      "items_inhand_b10"
+      "items_inhand_b10",
+      "items_inhand_b11"
     ],
     "boss": [
       "knight",
@@ -42,7 +43,8 @@
       "fx_common",
       "dragon_fx_v2",
       "items_inhand",
-      "items_inhand_b10"
+      "items_inhand_b10",
+      "items_inhand_b11"
     ],
     "boss_p1": [
       "red_dragon_p1_a",
@@ -73,7 +75,8 @@
       "mountain_mouth_props"
     ],
     "loot": [
-      "loot_pickups"
+      "loot_pickups",
+      "loot_pickups_b11"
     ],
     "boss_fx_extra": [
       "dragon_fx_extra"
@@ -191,6 +194,24 @@
           "key": "knight_use_eat",
           "image": "assets/characters/knight/knight_use_eat.png",
           "json": "assets/characters/knight/knight_use_eat.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "knight_use_charm": {
+          "key": "knight_use_charm",
+          "image": "assets/characters/knight/knight_use_charm.png",
+          "json": "assets/characters/knight/knight_use_charm.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "knight_use_charm_glow": {
+          "key": "knight_use_charm_glow",
+          "image": "assets/characters/knight/knight_use_charm_glow.png",
+          "json": "assets/characters/knight/knight_use_charm_glow.json",
           "anchor": {
             "x": 0.5,
             "y": 0.9271
@@ -343,6 +364,24 @@
             "x": 0.5,
             "y": 0.9271
           }
+        },
+        "thief_use_charm": {
+          "key": "thief_use_charm",
+          "image": "assets/characters/thief/thief_use_charm.png",
+          "json": "assets/characters/thief/thief_use_charm.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "thief_use_charm_glow": {
+          "key": "thief_use_charm_glow",
+          "image": "assets/characters/thief/thief_use_charm_glow.png",
+          "json": "assets/characters/thief/thief_use_charm_glow.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
         }
       },
       "sidecars": [
@@ -463,6 +502,48 @@
           "anchor": {
             "x": 0.5,
             "y": 0.9125
+          }
+        },
+        "dwarf_use_charm": {
+          "key": "dwarf_use_charm",
+          "image": "assets/characters/dwarf/dwarf_use_charm.png",
+          "json": "assets/characters/dwarf/dwarf_use_charm.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9125
+          }
+        },
+        "dwarf_use_charm_glow": {
+          "key": "dwarf_use_charm_glow",
+          "image": "assets/characters/dwarf/dwarf_use_charm_glow.png",
+          "json": "assets/characters/dwarf/dwarf_use_charm_glow.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9125
+          }
+        },
+        "dwarf_charm_hold_idle": {
+          "key": "dwarf_charm_hold_idle",
+          "image": "assets/characters/dwarf/dwarf_charm_hold_idle.png",
+          "json": "assets/characters/dwarf/dwarf_charm_hold_idle.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9125
+          },
+          "animAliases": {
+            "hold_idle": "charm_hold_idle"
+          }
+        },
+        "dwarf_charm_hold_run": {
+          "key": "dwarf_charm_hold_run",
+          "image": "assets/characters/dwarf/dwarf_charm_hold_run.png",
+          "json": "assets/characters/dwarf/dwarf_charm_hold_run.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9125
+          },
+          "animAliases": {
+            "hold_run": "charm_hold_run"
           }
         }
       },
@@ -617,6 +698,24 @@
           "key": "mage_use_eat",
           "image": "assets/characters/mage/mage_use_eat.png",
           "json": "assets/characters/mage/mage_use_eat.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "mage_use_charm": {
+          "key": "mage_use_charm",
+          "image": "assets/characters/mage/mage_use_charm.png",
+          "json": "assets/characters/mage/mage_use_charm.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "mage_use_charm_glow": {
+          "key": "mage_use_charm_glow",
+          "image": "assets/characters/mage/mage_use_charm_glow.png",
+          "json": "assets/characters/mage/mage_use_charm_glow.json",
           "anchor": {
             "x": 0.5,
             "y": 0.9271
@@ -2150,6 +2249,146 @@
           }
         }
       }
+    },
+    "items_inhand_b11": {
+      "id": "items_inhand_b11",
+      "kind": "items",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.6504
+      },
+      "image": "assets/items/inhand/items_inhand_b11.png",
+      "json": "assets/items/inhand/items_inhand_b11.json",
+      "sheets": {
+        "items_inhand_b11": {
+          "key": "items_inhand_b11",
+          "image": "assets/items/inhand/items_inhand_b11.png",
+          "json": "assets/items/inhand/items_inhand_b11.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.6504
+          }
+        }
+      }
+    },
+    "loot_pickups_b11": {
+      "id": "loot_pickups_b11",
+      "kind": "loot",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.875
+      },
+      "image": "assets/loot/loot_pickups/loot_pickups_b11.png",
+      "json": "assets/loot/loot_pickups/loot_pickups_b11.json",
+      "sheets": {
+        "loot_pickups_b11": {
+          "key": "loot_pickups_b11",
+          "image": "assets/loot/loot_pickups/loot_pickups_b11.png",
+          "json": "assets/loot/loot_pickups/loot_pickups_b11.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.875
+          }
+        }
+      },
+      "anims": {
+        "loot_nightfang_dagger_idle": {
+          "frames": 6,
+          "fps": 8,
+          "loop": true,
+          "playback": "loop",
+          "directions": [
+            "down"
+          ],
+          "frameNames": "loot_nightfang_dagger_idle_down_<i>",
+          "origin": {
+            "x": 0.5,
+            "y": 0.875
+          },
+          "cell": [
+            24,
+            24
+          ],
+          "durationMs": 750
+        },
+        "loot_stonehollow_hammer_idle": {
+          "frames": 6,
+          "fps": 8,
+          "loop": true,
+          "playback": "loop",
+          "directions": [
+            "down"
+          ],
+          "frameNames": "loot_stonehollow_hammer_idle_down_<i>",
+          "origin": {
+            "x": 0.5,
+            "y": 0.875
+          },
+          "cell": [
+            24,
+            24
+          ],
+          "durationMs": 750
+        },
+        "loot_healing_charm_idle": {
+          "frames": 6,
+          "fps": 8,
+          "loop": true,
+          "playback": "loop",
+          "directions": [
+            "down"
+          ],
+          "frameNames": "loot_healing_charm_idle_down_<i>",
+          "origin": {
+            "x": 0.5,
+            "y": 0.875
+          },
+          "cell": [
+            24,
+            24
+          ],
+          "durationMs": 750
+        },
+        "loot_seranyas_tear_idle": {
+          "frames": 6,
+          "fps": 4,
+          "loop": true,
+          "playback": "loop",
+          "directions": [
+            "down"
+          ],
+          "frameNames": "loot_seranyas_tear_idle_down_<i>",
+          "origin": {
+            "x": 0.5,
+            "y": 0.875
+          },
+          "cell": [
+            24,
+            24
+          ],
+          "durationMs": 1500
+        },
+        "loot_ember_chalice_idle": {
+          "frames": 6,
+          "fps": 4,
+          "loop": true,
+          "playback": "loop",
+          "directions": [
+            "down"
+          ],
+          "frameNames": "loot_ember_chalice_idle_down_<i>",
+          "origin": {
+            "x": 0.5,
+            "y": 0.875
+          },
+          "cell": [
+            24,
+            24
+          ],
+          "durationMs": 1500
+        }
+      },
+      "sidecars": []
     }
   },
   "tiles": {

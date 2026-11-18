@@ -54,6 +54,7 @@ import {
   teardownHvApi,
 } from '../hvApi.js'
 import { getSeed, setSeed } from '../../rng.js'
+import { eventBus, GameEvents } from '../../../lib/eventBus.js'
 
 describe('Hollowvale QA and Debug API (hvApi.js)', () => {
   let mockScene
@@ -557,6 +558,42 @@ describe('Hollowvale QA and Debug API (hvApi.js)', () => {
         expect(resetRes).toBe(true)
         expect(api.dragonState().hp).toBe(1200)
         expect(api.dragonState().phase).toBe(1)
+      })
+    })
+
+    describe('giveItem() and dropItem() (ITEM-NEW-1)', () => {
+      it('gives a registered item through the LOOT event, quest items included', () => {
+        const events = []
+        const off = eventBus.on(GameEvents.LOOT, (p) => events.push(p))
+        expect(api.giveItem('seranyas_tear')).toEqual({ ok: true, id: 'seranyas_tear', count: 1 })
+        expect(api.giveItem('healing_charm', 3)).toEqual({ ok: true, id: 'healing_charm', count: 3 })
+        off()
+        expect(events.map((e) => e.items)).toEqual([
+          [{ id: 'seranyas_tear', count: 1 }],
+          [{ id: 'healing_charm', count: 3 }],
+        ])
+      })
+
+      it('rejects an unknown item and lists the registry via items()', () => {
+        const events = []
+        const off = eventBus.on(GameEvents.LOOT, (p) => events.push(p))
+        expect(api.giveItem('not_an_item')).toMatchObject({ ok: false })
+        off()
+        expect(events).toEqual([])
+        expect(api.items().map((i) => i.id)).toEqual(expect.arrayContaining(['ember_chalice', 'nightfang_dagger']))
+      })
+
+      it('drops a world pickup beside the player', () => {
+        const sprite = {
+          setOrigin: vi.fn(), setDepth: vi.fn(),
+          anims: { play: vi.fn() },
+        }
+        mockScene.add = { sprite: vi.fn(() => sprite) }
+        mockScene.assetRegistry = { isGroupLoaded: () => true, createAnims: vi.fn() }
+        expect(api.dropItem('ember_chalice', 50, 10)).toEqual({ ok: true, id: 'ember_chalice' })
+        expect(mockScene.add.sprite).toHaveBeenCalledWith(1010, 550, 'loot_pickups_b11', 'loot_ember_chalice_idle_down_0')
+        expect(sprite.anims.play).toHaveBeenCalledWith('loot_pickups_b11_loot_ember_chalice_idle_down', true)
+        expect(api.dropItem('nope')).toMatchObject({ ok: false })
       })
     })
   })

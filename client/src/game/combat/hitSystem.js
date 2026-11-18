@@ -9,7 +9,7 @@
  * - Target i-frame enforcement and damage deduction
  */
 
-import { MELEE_DMG, scaleOutgoingDamage } from './balance.js'
+import { meleeDamageFor, scaleOutgoingDamage } from './balance.js'
 import {
   applyHitStop,
   applyFlash,
@@ -249,7 +249,7 @@ export function executePlayerMeleeHit(player, frameIndex, now = (typeof performa
     ? enemiesGroup.getChildren()
     : []
 
-  const damage = scaleOutgoingDamage(MELEE_DMG[player.classId] || 12, now, session)
+  const damage = scaleOutgoingDamage(meleeDamageFor(player.classId, session?.equippedId) || 12, now, session)
   const swingId = player.currentSwingId || 1
   let hitCount = 0
 
