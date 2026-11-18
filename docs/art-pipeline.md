@@ -1,61 +1,23 @@
-# Art pipeline (Aseprite → Phaser)
+# Art pipeline (Blendsmith → Phaser)
 
-Grant exports from Aseprite. The game loads those files at runtime; this repo does not generate art.
+Shipped character, enemy, effect, and tile art comes from Blendsmith under `art-source/blendsmith/`. This repo does not draw those sheets. The importer is `tools/assets/import_blendsmith.mjs`. From the repo root it is:
 
-Base tile size is **16×16**. The next world map is one league per screen, **20×12 tiles** (320×192 pixels), authored as Tiled JSON. Painted 1024×1536 backdrops are temporary and are not tiles.
-
-## Sprite sheets
-
-1. Draw on a 16×16 grid (or a whole multiple of it, e.g. a 32×32 character made of four tiles).
-2. In Aseprite: **File → Export Sprite Sheet**.
-3. Layout: **By Rows** or **Packed**. Output file: PNG.
-4. JSON Data: check **JSON Data**, and set the format to **Array** or **Hash**.
-   - Array matches `this.load.aseprite(key, png, json)` frame order.
-   - Hash matches frame names (`player_walk_0`) if you need to pick frames by tag.
-5. Borders / padding: 0. Do not trim frames unless every frame is the same size — Phaser slices the sheet from the JSON rectangles.
-6. Put the PNG and JSON under `client/public/images/` (or `client/public/images/sprites/`).
-
-Load them once in the scene `preload`:
-
-```js
-this.load.aseprite('knight', '/images/sprites/knight.png', '/images/sprites/knight.json')
+```
+npm run assets:import
 ```
 
-In `create`, register the tags Aseprite wrote (walk, attack, idle) and play them:
+The importer reads `art-source/blendsmith/` and writes Phaser 3 JSON-hash atlases under `client/public/assets/`. The client loads those sheets with `scene.load.atlas` in `client/src/game/assets/AssetRegistry.js`.
 
-```js
-this.anims.createFromAseprite('knight')
-sprite.play({ key: 'walk', repeat: -1 })
-```
+The contract is [`docs/ASSET_SPEC.md`](ASSET_SPEC.md): frame names `<asset>_<anim>_<dir>_<i>`, **32 px** tiles, four facings (`down`, `left`, `right`, `up`), and a per-sheet anchor. Anchors differ by sheet. Read each anchor from that atlas's `meta`. The importer also accepts a frame pivot when `meta` has no origin.
 
-Keep `pixelArt: true` on the game config so the canvas uses nearest-neighbor filtering. Do not scale frames by a fractional amount; the camera zoom is an integer.
+`art-source/blendsmith/` is read-only in this repo. Leave `frames/`, `render_hi/`, 4× masters, `*_bak*`, previews, `.blend`, and `.glb` out of `client/public/`.
 
-## Tilesets for Tiled
+## Tiles
 
-1. In Aseprite, export a tileset image: one row or a grid of 16×16 cells, no spacing, no margin. PNG, indexed color is fine.
-2. In Tiled: **New Tileset → Based on Tileset Image**. Tile width/height **16**, margin **0**, spacing **0**.
-3. Stamp a map of **20×12** tiles per league screen. Save as JSON (`.tmj` / `.json`), not as a Lua or XML map.
-4. Put the map JSON and the tileset PNG under `client/public/maps/`.
+World tiles are 32 px. Tiled maps (`.tmj`) live under `client/public/maps/`. Runtime tilesets live under `client/public/assets/tiles/`. Wang sets, prop anchors, and the 12° camera are in `docs/ASSET_SPEC.md` (Tiles).
 
-Load them in `preload`:
+## Legacy painted images
 
-```js
-this.load.image('terrain', '/maps/terrain.png')
-this.load.tilemapTiledJSON('league-0-0', '/maps/league-0-0.json')
-```
+Painted scene images the game no longer draws are kept under `art-source/legacy-public/`, on the path they had under `client/public/` (for example `art-source/legacy-public/images/bossFightEmptyRoom.png`). The audit notes are `docs/public-audit-2026-11-17.md` (`node tools/assets/audit_public_refs.mjs`).
 
-In `create`:
-
-```js
-const map = this.make.tilemap({ key: 'league-0-0' })
-const tiles = map.addTilesetImage('terrain', 'terrain')
-map.createLayer('ground', tiles, 0, 0)
-```
-
-The tileset name in `addTilesetImage` must match the name stored in the Tiled JSON. Collision for the league map can be an object layer of rectangles, or tile `collides` properties — the scene already builds Arcade static bodies from rectangles.
-
-Screens stay 20×12. Walking off an edge should call `ScreenCamera.setScreenBounds` with the next league rectangle and `slideMs` around 250. That helper is in `client/src/game/screenCamera.js`. Scene changes snap (`slideMs` 0). Wilderness still uses integer cover zoom; Tiled maps use integer tiled zoom.
-
-## Legacy public files
-
-Images and tool files under `client/public/` that nothing in the game references are moved, not deleted, to `art-source/legacy-public/`, keeping the path they had under `client/public/` (for example `art-source/legacy-public/images/bossFightEmptyRoom.png`). The audit is `docs/public-audit-2026-11-17.md` (`node tools/assets/audit_public_refs.mjs`). Package 3-4 moved the painted scene backdrops the same way. `art-source/blendsmith/` stays read-only.
+Package 3-4 (PR #89) removed the painted renderer and the maps opt-out. Any `renderer` or `maps` query value is ignored. The game uses Blendsmith atlases and Tiled maps, including when the URL contains `?renderer=legacy` or `?maps=legacy`.
