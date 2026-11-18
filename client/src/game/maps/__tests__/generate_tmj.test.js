@@ -36,7 +36,7 @@ describe('Package MM-1: Tiled TMJ Map Generator', () => {
   // =========================================================================
   describe('Tileset GID Architecture & Ranges', () => {
     it('builds sequential, non-overlapping firstgids across Blendsmith v4 tilesets', () => {
-      expect(tilesets.length).toBe(8);
+      expect(tilesets.length).toBe(9);
 
       let expectedFirstGid = 1;
       for (const ts of tilesets) {
@@ -52,12 +52,15 @@ describe('Package MM-1: Tiled TMJ Map Generator', () => {
       expect(gids.get('grass', 0)).toBe(1);
       expect(gids.get('dirt_road', 0)).toBe(9);
       expect(gids.get('dirt_road', 15)).toBe(24);
-      expect(gids.get('cobble_road', 0)).toBe(25);
-      expect(gids.get('water', 0)).toBe(41);
-      expect(gids.get('water_ford', 0)).toBe(105);
-      expect(gids.get('bridge_plank', 0)).toBe(109);
-      expect(gids.get('cliff', 0)).toBe(113);
-      expect(gids.get('cliff_face', 0)).toBe(129);
+      // Batch 11 package B: dirt_road has 24 ids, water 96, cliff 24, cliff_face 8.
+      expect(gids.get('dirt_road', 23)).toBe(32);
+      expect(gids.get('cobble_road', 0)).toBe(33);
+      expect(gids.get('water', 0)).toBe(49);
+      expect(gids.get('water_ford', 0)).toBe(145);
+      expect(gids.get('bridge_plank', 0)).toBe(149);
+      expect(gids.get('cliff', 0)).toBe(153);
+      expect(gids.get('cliff_face', 0)).toBe(177);
+      expect(gids.get('water_shore', 0)).toBe(185);
     });
   });
 
@@ -264,15 +267,24 @@ describe('Package MM-1: Tiled TMJ Map Generator', () => {
       expect(layer('collision').filter((g) => g === cliffFace)).toEqual([]);
       expect(layer('walls').every((g) => g === 0)).toBe(true);
       const ground = layer('ground');
-      const grass = createGidResolver(tilesets).get('grass', 0);
+      const resolver = createGidResolver(tilesets);
+      const grass = resolver.get('grass', 0);
+      const shoreFirst = resolver.get('water_shore', 0);
+      const shoreLast = resolver.get('water_shore', 78);
+      // The river banks (rows 5-6 and 8-9) use water_shore sand and the sand to grass blend.
+      const grassOrShore = (g) => g === grass || (g >= shoreFirst && g <= shoreLast);
       for (let c = 2; c <= 17; c++) {
         expect(ground[1 * LEAGUE_W + c]).toBe(grass);
         if (c !== 9 && c !== 10) expect(ground[10 * LEAGUE_W + c]).toBe(grass); // 9..10 is the south gate road
       }
       for (let r = 2; r <= 9; r++) {
         if (r === 7) continue;
-        expect(ground[r * LEAGUE_W + 1]).toBe(grass);
-        expect(ground[r * LEAGUE_W + 18]).toBe(grass);
+        expect(grassOrShore(ground[r * LEAGUE_W + 1])).toBe(true);
+        expect(grassOrShore(ground[r * LEAGUE_W + 18])).toBe(true);
+        if (r < 5 || r > 9) {
+          expect(ground[r * LEAGUE_W + 1]).toBe(grass);
+          expect(ground[r * LEAGUE_W + 18]).toBe(grass);
+        }
       }
     });
 

@@ -2,6 +2,8 @@
 AS-2 v5 visual swap (approved by Grant 2026-11-09): 6 PNGs replaced, all metadata unchanged.
 TILES-SWAP-1 (Batch 11 natural outdoor tiles, package A, approved by Grant 2026-11-18): 12 outdoor ground PNGs replaced (ash_fill, ash_ground, bridge_plank, cliff, cliff_face, cobble_road, dirt_road, forest_floor, grass, water, water_ford, water_shore); tsj, ids, collides unchanged. forest_floor PNG later replaced with the calmer approved-and-frozen version (Grant 2026-11-18); tsj unchanged. Byte and SHA rows below are updated for rows that exist; ash_fill and ash_ground have no rows in this older table.
 
+TILES-VARIANTS (Batch 11 package B, append-only, approved by Grant 2026-11-18): the six package B tilesets replace the package A files in client/public/assets/tiles and this mirror (PNG + tsj). Existing ids keep their meaning and art; only ids are added: cliff 16-23 (straight-run alternates, collide), cliff_face 4-7 (cap_left, cap_right, two variants, collide), dirt_road 16-23 (alternates), water 64-95 (alternates 64-71 with animation frames 72-95), water_shore 64-78 (sand to grass blend, grassMask = id - 63), forest_floor 8-22 (forest to grass blend, grassMask = id - 7, plus the forest_floor_blob16 corner wangset). Tilecounts: cliff 16->24, cliff_face 4->8, dirt_road 16->24, water 64->96, water_shore 64->79, forest_floor 8->23. Byte and SHA rows below are for the package B files (source /workspace/blender/hollowvale/tiles_b11/packageB/ground, sha256 of forest_floor.png 5a8f374c..., water_shore.png 40db07e8..., checked against the Blendsmith MANIFEST). The Atlas table above shows the new ID ranges and image sizes. The "Unique art" column is the package A count and was not recomputed.
+
 LOCAL art scope complete; not game-integrated or approved.
 15 tilesets,222 tile IDs,20 logical props. No character asset changes.
 
@@ -9,21 +11,21 @@ LOCAL art scope complete; not game-integrated or approved.
 | Atlas | Image px | IDs | Unique art | Anim | PNG bytes | TSJ bytes |
 |---|---|---|---:|---|---:|---:|
 | ground/bridge_plank | 136x34 | 0..3 | 4 | none | 1072 | 2572 |
-| ground/cliff | 136x136 | 0..15 | 16 | none | 7193 | 18139 |
-| ground/cliff_face | 136x34 | 0..3 | 4 | none | 2131 | 2564 |
+| ground/cliff | 136x204 | 0..23 | 16 | none | 11487 | 28059 |
+| ground/cliff_face | 136x68 | 0..7 | 4 | none | 4466 | 4435 |
 | ground/cobble_road | 136x136 | 0..15 | 16 | none | 6345 | 18173 |
-| ground/dirt_road | 136x136 | 0..15 | 16 | none | 6802 | 18167 |
+| ground/dirt_road | 136x204 | 0..23 | 16 | none | 10927 | 28095 |
 | ground/dungeon_floor | 102x68 | 0..5 | 6 | none | 1006 | 3288 |
 | ground/dungeon_wall | 136x34 | 0..3 | 4 | none | 292 | 2568 |
-| ground/forest_floor | 136x68 | 0..7 | 8 | none | 4482 | 3743 |
+| ground/forest_floor | 136x204 | 0..22 | 8 | none | 13598 | 15683 |
 | ground/grass | 136x68 | 0..7 | 8 | none | 2982 | 3986 |
 | ground/interior_market_floor | 136x34 | 0..3 | 4 | none | 584 | 2590 |
 | ground/interior_market_wall | 136x34 | 0..3 | 4 | none | 443 | 2584 |
 | ground/interior_tavern_floor | 136x34 | 0..3 | 4 | none | 526 | 2590 |
 | ground/interior_tavern_wall | 136x34 | 0..3 | 4 | none | 405 | 2584 |
-| ground/water | 136x544 | 0..63 | 61 | wet1..15:4x160ms | 35581 | 62939 |
+| ground/water | 136x816 | 0..95 | 61 | wet1..15:4x160ms | 52096 | 100547 |
 | ground/water_ford | 136x34 | 0..3 | 4 | none | 1802 | 2568 |
-| ground/water_shore | 136x544 | 0..63 | 61 | wet1..15:4x160ms | 31774 | 62957 |
+| ground/water_shore | 136x680 | 0..78 | 61 | wet1..15:4x160ms | 38774 | 74625 |
 
 ## Prop atlases
 | Atlas | Image px | Frames | Origin | Anims | PNG bytes | JSON bytes |
@@ -66,20 +68,20 @@ MANIFEST.md itself excluded to avoid self-reference.
 | SOURCE_PROVENANCE.json | 160051 | ab24ca7c7ea6273d87d3bbfaea9b6df13e80ff1f68f166893cb9021e7becfa4f |
 | ground/bridge_plank.png | 1072 | a2f7b5bbdadb2527fd09bebc4a121c28b261dd5a49b79d99b0a116c7b1ade709 |
 | ground/bridge_plank.tsj | 2572 | 59c05a95882be003a7cebffe52875a6a99a992fd29495ace8d169640a0299cae |
-| ground/cliff.png | 7193 | ad3537080c5a5164f3f69e139ccf0775251476f470e2a1fa8801bd8f25188082 |
-| ground/cliff.tsj | 18139 | 8952e11c8d6846af6a9fbdc65c801d92381ff9481ab6bdf8bb27118fa53a46f3 |
-| ground/cliff_face.png | 2131 | c8d670ecc0c20860b0b7a118d4c76f114d1dab87138af500c2875becd9710ca3 |
-| ground/cliff_face.tsj | 2564 | 7832be09a0122b560067f72eb335b4cd74b199cea53f9550a15548cff51a2f7d |
+| ground/cliff.png | 11487 | 91c10148c81a71ee15dcc4f4626386e0cff53ecc1112f6437e13c749f8b2433e |
+| ground/cliff.tsj | 28059 | c7bd72be7ed47aed6101d2188a919118d0cb459f957bd04165b7be9be2ca7d0a |
+| ground/cliff_face.png | 4466 | 706e0b0f4f21c2f52643c37f64065ce38f59a346dfa97a5644cef4aa95587d5c |
+| ground/cliff_face.tsj | 4435 | a18f2543769c94b93968062433243627102a52c45ec24a9b677184e0c5f972a9 |
 | ground/cobble_road.png | 6345 | 589facf18909378c2888a3dc5c9dc40e12674c3e57f6d328fb51188c23ed1b50 |
 | ground/cobble_road.tsj | 18173 | e14764c031496a906bd78aa968b5cd841d55af05ddcbb74f425d0ac8389ec21b |
-| ground/dirt_road.png | 6802 | 0be0d591b69732e5167feb6463b72cd9c386079370946ee5ab42d051f8bcd719 |
-| ground/dirt_road.tsj | 18167 | ef037d5b6ad5b3001dfc242882df4d055ede67084aa6e82dd61eff0236e91abf |
+| ground/dirt_road.png | 10927 | 9cc822fc8babe169f0c1ee3fdb38cc2f02b635e21a0cf829576d03d050996ebe |
+| ground/dirt_road.tsj | 28095 | dace721f99f6e220c5c09b794fe8a0a715bbb7b32547f4a70417b19e92960810 |
 | ground/dungeon_floor.png | 1006 | b792ec95e4b99e1cde20642cea16eb6d2df6b1537de47f7b2f74dafd5c99eded |
 | ground/dungeon_floor.tsj | 3288 | aa685e7ebbb469bab852b00107efd0877ba41e4fe46d41d3f25e7aae44212a35 |
 | ground/dungeon_wall.png | 292 | b0e3a4a4705fe945dbdc21c08ba8829d8ff1242cabb73679ee8d3550906bd1ca |
 | ground/dungeon_wall.tsj | 2568 | 4358a559afc8271dddc85412e08bf479b77780f2031976b9ec5cb36102259132 |
-| ground/forest_floor.png | 4482 | 6870a3aad4750293d0c4080ef8d6428f034f9fb33c411dad38b46cbae1bcf026 |
-| ground/forest_floor.tsj | 3743 | 492bc396a3962757bb990ec019c003b332ce301f763295268943e2f068ac39e5 |
+| ground/forest_floor.png | 13598 | 5a8f374c2ac2221a7f19d3848db50eb8230a0697d0643369f67c341f400eb9c7 |
+| ground/forest_floor.tsj | 15683 | c83b1ea2700752363a9789fb8c377d669bc79cee9f4c3c5c0eabe3db0f056aed |
 | ground/grass.png | 2982 | 73a8f6ba400593271c6e3e5ef765a52406f283d44ea62247ee060ce699f23c64 |
 | ground/grass.tsj | 3986 | 6629ad7f81cec7c4534d15c70c0e226b6fbad71d74c923ad71ae03f773faddbb |
 | ground/interior_market_floor.png | 584 | 014905f5d28d87af37750c98b61d91f6934a0cf4ccf61340be51da887e07292d |
@@ -90,12 +92,12 @@ MANIFEST.md itself excluded to avoid self-reference.
 | ground/interior_tavern_floor.tsj | 2590 | f444ba46e5949594527ef0662187de8883d2351a84f7aeb461be5790c03ecb28 |
 | ground/interior_tavern_wall.png | 405 | f2a4c163edabc3b9190cd7be525eaee9d563533d8ff0fed5f81de16227120fa3 |
 | ground/interior_tavern_wall.tsj | 2584 | c14124dcde7e0a22875563a4e0179f2385d21c1f5fab904c650e72440109d23f |
-| ground/water.png | 35581 | 3362cf01ebead6679a306a0f48db2349f0ee1ca0e10dd63c0263bb5ea4727fb6 |
-| ground/water.tsj | 62939 | 5924788df478fa33b2a623575f7e945bbf28d509eaceaf9a4d2bdcc1c45b91a7 |
+| ground/water.png | 52096 | f586084c52dccc68adbd22006dd0546d3940fa7560fd444f80e3f97b367c6bb9 |
+| ground/water.tsj | 100547 | 789bef251bcc032055061980c301f57a8da7f18ecab7d6bbb29d739ba0d89a28 |
 | ground/water_ford.png | 1802 | 9207904b4015c81e3826b6dc244b3d004db9cf89ae214de9cfc7b846e935f84a |
 | ground/water_ford.tsj | 2568 | 1b79c80d8670b09660a661f9c2dc4bb672dc30d4316f85ba6ed7c39544cc66ea |
-| ground/water_shore.png | 31774 | 33bd1fa723a526c2e171fdcae52f4f91bf8e2cd2e48c4acf127cbb28587445bb |
-| ground/water_shore.tsj | 62957 | 6d587d9304355c260edaf86cc8e0714a6bafae886c8fc0cb6df85b1862f2c5cd |
+| ground/water_shore.png | 38774 | 40db07e8c4d8b3154d0186590c7fc3385fa5986a44a11718a12a12ec24c58930 |
+| ground/water_shore.tsj | 74625 | be92b0d3da1386dbb0ec3de5703d5880f509e1d321f886159f93153b205c8c4b |
 | palette.json | 1220 | de92a9af68b25252456eb70916de00e28c7f43e99ec244f12c9e308d54721280 |
 | props/PAIRING.md | 540 | ed715ccf43aea0a616f335902773e209696756cb4a86c8e3a17f3e070863cf30 |
 | props/hearth.json | 3090 | 36b1cedfe0e82b5a63bedb659ffbe5e93a3cd474c3b4f09b091e194c8b4b5544 |

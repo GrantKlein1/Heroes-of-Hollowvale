@@ -402,13 +402,24 @@ test.describe('Package 2-3: Playable Brackenford Tiled Map Integration (?maps=ti
         blocked: loader.isTileColliding(c, r),
       }));
     });
+    const shoreRange = await page.evaluate(() => {
+      const ts = (window as any).__scene.tiledMapLoader.tilesets.find((t: { name: string }) => t.name === 'water_shore');
+      return { first: ts.firstgid as number, count: ts.tilecount as number };
+    });
     expect(ring).toHaveLength(16 + 14 + 14);
     const GRASS_GID = 1; // grass tileset firstgid 1, tile 0 (plain grass)
     for (const cell of ring) {
       expect(cell.wall, `walls ${cell.c},${cell.r}`).toBe(0);
       expect(cell.collision, `collision ${cell.c},${cell.r}`).toBe(0);
       expect(cell.blocked, `blocked ${cell.c},${cell.r}`).toBe(false);
-      expect(cell.ground, `ground ${cell.c},${cell.r}`).toBe(GRASS_GID);
+      // The ring columns cross the river banks (rows 5-6 and 8-9): water_shore sand and its sand to
+      // grass blend sit there. They are walkable (collision and blocked are asserted above).
+      const isShore = cell.ground >= shoreRange.first && cell.ground < shoreRange.first + shoreRange.count;
+      if (isShore) {
+        expect([5, 6, 8, 9], `shore only on the bank rows ${cell.c},${cell.r}`).toContain(cell.r);
+      } else {
+        expect(cell.ground, `ground ${cell.c},${cell.r}`).toBe(GRASS_GID);
+      }
     }
 
     // Walk out through the old wall columns/rows. The player must reach the old wall cells and then be stopped by the map bounds.

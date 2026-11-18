@@ -1,12 +1,12 @@
 {
   "columns": 4,
   "image": "water_shore.png",
-  "imageheight": 544,
+  "imageheight": 680,
   "imagewidth": 136,
   "margin": 1,
   "spacing": 2,
   "name": "water_shore",
-  "tilecount": 64,
+  "tilecount": 79,
   "tiledversion": "1.10.2",
   "tileheight": 32,
   "tilewidth": 32,
@@ -3162,6 +3162,456 @@
           "value": true
         }
       ]
+    },
+    {
+      "id": 64,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 64
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 1
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "sand_grass"
+        }
+      ]
+    },
+    {
+      "id": 65,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 65
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "sand_grass"
+        }
+      ]
+    },
+    {
+      "id": 66,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 66
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "sand_grass"
+        }
+      ]
+    },
+    {
+      "id": 67,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 67
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 4
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "sand_grass"
+        }
+      ]
+    },
+    {
+      "id": 68,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 68
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 5
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "sand_grass"
+        }
+      ]
+    },
+    {
+      "id": 69,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 69
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 6
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "sand_grass"
+        }
+      ]
+    },
+    {
+      "id": 70,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 70
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 7
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "sand_grass"
+        }
+      ]
+    },
+    {
+      "id": 71,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 71
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 8
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "sand_grass"
+        }
+      ]
+    },
+    {
+      "id": 72,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 72
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 9
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "sand_grass"
+        }
+      ]
+    },
+    {
+      "id": 73,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 73
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 10
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "sand_grass"
+        }
+      ]
+    },
+    {
+      "id": 74,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 74
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 11
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "sand_grass"
+        }
+      ]
+    },
+    {
+      "id": 75,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 75
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 12
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "sand_grass"
+        }
+      ]
+    },
+    {
+      "id": 76,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 76
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 13
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "sand_grass"
+        }
+      ]
+    },
+    {
+      "id": 77,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 77
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 14
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "sand_grass"
+        }
+      ]
+    },
+    {
+      "id": 78,
+      "properties": [
+        {
+          "name": "id",
+          "type": "int",
+          "value": 78
+        },
+        {
+          "name": "collides",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "animationOnly",
+          "type": "bool",
+          "value": false
+        },
+        {
+          "name": "grassMask",
+          "type": "int",
+          "value": 15
+        },
+        {
+          "name": "variantSlot",
+          "type": "string",
+          "value": "sand_grass"
+        }
+      ]
     }
   ],
   "properties": [
@@ -3222,6 +3672,12 @@
           "color": "#444444",
           "probability": 1,
           "tile": 15
+        },
+        {
+          "name": "grass",
+          "color": "#559922",
+          "probability": 1,
+          "tile": 78
         }
       ],
       "wangtiles": [
@@ -3431,6 +3887,201 @@
             2,
             0,
             2
+          ]
+        },
+        {
+          "tileid": 64,
+          "wangid": [
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            3
+          ]
+        },
+        {
+          "tileid": 65,
+          "wangid": [
+            0,
+            3,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 66,
+          "wangid": [
+            0,
+            3,
+            0,
+            1,
+            0,
+            1,
+            0,
+            3
+          ]
+        },
+        {
+          "tileid": 67,
+          "wangid": [
+            0,
+            1,
+            0,
+            1,
+            0,
+            3,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 68,
+          "wangid": [
+            0,
+            1,
+            0,
+            1,
+            0,
+            3,
+            0,
+            3
+          ]
+        },
+        {
+          "tileid": 69,
+          "wangid": [
+            0,
+            3,
+            0,
+            1,
+            0,
+            3,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 70,
+          "wangid": [
+            0,
+            3,
+            0,
+            1,
+            0,
+            3,
+            0,
+            3
+          ]
+        },
+        {
+          "tileid": 71,
+          "wangid": [
+            0,
+            1,
+            0,
+            3,
+            0,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 72,
+          "wangid": [
+            0,
+            1,
+            0,
+            3,
+            0,
+            1,
+            0,
+            3
+          ]
+        },
+        {
+          "tileid": 73,
+          "wangid": [
+            0,
+            3,
+            0,
+            3,
+            0,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 74,
+          "wangid": [
+            0,
+            3,
+            0,
+            3,
+            0,
+            1,
+            0,
+            3
+          ]
+        },
+        {
+          "tileid": 75,
+          "wangid": [
+            0,
+            1,
+            0,
+            3,
+            0,
+            3,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 76,
+          "wangid": [
+            0,
+            1,
+            0,
+            3,
+            0,
+            3,
+            0,
+            3
+          ]
+        },
+        {
+          "tileid": 77,
+          "wangid": [
+            0,
+            3,
+            0,
+            3,
+            0,
+            3,
+            0,
+            1
+          ]
+        },
+        {
+          "tileid": 78,
+          "wangid": [
+            0,
+            3,
+            0,
+            3,
+            0,
+            3,
+            0,
+            3
           ]
         }
       ]

@@ -39,13 +39,19 @@ All place names (`Brackenford`, `Hearthmile`, `Ruinwatch`, `Ember Road`, `The Fl
 Blendsmith v4 TSJs author river water with `collides: false` to allow proper water rendering and animation without treating water as inherently impassable or walkable. Traversal is governed as follows:
 
 1. **`ground` Layer**:
-   - Deep river water: GIDs from `water.tsj` ($41 \dots 104$) autotiled via 2x2 corner Wang sets.
-   - Town ford: GIDs from `water_ford.tsj` ($105 \dots 108$) placed at $wy = 7, wx \in [8..11]$.
-   - Plank bridge: GIDs from `bridge_plank.tsj` ($109 \dots 112$) placed at $wy = 7, wx \in [5..6]$.
+   - Deep river water: GIDs from `water.tsj` ($49 \dots 144$) autotiled via 2x2 corner Wang sets.
+   - Town ford: GIDs from `water_ford.tsj` ($145 \dots 148$) placed at $wy = 7, wx \in [8..11]$.
+   - Plank bridge: GIDs from `bridge_plank.tsj` ($149 \dots 152$) placed at $wy = 7, wx \in [5..6]$.
 2. **`collision` Layer**:
-   - **Deep Water**: Blocked explicitly using solid obstacle GIDs (e.g. `cliff` GID 113 or `cliff_face` GID 129).
+   - **Deep Water**: Blocked explicitly using solid obstacle GIDs (e.g. `cliff` GID 153 or `cliff_face` GID 177).
    - **Fords & Bridges**: Remain open with tile value `0` (passable).
    - **Land**: Walkable grass, dirt roads, and cobblestone retain tile value `0`.
+
+### River shore and ground variants (TILES-VARIANTS, Batch 11 package B)
+
+- Firstgids follow the tilecounts, in the order of `TILESET_SPECS` (`grass` 1, `dirt_road` 9, `cobble_road` 33, `water` 49, `water_ford` 145, `bridge_plank` 149, `cliff` 153, `cliff_face` 177, `water_shore` 185), so a tilecount change moves every later gid. Always regenerate after one.
+- Brackenford's river banks use `water_shore`: grass cells above or below the river become sand over water (ids 0-15), and the grass cells that touch them use the sand to grass blend (ids 64-78, id = 63 + grass corner mask). `computeRiverShore` does this; nothing in the collision layer changes.
+- Straight dirt road edges (Wang masks 3, 5, 10, 12) pick one of three art variants per cell (`dirtRoadVariant`, a pure function of the seed and the world cell). The id tables live in `client/src/game/terrain/tileVariants.js`, which the wilderness generator and `build_cavern.mjs` share.
 
 ---
 

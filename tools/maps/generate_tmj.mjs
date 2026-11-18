@@ -10,6 +10,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  cliffFaceId,
+  shoreGrassId,
+  shoreWaterId,
+  straightVariantId,
+} from '../../client/src/game/terrain/tileVariants.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -271,14 +277,92 @@ export function autotileWangId(wx, wy, isGroup) {
 
 export const TILESET_SPECS = [
   { name: 'grass', file: 'grass.tsj', count: 8 },
-  { name: 'dirt_road', file: 'dirt_road.tsj', count: 16 },
+  { name: 'dirt_road', file: 'dirt_road.tsj', count: 24 },
   { name: 'cobble_road', file: 'cobble_road.tsj', count: 16 },
-  { name: 'water', file: 'water.tsj', count: 64 },
+  { name: 'water', file: 'water.tsj', count: 96 },
   { name: 'water_ford', file: 'water_ford.tsj', count: 4 },
   { name: 'bridge_plank', file: 'bridge_plank.tsj', count: 4 },
-  { name: 'cliff', file: 'cliff.tsj', count: 16 },
-  { name: 'cliff_face', file: 'cliff_face.tsj', count: 4 },
+  { name: 'cliff', file: 'cliff.tsj', count: 24 },
+  { name: 'cliff_face', file: 'cliff_face.tsj', count: 8 },
+  { name: 'water_shore', file: 'water_shore.tsj', count: 79 },
 ];
+
+/**
+ * Straight dirt road edges (Wang masks 3, 5, 10, 12) pick one of three art
+ * variants (Batch 11 package B). A pure function of the seed and the world
+ * cell, so a re-run with the same seed writes identical maps.
+ */
+export function dirtRoadVariant(wangId, seed, wx, wy) {
+  return straightVariantId('dirt_road', wangId, unit(seed, wx, wy, 21));
+}
+
+// ============================================================================
+// 4b. River shore: water_shore sand banks and the sand to grass blend
+// ============================================================================
+
+const SHORE_BANK_KINDS = new Set(['grass', 'forest', 'plains']);
+
+/**
+ * Computes the shore tiles around a one-tile-high river for a league.
+ *
+ * Bank cells are grass cells directly above or below a water row. They use a
+ * water_shore Wang tile (sand over water, water corners where the river
+ * touches). Grass cells that touch a bank cell, even diagonally, use the
+ * sand to grass blend tile whose sand corners are the corners shared with a
+ * bank cell. Roads, cobble, fords and bridges keep their own tiles. Nothing
+ * here touches the collision layer: the river row itself stays the blocker.
+ *
+ * @param {(wx: number, wy: number) => string|null} kindAt
+ * @param {number} x0 world x of the league's first column
+ * @param {number} y0 world y of the league's first row
+ * @param {number} width
+ * @param {number} height
+ * @returns {Map<number, number>} cell index -> water_shore tile id
+ */
+export function computeRiverShore(kindAt, x0, y0, width, height) {
+  const isWaterLike = (wx, wy) => {
+    const k = kindAt(wx, wy);
+    return k === 'water' || k === 'ford' || k === 'bridge';
+  };
+  const isBank = (wx, wy) =>
+    SHORE_BANK_KINDS.has(kindAt(wx, wy)) && (isWaterLike(wx, wy - 1) || isWaterLike(wx, wy + 1));
+
+  const out = new Map();
+  for (let ty = 0; ty < height; ty++) {
+    for (let tx = 0; tx < width; tx++) {
+      const wx = x0 + tx;
+      const wy = y0 + ty;
+      if (!SHORE_BANK_KINDS.has(kindAt(wx, wy))) continue;
+      // Corner (cx, cy) touches the four cells (cx-1, cy-1), (cx, cy-1), (cx-1, cy), (cx, cy).
+      const touching = (cx, cy) => [
+        [cx - 1, cy - 1],
+        [cx, cy - 1],
+        [cx - 1, cy],
+        [cx, cy],
+      ];
+      const corners = [
+        [wx, wy], // NW
+        [wx + 1, wy], // NE
+        [wx, wy + 1], // SW
+        [wx + 1, wy + 1], // SE
+      ];
+      if (isBank(wx, wy)) {
+        let waterMask = 0;
+        corners.forEach(([cx, cy], bit) => {
+          if (touching(cx, cy).some(([a, b]) => isWaterLike(a, b))) waterMask |= 1 << bit;
+        });
+        out.set(ty * width + tx, shoreWaterId(waterMask));
+        continue;
+      }
+      let grassMask = 0;
+      corners.forEach(([cx, cy], bit) => {
+        if (!touching(cx, cy).some(([a, b]) => isBank(a, b))) grassMask |= 1 << bit;
+      });
+      if (grassMask !== 15) out.set(ty * width + tx, shoreGrassId(grassMask));
+    }
+  }
+  return out;
+}
 
 export function buildTilesets(assetsDir) {
   const tilesets = [];
@@ -711,7 +795,7 @@ export function buildBrackenfordMap(tilesets, seed = DEFAULT_SEED) {
 
       if (kind === 'road' || kind === 'gate') {
         const wangId = autotileWangId(wx, wy, isDirtRoad);
-        groundData[idx] = gids.get('dirt_road', wangId);
+        groundData[idx] = gids.get('dirt_road', dirtRoadVariant(wangId, seed, wx, wy));
       } else if (kind === 'cobble') {
         const wangId = autotileWangId(wx, wy, isCobbleRoad);
         groundData[idx] = gids.get('cobble_road', wangId);
@@ -729,6 +813,12 @@ export function buildBrackenfordMap(tilesets, seed = DEFAULT_SEED) {
         collisionData[idx] = gids.get('cliff_face', 0);
       }
     }
+  }
+
+  // River shore: sand banks along the river and the sand to grass blend around them.
+  for (const [idx, tileId] of computeRiverShore(kindAt, x0, y0, width, height)) {
+    groundData[idx] = gids.get('water_shore', tileId);
+    groundDetailData[idx] = 0;
   }
 
   // Props & Pairing objects
@@ -951,7 +1041,7 @@ export function buildHearthmileMap(tilesets, seed = DEFAULT_SEED) {
 
       if (kind === 'road') {
         const wangId = autotileWangId(wx, wy, isDirtRoad);
-        groundData[idx] = gids.get('dirt_road', wangId);
+        groundData[idx] = gids.get('dirt_road', dirtRoadVariant(wangId, seed, wx, wy));
       } else if (kind === 'cobble') {
         const wangId = autotileWangId(wx, wy, isCobbleRoad);
         groundData[idx] = gids.get('cobble_road', wangId);
@@ -1254,7 +1344,7 @@ export function buildWildernessMap(tilesets, seed = DEFAULT_SEED) {
 
       if (kind === 'road') {
         const wangId = autotileWangId(wx, wy, isDirtRoad);
-        groundData[idx] = gids.get('dirt_road', wangId);
+        groundData[idx] = gids.get('dirt_road', dirtRoadVariant(wangId, seed, wx, wy));
       }
     }
   }

@@ -213,11 +213,11 @@
       "columns": 4,
       "image": "../assets/tiles/dirt_road.png",
       "imagewidth": 136,
-      "imageheight": 136,
+      "imageheight": 204,
       "margin": 1,
       "name": "dirt_road",
       "spacing": 2,
-      "tilecount": 16,
+      "tilecount": 24,
       "tileheight": 32,
       "tilewidth": 32,
       "tiles": [
@@ -940,6 +940,446 @@
               "value": false
             }
           ]
+        },
+        {
+          "id": 16,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 16
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1"
+            }
+          ]
+        },
+        {
+          "id": 17,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 17
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1"
+            }
+          ]
+        },
+        {
+          "id": 18,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 18
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1"
+            }
+          ]
+        },
+        {
+          "id": 19,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 19
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1"
+            }
+          ]
+        },
+        {
+          "id": 20,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 20
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2"
+            }
+          ]
+        },
+        {
+          "id": 21,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 21
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2"
+            }
+          ]
+        },
+        {
+          "id": 22,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 22
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2"
+            }
+          ]
+        },
+        {
+          "id": 23,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 23
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2"
+            }
+          ]
         }
       ],
       "type": "tileset",
@@ -947,7 +1387,7 @@
       "_baseGid": 9
     },
     {
-      "firstgid": 25,
+      "firstgid": 33,
       "columns": 4,
       "image": "../assets/tiles/cobble_road.png",
       "imagewidth": 136,
@@ -1682,18 +2122,18 @@
       ],
       "type": "tileset",
       "version": "1.10",
-      "_baseGid": 25
+      "_baseGid": 33
     },
     {
-      "firstgid": 41,
+      "firstgid": 49,
       "columns": 4,
       "image": "../assets/tiles/water.png",
       "imagewidth": 136,
-      "imageheight": 544,
+      "imageheight": 816,
       "margin": 1,
       "name": "water",
       "spacing": 2,
-      "tilecount": 64,
+      "tilecount": 96,
       "tileheight": 32,
       "tilewidth": 32,
       "tiles": [
@@ -4846,14 +5286,1918 @@
               "value": true
             }
           ]
+        },
+        {
+          "id": 64,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 64
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1"
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 64,
+              "duration": 160
+            },
+            {
+              "tileid": 72,
+              "duration": 160
+            },
+            {
+              "tileid": 73,
+              "duration": 160
+            },
+            {
+              "tileid": 74,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 65,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 65
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1"
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 65,
+              "duration": 160
+            },
+            {
+              "tileid": 75,
+              "duration": 160
+            },
+            {
+              "tileid": 76,
+              "duration": 160
+            },
+            {
+              "tileid": 77,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 66,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 66
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1"
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 66,
+              "duration": 160
+            },
+            {
+              "tileid": 78,
+              "duration": 160
+            },
+            {
+              "tileid": 79,
+              "duration": 160
+            },
+            {
+              "tileid": 80,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 67,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 67
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1"
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 67,
+              "duration": 160
+            },
+            {
+              "tileid": 81,
+              "duration": 160
+            },
+            {
+              "tileid": 82,
+              "duration": 160
+            },
+            {
+              "tileid": 83,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 68,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 68
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2"
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 68,
+              "duration": 160
+            },
+            {
+              "tileid": 84,
+              "duration": 160
+            },
+            {
+              "tileid": 85,
+              "duration": 160
+            },
+            {
+              "tileid": 86,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 69,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 69
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2"
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 69,
+              "duration": 160
+            },
+            {
+              "tileid": 87,
+              "duration": 160
+            },
+            {
+              "tileid": 88,
+              "duration": 160
+            },
+            {
+              "tileid": 89,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 70,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 70
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2"
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 70,
+              "duration": 160
+            },
+            {
+              "tileid": 90,
+              "duration": 160
+            },
+            {
+              "tileid": 91,
+              "duration": 160
+            },
+            {
+              "tileid": 92,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 71,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 71
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2"
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 71,
+              "duration": 160
+            },
+            {
+              "tileid": 93,
+              "duration": 160
+            },
+            {
+              "tileid": 94,
+              "duration": 160
+            },
+            {
+              "tileid": 95,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 72,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 72
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1_frame1"
+            }
+          ]
+        },
+        {
+          "id": 73,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 73
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1_frame2"
+            }
+          ]
+        },
+        {
+          "id": 74,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 74
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1_frame3"
+            }
+          ]
+        },
+        {
+          "id": 75,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 75
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1_frame1"
+            }
+          ]
+        },
+        {
+          "id": 76,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 76
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1_frame2"
+            }
+          ]
+        },
+        {
+          "id": 77,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 77
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1_frame3"
+            }
+          ]
+        },
+        {
+          "id": 78,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 78
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1_frame1"
+            }
+          ]
+        },
+        {
+          "id": 79,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 79
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1_frame2"
+            }
+          ]
+        },
+        {
+          "id": 80,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 80
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1_frame3"
+            }
+          ]
+        },
+        {
+          "id": 81,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 81
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1_frame1"
+            }
+          ]
+        },
+        {
+          "id": 82,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 82
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1_frame2"
+            }
+          ]
+        },
+        {
+          "id": 83,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 83
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1_frame3"
+            }
+          ]
+        },
+        {
+          "id": 84,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 84
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2_frame1"
+            }
+          ]
+        },
+        {
+          "id": 85,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 85
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2_frame2"
+            }
+          ]
+        },
+        {
+          "id": 86,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 86
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2_frame3"
+            }
+          ]
+        },
+        {
+          "id": 87,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 87
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2_frame1"
+            }
+          ]
+        },
+        {
+          "id": 88,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 88
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2_frame2"
+            }
+          ]
+        },
+        {
+          "id": 89,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 89
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2_frame3"
+            }
+          ]
+        },
+        {
+          "id": 90,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 90
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2_frame1"
+            }
+          ]
+        },
+        {
+          "id": 91,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 91
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2_frame2"
+            }
+          ]
+        },
+        {
+          "id": 92,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 92
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2_frame3"
+            }
+          ]
+        },
+        {
+          "id": 93,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 93
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2_frame1"
+            }
+          ]
+        },
+        {
+          "id": 94,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 94
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2_frame2"
+            }
+          ]
+        },
+        {
+          "id": 95,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 95
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2_frame3"
+            }
+          ]
         }
       ],
       "type": "tileset",
       "version": "1.10",
-      "_baseGid": 41
+      "_baseGid": 49
     },
     {
-      "firstgid": 105,
+      "firstgid": 145,
       "columns": 4,
       "image": "../assets/tiles/water_ford.png",
       "imagewidth": 136,
@@ -4948,10 +7292,10 @@
       ],
       "type": "tileset",
       "version": "1.10",
-      "_baseGid": 105
+      "_baseGid": 145
     },
     {
-      "firstgid": 109,
+      "firstgid": 149,
       "columns": 4,
       "image": "../assets/tiles/bridge_plank.png",
       "imagewidth": 136,
@@ -5046,18 +7390,18 @@
       ],
       "type": "tileset",
       "version": "1.10",
-      "_baseGid": 109
+      "_baseGid": 149
     },
     {
-      "firstgid": 113,
+      "firstgid": 153,
       "columns": 4,
       "image": "../assets/tiles/cliff.png",
       "imagewidth": 136,
-      "imageheight": 136,
+      "imageheight": 204,
       "margin": 1,
       "name": "cliff",
       "spacing": 2,
-      "tilecount": 16,
+      "tilecount": 24,
       "tileheight": 32,
       "tilewidth": 32,
       "tiles": [
@@ -5780,22 +8124,462 @@
               "value": false
             }
           ]
+        },
+        {
+          "id": 16,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 16
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1"
+            }
+          ]
+        },
+        {
+          "id": 17,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 17
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1"
+            }
+          ]
+        },
+        {
+          "id": 18,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 18
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1"
+            }
+          ]
+        },
+        {
+          "id": 19,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 19
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt1"
+            }
+          ]
+        },
+        {
+          "id": 20,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 20
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2"
+            }
+          ]
+        },
+        {
+          "id": 21,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 21
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2"
+            }
+          ]
+        },
+        {
+          "id": 22,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 22
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2"
+            }
+          ]
+        },
+        {
+          "id": 23,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 23
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantOf",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "alt2"
+            }
+          ]
         }
       ],
       "type": "tileset",
       "version": "1.10",
-      "_baseGid": 113
+      "_baseGid": 153
     },
     {
-      "firstgid": 129,
+      "firstgid": 177,
       "columns": 4,
       "image": "../assets/tiles/cliff_face.png",
       "imagewidth": 136,
-      "imageheight": 34,
+      "imageheight": 68,
       "margin": 1,
       "name": "cliff_face",
       "spacing": 2,
-      "tilecount": 4,
+      "tilecount": 8,
       "tileheight": 32,
       "tilewidth": 32,
       "tiles": [
@@ -5878,11 +8662,3729 @@
               "value": false
             }
           ]
+        },
+        {
+          "id": 4,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "cap_left"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "cap_right"
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "variant"
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "variant"
+            }
+          ]
         }
       ],
       "type": "tileset",
       "version": "1.10",
-      "_baseGid": 129
+      "_baseGid": 177
+    },
+    {
+      "firstgid": 185,
+      "columns": 4,
+      "image": "../assets/tiles/water_shore.png",
+      "imagewidth": 136,
+      "imageheight": 680,
+      "margin": 1,
+      "name": "water_shore",
+      "spacing": 2,
+      "tilecount": 79,
+      "tileheight": 32,
+      "tilewidth": 32,
+      "tiles": [
+        {
+          "id": 0,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 1,
+              "duration": 160
+            },
+            {
+              "tileid": 17,
+              "duration": 160
+            },
+            {
+              "tileid": 33,
+              "duration": 160
+            },
+            {
+              "tileid": 49,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 2,
+              "duration": 160
+            },
+            {
+              "tileid": 18,
+              "duration": 160
+            },
+            {
+              "tileid": 34,
+              "duration": 160
+            },
+            {
+              "tileid": 50,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 3,
+              "duration": 160
+            },
+            {
+              "tileid": 19,
+              "duration": 160
+            },
+            {
+              "tileid": 35,
+              "duration": 160
+            },
+            {
+              "tileid": 51,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 4,
+              "duration": 160
+            },
+            {
+              "tileid": 20,
+              "duration": 160
+            },
+            {
+              "tileid": 36,
+              "duration": 160
+            },
+            {
+              "tileid": 52,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 5,
+              "duration": 160
+            },
+            {
+              "tileid": 21,
+              "duration": 160
+            },
+            {
+              "tileid": 37,
+              "duration": 160
+            },
+            {
+              "tileid": 53,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 6,
+              "duration": 160
+            },
+            {
+              "tileid": 22,
+              "duration": 160
+            },
+            {
+              "tileid": 38,
+              "duration": 160
+            },
+            {
+              "tileid": 54,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 7,
+              "duration": 160
+            },
+            {
+              "tileid": 23,
+              "duration": 160
+            },
+            {
+              "tileid": 39,
+              "duration": 160
+            },
+            {
+              "tileid": 55,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 8
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 8
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 8,
+              "duration": 160
+            },
+            {
+              "tileid": 24,
+              "duration": 160
+            },
+            {
+              "tileid": 40,
+              "duration": 160
+            },
+            {
+              "tileid": 56,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 9
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 9
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 9,
+              "duration": 160
+            },
+            {
+              "tileid": 25,
+              "duration": 160
+            },
+            {
+              "tileid": 41,
+              "duration": 160
+            },
+            {
+              "tileid": 57,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 10,
+              "duration": 160
+            },
+            {
+              "tileid": 26,
+              "duration": 160
+            },
+            {
+              "tileid": 42,
+              "duration": 160
+            },
+            {
+              "tileid": 58,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 11
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 11
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 11,
+              "duration": 160
+            },
+            {
+              "tileid": 27,
+              "duration": 160
+            },
+            {
+              "tileid": 43,
+              "duration": 160
+            },
+            {
+              "tileid": 59,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 12,
+              "duration": 160
+            },
+            {
+              "tileid": 28,
+              "duration": 160
+            },
+            {
+              "tileid": 44,
+              "duration": 160
+            },
+            {
+              "tileid": 60,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 13
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 13
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 13,
+              "duration": 160
+            },
+            {
+              "tileid": 29,
+              "duration": 160
+            },
+            {
+              "tileid": 45,
+              "duration": 160
+            },
+            {
+              "tileid": 61,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 14,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 14
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 14
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 14,
+              "duration": 160
+            },
+            {
+              "tileid": 30,
+              "duration": 160
+            },
+            {
+              "tileid": 46,
+              "duration": 160
+            },
+            {
+              "tileid": 62,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 15,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 15
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 15
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "animation": [
+            {
+              "tileid": 15,
+              "duration": 160
+            },
+            {
+              "tileid": 31,
+              "duration": 160
+            },
+            {
+              "tileid": 47,
+              "duration": 160
+            },
+            {
+              "tileid": 63,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "id": 16,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 16
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 17,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 17
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 18,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 18
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 19,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 19
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 20,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 20
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 21,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 21
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 22,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 22
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 23,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 23
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 24,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 24
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 8
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 25,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 25
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 9
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 26,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 26
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 27,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 27
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 11
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 28,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 28
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 29,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 29
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 13
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 30,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 30
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 14
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 31,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 31
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 15
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 32,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 32
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 33,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 33
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 34,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 34
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 35,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 35
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 36,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 36
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 37,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 37
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 38,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 38
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 39,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 39
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 40,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 40
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 8
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 41,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 41
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 9
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 42,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 42
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 43,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 43
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 11
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 44,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 44
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 45,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 45
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 13
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 46,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 46
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 14
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 47,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 47
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 15
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 48,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 48
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 49,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 49
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 50,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 50
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 51,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 51
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 52,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 52
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 53,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 53
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 54,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 54
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 55,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 55
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 56,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 56
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 8
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 57,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 57
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 9
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 58,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 58
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 59,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 59
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 11
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 60,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 60
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 61,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 61
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 13
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 62,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 62
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 14
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 63,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 63
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "wangId",
+              "type": "int",
+              "value": 15
+            },
+            {
+              "name": "nw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "ne",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "sw",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "se",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 64,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 64
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "sand_grass"
+            }
+          ]
+        },
+        {
+          "id": 65,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 65
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "sand_grass"
+            }
+          ]
+        },
+        {
+          "id": 66,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 66
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "sand_grass"
+            }
+          ]
+        },
+        {
+          "id": 67,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 67
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "sand_grass"
+            }
+          ]
+        },
+        {
+          "id": 68,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 68
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "sand_grass"
+            }
+          ]
+        },
+        {
+          "id": 69,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 69
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "sand_grass"
+            }
+          ]
+        },
+        {
+          "id": 70,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 70
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "sand_grass"
+            }
+          ]
+        },
+        {
+          "id": 71,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 71
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 8
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "sand_grass"
+            }
+          ]
+        },
+        {
+          "id": 72,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 72
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 9
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "sand_grass"
+            }
+          ]
+        },
+        {
+          "id": 73,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 73
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "sand_grass"
+            }
+          ]
+        },
+        {
+          "id": 74,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 74
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 11
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "sand_grass"
+            }
+          ]
+        },
+        {
+          "id": 75,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 75
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "sand_grass"
+            }
+          ]
+        },
+        {
+          "id": 76,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 76
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 13
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "sand_grass"
+            }
+          ]
+        },
+        {
+          "id": 77,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 77
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 14
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "sand_grass"
+            }
+          ]
+        },
+        {
+          "id": 78,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 78
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "animationOnly",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 15
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "sand_grass"
+            }
+          ]
+        }
+      ],
+      "type": "tileset",
+      "version": "1.10",
+      "_baseGid": 185
     }
   ],
   "layers": [
@@ -5982,121 +12484,121 @@
         1,
         1,
         1,
-        33,
+        41,
+        45,
+        45,
+        45,
+        45,
+        45,
+        45,
+        45,
+        45,
+        45,
+        45,
         37,
-        37,
-        37,
-        37,
-        37,
-        37,
-        37,
-        37,
-        37,
-        37,
-        29,
         1,
         1,
         1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        35,
+        251,
+        251,
+        251,
+        251,
+        251,
+        43,
+        48,
         40,
-        32,
-        28,
-        28,
-        28,
-        28,
         36,
-        40,
-        40,
-        40,
-        30,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        27,
-        28,
-        26,
+        36,
+        36,
+        36,
+        44,
+        48,
+        48,
+        48,
+        38,
+        251,
+        251,
+        251,
+        197,
+        197,
+        197,
+        197,
+        197,
+        35,
+        36,
+        34,
         24,
         24,
         24,
         24,
-        27,
-        28,
-        28,
-        28,
-        26,
-        1,
-        1,
-        1,
-        56,
-        56,
-        56,
-        56,
-        56,
-        109,
-        109,
-        56,
-        105,
-        105,
-        105,
-        105,
-        56,
-        56,
-        56,
-        56,
-        56,
-        56,
-        56,
-        56,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
+        35,
+        36,
+        36,
+        36,
+        34,
+        197,
+        197,
+        197,
+        64,
+        64,
+        64,
+        64,
+        64,
+        149,
+        149,
+        64,
+        145,
+        145,
+        145,
+        145,
+        64,
+        64,
+        64,
+        64,
+        64,
+        64,
+        64,
+        64,
+        188,
+        188,
+        188,
+        188,
+        188,
+        188,
+        188,
+        188,
         17,
         21,
-        21,
+        28,
         13,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
+        188,
+        188,
+        188,
+        188,
+        188,
+        188,
+        188,
+        188,
+        260,
+        260,
+        260,
+        260,
+        260,
+        260,
+        260,
+        260,
         11,
         20,
         16,
         10,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
+        260,
+        260,
+        260,
+        260,
+        260,
+        260,
+        260,
+        260,
         1,
         1,
         1,
@@ -6107,7 +12609,7 @@
         1,
         1,
         19,
-        14,
+        26,
         1,
         1,
         1,
@@ -6330,7 +12832,7 @@
         0,
         0,
         0,
-        5,
+        0,
         0,
         0,
         0,
@@ -7166,26 +13668,26 @@
         0,
         0,
         0,
-        113,
-        113,
-        113,
-        113,
-        113,
+        153,
+        153,
+        153,
+        153,
+        153,
         0,
         0,
-        113,
+        153,
         0,
         0,
         0,
         0,
-        113,
-        113,
-        113,
-        113,
-        113,
-        113,
-        113,
-        113,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
+        153,
         0,
         0,
         0,
