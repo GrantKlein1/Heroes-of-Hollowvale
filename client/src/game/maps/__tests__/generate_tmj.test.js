@@ -256,6 +256,26 @@ describe('Package MM-1: Tiled TMJ Map Generator', () => {
       expect(lost).toEqual([]);
     });
 
+    it('has no rock wall ring around Brackenford: no cliff_face in walls or collision, ring cells are plain grass', () => {
+      const map = buildBrackenfordMap(tilesets, DEFAULT_SEED);
+      const layer = (name) => map.layers.find((l) => l.name === name).data;
+      const cliffFace = createGidResolver(tilesets).get('cliff_face', 0);
+      expect(layer('walls').filter((g) => g === cliffFace)).toEqual([]);
+      expect(layer('collision').filter((g) => g === cliffFace)).toEqual([]);
+      expect(layer('walls').every((g) => g === 0)).toBe(true);
+      const ground = layer('ground');
+      const grass = createGidResolver(tilesets).get('grass', 0);
+      for (let c = 2; c <= 17; c++) {
+        expect(ground[1 * LEAGUE_W + c]).toBe(grass);
+        if (c !== 9 && c !== 10) expect(ground[10 * LEAGUE_W + c]).toBe(grass); // 9..10 is the south gate road
+      }
+      for (let r = 2; r <= 9; r++) {
+        if (r === 7) continue;
+        expect(ground[r * LEAGUE_W + 1]).toBe(grass);
+        expect(ground[r * LEAGUE_W + 18]).toBe(grass);
+      }
+    });
+
     it('keeps Brackenford spawns outside exit prompts, except the preserved points', () => {
       // HollowvaleScene._drawBeacons uses rectangle intersection and no radius.
       const promptRadius = 0

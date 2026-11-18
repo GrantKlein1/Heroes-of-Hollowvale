@@ -373,4 +373,76 @@ test.describe('Package 2-3: Playable Brackenford Tiled Map Integration (?maps=ti
     expect(arrival.activeLabel.toLowerCase()).not.toContain('exit');
     await expect(page.getByText(/Press E to exit/i)).toHaveCount(0);
   });
+  test('old village rock-wall ring is grass and walkable, and the player stays inside the map bounds', async ({ page }) => {
+    await page.addInitScript(() => {
+      window.HTMLMediaElement.prototype.play = () => Promise.resolve();
+    });
+
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
+    await page.getByRole('button', { name: 'Start Game' }).click();
+    await page.getByRole('button', { name: 'Choose' }).first().click();
+    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village');
+
+    // Old ring: row 1 and row 10 at cols 2..17, col 1 and col 18 at rows 2..9.
+    const ring = await page.evaluate(() => {
+      const loader = (window as any).__scene.tiledMapLoader;
+      const cells: Array<[number, number]> = [];
+      // Skip the river row (7) and the south gate road (cols 9..10), which were never wall cells.
+      for (let c = 2; c <= 17; c++) { cells.push([c, 1]); if (c !== 9 && c !== 10) cells.push([c, 10]); }
+      for (let r = 2; r <= 9; r++) { if (r !== 7) { cells.push([1, r]); cells.push([18, r]); } }
+      const wallsData = loader.getLayer('walls').data as number[];
+      const collisionData = loader.getLayer('collision').data as number[];
+      const groundData = loader.getLayer('ground').data as number[];
+      return cells.map(([c, r]) => ({
+        c,
+        r,
+        wall: wallsData[r * 20 + c],
+        collision: collisionData[r * 20 + c],
+        ground: groundData[r * 20 + c],
+        blocked: loader.isTileColliding(c, r),
+      }));
+    });
+    expect(ring).toHaveLength(16 + 14 + 14);
+    const GRASS_GID = 1; // grass tileset firstgid 1, tile 0 (plain grass)
+    for (const cell of ring) {
+      expect(cell.wall, `walls ${cell.c},${cell.r}`).toBe(0);
+      expect(cell.collision, `collision ${cell.c},${cell.r}`).toBe(0);
+      expect(cell.blocked, `blocked ${cell.c},${cell.r}`).toBe(false);
+      expect(cell.ground, `ground ${cell.c},${cell.r}`).toBe(GRASS_GID);
+    }
+
+    // Walk out through the old wall columns/rows. The player must reach the old wall cells and then be stopped by the map bounds.
+    const walk = async (key: string, x: number, y: number) => {
+      await page.evaluate(([px, py]) => {
+        const scene = (window as any).__scene;
+        scene.player.setPosition(px, py);
+        scene.player.body.reset(px, py);
+      }, [x, y]);
+      await page.keyboard.down(key);
+      await page.waitForTimeout(1500);
+      await page.keyboard.up(key);
+      return page.evaluate(() => {
+        const b = (window as any).__scene.player.body;
+        return { left: b.left, right: b.right, top: b.top, bottom: b.bottom };
+      });
+    };
+
+    // West: from x=100 (below the river, clear of the cottage) walk left through col 1.
+    const west = await walk('KeyA', 100, 300);
+    expect(west.left).toBeLessThan(32); // passed through the old wall column
+    expect(west.left).toBeGreaterThanOrEqual(-1);
+    // East
+    const east = await walk('KeyD', 540, 300);
+    expect(east.right).toBeGreaterThan(18 * 32 + 32); // passed through the old wall column 18
+    expect(east.right).toBeLessThanOrEqual(641);
+    // South (away from the gate at x 288..352)
+    const south = await walk('KeyS', 100, 300);
+    expect(south.bottom).toBeGreaterThan(10 * 32 + 20); // reached the old bottom wall row
+    expect(south.bottom).toBeLessThanOrEqual(385);
+    expect(await page.evaluate(() => (window as any).__hv.scene())).toBe('village');
+    // North (right of the tree trunk, past the old top wall row)
+    const north = await walk('KeyW', 620, 120);
+    expect(north.top).toBeLessThan(2 * 32);
+    expect(north.top).toBeGreaterThanOrEqual(-1);
+  });
 });

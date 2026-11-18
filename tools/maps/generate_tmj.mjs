@@ -170,10 +170,6 @@ function stampKind(wx, wy) {
     if (wy === 7) return riverKind(wx, wy);
     if (wy === 10 && (wx === 9 || wx === 10)) return 'gate';
     if (isRoad(wx, wy)) return 'road';
-    if (wy === 1 && wx >= 2 && wx <= 17) return 'wall';
-    if (wy === 10 && wx >= 2 && wx <= 17) return 'wall';
-    if (wx === 1 && wy >= 2 && wy <= 9) return 'wall';
-    if (wx === 18 && wy >= 2 && wy <= 9) return 'wall';
     // Cobblestone town square
     if (wy >= 4 && wy <= 6 && wx >= 5 && wx <= 16) return 'cobble';
     if (wy >= 8 && wy <= 9 && wx >= 8 && wx <= 11) return 'cobble';
