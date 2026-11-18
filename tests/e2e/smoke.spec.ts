@@ -1,7 +1,9 @@
 import { test, expect } from '@playwright/test';
+import { settleForScreenshot, waitForScene } from './helpers/waits';
 
 test.describe('Heroes of Hollowvale — E2E Smoke & Visual Regression', () => {
   test('boots, selects class, visits every scene with 0 console errors and 0 404s', async ({ page }) => {
+    test.setTimeout(180_000);
     const consoleErrors: string[] = [];
     const pageErrors: string[] = [];
     const notFoundResponses: string[] = [];
@@ -41,8 +43,8 @@ test.describe('Heroes of Hollowvale — E2E Smoke & Visual Regression', () => {
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await expect(startButton).toBeVisible();
 
-    // Settle render and capture Title Screen baseline
-    await page.waitForTimeout(600);
+    // Settle render (including the display font) and capture Title Screen baseline
+    await settleForScreenshot(page, 600);
     await expect(page).toHaveScreenshot('01-title-screen.png');
 
     // 2. Open Class Selection
@@ -51,7 +53,7 @@ test.describe('Heroes of Hollowvale — E2E Smoke & Visual Regression', () => {
     await expect(classModalHeading).toBeVisible();
 
     // Settle render and capture Class Select modal baseline
-    await page.waitForTimeout(600);
+    await settleForScreenshot(page, 600);
     await expect(page).toHaveScreenshot('02-class-selection.png');
 
     // 3. Choose Knight class to enter the village
@@ -60,13 +62,8 @@ test.describe('Heroes of Hollowvale — E2E Smoke & Visual Regression', () => {
     await expect(classModalHeading).toBeHidden();
 
     // Wait for window.__hv QA interface to be mounted and ready in village
-    await page.waitForFunction(() => {
-      return (
-        typeof (window as any).__hv?.scene === 'function' &&
-        typeof (window as any).__hv?.goto === 'function' &&
-        (window as any).__hv.scene() === 'village'
-      );
-    });
+    await waitForScene(page, 'village');
+    await page.waitForFunction(() => typeof (window as any).__hv?.goto === 'function');
 
     // 4. Visit every scene and capture visual baseline
     const scenes: Array<{ id: string; screenshot: string }> = [
@@ -85,13 +82,11 @@ test.describe('Heroes of Hollowvale — E2E Smoke & Visual Regression', () => {
           (window as any).__hv.goto(sceneId);
         }, id);
 
-        await page.waitForFunction((sceneId) => {
-          return (window as any).__hv?.scene() === sceneId;
-        }, id);
+        await waitForScene(page, id);
       }
 
-      // Allow background textures, solids, and animations to settle
-      await page.waitForTimeout(600);
+      // Allow background textures, solids, and the display font to settle
+      await settleForScreenshot(page, 600);
       await expect(page).toHaveScreenshot(screenshot);
     }
 

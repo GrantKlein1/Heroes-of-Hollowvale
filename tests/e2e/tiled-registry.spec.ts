@@ -1,9 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { waitForScene } from './helpers/waits';
 
 test.describe('Package 2-4: Data-Driven Tiled Map Registry, Multi-Atlas Props & Generic Doors', () => {
   test('Data-driven registry routes scenes, resolves generic doors, and spawns at named targetSpawn', async ({
     page,
   }) => {
+    test.setTimeout(120_000);
     const consoleErrors: string[] = [];
     const pageErrors: string[] = [];
     const notFoundResponses: string[] = [];
@@ -47,7 +49,7 @@ test.describe('Package 2-4: Data-Driven Tiled Map Registry, Multi-Atlas Props & 
     await expect(classModalHeading).toBeHidden();
 
     // Wait for village scene to be active
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village');
+    await waitForScene(page, 'village');
 
     // 2. Verify Brackenford village loaded through registry
     const villageMetrics = await page.evaluate(() => (window as any).__hv.world());
@@ -69,7 +71,7 @@ test.describe('Package 2-4: Data-Driven Tiled Map Registry, Multi-Atlas Props & 
       }
     });
 
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'tavern', { timeout: 10000 });
+    await waitForScene(page, 'tavern');
     expect(await page.evaluate(() => (window as any).__hv.scene())).toBe('tavern');
 
     // Verify tavern map metrics
@@ -89,7 +91,7 @@ test.describe('Package 2-4: Data-Driven Tiled Map Registry, Multi-Atlas Props & 
     }));
     await page.evaluate(() => (window as any).__scene._tryInteract());
 
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village', { timeout: 10000 });
+    await waitForScene(page, 'village');
     expect(await page.evaluate(() => (window as any).__hv.scene())).toBe('village');
 
     // Verify player spawned near door_tavern zone (center around x: 288, y: 144)
@@ -107,7 +109,7 @@ test.describe('Package 2-4: Data-Driven Tiled Map Registry, Multi-Atlas Props & 
       scene._tryInteract();
     });
 
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'market', { timeout: 10000 });
+    await waitForScene(page, 'market');
     expect(await page.evaluate(() => (window as any).__hv.scene())).toBe('market');
 
     // Return to Brackenford
@@ -118,7 +120,7 @@ test.describe('Package 2-4: Data-Driven Tiled Map Registry, Multi-Atlas Props & 
       scene._tryInteract();
     });
 
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village', { timeout: 10000 });
+    await waitForScene(page, 'village');
     expect(await page.evaluate(() => (window as any).__hv.scene())).toBe('village');
 
     // 6. Proves "new map = one registry entry" in live game

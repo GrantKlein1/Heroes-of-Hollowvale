@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { ANIM_TIMEOUT, waitForScene } from './helpers/waits';
 
 test.describe('Package 1-5 — Lane C Player: Atlas Projectiles & Spells', () => {
   test.beforeEach(async ({ page }) => {
@@ -20,12 +21,7 @@ test.describe('Package 1-5 — Lane C Player: Atlas Projectiles & Spells', () =>
     await page.getByRole('button', { name: 'Choose' }).nth(1).click();
     await expect(chooseModal).toBeHidden();
 
-    await page.waitForFunction(() => {
-      return (
-        typeof (window as any).__hv?.anim === 'function' &&
-        (window as any).__hv.scene() === 'village'
-      );
-    });
+    await waitForScene(page, 'village');
 
     // Cast fireball via QA API
     const castResult = await page.evaluate(() => {
@@ -83,7 +79,7 @@ test.describe('Package 1-5 — Lane C Player: Atlas Projectiles & Spells', () =>
     await page.getByRole('button', { name: 'Choose' }).nth(2).click();
     await expect(chooseModal).toBeHidden();
 
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village');
+    await waitForScene(page, 'village');
 
     // Select hotbar slot 1 (poison vial) and trigger attack.
     // The vial is released on frame 3 (250 ms), so read it only after that.
@@ -136,7 +132,7 @@ test.describe('Package 1-5 — Lane C Player: Atlas Projectiles & Spells', () =>
     await page.getByRole('button', { name: 'Choose' }).nth(1).click();
     await expect(chooseModal).toBeHidden();
 
-    await page.waitForFunction(() => (window as any).__hv?.anim() === 'mage_idle_down');
+    await page.waitForFunction(() => (window as any).__hv?.anim() === 'mage_idle_down', null, { timeout: ANIM_TIMEOUT });
 
     // Press Space for melee attack
     await page.keyboard.press('Space', { delay: 60 });
@@ -145,9 +141,9 @@ test.describe('Package 1-5 — Lane C Player: Atlas Projectiles & Spells', () =>
     await page.waitForFunction(() => {
       const anim = (window as any).__hv.anim();
       return anim && anim.includes('attack_2');
-    }, null, { timeout: 2000 });
+    }, null, { timeout: ANIM_TIMEOUT });
 
     // Safely returns to idle
-    await page.waitForFunction(() => (window as any).__hv.anim() === 'mage_idle_down', null, { timeout: 3000 });
+    await page.waitForFunction(() => (window as any).__hv.anim() === 'mage_idle_down', null, { timeout: ANIM_TIMEOUT });
   });
 });

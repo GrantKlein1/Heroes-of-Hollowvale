@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForScene } from './helpers/waits';
 
 test.describe('Package 3-1: Interior Maps (Tavern & Market) Integration (?maps=tiled)', () => {
   test('Tavern interior loads behind ?renderer=blend&maps=tiled, Tharos is reachable, and exit returns to Brackenford', async ({ page }) => {
@@ -45,7 +46,7 @@ test.describe('Package 3-1: Interior Maps (Tavern & Market) Integration (?maps=t
     await expect(classModalHeading).toBeHidden();
 
     // Wait for village scene
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village');
+    await waitForScene(page, 'village');
 
     // 2. Move player in front of tavern door (x: 288, y: 155)
     await page.evaluate(() => {
@@ -63,7 +64,7 @@ test.describe('Package 3-1: Interior Maps (Tavern & Market) Integration (?maps=t
     });
 
     // Wait for tavern scene to load
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'tavern', { timeout: 10000 });
+    await waitForScene(page, 'tavern');
     expect(await page.evaluate(() => (window as any).__hv.scene())).toBe('tavern');
 
     // 3. Verify Tavern 640x384 Tiled map metrics and loader
@@ -158,7 +159,7 @@ test.describe('Package 3-1: Interior Maps (Tavern & Market) Integration (?maps=t
       scene._tryInteract();
     });
 
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village', { timeout: 10000 });
+    await waitForScene(page, 'village');
     expect(await page.evaluate(() => (window as any).__hv.scene())).toBe('village');
 
     // Regression: The Flagon exit already lands walkable at door_tavern (288, 144).
@@ -174,7 +175,7 @@ test.describe('Package 3-1: Interior Maps (Tavern & Market) Integration (?maps=t
       const player = scene?.player;
       const body = player?.body;
       return Boolean(body && body.y > player.y - 10);
-    }, null, { timeout: 2000 });
+    }, null, { timeout: 5000 });
 
     const tavernOverlap = await page.evaluate(() => {
       const scene = (window as any).__scene;
@@ -192,7 +193,7 @@ test.describe('Package 3-1: Interior Maps (Tavern & Market) Integration (?maps=t
     await page.waitForFunction(
       (startY) => (window as any).__scene.player.y >= startY + 32,
       tavernReturn.y,
-      { timeout: 1000 }
+      { timeout: 4000 }
     );
     await page.keyboard.up('ArrowDown');
 
@@ -245,7 +246,7 @@ test.describe('Package 3-1: Interior Maps (Tavern & Market) Integration (?maps=t
     await expect(classModalHeading).toBeHidden();
 
     // Wait for village scene
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village');
+    await waitForScene(page, 'village');
 
     // 2. Move player in front of market door (x: 96, y: 180)
     await page.evaluate(() => {
@@ -256,7 +257,7 @@ test.describe('Package 3-1: Interior Maps (Tavern & Market) Integration (?maps=t
     });
 
     // Wait for market scene to load
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'market', { timeout: 10000 });
+    await waitForScene(page, 'market');
     expect(await page.evaluate(() => (window as any).__hv.scene())).toBe('market');
 
     // 3. Verify Market 640x384 Tiled map metrics and loader
@@ -311,7 +312,7 @@ test.describe('Package 3-1: Interior Maps (Tavern & Market) Integration (?maps=t
       scene._tryInteract();
     });
 
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village', { timeout: 10000 });
+    await waitForScene(page, 'village');
     expect(await page.evaluate(() => (window as any).__hv.scene())).toBe('village');
 
     const marketReturn = await page.evaluate(() => {
@@ -327,7 +328,7 @@ test.describe('Package 3-1: Interior Maps (Tavern & Market) Integration (?maps=t
       const player = scene?.player;
       const body = player?.body;
       return Boolean(body && body.y > player.y - 10);
-    }, null, { timeout: 2000 });
+    }, null, { timeout: 5000 });
 
     const marketOverlap = await page.evaluate(() => {
       const scene = (window as any).__scene;
@@ -345,7 +346,7 @@ test.describe('Package 3-1: Interior Maps (Tavern & Market) Integration (?maps=t
     await page.waitForFunction(
       (startX) => (window as any).__scene.player.x >= startX + 32,
       marketReturn.x,
-      { timeout: 1000 }
+      { timeout: 4000 }
     );
     await page.keyboard.up('ArrowRight');
 

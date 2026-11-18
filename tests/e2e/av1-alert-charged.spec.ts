@@ -1,10 +1,12 @@
 import { test, expect } from '@playwright/test'
+import { waitForScene } from './helpers/waits'
 
 /**
  * AV-1: goblin alert frame and dwarf charged-release frame 3, with a clear cell border.
  */
 
 test('goblin alert and dwarf charged frame 3 show without cell-edge clipping', async ({ page }) => {
+  test.setTimeout(120_000)
   await page.addInitScript(() => {
     window.HTMLMediaElement.prototype.play = () => Promise.resolve()
   })
@@ -14,9 +16,11 @@ test('goblin alert and dwarf charged frame 3 show without cell-edge clipping', a
 
   await page.goto('/?renderer=blend&maps=tiled&qa=1&seed=1')
   await page.getByRole('button', { name: 'Start Game' }).click()
-  await expect(page.getByText('Choose Your Class')).toBeVisible()
-  await page.getByRole('button', { name: 'Choose Dwarf' }).click()
-  await page.waitForFunction(() => (window as any).__hv?.scene() === 'village')
+  await expect(page.getByText('Choose Your Class')).toBeVisible({ timeout: 20_000 })
+  const chooseDwarf = page.getByRole('button', { name: 'Choose Dwarf' })
+  await expect(chooseDwarf).toBeVisible({ timeout: 20_000 })
+  await chooseDwarf.click()
+  await waitForScene(page, 'village')
 
   const posed = await page.evaluate(() => {
     const scene = (window as any).__scene

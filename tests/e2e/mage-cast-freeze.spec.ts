@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForLoopFrames } from './helpers/waits';
 
 test.describe('Package BF-1: Mage Lightning/Leech Freeze Regression (Empty v2 Clips)', () => {
   test('casting Lightning or Leech before and after v2 atlas loads does not freeze the game loop', async ({ page }) => {
@@ -121,10 +122,10 @@ test.describe('Package BF-1: Mage Lightning/Leech Freeze Regression (Empty v2 Cl
 
     expect(lightningResult.spawned).toBe(true);
 
-    // Assert game.loop.frame keeps advancing for 1 s after cast
-    await page.waitForTimeout(1000);
-    const frameAfterLightning = await page.evaluate(() => (window as any).__scene?.game?.loop?.frame ?? 0);
-    expect(frameAfterLightning).toBeGreaterThan(lightningResult.startLoop + 30);
+    // The loop must keep advancing after the cast. Wait for 30 frames rather
+    // than requiring those 30 frames inside one wall-clock second (the CI
+    // runner can be slow without being frozen).
+    await waitForLoopFrames(page, lightningResult.startLoop, 30);
 
     // Wait until player finishes attack
     await page.waitForFunction(() => {
@@ -165,10 +166,7 @@ test.describe('Package BF-1: Mage Lightning/Leech Freeze Regression (Empty v2 Cl
 
     expect(leechResult.spawned).toBe(true);
 
-    // Assert game.loop.frame keeps advancing for 1 s after cast
-    await page.waitForTimeout(1000);
-    const frameAfterLeech = await page.evaluate(() => (window as any).__scene?.game?.loop?.frame ?? 0);
-    expect(frameAfterLeech).toBeGreaterThan(leechResult.startLoop + 30);
+    await waitForLoopFrames(page, leechResult.startLoop, 30);
 
     // (c) Real input: equip spellbook as the game does, press Space 3 times about 400 ms apart
     await page.evaluate(() => {
@@ -186,8 +184,7 @@ test.describe('Package BF-1: Mage Lightning/Leech Freeze Regression (Empty v2 Cl
       await page.waitForTimeout(400);
     }
 
-    const loopAfterSpace = await page.evaluate(() => (window as any).__scene?.game?.loop?.frame ?? 0);
-    expect(loopAfterSpace).toBeGreaterThan(loopBeforeSpace + 40);
+    await waitForLoopFrames(page, loopBeforeSpace, 40);
 
     // Zero page errors
     expect(pageErrors).toEqual([]);

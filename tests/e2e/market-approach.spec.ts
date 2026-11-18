@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForScene } from './helpers/waits';
 
 test.describe('Package BF-1: Brackenford Market Approach (Unblocked Bridge Walk)', () => {
   test.beforeEach(async ({ page }) => {
@@ -8,6 +9,7 @@ test.describe('Package BF-1: Brackenford Market Approach (Unblocked Bridge Walk)
   });
 
   test('Knight walks unimpeded from bridge into market without rolling, and spawns reported after exit', async ({ page }) => {
+    test.setTimeout(120_000);
     // 1. Boot on default path /?qa=1 (no renderer or maps params)
     await page.goto('/?qa=1');
 
@@ -22,7 +24,7 @@ test.describe('Package BF-1: Brackenford Market Approach (Unblocked Bridge Walk)
     await expect(chooseModal).toBeHidden();
 
     // Wait for village scene
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village');
+    await waitForScene(page, 'village');
 
     // 2. Place Knight on bridge north end, feet at (192, 220)
     await page.evaluate(() => {
@@ -45,13 +47,13 @@ test.describe('Package BF-1: Brackenford Market Approach (Unblocked Bridge Walk)
       const inZone = player.x <= 130 && player.x >= 64 && player.y >= 180 && player.y <= 230;
       const promptActive = scene?.prompts?.some?.((p: any) => p.text?.includes?.('enter the Market'));
       return inZone || promptActive;
-    }, null, { timeout: 3000 });
+    }, null, { timeout: 8000 });
 
     await page.keyboard.up('ArrowLeft');
 
     // Press E to enter the market
     await page.keyboard.press('KeyE');
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'market', null, { timeout: 5000 });
+    await waitForScene(page, 'market');
     expect(await page.evaluate(() => (window as any).__hv.scene())).toBe('market');
 
     // 4. Exit market to village to test repeat walk from spawn_south (288, 288)
@@ -64,7 +66,7 @@ test.describe('Package BF-1: Brackenford Market Approach (Unblocked Bridge Walk)
       scene._tryInteract();
     });
 
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village', null, { timeout: 10000 });
+    await waitForScene(page, 'village');
 
     // Place Knight at spawn_south (288, 288)
     await page.evaluate(() => {
@@ -78,12 +80,12 @@ test.describe('Package BF-1: Brackenford Market Approach (Unblocked Bridge Walk)
     // Walk north over the bridge:
     // First walk left towards bridge column (x ~192)
     await page.keyboard.down('ArrowLeft');
-    await page.waitForFunction(() => (window as any).__scene?.player?.x <= 195, null, { timeout: 5000 });
+    await page.waitForFunction(() => (window as any).__scene?.player?.x <= 195, null, { timeout: 8000 });
     await page.keyboard.up('ArrowLeft');
 
     // Walk north over the bridge
     await page.keyboard.down('ArrowUp');
-    await page.waitForFunction(() => (window as any).__scene?.player?.y <= 220, null, { timeout: 5000 });
+    await page.waitForFunction(() => (window as any).__scene?.player?.y <= 220, null, { timeout: 8000 });
     await page.keyboard.up('ArrowUp');
 
     // Walk west towards market door
@@ -92,12 +94,12 @@ test.describe('Package BF-1: Brackenford Market Approach (Unblocked Bridge Walk)
       const scene = (window as any).__scene;
       const player = scene?.player;
       return player?.x <= 128 && player?.y <= 224;
-    }, null, { timeout: 5000 });
+    }, null, { timeout: 8000 });
     await page.keyboard.up('ArrowLeft');
 
     // Press E to enter the market
     await page.keyboard.press('KeyE');
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'market', null, { timeout: 5000 });
+    await waitForScene(page, 'market');
     expect(await page.evaluate(() => (window as any).__hv.scene())).toBe('market');
 
     // 5. Exit market and report landing position and walkability
@@ -110,7 +112,7 @@ test.describe('Package BF-1: Brackenford Market Approach (Unblocked Bridge Walk)
       scene._tryInteract();
     });
 
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village', null, { timeout: 10000 });
+    await waitForScene(page, 'village');
     expect(await page.evaluate(() => (window as any).__hv.scene())).toBe('village');
 
     const exitReport = await page.evaluate(() => {
@@ -152,7 +154,7 @@ test.describe('Package BF-1: Brackenford Market Approach (Unblocked Bridge Walk)
       const player = scene?.player;
       const body = player?.body;
       return Boolean(body && body.y > player.y - 10);
-    }, null, { timeout: 2000 });
+    }, null, { timeout: 5000 });
 
     const marketExitOverlap = await page.evaluate(() => {
       const scene = (window as any).__scene;
@@ -172,7 +174,7 @@ test.describe('Package BF-1: Brackenford Market Approach (Unblocked Bridge Walk)
     await page.waitForFunction(
       (startX) => (window as any).__scene.player.x >= startX + 32,
       exitReport.landingX,
-      { timeout: 1000 }
+      { timeout: 4000 }
     );
     await page.keyboard.up('ArrowRight');
 

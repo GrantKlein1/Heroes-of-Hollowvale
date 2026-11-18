@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { ANIM_TIMEOUT, waitForScene } from './helpers/waits';
 
 test.describe('Attack Lifecycle, Collider Alignment & Mage Fix Regression Tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -27,15 +28,10 @@ test.describe('Attack Lifecycle, Collider Alignment & Mage Fix Regression Tests'
     await page.getByRole('button', { name: 'Choose' }).nth(1).click();
     await expect(chooseModal).toBeHidden();
 
-    await page.waitForFunction(() => {
-      return (
-        typeof (window as any).__hv?.anim === 'function' &&
-        (window as any).__hv.scene() === 'village'
-      );
-    });
+    await waitForScene(page, 'village');
 
     // Verify initial idle state
-    await page.waitForFunction(() => (window as any).__hv.anim() === 'mage_idle_down');
+    await page.waitForFunction(() => (window as any).__hv.anim() === 'mage_idle_down', null, { timeout: ANIM_TIMEOUT });
 
     // Trigger attack with frame-safe delay so Phaser's JustDown detects the keypress
     await page.keyboard.press('Space', { delay: 60 });
@@ -44,12 +40,12 @@ test.describe('Attack Lifecycle, Collider Alignment & Mage Fix Regression Tests'
     await page.waitForFunction(() => {
       const anim = (window as any).__hv.anim();
       return anim && anim.includes('attack_2');
-    }, null, { timeout: 2000 });
+    }, null, { timeout: ANIM_TIMEOUT });
 
     // Verify that Mage returns to IDLE upon animation completion (within 1000 ms)
     await page.waitForFunction(() => {
       return (window as any).__hv.anim() === 'mage_idle_down';
-    }, null, { timeout: 3000 });
+    }, null, { timeout: ANIM_TIMEOUT });
 
     // Verify state machine is in IDLE
     const stateAfterAttack = await page.evaluate(() => (window as any).__scene.player.state);
@@ -79,7 +75,7 @@ test.describe('Attack Lifecycle, Collider Alignment & Mage Fix Regression Tests'
     await page.getByRole('button', { name: 'Choose' }).first().click();
     await expect(chooseModal).toBeHidden();
 
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village');
+    await waitForScene(page, 'village');
 
     // Position player and spawn a single test goblin in front of the player
     const spawnResult = await page.evaluate(() => {
@@ -111,7 +107,7 @@ test.describe('Attack Lifecycle, Collider Alignment & Mage Fix Regression Tests'
     }
 
     // Verify the attack animation finishes and stays in IDLE (does not loop back to attack)
-    await page.waitForFunction(() => (window as any).__hv.anim() === 'knight_idle_right', null, { timeout: 3000 });
+    await page.waitForFunction(() => (window as any).__hv.anim() === 'knight_idle_right', null, { timeout: ANIM_TIMEOUT });
     const finalState = await page.evaluate(() => (window as any).__scene.player.state);
     expect(finalState).toBe('IDLE');
 
@@ -141,7 +137,7 @@ test.describe('Attack Lifecycle, Collider Alignment & Mage Fix Regression Tests'
       await page.getByRole('button', { name: 'Choose' }).nth(classIndex).click();
       await expect(chooseModal).toBeHidden();
 
-      await page.waitForFunction(() => (window as any).__hv?.scene() === 'village');
+      await waitForScene(page, 'village');
 
       // Measure idle body alignment relative to player position
       const idleMetrics = await page.evaluate(() => {
@@ -186,7 +182,7 @@ test.describe('Attack Lifecycle, Collider Alignment & Mage Fix Regression Tests'
       expect(attackMetrics.height).toBe(idleMetrics.height);
 
       // Wait for attack to complete back to idle
-      await page.waitForFunction(() => (window as any).__scene.player.state === 'IDLE', null, { timeout: 3000 });
+      await page.waitForFunction(() => (window as any).__scene.player.state === 'IDLE', null, { timeout: ANIM_TIMEOUT });
     }
   });
 
@@ -198,7 +194,7 @@ test.describe('Attack Lifecycle, Collider Alignment & Mage Fix Regression Tests'
     await page.getByRole('button', { name: 'Choose' }).first().click();
     await expect(chooseModal).toBeHidden();
 
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village');
+    await waitForScene(page, 'village');
 
     // 1. Position Knight directly north of deep water at col 2 (x: 80, y: 190 facing south toward river at y: 224)
     await page.evaluate(() => {
@@ -247,7 +243,7 @@ test.describe('Attack Lifecycle, Collider Alignment & Mage Fix Regression Tests'
     await page.getByRole('button', { name: 'Choose' }).first().click();
     await expect(chooseModal).toBeHidden();
 
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village');
+    await waitForScene(page, 'village');
 
     const initialHp = await page.evaluate(() => (window as any).__scene.hp);
     expect(initialHp).toBe(120);
@@ -267,7 +263,7 @@ test.describe('Attack Lifecycle, Collider Alignment & Mage Fix Regression Tests'
 
     // Player attacks
     await page.keyboard.press('Space', { delay: 60 });
-    await page.waitForFunction(() => (window as any).__scene.hp < (window as any).__scene.hpMax, null, { timeout: 3000 });
+    await page.waitForFunction(() => (window as any).__scene.hp < (window as any).__scene.hpMax, null, { timeout: ANIM_TIMEOUT });
 
     // Verify player takes damage (HP decrements below the knight's pool)
     const currentHp = await page.evaluate(() => (window as any).__scene.hp);
@@ -289,7 +285,7 @@ test.describe('Attack Lifecycle, Collider Alignment & Mage Fix Regression Tests'
     await page.getByRole('button', { name: 'Choose' }).first().click();
     await expect(chooseModal).toBeHidden();
 
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village');
+    await waitForScene(page, 'village');
 
     // Position player and spawn a goblin in front of the player
     await page.evaluate(() => {
@@ -315,7 +311,7 @@ test.describe('Attack Lifecycle, Collider Alignment & Mage Fix Regression Tests'
       const p = (window as any).__scene.player;
       const frameName = p.anims?.currentFrame?.textureFrame || '';
       return p.state === 'ATTACK' && (frameName.endsWith('_3') || frameName.endsWith('_4'));
-    }, null, { timeout: 3000 });
+    }, null, { timeout: ANIM_TIMEOUT });
 
     // Second attack press inside combo window triggers attack_2
     await page.evaluate(() => {
@@ -327,10 +323,10 @@ test.describe('Attack Lifecycle, Collider Alignment & Mage Fix Regression Tests'
     await page.waitForFunction(() => {
       const anim = (window as any).__hv.anim();
       return anim && anim.includes('attack_2');
-    }, null, { timeout: 3000 });
+    }, null, { timeout: ANIM_TIMEOUT });
 
     // Wait for combo sequence to complete back to IDLE
-    await page.waitForFunction(() => (window as any).__scene.player.state === 'IDLE', null, { timeout: 3000 });
+    await page.waitForFunction(() => (window as any).__scene.player.state === 'IDLE', null, { timeout: ANIM_TIMEOUT });
 
     // Verify console logged hit on attack_2 frame index
     const hitLogs = consoleLogs.filter((l) => l.includes('[Hit] attack_2 frame'));

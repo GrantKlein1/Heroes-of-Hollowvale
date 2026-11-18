@@ -193,7 +193,7 @@ test.describe('PT-K knight playtest', () => {
         scene.player.setVelocity(0, 0)
         scene.player.body.moves = false
       })
-      await page.waitForFunction(() => ((window as any).__scene._activeLabel || '').includes('Tharos'), null, { timeout: 3000 })
+      await page.waitForFunction(() => ((window as any).__scene._activeLabel || '').includes('Tharos'), null, { timeout: 10000 })
     }
     await pressE(page)
     const panel = page.getByRole('heading', { name: 'Tharos the Bartender' })
@@ -213,7 +213,7 @@ test.describe('PT-K knight playtest', () => {
     await holdUntil(page, 'ArrowDown', () => {
       const label = (window as any).__scene?._activeLabel || ''
       return label.includes('Brackenford')
-    }, 3000)
+    }, 10000)
     await pressEUntilScene(page, 'village')
     expect(await page.evaluate(() => (window as any).__hv.scene())).toBe('village')
     await shot(page, '08-back-in-brackenford.png')

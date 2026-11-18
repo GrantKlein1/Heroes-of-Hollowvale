@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForScene } from './helpers/waits';
 
 test.describe('MS-1 — Mage Lightning and Leech release on the v2 cast frame', () => {
   test.beforeEach(async ({ page }) => {
@@ -14,7 +15,7 @@ test.describe('MS-1 — Mage Lightning and Leech release on the v2 cast frame', 
     await expect(chooseModal).toBeVisible();
     await page.getByRole('button', { name: 'Choose' }).nth(1).click();
     await expect(chooseModal).toBeHidden();
-    await page.waitForFunction(() => (window as any).__hv?.scene() === 'village');
+    await waitForScene(page, 'village');
     await page.waitForFunction(() => {
       const scene = (window as any).__scene;
       return (scene?.anims?.get?.('mage_cast_lightning_v2_down')?.frames?.length > 0)
@@ -44,8 +45,13 @@ test.describe('MS-1 — Mage Lightning and Leech release on the v2 cast frame', 
           const list = scene.projectiles || [];
           if (list.length > before) {
             const proj = list[list.length - 1];
+            const pending = player._v2Cast;
             resolve({
               elapsed: performance.now() - started,
+              gameElapsed: pending?.spawnedAt != null && pending?.startedAt != null
+                ? pending.spawnedAt - pending.startedAt
+                : null,
+              releaseFrame: pending?.releaseFrame ?? null,
               x: proj.startX ?? proj.x,
               y: proj.startY ?? proj.y,
               key: proj.texture?.key,
@@ -56,7 +62,7 @@ test.describe('MS-1 — Mage Lightning and Leech release on the v2 cast frame', 
             });
             return;
           }
-          if (performance.now() - started > 800) {
+          if (performance.now() - started > 1500) {
             resolve(null);
             return;
           }
@@ -75,8 +81,11 @@ test.describe('MS-1 — Mage Lightning and Leech release on the v2 cast frame', 
     expect(result.immediate).toBe(result.before);
     expect(result.flipX).not.toBe(true);
     expect(result.spawned).toBeTruthy();
-    expect(result.spawned.elapsed).toBeGreaterThanOrEqual(312.5 - 62.5);
-    expect(result.spawned.elapsed).toBeLessThanOrEqual(312.5 + 62.5);
+    // Wall-clock rAF observation can lag on a slow runner. The game clock
+    // (spawnedAt - startedAt) is the authored release of 312.5ms ± one frame.
+    expect(result.spawned.gameElapsed).toBeGreaterThanOrEqual(312.5 - 62.5);
+    expect(result.spawned.gameElapsed).toBeLessThanOrEqual(312.5 + 62.5);
+    expect(result.spawned.releaseFrame).toBe(5);
     expect(result.spawned.key).toBe('spell_fx_v2');
     expect(result.spawned.fly).toBe('lightning_bolt_v2');
     expect(result.spawned.hit).toBe('lightning_impact_v2');
@@ -107,8 +116,13 @@ test.describe('MS-1 — Mage Lightning and Leech release on the v2 cast frame', 
           const list = scene.projectiles || [];
           if (list.length > before) {
             const proj = list[list.length - 1];
+            const pending = player._v2Cast;
             resolve({
               elapsed: performance.now() - started,
+              gameElapsed: pending?.spawnedAt != null && pending?.startedAt != null
+                ? pending.spawnedAt - pending.startedAt
+                : null,
+              releaseFrame: pending?.releaseFrame ?? null,
               x: proj.startX ?? proj.x,
               y: proj.startY ?? proj.y,
               fly: proj.flyAnim,
@@ -120,7 +134,7 @@ test.describe('MS-1 — Mage Lightning and Leech release on the v2 cast frame', 
             });
             return;
           }
-          if (performance.now() - started > 800) {
+          if (performance.now() - started > 1500) {
             resolve(null);
             return;
           }
@@ -135,8 +149,11 @@ test.describe('MS-1 — Mage Lightning and Leech release on the v2 cast frame', 
     expect(result.anim).toBe('mage_cast_leech_v2_right');
     expect(result.immediate).toBe(result.before);
     expect(result.spawned).toBeTruthy();
-    expect(result.spawned.elapsed).toBeGreaterThanOrEqual(312.5 - 62.5);
-    expect(result.spawned.elapsed).toBeLessThanOrEqual(312.5 + 62.5);
+    // Wall-clock rAF observation can lag on a slow runner. The game clock
+    // (spawnedAt - startedAt) is the authored release of 312.5ms ± one frame.
+    expect(result.spawned.gameElapsed).toBeGreaterThanOrEqual(312.5 - 62.5);
+    expect(result.spawned.gameElapsed).toBeLessThanOrEqual(312.5 + 62.5);
+    expect(result.spawned.releaseFrame).toBe(5);
     expect(result.spawned.fly).toBe('leech_orb_v2');
     expect(result.spawned.hit).toBe('leech_impact_v2');
     expect(result.spawned.ret).toBe('leech_return_v2');
