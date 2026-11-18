@@ -93,7 +93,8 @@ describe('enemyDefs: built-in numbers are unchanged', () => {
   })
 
   it('keeps the loot tables', () => {
-    expect(LOOT_TABLES).toEqual({
+    // Original three only; the Batch 11 enemies are pinned in enemyNew.test.js.
+    expect(LOOT_TABLES).toMatchObject({
       goblin: {
         gems: [
           { type: 'ruby', chance: 0.35, count: 1 },
@@ -139,7 +140,16 @@ describe('enemyDefs: built-in numbers are unchanged', () => {
       alertSheet: 'goblin_archer_alert',
       initialFrame: 'goblin_archer_idle_down',
     }
-    expect(Object.keys(ENEMY_SHEETS).sort()).toEqual(['archer', 'brute', 'goblin', 'goblin_archer', 'goblin_brute'])
+    expect(Object.keys(ENEMY_SHEETS).sort()).toEqual([
+      'archer',
+      'ashen_cultist',
+      'ashen_revenant',
+      'brute',
+      'goblin',
+      'goblin_archer',
+      'goblin_brute',
+      'shadowfang_wolf',
+    ])
     expect(ENEMY_SHEETS.goblin).toEqual({
       defaultSheet: 'goblin',
       walkSheet: 'goblin',
@@ -173,7 +183,9 @@ describe('enemyDefs: built-in numbers are unchanged', () => {
   it('has a spawn weight on every built-in', () => {
     for (const type of Object.keys(EXPECTED)) expect(getEnemyDef(type).spawnWeight).toBeGreaterThan(0)
     expect(pickEnemyTypeByWeight(() => 0)).toBe('goblin')
-    expect(pickEnemyTypeByWeight(() => 0.99)).toBe('archer')
+    // Last def in the table gets the top of the roll.
+    expect(pickEnemyTypeByWeight(() => 0.99)).toBe('ashen_revenant')
+    expect(pickEnemyTypeByWeight(() => 0.99, { goblin: 6, archer: 2 })).toBe('archer')
   })
 })
 

@@ -44,8 +44,11 @@ const SPAWN_SCENES = new Set(['wilderness'])
  */
 export const BIOME_SPAWN_TABLES = {
   plains: { count: [1, 2], weights: { goblin: 8, archer: 1 } },
-  emberwood_forest: { count: [2, 3], weights: { goblin: 6, archer: 3, brute: 1 } },
-  ashen_wastes: { count: [2, 3], weights: { goblin: 3, archer: 3, brute: 3 } },
+  emberwood_forest: { count: [2, 3], weights: { goblin: 6, archer: 3, brute: 1, shadowfang_wolf: 2 } },
+  ashen_wastes: {
+    count: [2, 3],
+    weights: { goblin: 3, archer: 3, brute: 3, shadowfang_wolf: 2, ashen_cultist: 2, ashen_revenant: 1 },
+  },
 }
 
 /**
