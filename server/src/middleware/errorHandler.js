@@ -4,5 +4,10 @@ export default function errorHandler(err, req, res, next) {
     console.error(err.stack);
   }
   const status = err.status || 500;
-  res.status(status).json({ error: err.message || 'Internal Server Error' });
+  const message = err.message || 'Internal Server Error';
+  const clientMessage =
+    process.env.NODE_ENV === 'production' && status === 500
+      ? 'Internal Server Error'
+      : message;
+  res.status(status).json({ error: clientMessage });
 }
