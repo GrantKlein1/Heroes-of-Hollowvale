@@ -162,7 +162,7 @@ export default function Game() {
       description: 'A disciplined warrior clad in steel, sworn to protect and endure. Knights excel in close combat and defense.',
       strengths: ['High defense', 'Strong melee damage', 'Reliable survivability'],
       weaknesses: ['Slow movement', 'Limited ranged options', 'Low magic resistance'],
-      abilities: ['[Z] Shield Bash (stun briefly)', '[X] Defensive Stance (reduce damage)', '[C] Power Strike (heavy melee)'],
+      abilities: ['Move: WASD or arrows', 'Attack: Space. Dodge: Shift', 'Block: hold C'],
       items: ['Iron Sword', 'Wooden Shield', 'Chainmail Armor', '1x Healing Potion'],
     },
     mage: {
@@ -172,7 +172,7 @@ export default function Game() {
       description: 'A master of arcane forces, fragile in body but devastating in spellcraft. Mages bend fire, frost, and lightning to their will.',
       strengths: ['High magic damage', 'Ranged attacks', 'Versatile elemental spells'],
       weaknesses: ['Low health', 'Weak physical defense', 'Relies on mana'],
-      abilities: ['[Z] Firebolt (ranged fire)', '[X] Frost Nova (freeze nearby)', '[C] Arcane Shield (magic barrier)'],
+      abilities: ['Move: WASD or arrows', 'Cast: Space. Dodge: Shift or C', 'Spell wheel: hold K with the spellbook'],
       items: ['Apprentice Staff', 'Spellbook', 'Cloth Robes', '2x Mana Potions'],
     },
     thief: {
@@ -182,7 +182,7 @@ export default function Game() {
       description: 'A cunning rogue who thrives in shadows, striking swiftly and vanishing just as fast. Agile and resourceful.',
       strengths: ['High speed', 'Critical strikes', 'Stealth abilities'],
       weaknesses: ['Low defense', 'Weaker against groups', 'Limited durability'],
-      abilities: ['[Z] Backstab (bonus rear damage)', '[X] Smoke Bomb (brief invisibility)', '[C] Pick Lock (open locks)'],
+      abilities: ['Move: WASD or arrows', 'Attack: Space. Dodge: Shift or C', 'Vanish: J'],
       items: ['Twin Daggers', 'Leather Armor', 'Lockpicks', '1x Poison Vial'],
     },
     dwarf: {
@@ -192,7 +192,7 @@ export default function Game() {
       description: 'A stout fighter from the mountain halls, tough as stone and skilled with heavy weapons. Dwarves endure where others fall.',
       strengths: ['High health', 'Strong melee (axes/hammers)', 'Poison resistance'],
       weaknesses: ['Shorter range', 'Slower speed', 'Limited magic use'],
-      abilities: ['[Z] Cleave (wide swing)', '[X] Stone Skin (armor boost)', '[C] Battle Roar (ally buff)'],
+      abilities: ['Move: WASD or arrows', 'Attack: Space. Dodge: Shift or C'],
       items: ['Battle Axe', 'Dwarf Armor', 'Dwarf Pickaxe (utility)', '1x Ale Flask (stamina)'],
     },
   }
@@ -1585,7 +1585,8 @@ export default function Game() {
         <PhaserGame />
         {!titleOpen && !classSelectOpen && (
           <div className="pointer-events-none absolute left-2 top-2 z-10 max-w-[calc(100%-5.5rem)] rounded bg-black/50 px-2 py-1.5 text-xs text-white sm:left-3 sm:top-3 sm:max-w-md sm:px-3 sm:py-2 sm:text-sm">
-            <div>WASD: Move &nbsp; E: Interact &nbsp; V: Inventory &nbsp; F2: Collision</div>
+            <div>WASD: Move · Space: Attack · Shift: Dodge</div>
+            <div>E: Interact · V: Inventory · F2: Collision</div>
             <div className="text-stone-200">{SCENE_HINTS[scene] || ''}</div>
           </div>
         )}
@@ -1613,25 +1614,25 @@ export default function Game() {
               <div className="absolute left-1/2 -translate-x-1/2 top-4 flex flex-col items-center gap-1 text-amber-200" title="Lightning Bolt (1)">
                 <img src={PATHS.lightningBoltIcon} alt="Lightning Bolt" className="w-8 h-8 rounded border border-amber-900/40 bg-stone-900/40 object-contain" onError={(e)=>{e.currentTarget.style.visibility='hidden'}} />
                 <div className="text-xs">Lightning Bolt</div>
-                <div className="text-[10px] text-stone-400">[1]</div>
+                <div className="text-xs text-stone-300">[1]</div>
               </div>
               {/* Right: Blink */}
               <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 text-amber-200" title="Blink (2)">
                 <img src={PATHS.blinkIcon} alt="Blink" className="w-8 h-8 rounded border border-amber-900/40 bg-stone-900/40 object-contain" onError={(e)=>{e.currentTarget.style.visibility='hidden'}} />
                 <div className="text-xs">Blink</div>
-                <div className="text-[10px] text-stone-400">[2]</div>
+                <div className="text-xs text-stone-300">[2]</div>
               </div>
               {/* Bottom: Life Leech */}
               <div className="absolute left-1/2 -translate-x-1/2 bottom-4 flex flex-col items-center gap-1 text-amber-200" title="Life Leech (3)">
                 <img src={PATHS.lifeLeechIcon} alt="Life Leech" className="w-8 h-8 rounded border border-amber-900/40 bg-stone-900/40 object-contain" onError={(e)=>{e.currentTarget.style.visibility='hidden'}} />
                 <div className="text-xs">Life Leech</div>
-                <div className="text-[10px] text-stone-400">[3]</div>
+                <div className="text-xs text-stone-300">[3]</div>
               </div>
               {/* Left: Mana Shield */}
               <div className="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 text-amber-200" title="Mana Shield (4)">
                 <img src={PATHS.manaShieldIcon} alt="Mana Shield" className="w-8 h-8 rounded border border-amber-900/40 bg-stone-900/40 object-contain" onError={(e)=>{e.currentTarget.style.visibility='hidden'}} />
                 <div className="text-xs">Mana Shield</div>
-                <div className="text-[10px] text-stone-400">[4]</div>
+                <div className="text-xs text-stone-300">[4]</div>
               </div>
             </div>
           </div>
@@ -1665,7 +1666,7 @@ export default function Game() {
                   <div className="mt-1 h-1.5 w-full bg-stone-700/80 rounded overflow-hidden">
                     <div className="h-full" style={{ width: `${Math.round(pct*100)}%`, backgroundColor: color }} />
                   </div>
-                  <div className="mt-1 text-[10px] text-stone-400">Attack: Space • Invisibility: J</div>
+                  <div className="mt-1 text-xs text-stone-300">Attack: Space • Invisibility: J</div>
                 </div>
               </div>
             )
@@ -1693,7 +1694,7 @@ export default function Game() {
                   <div className="mt-1 h-1.5 w-full bg-stone-700/80 rounded overflow-hidden">
                     <div className="h-full" style={{ width: `${Math.round(pct*100)}%`, backgroundColor: color }} />
                   </div>
-                  <div className="mt-1 text-[10px] text-stone-400">Cast: Space (Spellbook)</div>
+                  <div className="mt-1 text-xs text-stone-300">Cast: Space (Spellbook)</div>
                 </div>
               </div>
             )
@@ -1905,9 +1906,9 @@ export default function Game() {
               </div>
               <div className="flex items-center gap-4 mb-4 text-sm">
                 <span className="text-stone-300/80">Your gems:</span>
-                <span className="px-2 py-0.5 rounded bg-stone-800/80 border border-amber-900/40 text-amber-200">R {inventoryTotals.ruby||0}</span>
-                <span className="px-2 py-0.5 rounded bg-stone-800/80 border border-amber-900/40 text-amber-200">S {inventoryTotals.sapphire||0}</span>
-                <span className="px-2 py-0.5 rounded bg-stone-800/80 border border-amber-900/40 text-amber-200">E {inventoryTotals.emerald||0}</span>
+                <span className="px-2 py-0.5 rounded bg-stone-800/80 border border-amber-900/40 text-amber-200">Ruby {inventoryTotals.ruby||0}</span>
+                <span className="px-2 py-0.5 rounded bg-stone-800/80 border border-amber-900/40 text-amber-200">Sapphire {inventoryTotals.sapphire||0}</span>
+                <span className="px-2 py-0.5 rounded bg-stone-800/80 border border-amber-900/40 text-amber-200">Emerald {inventoryTotals.emerald||0}</span>
               </div>
               <div className="mb-3 flex flex-wrap gap-2">
                 {['Potions','Magic','Food','Weaponry','Armor','Tools'].map(cat => (
@@ -1934,9 +1935,9 @@ export default function Game() {
                         <div className="flex-1 min-w-0">
                           <div className="text-amber-200 font-medium truncate">{def.name}</div>
                           <div className="text-xs text-stone-300/80 flex gap-2 mt-0.5">
-                            {price.ruby>0 && <span className="px-1 rounded bg-stone-900/60 border border-amber-900/40">R {price.ruby}</span>}
-                            {price.sapphire>0 && <span className="px-1 rounded bg-stone-900/60 border border-amber-900/40">S {price.sapphire}</span>}
-                            {price.emerald>0 && <span className="px-1 rounded bg-stone-900/60 border border-amber-900/40">E {price.emerald}</span>}
+                            {price.ruby>0 && <span className="px-1 rounded bg-stone-900/60 border border-amber-900/40">Ruby {price.ruby}</span>}
+                            {price.sapphire>0 && <span className="px-1 rounded bg-stone-900/60 border border-amber-900/40">Sapphire {price.sapphire}</span>}
+                            {price.emerald>0 && <span className="px-1 rounded bg-stone-900/60 border border-amber-900/40">Emerald {price.emerald}</span>}
                             {(price.ruby||0)+(price.sapphire||0)+(price.emerald||0)===0 && <span className="px-1 rounded bg-stone-900/60 border border-amber-900/40">Free</span>}
                           </div>
                         </div>
@@ -2239,10 +2240,10 @@ export default function Game() {
                     onError={(e)=>{ e.currentTarget.style.display='none' }}
                   />
                 ) : (
-                  <span className="text-stone-500 text-[10px]">offhand</span>
+                  <span className="text-stone-500 text-xs">offhand</span>
                 )}
                 {inventory.armor.offhand?.count > 1 && (
-                  <span className="absolute bottom-0.5 right-0.5 text-[10px] px-1 rounded bg-stone-900/80 text-amber-200">
+                  <span className="absolute bottom-0.5 right-0.5 text-xs px-1 rounded bg-stone-900/80 text-amber-200">
                     {inventory.armor.offhand.count}
                   </span>
                 )}
@@ -2273,7 +2274,7 @@ export default function Game() {
                       />
                     ) : null}
                     {/* number label like Minecraft */}
-                    <span className="absolute top-0.5 left-1 text-[10px] text-stone-400">{idx+1}</span>
+                    <span className="absolute top-0.5 left-1 text-xs text-stone-300">{idx+1}</span>
                     {it?.count > 1 && (
                       <span className="absolute bottom-0.5 right-0.5 text-[11px] px-1 rounded bg-stone-900/80 text-amber-200">{it.count}</span>
                     )}
@@ -2298,7 +2299,7 @@ export default function Game() {
                 onError={(e)=>{ e.currentTarget.style.display='none' }}
               />
               {invDrag.item.count > 1 && (
-                <span className="absolute bottom-0.5 right-0.5 text-[10px] px-1 rounded bg-stone-900/90 text-amber-200">{invDrag.item.count}</span>
+                <span className="absolute bottom-0.5 right-0.5 text-xs px-1 rounded bg-stone-900/90 text-amber-200">{invDrag.item.count}</span>
               )}
             </div>
           </div>
