@@ -549,7 +549,9 @@ export default function Game() {
           { id: 'speed_potion', count: 1 },
         ]
       : []
-    const overflow = grantLoot(loot, potionRewards)
+    // BOW-1: the locked chest also holds the lightning bow (any hero can use it).
+    const bowReward = locked ? [{ id: 'lightning_bow', count: 1 }] : []
+    const overflow = grantLoot(loot, [...potionRewards, ...bowReward])
     const gemParts = []
     if (loot.ruby) gemParts.push(`${loot.ruby} Rub${loot.ruby > 1 ? 'ies' : 'y'}`)
     if (loot.sapphire) gemParts.push(`${loot.sapphire} Sapphire${loot.sapphire > 1 ? 's' : ''}`)
@@ -560,6 +562,7 @@ export default function Game() {
       const segments = []
       if (gemParts.length) segments.push(gemParts.join(', '))
       segments.push(`potions (${potionNames.join(', ')})`)
+      if (bowReward.length) segments.push(getItemDef('lightning_bow').name)
       let message = `You picked the lock! Loot: ${segments.join(' + ')}`
       if (overflowNames.length) message += `. No space for ${overflowNames.join(', ')}`
       showNotice(message)

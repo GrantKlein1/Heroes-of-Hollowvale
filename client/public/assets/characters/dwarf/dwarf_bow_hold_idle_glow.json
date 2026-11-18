@@ -1,0 +1,183 @@
+{
+ "frames": {
+  "dwarf_bow_hold_idle_glow_down_0": {
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_bow_hold_idle_glow_left_0": {
+   "frame": {
+    "x": 0,
+    "y": 80,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_bow_hold_idle_glow_right_0": {
+   "frame": {
+    "x": 0,
+    "y": 160,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  },
+  "dwarf_bow_hold_idle_glow_up_0": {
+   "frame": {
+    "x": 0,
+    "y": 240,
+    "w": 64,
+    "h": 80
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 80
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 80
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9125
+   }
+  }
+ },
+ "meta": {
+  "app": "items_b12/scripts/make_bow_glow.py",
+  "version": "0.2-phase1",
+  "image": "dwarf_bow_hold_idle_glow.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 64,
+   "h": 320
+  },
+  "scale": "1",
+  "pxPerUnit": 36.923,
+  "origin": {
+   "x": 0.5,
+   "y": 0.9125
+  },
+  "propCameraDegFromHorizontal": 12,
+  "cell": {
+   "w": 64,
+   "h": 80
+  },
+  "pivotRowPx": 73.0,
+  "rows": [
+   "down",
+   "left",
+   "right",
+   "up"
+  ],
+  "note": "Phase 1: 4 facings. Binary alpha, palette colours only. Overlay drawn above body and weapon layer.",
+  "footprint": {
+   "x": -13,
+   "y": -4,
+   "w": 26,
+   "h": 8,
+   "shape": "ellipse",
+   "note": "collision footprint centred on feet"
+  },
+  "hurtbox": {
+   "x": -16,
+   "y": -29,
+   "w": 31,
+   "h": 29,
+   "note": "body hurtbox, bottom on feet"
+  },
+  "hand": "hand.R",
+  "anchorsFile": "dwarf_use_bow_anchors.json",
+  "weapon": "axe hidden (Haft, Grip, Socket, AxeBlade, AxeEdge, BackSpike) all frames; no off-hand item (nothing to stow); the hold is the B9 item-agnostic hold (NOT the B10 hammer tool-grip hold)",
+  "anims": {
+   "hold_idle_glow": {
+    "frames": 1,
+    "fps": 1,
+    "loop": true,
+    "playback": "loop",
+    "directions": [
+     "down",
+     "left",
+     "right",
+     "up"
+    ],
+    "frameNames": "dwarf_bow_hold_idle_glow_<dir>_<i>",
+    "durationMs": 1000,
+    "durations": [
+     1000
+    ],
+    "cell": [
+     64,
+     80
+    ],
+    "origin": [
+     0.5,
+     0.9125
+    ],
+    "note": "resting lightning string + faint runes for the hold; draw on the in-hand bow"
+   }
+  },
+  "clip": "hold_idle_glow",
+  "colors": [
+   "rune_lt",
+   "rune",
+   "bolt_wh",
+   "bolt",
+   "bolt_dk"
+  ]
+ }
+}

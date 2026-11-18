@@ -1,0 +1,593 @@
+{
+ "actor": "mage",
+ "clip": "use_bow",
+ "cell": [
+  64,
+  96
+ ],
+ "origin": {
+  "x": 0.5,
+  "y": 0.9271
+ },
+ "pivotPx": [
+  32.0,
+  89.0016
+ ],
+ "hand": "arm.R",
+ "units": "px from feet origin, +y down",
+ "rotation": "degrees, 0=item upright (cork/stem up), positive clockwise on screen",
+ "layer": "front|behind; up is forced front so the item reads",
+ "format": "{x, y, rotation, layer}",
+ "layerLock": {
+  "down": "front",
+  "left": "front",
+  "right": "front",
+  "up": "front"
+ },
+ "fps": 12,
+ "framesCount": 10,
+ "effectFrame": 6,
+ "note": "grip = bow-hand position (px from feet, +y down) for reference; the bow is baked in mage_use_bow_weapon.png (do not composite the in-hand sprite during use_bow). nock/arrowTip = arrow spawn reference (arrow spawn = f6 arrowTip). Layer is always front: the weapon layer was rendered with the body as holdout, so true depth is already in the pixels.",
+ "frames": {
+  "mage_use_bow_down_0": {
+   "x": -4.96,
+   "y": -37.69,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    3.92,
+    -37.69
+   ],
+   "arrowTip": [
+    -6.53,
+    -37.69
+   ]
+  },
+  "mage_use_bow_down_1": {
+   "x": -9.63,
+   "y": -40.46,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -2.1,
+    -41.44
+   ],
+   "arrowTip": [
+    -16.72,
+    -39.54
+   ]
+  },
+  "mage_use_bow_down_2": {
+   "x": -14.07,
+   "y": -43.94,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -8.31,
+    -45.64
+   ],
+   "arrowTip": [
+    -18.86,
+    -42.51
+   ]
+  },
+  "mage_use_bow_down_3": {
+   "x": -14.07,
+   "y": -43.94,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -7.16,
+    -45.99
+   ],
+   "arrowTip": [
+    -18.86,
+    -42.51
+   ]
+  },
+  "mage_use_bow_down_4": {
+   "x": -14.07,
+   "y": -43.94,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -6.01,
+    -46.33
+   ],
+   "arrowTip": [
+    -18.86,
+    -42.51
+   ]
+  },
+  "mage_use_bow_down_5": {
+   "x": -14.07,
+   "y": -43.94,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -5.68,
+    -46.43
+   ],
+   "arrowTip": [
+    -18.86,
+    -42.51
+   ]
+  },
+  "mage_use_bow_down_6": {
+   "x": -14.07,
+   "y": -43.94,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -5.28,
+    -46.55
+   ],
+   "arrowTip": [
+    -11.28,
+    -44.77
+   ]
+  },
+  "mage_use_bow_down_7": {
+   "x": -13.7,
+   "y": -43.61,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -4.13,
+    -45.67
+   ],
+   "arrowTip": [
+    -11.39,
+    -44.1
+   ]
+  },
+  "mage_use_bow_down_8": {
+   "x": -9.63,
+   "y": -40.46,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -1.52,
+    -41.21
+   ],
+   "arrowTip": [
+    -11.06,
+    -40.33
+   ]
+  },
+  "mage_use_bow_down_9": {
+   "x": -4.96,
+   "y": -37.69,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    3.92,
+    -37.69
+   ],
+   "arrowTip": [
+    -6.53,
+    -37.69
+   ]
+  },
+  "mage_use_bow_left_0": {
+   "x": -14.04,
+   "y": -41.64,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -14.04,
+    -39.79
+   ],
+   "arrowTip": [
+    -14.04,
+    -41.97
+   ]
+  },
+  "mage_use_bow_left_1": {
+   "x": -15.06,
+   "y": -45.41,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -10.35,
+    -43.84
+   ],
+   "arrowTip": [
+    -19.49,
+    -46.88
+   ]
+  },
+  "mage_use_bow_left_2": {
+   "x": -14.22,
+   "y": -49.51,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -6.01,
+    -48.31
+   ],
+   "arrowTip": [
+    -21.07,
+    -50.51
+   ]
+  },
+  "mage_use_bow_left_3": {
+   "x": -14.22,
+   "y": -49.51,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -4.36,
+    -48.07
+   ],
+   "arrowTip": [
+    -21.07,
+    -50.51
+   ]
+  },
+  "mage_use_bow_left_4": {
+   "x": -14.22,
+   "y": -49.51,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -2.71,
+    -47.83
+   ],
+   "arrowTip": [
+    -21.07,
+    -50.51
+   ]
+  },
+  "mage_use_bow_left_5": {
+   "x": -14.22,
+   "y": -49.51,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -2.24,
+    -47.77
+   ],
+   "arrowTip": [
+    -21.07,
+    -50.51
+   ]
+  },
+  "mage_use_bow_left_6": {
+   "x": -14.22,
+   "y": -49.51,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -1.67,
+    -47.68
+   ],
+   "arrowTip": [
+    -10.23,
+    -48.93
+   ]
+  },
+  "mage_use_bow_left_7": {
+   "x": -14.38,
+   "y": -49.13,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -4.48,
+    -47.14
+   ],
+   "arrowTip": [
+    -12.0,
+    -48.65
+   ]
+  },
+  "mage_use_bow_left_8": {
+   "x": -15.06,
+   "y": -45.41,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -11.45,
+    -43.72
+   ],
+   "arrowTip": [
+    -15.7,
+    -45.7
+   ]
+  },
+  "mage_use_bow_left_9": {
+   "x": -14.04,
+   "y": -41.64,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -14.04,
+    -39.79
+   ],
+   "arrowTip": [
+    -14.04,
+    -41.97
+   ]
+  },
+  "mage_use_bow_right_0": {
+   "x": 14.04,
+   "y": -39.58,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    14.04,
+    -41.42
+   ],
+   "arrowTip": [
+    14.04,
+    -39.25
+   ]
+  },
+  "mage_use_bow_right_1": {
+   "x": 15.06,
+   "y": -41.74,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    10.35,
+    -43.31
+   ],
+   "arrowTip": [
+    19.49,
+    -40.27
+   ]
+  },
+  "mage_use_bow_right_2": {
+   "x": 14.22,
+   "y": -44.21,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    6.01,
+    -45.4
+   ],
+   "arrowTip": [
+    21.07,
+    -43.21
+   ]
+  },
+  "mage_use_bow_right_3": {
+   "x": 14.22,
+   "y": -44.21,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    4.36,
+    -45.64
+   ],
+   "arrowTip": [
+    21.07,
+    -43.21
+   ]
+  },
+  "mage_use_bow_right_4": {
+   "x": 14.22,
+   "y": -44.21,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    2.71,
+    -45.88
+   ],
+   "arrowTip": [
+    21.07,
+    -43.21
+   ]
+  },
+  "mage_use_bow_right_5": {
+   "x": 14.22,
+   "y": -44.21,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    2.24,
+    -45.95
+   ],
+   "arrowTip": [
+    21.07,
+    -43.21
+   ]
+  },
+  "mage_use_bow_right_6": {
+   "x": 14.22,
+   "y": -44.21,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    1.67,
+    -46.03
+   ],
+   "arrowTip": [
+    10.23,
+    -44.79
+   ]
+  },
+  "mage_use_bow_right_7": {
+   "x": 14.38,
+   "y": -43.98,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    4.48,
+    -45.96
+   ],
+   "arrowTip": [
+    12.0,
+    -44.45
+   ]
+  },
+  "mage_use_bow_right_8": {
+   "x": 15.06,
+   "y": -41.74,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    11.45,
+    -43.43
+   ],
+   "arrowTip": [
+    15.7,
+    -41.44
+   ]
+  },
+  "mage_use_bow_right_9": {
+   "x": 14.04,
+   "y": -39.58,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    14.04,
+    -41.42
+   ],
+   "arrowTip": [
+    14.04,
+    -39.25
+   ]
+  },
+  "mage_use_bow_up_0": {
+   "x": 4.96,
+   "y": -43.53,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -3.92,
+    -43.53
+   ],
+   "arrowTip": [
+    6.53,
+    -43.53
+   ]
+  },
+  "mage_use_bow_up_1": {
+   "x": 8.82,
+   "y": -46.7,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    1.28,
+    -45.72
+   ],
+   "arrowTip": [
+    15.9,
+    -47.62
+   ]
+  },
+  "mage_use_bow_up_2": {
+   "x": 12.75,
+   "y": -49.82,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    7.0,
+    -48.11
+   ],
+   "arrowTip": [
+    17.55,
+    -51.24
+   ]
+  },
+  "mage_use_bow_up_3": {
+   "x": 12.75,
+   "y": -49.82,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    5.84,
+    -47.77
+   ],
+   "arrowTip": [
+    17.55,
+    -51.24
+   ]
+  },
+  "mage_use_bow_up_4": {
+   "x": 12.75,
+   "y": -49.82,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    4.69,
+    -47.42
+   ],
+   "arrowTip": [
+    17.55,
+    -51.24
+   ]
+  },
+  "mage_use_bow_up_5": {
+   "x": 12.75,
+   "y": -49.82,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    4.36,
+    -47.32
+   ],
+   "arrowTip": [
+    17.55,
+    -51.24
+   ]
+  },
+  "mage_use_bow_up_6": {
+   "x": 12.75,
+   "y": -49.82,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    3.97,
+    -47.21
+   ],
+   "arrowTip": [
+    9.96,
+    -48.99
+   ]
+  },
+  "mage_use_bow_up_7": {
+   "x": 12.4,
+   "y": -49.54,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    2.84,
+    -47.49
+   ],
+   "arrowTip": [
+    10.1,
+    -49.05
+   ]
+  },
+  "mage_use_bow_up_8": {
+   "x": 8.82,
+   "y": -46.7,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    0.7,
+    -45.95
+   ],
+   "arrowTip": [
+    10.25,
+    -46.84
+   ]
+  },
+  "mage_use_bow_up_9": {
+   "x": 4.96,
+   "y": -43.53,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -3.92,
+    -43.53
+   ],
+   "arrowTip": [
+    6.53,
+    -43.53
+   ]
+  }
+ }
+}

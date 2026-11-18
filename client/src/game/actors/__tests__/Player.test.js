@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 
 // Mock Phaser Sprite & Scene structures for node test environment
 vi.mock('phaser', () => {
@@ -107,6 +107,7 @@ import { session } from '../../session.js'
 import { eventBus, GameEvents } from '../../../lib/eventBus.js'
 import { getVialThrowTiming, VIAL_THROW_COOLDOWN_MS } from '../../combat/spells.js'
 import mageSpellsV2Atlas from '../../../../public/assets/characters/mage/spells_v2/mage_spells_v2.json'
+import { getBowTiming, getBowCooldownMs, getArrowSpawnOffset, ARROW_FLY_ANIM, ARROW_HIT_ANIM } from '../../combat/bowShot.js'
 import thiefUseThrowAtlas from '../../../../public/assets/characters/thief/thief_use_throw.json'
 
 function createMockScene() {
@@ -1235,6 +1236,144 @@ describe('Player Actor — Package 1-3', () => {
       expect(consumed.events).toHaveLength(0)
       expect(thief._vialCooldownUntil).toBe(0)
       consumed.off()
+    })
+  })
+
+  describe('Lightning bow draw (BOW-1)', () => {
+    let savedEquipped
+    let savedClass
+    beforeEach(() => {
+      savedEquipped = session.equippedId
+      savedClass = session.classId
+      session.equippedId = 'lightning_bow'
+    })
+    afterEach(() => {
+      session.equippedId = savedEquipped
+      session.classId = savedClass
+    })
+
+    it('draws 10 frames at 12 fps and releases on frame 6 (500 ms in)', () => {
+      expect(getBowTiming()).toEqual({ releaseFrame: 6, releaseMs: 500, durationMs: 833, frames: 10 })
+      expect(getBowCooldownMs()).toBe(833)
+    })
+
+    it.each(['thief', 'knight', 'mage', 'dwarf'])('%s plays use_bow and fires nothing until the release frame', (hero) => {
+      const player = new Player(mockScene, 200, 300, hero)
+      session.classId = hero
+      mockScene.projectiles = []
+      player.facing = 'down'
+
+      const pending = player.beginBowDraw(5000)
+      expect(pending.animKey).toBe(`${hero}_use_bow_down`)
+      expect(player.anims.currentAnim.key).toBe(`${hero}_use_bow_down`)
+      expect(player.itemUseState).toMatchObject({ active: true, itemId: 'lightning_bow', clip: 'use_bow' })
+      expect(mockScene.projectiles).toHaveLength(0)
+
+      player.update(5000 + 499, 16)
+      expect(mockScene.projectiles).toHaveLength(0)
+      expect(player._bowCooldownUntil).toBe(0)
+
+      player.update(5000 + 500, 16)
+      expect(mockScene.projectiles).toHaveLength(1)
+      const arrow = mockScene.projectiles[0]
+      const tip = getArrowSpawnOffset(hero, 'down')
+      expect(arrow.x).toBeCloseTo(200 + tip.x, 3)
+      expect(arrow.y).toBeCloseTo(300 + tip.y, 3)
+      expect(arrow.flyAnim).toBe(ARROW_FLY_ANIM)
+      expect(arrow.hitAnim).toBe(ARROW_HIT_ANIM)
+      expect(arrow.owner).toBe('player')
+      expect(arrow.damage).toBe(14)
+      expect(arrow.vy).toBeGreaterThan(0)
+      expect(arrow.vx).toBe(0)
+      expect(player._bowCooldownUntil).toBe(5000 + 500 + 833)
+
+      // a second Space during the draw or the cooldown does nothing
+      expect(player.beginBowDraw(5600)).toBeNull()
+    })
+
+    it('fires along the facing the hero has at release, from that facing\'s arrow tip', () => {
+      const thief = new Player(mockScene, 40, 70, 'thief')
+      session.classId = 'thief'
+      mockScene.projectiles = []
+      thief.facing = 'right'
+      thief.beginBowDraw(1000)
+      thief.update(1000 + 500, 16)
+      const arrow = mockScene.projectiles[0]
+      const tip = getArrowSpawnOffset('thief', 'right')
+      expect(arrow.x).toBeCloseTo(40 + tip.x, 3)
+      expect(arrow.y).toBeCloseTo(70 + tip.y, 3)
+      expect(arrow.vx).toBeGreaterThan(0)
+      expect(arrow.vy).toBe(0)
+    })
+
+    it('switches draw clips at the same frame index when facing changes', () => {
+      const knight = new Player(mockScene, 10, 10, 'knight')
+      session.classId = 'knight'
+      knight.beginBowDraw(1000)
+      knight.anims.currentFrame = { frame: { name: 'knight_use_bow_down_3' } }
+      knight.anims.setCurrentFrame = vi.fn()
+      const frames = Array.from({ length: 10 }, (_, i) => ({ index: i }))
+      mockScene.anims.get.mockImplementation(() => ({ frames }))
+      knight.setFacing('left')
+      expect(knight.anims.play).toHaveBeenCalledWith('knight_use_bow_left', false)
+      expect(knight.anims.setCurrentFrame).toHaveBeenCalledWith(frames[3])
+    })
+
+    it('draws the weapon overlay over the body and the glow over the weapon, in place of the in-hand sprite', () => {
+      const mage = new Player(mockScene, 100, 120, 'mage')
+      session.classId = 'mage'
+      mage.beginBowDraw(1000)
+      mage.anims.currentFrame = { frame: { name: 'mage_use_bow_down_5' } }
+      mage._syncItemInHandSprite()
+      expect(mage.itemSprite.texture.key).toBe('mage_use_bow_weapon')
+      expect(mage.itemSprite.frame.name).toBe('mage_use_bow_down_5')
+      expect(mage.itemSprite.visible).toBe(true)
+      expect(mage.itemSprite.x).toBe(mage.x)
+      expect(mage.itemSprite.y).toBe(mage.y)
+      expect(mage.itemSprite.depth).toBeGreaterThan(mage.depth)
+      expect(mage.glowSprite.texture.key).toBe('mage_use_bow_glow')
+      expect(mage.glowSprite.frame.name).toBe('mage_use_bow_down_5')
+      expect(mage.glowSprite.depth).toBeGreaterThan(mage.itemSprite.depth)
+
+      // back to the in-hand bow and the resting glow once the draw ends
+      mage.endItemUse()
+      mage._syncItemInHandSprite()
+      expect(mage.itemSprite.texture.key).toBe('items_inhand_b12')
+      expect(mage.itemSprite.frame.name).toBe('lightning_bow_down')
+    })
+
+    it('holds the bow with the hero hold clip and the resting glow; the dwarf uses charm_hold', () => {
+      const thief = new Player(mockScene, 10, 10, 'thief')
+      session.classId = 'thief'
+      thief.playAnim('idle')
+      expect(thief.anims.play).toHaveBeenCalledWith('thief_hold_idle_down', true)
+      thief._syncItemInHandSprite()
+      expect(thief.itemSprite.texture.key).toBe('items_inhand_b12')
+      expect(thief.itemSprite.frame.name).toBe('lightning_bow_down')
+      expect(thief.itemSprite.visible).toBe(true)
+      expect(thief.glowSprite.texture.key).toBe('thief_bow_hold_idle_glow')
+      expect(thief.glowSprite.frame.name).toBe('thief_bow_hold_idle_glow_down_0')
+
+      const dwarf = new Player(mockScene, 10, 10, 'dwarf')
+      session.classId = 'dwarf'
+      dwarf.playAnim('idle')
+      expect(dwarf.anims.play).toHaveBeenCalledWith('dwarf_charm_hold_idle_down', true)
+    })
+
+    it.each([
+      ['hurt', (p, now) => p.takeDamage(10, now)],
+      ['dodge', (p, now) => p.dodge(now)],
+      ['death', (p) => p.die()],
+      ['weapon swap', () => { session.equippedId = 'healing_potion' }],
+    ])('cancel by %s before release fires nothing', (_label, cancel) => {
+      const hero = new Player(mockScene, 15, 25, 'knight')
+      session.classId = 'knight'
+      mockScene.projectiles = []
+      hero.beginBowDraw(4000)
+      cancel(hero, 4100)
+      hero.update(4000 + 600, 16)
+      expect(mockScene.projectiles).toHaveLength(0)
+      expect(hero._bowCooldownUntil).toBe(0)
     })
   })
 

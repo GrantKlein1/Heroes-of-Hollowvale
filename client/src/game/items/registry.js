@@ -18,10 +18,11 @@
  *   market:   category string | null                                        // null = not sold
  *   loot:     { pickupAtlas: string|null, random: boolean }                  // world pickup sprite / may roll randomly
  *   hold:     { idle, run, byClass? } | null                                // hold clips (null = never held in-hand)
- *   use:      { clip, glow?, effectFrame? } | null                          // one-shot use clip (null = cannot be used)
+ *   use:      { clip, glow?, weapon?, effectFrame?, durations? } | null     // one-shot use clip (null = cannot be used)
  *   inhand:   { atlas, origin: [x, y] } | null                              // in-hand sprite atlas and grip origin
  *   classes:  string[] | null                                               // heroes that can hold/wield it (null = all)
- *   weapon:   { damage } | null                                             // melee weapon stats
+ *   weapon:   { damage, ranged? } | null                                     // weapon stats (melee unless ranged)
+ *   projectile: { speed, maxDist, size, ... } | null                         // ranged weapons: the shot Space fires
  *   sellable: boolean
  * }
  */
@@ -43,6 +44,7 @@ export const DEFAULT_INHAND_ORIGIN = Object.freeze([12 / 24, 15.61 / 24])
 
 export const LOOT_ATLAS_MAIN = 'loot_pickups'
 export const LOOT_ATLAS_B11 = 'loot_pickups_b11'
+export const LOOT_ATLAS_B12 = 'loot_pickups_b12'
 
 const HOLD_DEFAULT = Object.freeze({ idle: 'hold_idle', run: 'hold_run' })
 /** Dwarf charm uses the Batch 9 potion-grip hold; `dwarf_hold_*` is the tool grip. */
@@ -53,6 +55,12 @@ const HOLD_CHARM = Object.freeze({
     dwarf: Object.freeze({ idle: 'charm_hold_idle', run: 'charm_hold_run' }),
   }),
 })
+
+/**
+ * Lightning bow hold: the hero's potion-grip hold clip (the dwarf's is `charm_hold_*`) with a
+ * resting string-and-runes glow overlay on the idle pose (`<hero>_bow_hold_idle_glow`).
+ */
+const HOLD_BOW = Object.freeze({ ...HOLD_CHARM, glowIdle: 'bow_hold_idle_glow' })
 
 const inhand = (atlas, origin = DEFAULT_INHAND_ORIGIN) => Object.freeze({ atlas, origin: Object.freeze([...origin]) })
 const price = (ruby = 0, sapphire = 0, emerald = 0) => Object.freeze({ ruby, sapphire, emerald })
@@ -187,6 +195,25 @@ const BUILTIN_ITEMS = [
     id: 'ember_chalice', name: 'The Embered Flagon Chalice', icon: `${IMAGES}/ember_chalice.png`, kind: 'quest',
     loot: pickup(LOOT_ATLAS_B11, false),
   },
+  // --- BOW-1 (Batch 12, Grant-approved and frozen). Found weapon, any hero can hold and fire it.
+  // Not sold. Found in the cavern treasure chest and as a rare goblin archer drop (enemyDefs.js).
+  {
+    id: 'lightning_bow', name: 'Lightning Bow', icon: `${IMAGES}/lightning_bow.png`, kind: 'weapon',
+    classes: null, // any class
+    // Space draws and fires. Numbers marked // tunable are placeholders: lightning spell = 15 dmg for
+    // 10 mana at 600 px/s over 320 px, twin_daggers 7, iron_sword 12, battle_axe 22.
+    weapon: { damage: 14, ranged: true }, // tunable
+    projectile: { speed: 520, maxDist: 360, size: 24, tipX: 76 / 96 }, // tunable; tipX = arrowhead on the 96 px cell
+    loot: pickup(LOOT_ATLAS_B12, false),
+    hold: HOLD_BOW,
+    // use_bow is 10 frames at 12 fps (83/83/84 ms), release on frame 6 (500 ms in). weapon and glow are
+    // overlay sheets (`<hero>_use_bow_weapon`, `<hero>_use_bow_glow`) drawn over the body.
+    use: {
+      clip: 'use_bow', weapon: 'use_bow_weapon', glow: 'use_bow_glow', effectFrame: 6,
+      durations: [83, 83, 84, 83, 83, 84, 83, 83, 84, 83],
+    },
+    inhand: inhand('items_inhand_b12', [0.5, 0.5]),
+  },
 ]
 
 /** Live table. Built-ins first; registerItem adds more. Read it, do not mutate it directly. */
@@ -229,6 +256,7 @@ function normalizeItem(def) {
     inhand: def.inhand || null,
     classes: def.classes || null,
     weapon: def.weapon || null,
+    projectile: def.projectile || null,
     sellable: quest ? false : def.sellable !== false,
   })
 }
@@ -400,4 +428,32 @@ export function useClipNames() {
   const names = new Set()
   for (const it of listItems()) if (it.use?.clip) names.add(it.use.clip)
   return names
+}
+
+/**
+ * Overlay sheet clip names drawn above the body while an item's use clip plays
+ * (the lightning bow's `use_bow_weapon` and `use_bow_glow`).
+ *
+ * @param {string} id
+ * @returns {{ weapon: string|null, glow: string|null }}
+ */
+export function useLayersFor(id) {
+  const use = getItem(id)?.use
+  return { weapon: use?.weapon || null, glow: use?.glow || null }
+}
+
+/**
+ * Resting glow overlay sheet clip for a held item's idle pose, or null.
+ *
+ * @param {string} id
+ * @returns {string|null}
+ */
+export function holdGlowFor(id) {
+  return getItem(id)?.hold?.glowIdle || null
+}
+
+/** @param {string} id @returns {boolean} true for a weapon that fires a projectile (the lightning bow) */
+export function isRangedWeapon(id) {
+  const item = getItem(id)
+  return Boolean(item?.kind === 'weapon' && item.weapon?.ranged && item.projectile)
 }

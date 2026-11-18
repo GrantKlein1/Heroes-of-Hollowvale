@@ -125,6 +125,7 @@ const ITEM_COPY = Object.freeze({
   emerald: Object.freeze({ category: 'Gems', blurb: 'Market currency, green.' }),
   nightfang_dagger: Object.freeze({ category: 'Weapons', blurb: 'A thief’s dagger, forged from a dragon’s tooth.' }),
   stonehollow_hammer: Object.freeze({ category: 'Weapons', blurb: 'A dwarf’s hammer. Its strikes carry the weight of dwarven wrath.' }),
+  lightning_bow: Object.freeze({ category: 'Weapons', blurb: 'A bow strung with lightning, found rather than bought. Any hero can hold it. Space draws and looses a lightning arrow.' }),
   healing_charm: Object.freeze({ category: 'Magic', blurb: 'A charm that restores health. Hold K to use it.' }),
   seranyas_tear: Object.freeze({ category: 'Quest', blurb: 'A crystal said to be a tear of the goddess. It cannot be used or sold.' }),
   ember_chalice: Object.freeze({ category: 'Quest', blurb: 'A chalice once used to seal dragon-blood pacts. It cannot be used or sold.' }),
@@ -466,6 +467,11 @@ function itemStats(item) {
     const classId = item.classes?.[0]
     if (classId && typeof ATTACK_MS[classId] === 'number') {
       lines.push(stat('Swing', `Every ${secondsLabel(ATTACK_MS[classId])}`))
+    }
+    if (item.weapon.ranged && item.projectile) {
+      const drawMs = (item.use?.durations || []).reduce((a, b) => a + b, 0)
+      if (drawMs > 0) lines.push(stat('Draw', `Every ${secondsLabel(drawMs)}. The arrow leaves a little over halfway through.`))
+      lines.push(stat('Range', `About ${item.projectile.maxDist} px. It costs no mana and no ammunition.`))
     }
   }
 

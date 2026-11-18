@@ -39,12 +39,16 @@ import {
   holdClipFor,
   useClipFor,
   useGlowClipFor,
+  useWeaponClipFor,
+  holdGlowClipFor,
   isItemUseAnimKey,
   clipFrameStem,
   getItemAnchor,
   inhandAtlasKey,
   inhandOriginFor,
 } from './itemHold.js'
+import { BOW_ITEM_ID, BOW_CLIP, armBowShot, tickBowShot, cancelBowShot, getBowTiming } from '../combat/bowShot.js'
+import { itemUsableBy } from '../items/registry.js'
 import {
   castFireball,
   castLightning,
@@ -171,6 +175,8 @@ export class Player extends Actor {
     this.glowSprite = null
     this._vialThrow = null
     this._vialCooldownUntil = 0
+    this._bowShot = null
+    this._bowCooldownUntil = 0
 
     // Listen for animation completion to transition out of non-looping states
     if (typeof this.on === 'function') {
@@ -189,6 +195,9 @@ export class Player extends Actor {
         const item = session.equippedId
         if (cls === 'thief' && item === 'poison_vial') {
           return this.beginVialThrow(now)
+        }
+        if (item === BOW_ITEM_ID && itemUsableBy(item, cls)) {
+          return this.beginBowDraw(now)
         }
         if (cls === 'mage' && item === 'spellbook') {
           scene._attacking = true
@@ -887,6 +896,9 @@ export class Player extends Actor {
       if (this._vialThrow && !this._vialThrow.released) {
         cancelPoisonVialThrow(this)
       }
+      if (this._bowShot && !this._bowShot.released) {
+        cancelBowShot(this)
+      }
     }
 
     if (newState === ACTOR_STATES.WALK) {
@@ -1115,6 +1127,69 @@ export class Player extends Actor {
   }
 
   /**
+   * Starts the lightning-bow draw: plays `<hero>_use_bow_<facing>` and arms the
+   * shot. The arrow spawns on release frame 6 (bowShot.js), not here.
+   *
+   * @param {number} [now]
+   * @returns {object|null} the pending shot, or null when the draw cannot start
+   */
+  beginBowDraw(now = (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
+    if (this.is(ACTOR_STATES.DEAD) || this.is(ACTOR_STATES.HURT) || this.is(ACTOR_STATES.DODGE)) return null
+    if (this.itemUseState?.active) return null
+    if (this.blockState?.active) return null
+
+    const pending = armBowShot(this.scene, this, now)
+    if (!pending || pending.animStarted) return pending
+    pending.animStarted = true
+
+    this.itemUseState = { active: true, itemId: BOW_ITEM_ID, startTime: now, clip: BOW_CLIP }
+    const key = pending.animKey
+    const sheetKey = `${this.classId}_${BOW_CLIP}`
+    if (this.scene?.anims && typeof this.scene.anims.exists === 'function' && !this.scene.anims.exists(key)) {
+      console.warn(`[Player] Animation key "${key}" not found in scene anims.`)
+    }
+    this.applySheetOrigin(sheetKey)
+    if (this.anims && typeof this.anims.play === 'function') {
+      this.anims.play(key, false)
+    }
+    this.applySheetOrigin(sheetKey)
+    this.applyFootprint(sheetKey)
+    this._syncItemInHandSprite()
+    return pending
+  }
+
+  /**
+   * Fires or drops the bow draw, then ends the clip when it finishes.
+   *
+   * @param {number} time
+   */
+  _tickBowShot(time) {
+    const pending = this._bowShot
+    if (!pending || pending.cancelled) return
+    if (!pending.released) {
+      const interrupted = session.equippedId !== BOW_ITEM_ID
+        || this.is(ACTOR_STATES.HURT)
+        || this.is(ACTOR_STATES.DODGE)
+        || this.is(ACTOR_STATES.DEAD)
+      if (interrupted) {
+        cancelBowShot(this)
+        this._refreshCurrentAnim()
+        return
+      }
+      tickBowShot(this, time)
+    }
+    if (pending.released && this.itemUseState?.clip === BOW_CLIP) {
+      const durationMs = pending.durationMs ?? getBowTiming().durationMs
+      if (time - pending.startedAt >= durationMs) {
+        this.itemUseState = { active: false, itemId: null, startTime: 0, clip: null }
+        this._bowShot = null
+        this._refreshCurrentAnim()
+        this._syncItemInHandSprite()
+      }
+    }
+  }
+
+  /**
    * Releases or cancels the vial wind-up, then ends the body clip when it finishes.
    *
    * @param {number} time
@@ -1339,6 +1414,11 @@ export class Player extends Actor {
     const sprite = this._getItemSprite()
     if (!sprite) return
 
+    // Lightning bow draw: the item layer is a full-cell overlay sheet (`<hero>_use_bow_weapon`)
+    // that replaces the in-hand sprite, with the glow sheet above it.
+    const weaponClip = isUsing ? useWeaponClipFor(activeItemId) : null
+    if (weaponClip && this._syncWeaponLayerSprite(sprite, activeItemId, weaponClip)) return
+
     const itemFrameName = `${activeItemId}_${this.facing}`
     const atlasKey = inhandAtlasKey(activeItemId)
     if (sprite.texture?.key !== atlasKey && typeof sprite.setTexture === 'function') {
@@ -1350,11 +1430,12 @@ export class Player extends Actor {
     }
 
     let clip = 'hold_idle'
+    let holdMoving = false
     if (isUsing) {
       clip = this.itemUseState.clip || 'use_drink'
     } else {
-      const isMoving = this.is(ACTOR_STATES.WALK) || this.isAtRunSpeed() || this.isRunning
-      clip = holdClipFor(isMoving, activeItemId, this.classId)
+      holdMoving = this.is(ACTOR_STATES.WALK) || this.isAtRunSpeed() || this.isRunning
+      clip = holdClipFor(holdMoving, activeItemId, this.classId)
     }
 
     let playerFrameName = this.anims?.currentFrame?.frame?.name
@@ -1427,12 +1508,69 @@ export class Player extends Actor {
       sprite.visible = true
     }
 
+    if (this._itemSpriteScaled && typeof sprite.setScale === 'function') {
+      sprite.setScale(1)
+      this._itemSpriteScaled = false
+    }
+
     const glowClip = isUsing ? useGlowClipFor(activeItemId) : null
+    const holdGlow = !isUsing && !holdMoving ? holdGlowClipFor(activeItemId) : null
     if (glowClip) {
       this._syncGlowSprite(glowClip, playerFrameName, scale)
+    } else if (holdGlow) {
+      this._syncGlowSprite(holdGlow, `${this.classId}_${holdGlow}_${this.facing}_0`, scale)
     } else {
       this._hideGlowSprite()
     }
+  }
+
+  /**
+   * Draws a full-cell weapon overlay (`<hero>_<weaponClip>`, same grid and frame names as the
+   * body clip) in place of the in-hand sprite, with the clip's glow sheet above it.
+   * Draw order is body, weapon (depth +1), glow (depth +2).
+   *
+   * @param {Phaser.GameObjects.Image|object} sprite
+   * @param {string} itemId
+   * @param {string} weaponClip - e.g. 'use_bow_weapon'
+   * @returns {boolean} false when the overlay sheet is not loaded (the in-hand sprite is used)
+   */
+  _syncWeaponLayerSprite(sprite, itemId, weaponClip) {
+    const textureKey = `${this.classId}_${weaponClip}`
+    const textures = this.scene?.textures
+    if (typeof textures?.exists === 'function' && !textures.exists(textureKey)) return false
+
+    const useClip = this.itemUseState?.clip || BOW_CLIP
+    const frameStem = `${this.classId}_${useClip}`
+    let frameName = this.anims?.currentFrame?.frame?.name || this.frame?.name
+    if (!frameName || !String(frameName).startsWith(frameStem)) {
+      frameName = `${frameStem}_${this.facing}_0`
+    }
+    const scale = this.scaleX !== undefined ? this.scaleX : (this.scale !== undefined ? this.scale : 1)
+
+    if (sprite.texture?.key !== textureKey && typeof sprite.setTexture === 'function') {
+      sprite.setTexture(textureKey, frameName)
+    } else if (typeof sprite.setFrame === 'function') {
+      sprite.setFrame(frameName)
+    }
+    if (typeof sprite.setOrigin === 'function') sprite.setOrigin(this.originX ?? 0.5, this.originY ?? 0.5)
+    else { sprite.originX = this.originX ?? 0.5; sprite.originY = this.originY ?? 0.5 }
+    if (typeof sprite.setScale === 'function') sprite.setScale(scale)
+    this._itemSpriteScaled = true
+    if (typeof sprite.setPosition === 'function') sprite.setPosition(this.x, this.y)
+    else { sprite.x = this.x; sprite.y = this.y }
+    if (typeof sprite.setAngle === 'function') sprite.setAngle(0)
+    else sprite.rotation = 0
+    const depth = (this.depth ?? 0) + 1
+    if (typeof sprite.setDepth === 'function') sprite.setDepth(depth)
+    else sprite.depth = depth
+    if (typeof sprite.setVisible === 'function') sprite.setVisible(true)
+    else sprite.visible = true
+    this._lastAnchor = getItemAnchor(this.classId, useClip, frameName) || this._lastAnchor
+
+    const glowClip = useGlowClipFor(itemId)
+    if (glowClip) this._syncGlowSprite(glowClip, frameName, scale)
+    else this._hideGlowSprite()
+    return true
   }
 
   /**
@@ -1636,6 +1774,7 @@ export class Player extends Actor {
     super.update(time, delta)
     this._syncItemInHandSprite()
     this._tickVialThrow(time)
+    this._tickBowShot(time)
 
     const v2Casting = typeof this.currentAttackType === 'string' && this.currentAttackType.startsWith('cast_')
     if (this._v2Cast && !this._v2Cast.released && !this.is(ACTOR_STATES.ATTACK)) {

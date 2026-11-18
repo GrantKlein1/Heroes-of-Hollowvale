@@ -36,7 +36,8 @@
       "ember_vent",
       "items_inhand",
       "items_inhand_b10",
-      "items_inhand_b11"
+      "items_inhand_b11",
+      "items_inhand_b12"
     ],
     "boss": [
       "knight",
@@ -47,7 +48,8 @@
       "dragon_fx_v2",
       "items_inhand",
       "items_inhand_b10",
-      "items_inhand_b11"
+      "items_inhand_b11",
+      "items_inhand_b12"
     ],
     "boss_p1": [
       "red_dragon_p1_a",
@@ -79,10 +81,15 @@
     ],
     "loot": [
       "loot_pickups",
-      "loot_pickups_b11"
+      "loot_pickups_b11",
+      "loot_pickups_b12"
     ],
     "boss_fx_extra": [
       "dragon_fx_extra"
+    ],
+    "bow_b12": [
+      "lightning_arrow_b12",
+      "lightning_arrow_impact_b12"
     ]
   },
   "assets": {
@@ -215,6 +222,42 @@
           "key": "knight_use_charm_glow",
           "image": "assets/characters/knight/knight_use_charm_glow.png",
           "json": "assets/characters/knight/knight_use_charm_glow.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "knight_use_bow": {
+          "key": "knight_use_bow",
+          "image": "assets/characters/knight/knight_use_bow.png",
+          "json": "assets/characters/knight/knight_use_bow.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "knight_use_bow_weapon": {
+          "key": "knight_use_bow_weapon",
+          "image": "assets/characters/knight/knight_use_bow_weapon.png",
+          "json": "assets/characters/knight/knight_use_bow_weapon.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "knight_use_bow_glow": {
+          "key": "knight_use_bow_glow",
+          "image": "assets/characters/knight/knight_use_bow_glow.png",
+          "json": "assets/characters/knight/knight_use_bow_glow.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "knight_bow_hold_idle_glow": {
+          "key": "knight_bow_hold_idle_glow",
+          "image": "assets/characters/knight/knight_bow_hold_idle_glow.png",
+          "json": "assets/characters/knight/knight_bow_hold_idle_glow.json",
           "anchor": {
             "x": 0.5,
             "y": 0.9271
@@ -385,6 +428,42 @@
             "x": 0.5,
             "y": 0.9271
           }
+        },
+        "thief_use_bow": {
+          "key": "thief_use_bow",
+          "image": "assets/characters/thief/thief_use_bow.png",
+          "json": "assets/characters/thief/thief_use_bow.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "thief_use_bow_weapon": {
+          "key": "thief_use_bow_weapon",
+          "image": "assets/characters/thief/thief_use_bow_weapon.png",
+          "json": "assets/characters/thief/thief_use_bow_weapon.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "thief_use_bow_glow": {
+          "key": "thief_use_bow_glow",
+          "image": "assets/characters/thief/thief_use_bow_glow.png",
+          "json": "assets/characters/thief/thief_use_bow_glow.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "thief_bow_hold_idle_glow": {
+          "key": "thief_bow_hold_idle_glow",
+          "image": "assets/characters/thief/thief_bow_hold_idle_glow.png",
+          "json": "assets/characters/thief/thief_bow_hold_idle_glow.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
         }
       },
       "sidecars": [
@@ -547,6 +626,42 @@
           },
           "animAliases": {
             "hold_run": "charm_hold_run"
+          }
+        },
+        "dwarf_use_bow": {
+          "key": "dwarf_use_bow",
+          "image": "assets/characters/dwarf/dwarf_use_bow.png",
+          "json": "assets/characters/dwarf/dwarf_use_bow.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9125
+          }
+        },
+        "dwarf_use_bow_weapon": {
+          "key": "dwarf_use_bow_weapon",
+          "image": "assets/characters/dwarf/dwarf_use_bow_weapon.png",
+          "json": "assets/characters/dwarf/dwarf_use_bow_weapon.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9125
+          }
+        },
+        "dwarf_use_bow_glow": {
+          "key": "dwarf_use_bow_glow",
+          "image": "assets/characters/dwarf/dwarf_use_bow_glow.png",
+          "json": "assets/characters/dwarf/dwarf_use_bow_glow.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9125
+          }
+        },
+        "dwarf_bow_hold_idle_glow": {
+          "key": "dwarf_bow_hold_idle_glow",
+          "image": "assets/characters/dwarf/dwarf_bow_hold_idle_glow.png",
+          "json": "assets/characters/dwarf/dwarf_bow_hold_idle_glow.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9125
           }
         }
       },
@@ -719,6 +834,42 @@
           "key": "mage_use_charm_glow",
           "image": "assets/characters/mage/mage_use_charm_glow.png",
           "json": "assets/characters/mage/mage_use_charm_glow.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "mage_use_bow": {
+          "key": "mage_use_bow",
+          "image": "assets/characters/mage/mage_use_bow.png",
+          "json": "assets/characters/mage/mage_use_bow.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "mage_use_bow_weapon": {
+          "key": "mage_use_bow_weapon",
+          "image": "assets/characters/mage/mage_use_bow_weapon.png",
+          "json": "assets/characters/mage/mage_use_bow_weapon.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "mage_use_bow_glow": {
+          "key": "mage_use_bow_glow",
+          "image": "assets/characters/mage/mage_use_bow_glow.png",
+          "json": "assets/characters/mage/mage_use_bow_glow.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.9271
+          }
+        },
+        "mage_bow_hold_idle_glow": {
+          "key": "mage_bow_hold_idle_glow",
+          "image": "assets/characters/mage/mage_bow_hold_idle_glow.png",
+          "json": "assets/characters/mage/mage_bow_hold_idle_glow.json",
           "anchor": {
             "x": 0.5,
             "y": 0.9271
@@ -2479,6 +2630,143 @@
         }
       },
       "sidecars": []
+    },
+    "items_inhand_b12": {
+      "id": "items_inhand_b12",
+      "kind": "items",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.6504
+      },
+      "image": "assets/items/inhand/items_inhand_b12.png",
+      "json": "assets/items/inhand/items_inhand_b12.json",
+      "sheets": {
+        "items_inhand_b12": {
+          "key": "items_inhand_b12",
+          "image": "assets/items/inhand/items_inhand_b12.png",
+          "json": "assets/items/inhand/items_inhand_b12.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.6504
+          }
+        }
+      }
+    },
+    "loot_pickups_b12": {
+      "id": "loot_pickups_b12",
+      "kind": "loot",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.875
+      },
+      "image": "assets/loot/loot_pickups/loot_pickups_b12.png",
+      "json": "assets/loot/loot_pickups/loot_pickups_b12.json",
+      "sheets": {
+        "loot_pickups_b12": {
+          "key": "loot_pickups_b12",
+          "image": "assets/loot/loot_pickups/loot_pickups_b12.png",
+          "json": "assets/loot/loot_pickups/loot_pickups_b12.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.875
+          }
+        }
+      },
+      "anims": {
+        "loot_lightning_bow_idle": {
+          "frames": 6,
+          "fps": 8,
+          "loop": true,
+          "playback": "loop",
+          "directions": [
+            "down"
+          ],
+          "frameNames": "loot_lightning_bow_idle_down_<i>",
+          "origin": {
+            "x": 0.5,
+            "y": 0.875
+          },
+          "cell": [
+            24,
+            24
+          ],
+          "durationMs": 750
+        }
+      },
+      "sidecars": []
+    },
+    "lightning_arrow_b12": {
+      "id": "lightning_arrow_b12",
+      "kind": "fx",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "image": "assets/fx/lightning_arrow/lightning_arrow_b12.png",
+      "json": "assets/fx/lightning_arrow/lightning_arrow_b12.json",
+      "sheets": {
+        "lightning_arrow_b12": {
+          "key": "lightning_arrow_b12",
+          "image": "assets/fx/lightning_arrow/lightning_arrow_b12.png",
+          "json": "assets/fx/lightning_arrow/lightning_arrow_b12.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.5
+          }
+        }
+      },
+      "sidecars": [],
+      "anims": {
+        "lightning_arrow_b12": {
+          "frames": [
+            "lightning_arrow_b12_0",
+            "lightning_arrow_b12_1",
+            "lightning_arrow_b12_2",
+            "lightning_arrow_b12_3"
+          ],
+          "frameRate": 16,
+          "repeat": -1,
+          "durationMs": 250.0
+        }
+      }
+    },
+    "lightning_arrow_impact_b12": {
+      "id": "lightning_arrow_impact_b12",
+      "kind": "fx",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "image": "assets/fx/lightning_arrow/lightning_arrow_impact_b12.png",
+      "json": "assets/fx/lightning_arrow/lightning_arrow_impact_b12.json",
+      "sheets": {
+        "lightning_arrow_impact_b12": {
+          "key": "lightning_arrow_impact_b12",
+          "image": "assets/fx/lightning_arrow/lightning_arrow_impact_b12.png",
+          "json": "assets/fx/lightning_arrow/lightning_arrow_impact_b12.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.5
+          }
+        }
+      },
+      "sidecars": [],
+      "anims": {
+        "lightning_arrow_impact_b12": {
+          "frames": [
+            "lightning_arrow_impact_b12_0",
+            "lightning_arrow_impact_b12_1",
+            "lightning_arrow_impact_b12_2",
+            "lightning_arrow_impact_b12_3",
+            "lightning_arrow_impact_b12_4",
+            "lightning_arrow_impact_b12_5",
+            "lightning_arrow_impact_b12_6"
+          ],
+          "frameRate": 16,
+          "repeat": 0,
+          "durationMs": 437.5
+        }
+      }
     }
   },
   "tiles": {

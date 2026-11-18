@@ -1,0 +1,593 @@
+{
+ "actor": "dwarf",
+ "clip": "use_bow",
+ "cell": [
+  64,
+  80
+ ],
+ "origin": {
+  "x": 0.5,
+  "y": 0.9125
+ },
+ "pivotPx": [
+  32.0,
+  73.0
+ ],
+ "hand": "hand.R",
+ "units": "px from feet origin, +y down",
+ "rotation": "degrees, 0=item upright (cork/stem up), positive clockwise on screen",
+ "layer": "front|behind, relative to the body sprite. Up is forced front so the item reads (true depth hides it behind the body).",
+ "format": "{x, y, rotation, layer}",
+ "layerLock": {
+  "down": "front",
+  "left": "front",
+  "right": "front",
+  "up": "front"
+ },
+ "fps": 12,
+ "framesCount": 10,
+ "effectFrame": 6,
+ "note": "grip = bow-hand position (px from feet, +y down) for reference; the bow is baked in dwarf_use_bow_weapon.png (do not composite the in-hand sprite during use_bow). nock/arrowTip = arrow spawn reference (arrow spawn = f6 arrowTip). Layer is always front: the weapon layer was rendered with the body as holdout, so true depth is already in the pixels.",
+ "frames": {
+  "dwarf_use_bow_down_0": {
+   "x": -6.15,
+   "y": -30.79,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    2.74,
+    -30.79
+   ],
+   "arrowTip": [
+    -7.71,
+    -30.79
+   ]
+  },
+  "dwarf_use_bow_down_1": {
+   "x": -8.8,
+   "y": -33.75,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -1.27,
+    -34.72
+   ],
+   "arrowTip": [
+    -15.89,
+    -32.83
+   ]
+  },
+  "dwarf_use_bow_down_2": {
+   "x": -11.26,
+   "y": -36.43,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -5.5,
+    -38.13
+   ],
+   "arrowTip": [
+    -16.05,
+    -35.0
+   ]
+  },
+  "dwarf_use_bow_down_3": {
+   "x": -11.26,
+   "y": -36.43,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -4.35,
+    -38.48
+   ],
+   "arrowTip": [
+    -16.05,
+    -35.0
+   ]
+  },
+  "dwarf_use_bow_down_4": {
+   "x": -11.26,
+   "y": -36.43,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -3.2,
+    -38.82
+   ],
+   "arrowTip": [
+    -16.05,
+    -35.0
+   ]
+  },
+  "dwarf_use_bow_down_5": {
+   "x": -11.26,
+   "y": -36.43,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -2.87,
+    -38.92
+   ],
+   "arrowTip": [
+    -16.05,
+    -35.0
+   ]
+  },
+  "dwarf_use_bow_down_6": {
+   "x": -11.26,
+   "y": -36.43,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -2.47,
+    -39.03
+   ],
+   "arrowTip": [
+    -8.46,
+    -37.25
+   ]
+  },
+  "dwarf_use_bow_down_7": {
+   "x": -11.01,
+   "y": -36.17,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -1.44,
+    -38.23
+   ],
+   "arrowTip": [
+    -8.7,
+    -36.66
+   ]
+  },
+  "dwarf_use_bow_down_8": {
+   "x": -8.8,
+   "y": -33.75,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -0.69,
+    -34.5
+   ],
+   "arrowTip": [
+    -10.24,
+    -33.61
+   ]
+  },
+  "dwarf_use_bow_down_9": {
+   "x": -6.15,
+   "y": -30.79,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    2.74,
+    -30.79
+   ],
+   "arrowTip": [
+    -7.71,
+    -30.79
+   ]
+  },
+  "dwarf_use_bow_left_0": {
+   "x": -10.23,
+   "y": -34.2,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -10.23,
+    -32.35
+   ],
+   "arrowTip": [
+    -10.23,
+    -34.52
+   ]
+  },
+  "dwarf_use_bow_left_1": {
+   "x": -10.77,
+   "y": -37.67,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -6.06,
+    -36.1
+   ],
+   "arrowTip": [
+    -15.2,
+    -39.14
+   ]
+  },
+  "dwarf_use_bow_left_2": {
+   "x": -11.25,
+   "y": -40.86,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -3.04,
+    -39.66
+   ],
+   "arrowTip": [
+    -18.1,
+    -41.85
+   ]
+  },
+  "dwarf_use_bow_left_3": {
+   "x": -11.25,
+   "y": -40.86,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -1.39,
+    -39.42
+   ],
+   "arrowTip": [
+    -18.1,
+    -41.85
+   ]
+  },
+  "dwarf_use_bow_left_4": {
+   "x": -11.25,
+   "y": -40.86,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    0.26,
+    -39.18
+   ],
+   "arrowTip": [
+    -18.1,
+    -41.85
+   ]
+  },
+  "dwarf_use_bow_left_5": {
+   "x": -11.25,
+   "y": -40.86,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    0.73,
+    -39.11
+   ],
+   "arrowTip": [
+    -18.1,
+    -41.85
+   ]
+  },
+  "dwarf_use_bow_left_6": {
+   "x": -11.25,
+   "y": -40.86,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    1.29,
+    -39.03
+   ],
+   "arrowTip": [
+    -7.27,
+    -40.27
+   ]
+  },
+  "dwarf_use_bow_left_7": {
+   "x": -11.2,
+   "y": -40.55,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -1.29,
+    -38.56
+   ],
+   "arrowTip": [
+    -8.81,
+    -40.07
+   ]
+  },
+  "dwarf_use_bow_left_8": {
+   "x": -10.77,
+   "y": -37.67,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -7.15,
+    -35.98
+   ],
+   "arrowTip": [
+    -11.4,
+    -37.97
+   ]
+  },
+  "dwarf_use_bow_left_9": {
+   "x": -10.23,
+   "y": -34.2,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -10.23,
+    -32.35
+   ],
+   "arrowTip": [
+    -10.23,
+    -34.52
+   ]
+  },
+  "dwarf_use_bow_right_0": {
+   "x": 10.23,
+   "y": -31.64,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    10.23,
+    -33.49
+   ],
+   "arrowTip": [
+    10.23,
+    -31.31
+   ]
+  },
+  "dwarf_use_bow_right_1": {
+   "x": 10.77,
+   "y": -34.32,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    6.06,
+    -35.89
+   ],
+   "arrowTip": [
+    15.2,
+    -32.85
+   ]
+  },
+  "dwarf_use_bow_right_2": {
+   "x": 11.25,
+   "y": -36.81,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    3.04,
+    -38.01
+   ],
+   "arrowTip": [
+    18.1,
+    -35.81
+   ]
+  },
+  "dwarf_use_bow_right_3": {
+   "x": 11.25,
+   "y": -36.81,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    1.39,
+    -38.25
+   ],
+   "arrowTip": [
+    18.1,
+    -35.81
+   ]
+  },
+  "dwarf_use_bow_right_4": {
+   "x": 11.25,
+   "y": -36.81,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -0.26,
+    -38.49
+   ],
+   "arrowTip": [
+    18.1,
+    -35.81
+   ]
+  },
+  "dwarf_use_bow_right_5": {
+   "x": 11.25,
+   "y": -36.81,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -0.73,
+    -38.56
+   ],
+   "arrowTip": [
+    18.1,
+    -35.81
+   ]
+  },
+  "dwarf_use_bow_right_6": {
+   "x": 11.25,
+   "y": -36.81,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -1.29,
+    -38.64
+   ],
+   "arrowTip": [
+    7.27,
+    -37.39
+   ]
+  },
+  "dwarf_use_bow_right_7": {
+   "x": 11.2,
+   "y": -36.57,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    1.29,
+    -38.56
+   ],
+   "arrowTip": [
+    8.81,
+    -37.05
+   ]
+  },
+  "dwarf_use_bow_right_8": {
+   "x": 10.77,
+   "y": -34.32,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    7.15,
+    -36.01
+   ],
+   "arrowTip": [
+    11.4,
+    -34.02
+   ]
+  },
+  "dwarf_use_bow_right_9": {
+   "x": 10.23,
+   "y": -31.64,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    10.23,
+    -33.49
+   ],
+   "arrowTip": [
+    10.23,
+    -31.31
+   ]
+  },
+  "dwarf_use_bow_up_0": {
+   "x": 6.15,
+   "y": -35.04,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -2.74,
+    -35.04
+   ],
+   "arrowTip": [
+    7.71,
+    -35.04
+   ]
+  },
+  "dwarf_use_bow_up_1": {
+   "x": 8.05,
+   "y": -38.23,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    0.52,
+    -37.26
+   ],
+   "arrowTip": [
+    15.14,
+    -39.16
+   ]
+  },
+  "dwarf_use_bow_up_2": {
+   "x": 9.73,
+   "y": -41.17,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    3.97,
+    -39.46
+   ],
+   "arrowTip": [
+    14.52,
+    -42.6
+   ]
+  },
+  "dwarf_use_bow_up_3": {
+   "x": 9.73,
+   "y": -41.17,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    2.82,
+    -39.12
+   ],
+   "arrowTip": [
+    14.52,
+    -42.6
+   ]
+  },
+  "dwarf_use_bow_up_4": {
+   "x": 9.73,
+   "y": -41.17,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    1.67,
+    -38.78
+   ],
+   "arrowTip": [
+    14.52,
+    -42.6
+   ]
+  },
+  "dwarf_use_bow_up_5": {
+   "x": 9.73,
+   "y": -41.17,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    1.34,
+    -38.68
+   ],
+   "arrowTip": [
+    14.52,
+    -42.6
+   ]
+  },
+  "dwarf_use_bow_up_6": {
+   "x": 9.73,
+   "y": -41.17,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    0.94,
+    -38.56
+   ],
+   "arrowTip": [
+    6.93,
+    -40.34
+   ]
+  },
+  "dwarf_use_bow_up_7": {
+   "x": 9.56,
+   "y": -40.89,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    0.0,
+    -38.83
+   ],
+   "arrowTip": [
+    7.26,
+    -40.39
+   ]
+  },
+  "dwarf_use_bow_up_8": {
+   "x": 8.05,
+   "y": -38.23,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -0.06,
+    -37.48
+   ],
+   "arrowTip": [
+    9.48,
+    -38.37
+   ]
+  },
+  "dwarf_use_bow_up_9": {
+   "x": 6.15,
+   "y": -35.04,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -2.74,
+    -35.04
+   ],
+   "arrowTip": [
+    7.71,
+    -35.04
+   ]
+  }
+ }
+}

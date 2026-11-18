@@ -1,0 +1,593 @@
+{
+ "actor": "thief",
+ "clip": "use_bow",
+ "cell": [
+  64,
+  96
+ ],
+ "origin": {
+  "x": 0.5,
+  "y": 0.9271
+ },
+ "pivotPx": [
+  32.0,
+  89.0016
+ ],
+ "hand": "hand.R",
+ "units": "px from feet origin, +y down",
+ "rotation": "degrees, 0=item upright (cork/stem up), positive clockwise on screen",
+ "layer": "front|behind, relative to the body sprite. Up is forced front so the item reads (true depth hides it behind the body).",
+ "format": "{x, y, rotation, layer}",
+ "layerLock": {
+  "down": "front",
+  "left": "front",
+  "right": "front",
+  "up": "front"
+ },
+ "fps": 12,
+ "framesCount": 10,
+ "effectFrame": 6,
+ "note": "grip = bow-hand position (px from feet, +y down) for reference; the bow is baked in thief_use_bow_weapon.png (do not composite the in-hand sprite during use_bow). nock/arrowTip = arrow spawn reference (arrow spawn = f6 arrowTip). Layer is always front: the weapon layer was rendered with the body as holdout, so true depth is already in the pixels.",
+ "frames": {
+  "thief_use_bow_down_0": {
+   "x": -4.17,
+   "y": -37.42,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    4.71,
+    -37.42
+   ],
+   "arrowTip": [
+    -5.74,
+    -37.42
+   ]
+  },
+  "thief_use_bow_down_1": {
+   "x": -8.59,
+   "y": -42.65,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -1.06,
+    -43.63
+   ],
+   "arrowTip": [
+    -15.68,
+    -41.73
+   ]
+  },
+  "thief_use_bow_down_2": {
+   "x": -12.96,
+   "y": -47.5,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -7.2,
+    -49.21
+   ],
+   "arrowTip": [
+    -17.75,
+    -46.08
+   ]
+  },
+  "thief_use_bow_down_3": {
+   "x": -12.96,
+   "y": -47.5,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -6.05,
+    -49.55
+   ],
+   "arrowTip": [
+    -17.75,
+    -46.08
+   ]
+  },
+  "thief_use_bow_down_4": {
+   "x": -12.96,
+   "y": -47.5,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -4.89,
+    -49.9
+   ],
+   "arrowTip": [
+    -17.75,
+    -46.08
+   ]
+  },
+  "thief_use_bow_down_5": {
+   "x": -12.96,
+   "y": -47.5,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -4.56,
+    -49.99
+   ],
+   "arrowTip": [
+    -17.75,
+    -46.08
+   ]
+  },
+  "thief_use_bow_down_6": {
+   "x": -12.96,
+   "y": -47.5,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -4.17,
+    -50.11
+   ],
+   "arrowTip": [
+    -10.16,
+    -48.33
+   ]
+  },
+  "thief_use_bow_down_7": {
+   "x": -12.51,
+   "y": -47.03,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -2.94,
+    -49.09
+   ],
+   "arrowTip": [
+    -10.2,
+    -47.52
+   ]
+  },
+  "thief_use_bow_down_8": {
+   "x": -8.59,
+   "y": -42.65,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -0.48,
+    -43.4
+   ],
+   "arrowTip": [
+    -10.02,
+    -42.52
+   ]
+  },
+  "thief_use_bow_down_9": {
+   "x": -4.17,
+   "y": -37.42,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    4.71,
+    -37.42
+   ],
+   "arrowTip": [
+    -5.74,
+    -37.42
+   ]
+  },
+  "thief_use_bow_left_0": {
+   "x": -15.48,
+   "y": -41.51,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -15.48,
+    -39.66
+   ],
+   "arrowTip": [
+    -15.48,
+    -41.83
+   ]
+  },
+  "thief_use_bow_left_1": {
+   "x": -15.54,
+   "y": -47.52,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -10.83,
+    -45.96
+   ],
+   "arrowTip": [
+    -19.96,
+    -49.0
+   ]
+  },
+  "thief_use_bow_left_2": {
+   "x": -15.48,
+   "y": -53.13,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -7.27,
+    -51.93
+   ],
+   "arrowTip": [
+    -22.33,
+    -54.12
+   ]
+  },
+  "thief_use_bow_left_3": {
+   "x": -15.48,
+   "y": -53.13,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -5.62,
+    -51.69
+   ],
+   "arrowTip": [
+    -22.33,
+    -54.12
+   ]
+  },
+  "thief_use_bow_left_4": {
+   "x": -15.48,
+   "y": -53.13,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -3.97,
+    -51.45
+   ],
+   "arrowTip": [
+    -22.33,
+    -54.12
+   ]
+  },
+  "thief_use_bow_left_5": {
+   "x": -15.48,
+   "y": -53.13,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -3.5,
+    -51.38
+   ],
+   "arrowTip": [
+    -22.33,
+    -54.12
+   ]
+  },
+  "thief_use_bow_left_6": {
+   "x": -15.48,
+   "y": -53.13,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -2.94,
+    -51.3
+   ],
+   "arrowTip": [
+    -11.5,
+    -52.55
+   ]
+  },
+  "thief_use_bow_left_7": {
+   "x": -15.48,
+   "y": -52.58,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -5.58,
+    -50.59
+   ],
+   "arrowTip": [
+    -13.1,
+    -52.1
+   ]
+  },
+  "thief_use_bow_left_8": {
+   "x": -15.54,
+   "y": -47.52,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -11.92,
+    -45.83
+   ],
+   "arrowTip": [
+    -16.17,
+    -47.82
+   ]
+  },
+  "thief_use_bow_left_9": {
+   "x": -15.48,
+   "y": -41.51,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -15.48,
+    -39.66
+   ],
+   "arrowTip": [
+    -15.48,
+    -41.83
+   ]
+  },
+  "thief_use_bow_right_0": {
+   "x": 15.48,
+   "y": -39.78,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    15.48,
+    -41.62
+   ],
+   "arrowTip": [
+    15.48,
+    -39.45
+   ]
+  },
+  "thief_use_bow_right_1": {
+   "x": 15.54,
+   "y": -44.27,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    10.83,
+    -45.84
+   ],
+   "arrowTip": [
+    19.96,
+    -42.8
+   ]
+  },
+  "thief_use_bow_right_2": {
+   "x": 15.48,
+   "y": -48.41,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    7.27,
+    -49.61
+   ],
+   "arrowTip": [
+    22.33,
+    -47.41
+   ]
+  },
+  "thief_use_bow_right_3": {
+   "x": 15.48,
+   "y": -48.41,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    5.62,
+    -49.85
+   ],
+   "arrowTip": [
+    22.33,
+    -47.41
+   ]
+  },
+  "thief_use_bow_right_4": {
+   "x": 15.48,
+   "y": -48.41,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    3.97,
+    -50.09
+   ],
+   "arrowTip": [
+    22.33,
+    -47.41
+   ]
+  },
+  "thief_use_bow_right_5": {
+   "x": 15.48,
+   "y": -48.41,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    3.5,
+    -50.16
+   ],
+   "arrowTip": [
+    22.33,
+    -47.41
+   ]
+  },
+  "thief_use_bow_right_6": {
+   "x": 15.48,
+   "y": -48.41,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    2.94,
+    -50.24
+   ],
+   "arrowTip": [
+    11.5,
+    -48.99
+   ]
+  },
+  "thief_use_bow_right_7": {
+   "x": 15.48,
+   "y": -48.01,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    5.58,
+    -50.0
+   ],
+   "arrowTip": [
+    13.1,
+    -48.49
+   ]
+  },
+  "thief_use_bow_right_8": {
+   "x": 15.54,
+   "y": -44.27,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    11.92,
+    -45.96
+   ],
+   "arrowTip": [
+    16.17,
+    -43.98
+   ]
+  },
+  "thief_use_bow_right_9": {
+   "x": 15.48,
+   "y": -39.78,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    15.48,
+    -41.62
+   ],
+   "arrowTip": [
+    15.48,
+    -39.45
+   ]
+  },
+  "thief_use_bow_up_0": {
+   "x": 4.17,
+   "y": -43.86,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -4.71,
+    -43.86
+   ],
+   "arrowTip": [
+    5.74,
+    -43.86
+   ]
+  },
+  "thief_use_bow_up_1": {
+   "x": 7.81,
+   "y": -49.13,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    0.28,
+    -48.15
+   ],
+   "arrowTip": [
+    14.9,
+    -50.05
+   ]
+  },
+  "thief_use_bow_up_2": {
+   "x": 11.34,
+   "y": -53.99,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    5.59,
+    -52.28
+   ],
+   "arrowTip": [
+    16.13,
+    -55.41
+   ]
+  },
+  "thief_use_bow_up_3": {
+   "x": 11.34,
+   "y": -53.99,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    4.43,
+    -51.94
+   ],
+   "arrowTip": [
+    16.13,
+    -55.41
+   ]
+  },
+  "thief_use_bow_up_4": {
+   "x": 11.34,
+   "y": -53.99,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    3.28,
+    -51.6
+   ],
+   "arrowTip": [
+    16.13,
+    -55.41
+   ]
+  },
+  "thief_use_bow_up_5": {
+   "x": 11.34,
+   "y": -53.99,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    2.95,
+    -51.5
+   ],
+   "arrowTip": [
+    16.13,
+    -55.41
+   ]
+  },
+  "thief_use_bow_up_6": {
+   "x": 11.34,
+   "y": -53.99,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    2.55,
+    -51.38
+   ],
+   "arrowTip": [
+    8.55,
+    -53.16
+   ]
+  },
+  "thief_use_bow_up_7": {
+   "x": 10.98,
+   "y": -53.51,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    1.41,
+    -51.45
+   ],
+   "arrowTip": [
+    8.67,
+    -53.02
+   ]
+  },
+  "thief_use_bow_up_8": {
+   "x": 7.81,
+   "y": -49.13,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -0.3,
+    -48.38
+   ],
+   "arrowTip": [
+    9.24,
+    -49.26
+   ]
+  },
+  "thief_use_bow_up_9": {
+   "x": 4.17,
+   "y": -43.86,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -4.71,
+    -43.86
+   ],
+   "arrowTip": [
+    5.74,
+    -43.86
+   ]
+  }
+ }
+}

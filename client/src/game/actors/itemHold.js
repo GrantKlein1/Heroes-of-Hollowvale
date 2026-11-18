@@ -13,6 +13,8 @@ import {
   inhandFor,
   itemUsableBy,
   useClipNames,
+  useLayersFor,
+  holdGlowFor,
 } from '../items/registry.js'
 
 export const EFFECT_MS = 625
@@ -120,6 +122,28 @@ export function useClipFor(itemId) {
  */
 export function useGlowClipFor(itemId) {
   return getItem(itemId)?.use?.glow || null
+}
+
+/**
+ * Full-cell weapon overlay clip drawn over the body while the item is used
+ * (the lightning bow's `use_bow_weapon`). It replaces the in-hand sprite.
+ *
+ * @param {string} itemId
+ * @returns {string|null}
+ */
+export function useWeaponClipFor(itemId) {
+  return useLayersFor(itemId).weapon
+}
+
+/**
+ * Resting glow overlay clip drawn over the hero's idle hold pose
+ * (the lightning bow's `bow_hold_idle_glow`).
+ *
+ * @param {string} itemId
+ * @returns {string|null}
+ */
+export function holdGlowClipFor(itemId) {
+  return holdGlowFor(itemId)
 }
 
 /**
