@@ -4,7 +4,7 @@
  * Implements:
  * - Meta-accurate spawn offsets and release timings for Mage & Thief
  * - Mage Fireball (meta offsets from mage_cast.json within +-2 px, 15 mana cost, fly/hit atlas anims)
- * - Mage Lightning (spell_fx_v2 bolt + impact, spawned on the v2 release frame)
+ * - Mage Lightning (spell_fx_v2 bolt + impact, spawned on the v2 release frame, LIGHTNING_MANA_COST)
  * - Mage Life Leech (40% enemy HP drain, 10 s cooldown, leech orb / impact / return / absorb)
  * - Mage Mana Shield (shield_form -> shield_loop -> shield_break over mage feet origin)
  * - Mage Blink (blink_portal at departure/destination, collision-safe forward teleport)
@@ -222,6 +222,8 @@ export const SPELL_RELEASE_FRAMES = Object.freeze({
 })
 
 export const FIREBALL_MANA_COST = 15
+/** Grant-tunable. Lightning pays this before the cast. Leech, shield, and blink do not. */
+export const LIGHTNING_MANA_COST = 10
 export const MANA_REGEN_PER_SEC = 5
 export const MANA_MAX = 100
 export const LEECH_COOLDOWN_MS = 10000
@@ -513,6 +515,26 @@ export function facingToVector(facing) {
 }
 
 /**
+ * Pays a spell cost from scene mana (else session, else a full pool).
+ * A short pool notices and pays nothing. The balance never drops below 0.
+ *
+ * @param {object} scene
+ * @param {number} cost
+ * @returns {boolean}
+ */
+function trySpendMana(scene, cost) {
+  const currentMana = scene.mana ?? session.mana ?? 100
+  if (currentMana < cost) {
+    scene._notice?.('Not enough mana.')
+    return false
+  }
+  scene.mana = Math.max(0, currentMana - cost)
+  session.mana = scene.mana
+  scene._publishVitals?.(false)
+  return true
+}
+
+/**
  * Casts a Fireball projectile from the player character.
  *
  * @param {import('phaser').Scene} scene
@@ -522,18 +544,7 @@ export function facingToVector(facing) {
  */
 export function castFireball(scene, player, now = (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
   if (!scene || !player) return null
-
-  // Mana check
-  const currentMana = scene.mana ?? session.mana ?? 100
-  if (currentMana < FIREBALL_MANA_COST) {
-    scene._notice?.('Not enough mana.')
-    return null
-  }
-
-  // Deduct mana
-  scene.mana = Math.max(0, currentMana - FIREBALL_MANA_COST)
-  session.mana = scene.mana
-  scene._publishVitals?.(false)
+  if (!trySpendMana(scene, FIREBALL_MANA_COST)) return null
 
   ensureSpellAnimations(scene)
   safeSpellCast()
@@ -579,6 +590,8 @@ export function castFireball(scene, player, now = (typeof performance !== 'undef
  */
 export function castLightning(scene, player, now = (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
   if (!scene || !player) return null
+  // Charge before the bolt. A short pool spawns nothing and starts no cast.
+  if (!trySpendMana(scene, LIGHTNING_MANA_COST)) return null
 
   ensureMageSpellsGroup(scene)
   safeSpellCast()
@@ -609,6 +622,12 @@ export function armMageV2Cast(scene, player, spellId, now = (typeof performance 
 
   if (textureMissing || clipNotPlayable) {
     scene._notice?.('Spells are still loading')
+    return null
+  }
+
+  // Lightning pays before the clip is armed. Short mana: no cast, no cooldown, no clip.
+  // Leech keeps its cooldown only and does not spend mana.
+  if (spellId === 'lightning' && !trySpendMana(scene, LIGHTNING_MANA_COST)) {
     return null
   }
 
