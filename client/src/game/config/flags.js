@@ -7,10 +7,6 @@
  * - qa: boolean (true when ?qa=1 or ?qa=true)
  * - seed: number | string | null
  * - debug: boolean (true when ?debug=1 or ?debug=true)
- *
- * Follow-up: getRenderer, isBlendRenderer, getMaps, and isTiledMaps are
- * constant-returning so existing imports (Player.js) keep working. Delete
- * them once those call sites stop branching.
  */
 
 /**
@@ -84,46 +80,6 @@ export function parseFlags(search) {
  */
 export function getFlags(search) {
   return parseFlags(search)
-}
-
-/**
- * Returns the active renderer. Always 'blend' after package 3-4.
- *
- * @param {string} [search]
- * @returns {'blend'}
- */
-export function getRenderer(search) {
-  return parseFlags(search).renderer
-}
-
-/**
- * Returns true if the blend renderer is enabled.
- *
- * @param {string} [search]
- * @returns {boolean}
- */
-export function isBlendRenderer(search) {
-  return getRenderer(search) === 'blend'
-}
-
-/**
- * Returns the active maps flag. Always 'tiled' after package 3-4.
- *
- * @param {string} [search]
- * @returns {'tiled'}
- */
-export function getMaps(search) {
-  return parseFlags(search).maps
-}
-
-/**
- * Returns true if Tiled maps mode is enabled.
- *
- * @param {string} [search]
- * @returns {boolean}
- */
-export function isTiledMaps(search) {
-  return getMaps(search) === 'tiled'
 }
 
 /**

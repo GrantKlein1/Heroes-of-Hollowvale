@@ -4,7 +4,6 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
   MapLoader,
-  isTiledMapsEnabled,
   parsePropFootprint,
   resolvePropAtlasKeys,
   resolvePropFrame,
@@ -254,47 +253,6 @@ describe('Package 2-1: MapLoader & Tiled TMJ Architecture', () => {
       // Rect overlapping door_tavern (x: 224, y: 160)
       const intersecting = zones.findIntersecting({ x: 220, y: 155, width: 20, height: 20 })
       expect(intersecting.some((z) => z.name === 'door_tavern')).toBe(true)
-    })
-  })
-
-  // =========================================================================
-  // ?maps=tiled URL Flag Support
-  // =========================================================================
-  describe('Flag Control: tiled maps default on', () => {
-    it('returns true when ?maps=tiled, 1, or true is present', () => {
-      expect(isTiledMapsEnabled('?maps=tiled')).toBe(true)
-      expect(isTiledMapsEnabled('?renderer=blend&maps=tiled&seed=42')).toBe(true)
-      expect(isTiledMapsEnabled('maps=tiled')).toBe(true)
-      expect(isTiledMapsEnabled('?maps=1')).toBe(true)
-      expect(isTiledMapsEnabled('?maps=true')).toBe(true)
-    })
-
-    it('defaults on when search is omitted, empty, or has no maps param', () => {
-      const previousWindow = globalThis.window
-      delete globalThis.window
-      try {
-        expect(isTiledMapsEnabled(undefined)).toBe(true)
-        expect(isTiledMapsEnabled()).toBe(true)
-      } finally {
-        if (previousWindow === undefined) {
-          delete globalThis.window
-        } else {
-          globalThis.window = previousWindow
-        }
-      }
-      expect(isTiledMapsEnabled('')).toBe(true)
-      expect(isTiledMapsEnabled('?qa=1')).toBe(true)
-      expect(isTiledMapsEnabled('?renderer=blend')).toBe(true)
-      expect(isTiledMapsEnabled('?renderer=legacy')).toBe(true)
-      expect(isTiledMapsEnabled('?maps=')).toBe(true)
-      expect(isTiledMapsEnabled('?maps=   ')).toBe(true)
-    })
-
-    it('stays on when the removed maps opt-out is present', () => {
-      expect(isTiledMapsEnabled('?maps=legacy')).toBe(true)
-      expect(isTiledMapsEnabled('?maps=LEGACY')).toBe(true)
-      expect(isTiledMapsEnabled('?maps= Legacy ')).toBe(true)
-      expect(isTiledMapsEnabled('?qa=1&maps=legacy')).toBe(true)
     })
   })
 

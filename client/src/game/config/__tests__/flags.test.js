@@ -2,10 +2,6 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import {
   parseFlags,
   getFlags,
-  getRenderer,
-  isBlendRenderer,
-  getMaps,
-  isTiledMaps,
   isQa,
   getSeed,
   isDebug,
@@ -26,90 +22,15 @@ describe('Runtime URL Feature Flags (flags.js)', () => {
     globalThis.window = originalWindow
   })
 
-  describe('renderer flag', () => {
-    it('defaults to "blend" when no search parameters are given', () => {
-      const flags = parseFlags('')
-      expect(flags.renderer).toBe('blend')
-      expect(flags.maps).toBe('tiled')
-      expect(getRenderer('')).toBe('blend')
-      expect(isBlendRenderer('')).toBe(true)
-      expect(isTiledMaps('')).toBe(true)
-    })
+  describe('renderer and maps', () => {
+    it('ignores a renderer or maps query and stays on blend and tiled', () => {
+      const flagged = parseFlags('?renderer=legacy&maps=legacy')
+      expect(flagged.renderer).toBe('blend')
+      expect(flagged.maps).toBe('tiled')
 
-    it('reads "?renderer=blend" and returns "blend"', () => {
-      const flags = parseFlags('?renderer=blend')
-      expect(flags.renderer).toBe('blend')
-      expect(getRenderer('?renderer=blend')).toBe('blend')
-      expect(isBlendRenderer('?renderer=blend')).toBe(true)
-    })
-
-    it('handles query strings without leading "?"', () => {
-      expect(getRenderer('renderer=blend')).toBe('blend')
-      expect(isBlendRenderer('renderer=blend')).toBe(true)
-    })
-
-    it('handles case-insensitivity and whitespace for blend', () => {
-      expect(getRenderer('?renderer=BLEND')).toBe('blend')
-      expect(getRenderer('?renderer=%20blend%20')).toBe('blend')
-    })
-
-    it('ignores a legacy renderer query and stays on blend', () => {
-      const flags = parseFlags('?renderer=legacy')
-      expect(flags.renderer).toBe('blend')
-      expect(getRenderer('?renderer=legacy')).toBe('blend')
-      expect(isBlendRenderer('?renderer=legacy')).toBe(true)
-    })
-
-    it('ignores unrecognized renderer values and stays on blend', () => {
-      expect(getRenderer('?renderer=threejs')).toBe('blend')
-      expect(getRenderer('?renderer=canvas')).toBe('blend')
-      expect(getRenderer('?renderer=')).toBe('blend')
-    })
-
-    it('reads renderer from window.location.search when search parameter is omitted', () => {
-      globalThis.window = { location: { search: '?renderer=blend' } }
-      expect(getRenderer()).toBe('blend')
-      expect(isBlendRenderer()).toBe(true)
-
-      globalThis.window = { location: { search: '?renderer=legacy' } }
-      expect(getRenderer()).toBe('blend')
-      expect(isBlendRenderer()).toBe(true)
-
-      globalThis.window = { location: { search: '' } }
-      expect(getRenderer()).toBe('blend')
-      expect(isBlendRenderer()).toBe(true)
-      expect(getMaps()).toBe('tiled')
-      expect(isTiledMaps()).toBe(true)
-    })
-
-    it('falls back gracefully when window is undefined', () => {
-      delete globalThis.window
-      expect(getRenderer()).toBe('blend')
-      expect(isBlendRenderer()).toBe(true)
-      expect(getMaps()).toBe('tiled')
-      expect(isTiledMaps()).toBe(true)
-    })
-  })
-
-  describe('maps flag', () => {
-    it('defaults to "tiled" when ?maps is not provided', () => {
-      expect(getMaps('')).toBe('tiled')
-      expect(isTiledMaps('')).toBe(true)
-    })
-
-    it('ignores ?maps=legacy and stays on tiled maps', () => {
-      expect(getMaps('?maps=legacy')).toBe('tiled')
-      expect(isTiledMaps('?maps=legacy')).toBe(true)
-    })
-
-    it('reads ?maps=tiled correctly', () => {
-      expect(getMaps('?maps=tiled')).toBe('tiled')
-      expect(isTiledMaps('?maps=tiled')).toBe(true)
-    })
-
-    it('ignores other map query values and stays on tiled maps', () => {
-      expect(getMaps('?maps=custom')).toBe('tiled')
-      expect(isTiledMaps('?maps=custom')).toBe(true)
+      const plain = parseFlags('')
+      expect(plain.renderer).toBe('blend')
+      expect(plain.maps).toBe('tiled')
     })
   })
 
@@ -153,6 +74,11 @@ describe('Runtime URL Feature Flags (flags.js)', () => {
     it('returns true when ?debug=1 or ?debug=true', () => {
       expect(isDebug('?debug=1')).toBe(true)
       expect(isDebug('?debug=true')).toBe(true)
+    })
+
+    it('reads ?debug=1 from window.location.search when no search is passed', () => {
+      globalThis.window = { location: { search: '?debug=1' } }
+      expect(isDebug()).toBe(true)
     })
   })
 
