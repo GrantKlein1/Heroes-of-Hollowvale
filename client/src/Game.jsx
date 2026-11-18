@@ -15,14 +15,6 @@ import { SCENE_HINTS } from './game/sceneCatalog'
 // Simple top-down RPG prototype with two scenes: Village and Tavern
 
 const ASSETS = {
-  villageBg: PATHS.villageBg,
-  tavernBg: PATHS.tavernBg,
-  marketBg: PATHS.marketBg,
-  pathBg: PATHS.walkingPath,
-  dungeonBg: PATHS.dungeonEntrance,
-  dungeonInteriorBg: PATHS.dungeonInterior,
-  treasureBg: PATHS.hiddenTreasureRoom,
-  player: CLASS_SPRITES.knight,
   // Title background image (place in client/public/images)
   titleBg: PATHS.titleBg,
   // Title logo image (with spaces in filename)
@@ -40,6 +32,7 @@ export default function Game() {
   const vendorAudioRef = useRef(null)
   const sceneRef = useRef('village') // 'village' | 'tavern'
   const [ready, setReady] = useState(false)
+  const [loadSlow, setLoadSlow] = useState(false)
   const [scene, setScene] = useState('village')
   // Title and options overlays
   const [titleOpen, setTitleOpen] = useState(true)
@@ -1372,6 +1365,12 @@ export default function Game() {
   }, [selectedClass])
 
   useEffect(() => {
+    if (ready) return undefined
+    const timer = window.setTimeout(() => setLoadSlow(true), 12000)
+    return () => window.clearTimeout(timer)
+  }, [ready])
+
+  useEffect(() => {
     const onReady = () => setReady(true)
     const onScene = ({ scene: next } = {}) => {
       if (next) setScene(next)
@@ -1386,7 +1385,7 @@ export default function Game() {
       const overflow = grantLoot(gems || {}, items || [])
       const gemParts = []
       const g = gems || {}
-      if (g.ruby) gemParts.push(`${g.ruby} Ruby${g.ruby > 1 ? 'ies' : ''}`)
+      if (g.ruby) gemParts.push(`${g.ruby} ${g.ruby > 1 ? 'Rubies' : 'Ruby'}`)
       if (g.sapphire) gemParts.push(`${g.sapphire} Sapphire${g.sapphire > 1 ? 's' : ''}`)
       if (g.emerald) gemParts.push(`${g.emerald} Emerald${g.emerald > 1 ? 's' : ''}`)
       const itemNames = (items || []).map((it) => getItemDef(it.id).name)
@@ -1956,7 +1955,9 @@ export default function Game() {
         )}
         {!ready && (
           <div className="absolute inset-0 flex items-center justify-center text-stone-200">
-            Loading assets…
+            {loadSlow
+              ? 'Assets are still loading, so refresh the page to try again.'
+              : 'Loading assets…'}
           </div>
         )}
 
