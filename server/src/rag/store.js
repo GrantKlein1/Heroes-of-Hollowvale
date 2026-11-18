@@ -44,6 +44,22 @@ try {
 }
 
 /**
+ * Higher score first. Equal scores use chunk id ascending so a tie does not
+ * follow whichever order the candidates were built in.
+ * @param {{ score: number, id: string|number }} a
+ * @param {{ score: number, id: string|number }} b
+ * @returns {number}
+ */
+function compareScoredChunks(a, b) {
+  if (a.score !== b.score) return b.score - a.score
+  const left = String(a.id)
+  const right = String(b.id)
+  if (left < right) return -1
+  if (left > right) return 1
+  return 0
+}
+
+/**
  * Retrieve up to k candidate lore items with cosine similarity scores
  * @param {string} query
  * @param {number} k
@@ -66,7 +82,7 @@ async function retrieveCandidates(query, k = 10) {
         }
       })
       .filter(x => Number.isFinite(x.score) && x.score > 0)
-      .sort((a, b) => b.score - a.score)
+      .sort(compareScoredChunks)
       .slice(0, Math.max(1, k))
     return scored
   }
@@ -94,7 +110,7 @@ async function retrieveCandidates(query, k = 10) {
       }
     })
       .filter(x => Number.isFinite(x.score) && x.score > 0)
-      .sort((a, b) => b.score - a.score)
+      .sort(compareScoredChunks)
       .slice(0, Math.max(1, k))
     if (scored.length) {
       console.info('[RAG] HF embeddings unavailable; using token-overlap fallback')
@@ -361,6 +377,7 @@ async function retrieveLoreForTurn(query, {
 }
 
 export {
+  compareScoredChunks,
   retrieveCandidates,
   retrieveLoreForQuery,
   retrieveLoreWithShadow,
