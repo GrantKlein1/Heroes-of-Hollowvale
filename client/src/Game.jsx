@@ -151,7 +151,7 @@ export default function Game() {
   }
   // Game over overlay and killer info
   const [gameOver, setGameOver] = useState(false)
-  const [vitals, setVitals] = useState({ hp: 100, hpMax: 100, mana: 0, manaMax: 0 })
+  const [vitals, setVitals] = useState({ hp: CLASS_HP.knight, hpMax: CLASS_HP.knight, mana: 0, manaMax: 0 })
   const [activePrompt, setActivePrompt] = useState('')
   const [abilityNow, setAbilityNow] = useState(0)
   const gameOverRef = useRef(false)
@@ -314,7 +314,7 @@ export default function Game() {
     session.hpMax = hp
     session.manaMax = id === 'mage' ? 100 : 0
     session.mana = session.manaMax
-    setVitals({ hp: 100, hpMax: 100, mana: session.mana, manaMax: session.manaMax })
+    setVitals({ hp, hpMax: hp, mana: session.mana, manaMax: session.manaMax })
     setSelectedClass(id)
     setClassSelectOpen(false)
     setInventory(seedInventoryForClass(id))
@@ -2374,7 +2374,7 @@ export default function Game() {
                   session.spriteUrl = ''
                   session.equippedId = null
                   session.api?.resetRun()
-                  setVitals({ hp: 100, hpMax: 100, mana: 0, manaMax: 0 })
+                  setVitals({ hp: CLASS_HP.knight, hpMax: CLASS_HP.knight, mana: 0, manaMax: 0 })
                   setTitleOpen(true)
                   titleOpenRef.current = true
                   setClassSelectOpen(false)

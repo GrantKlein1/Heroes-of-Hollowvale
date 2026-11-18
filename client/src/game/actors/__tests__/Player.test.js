@@ -1237,3 +1237,45 @@ describe('Player Actor — Package 1-3', () => {
   })
 })
 
+
+describe('Player Actor — attack anim timeScale composition', () => {
+  const swing = (classId, name = 'attack') => {
+    const player = new Player(createMockScene(), 100, 200, classId)
+    player.anims.timeScale = 1
+    player.playAnim(name, false)
+    return player
+  }
+
+  it.each([
+    ['knight', 'attack', 1],
+    ['dwarf', 'attack', 0.75],
+    ['thief', 'attack', 1.5],
+    ['thief', 'attack_2', 1.5],
+    ['dwarf', 'walk', 1],
+  ])('keeps normal %s %s timing at %sx', (classId, name, expected) => {
+    expect(swing(classId, name).anims.timeScale).toBeCloseTo(expected, 10)
+  })
+
+  it('composes the class multiplier with an external slow-down instead of overwriting it', () => {
+    const player = new Player(createMockScene(), 100, 200, 'knight')
+    player.anims.timeScale = 0.25
+    player.playAnim('attack', false)
+    expect(player.anims.timeScale).toBeCloseTo(0.25, 10)
+
+    const dwarf = new Player(createMockScene(), 100, 200, 'dwarf')
+    dwarf.anims.timeScale = 0.25
+    dwarf.playAnim('attack', false)
+    expect(dwarf.anims.timeScale).toBeCloseTo(0.25 * 0.75, 10)
+  })
+
+  it('does not stack the class multiplier across repeated plays and removes it for non-attack clips', () => {
+    const player = new Player(createMockScene(), 100, 200, 'thief')
+    player.anims.timeScale = 0.5
+    player.playAnim('attack', false)
+    player.playAnim('attack_2', false)
+    player.playAnim('attack', false)
+    expect(player.anims.timeScale).toBeCloseTo(0.5 * 1.5, 10)
+    player.playAnim('walk', false)
+    expect(player.anims.timeScale).toBeCloseTo(0.5, 10)
+  })
+})

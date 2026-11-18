@@ -363,6 +363,25 @@ export class Player extends Actor {
   }
 
   /**
+   * Applies the class swing multiplier (dwarf 0.75x, thief 1.5x) to anims.timeScale
+   * without clobbering a slow-down set from outside (QA specs, debug tools). The
+   * last multiplier we applied is divided out to recover the external scale, then
+   * the new class multiplier is multiplied back in.
+   *
+   * @param {string} animName
+   */
+  _applyClassAnimTimeScale(animName) {
+    const classScale = attackAnimTimeScale(this.classId, animName)
+    const current = this.anims.timeScale
+    const applied = this._classAnimScale > 0 ? this._classAnimScale : 1
+    const external = typeof current === 'number' && Number.isFinite(current) && current >= 0
+      ? current / applied
+      : 1
+    this.anims.timeScale = external * classScale
+    this._classAnimScale = classScale
+  }
+
+  /**
    * Plays the directional animation for the given action type.
    *
    * @param {string} animName - 'idle' | 'walk' | 'hurt' | 'attack' | 'cast' | 'dodge' | 'block_start' | 'death'
@@ -416,7 +435,7 @@ export class Player extends Actor {
 
     if (this.anims && typeof this.anims.play === 'function') {
       this.anims.play(key, ignoreIfPlaying)
-      this.anims.timeScale = attackAnimTimeScale(this.classId, animName)
+      this._applyClassAnimTimeScale(animName)
     }
 
     if (targetSheet) {
