@@ -1270,10 +1270,11 @@ export default function Game() {
       }
       // Track keys for movement, but movement is paused when overlays are open anyway
       keysRef.current[e.key.toLowerCase()] = true
-      // prevent page scroll for arrow keys/space only when not typing into an input/textarea
-      if (!typing && ['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].includes(e.key.toLowerCase())) {
-        e.preventDefault()
-      }
+      // Do not preventDefault Arrow keys or Space. Phaser's keyboard manager
+      // ignores a keydown once defaultPrevented is set, and it already captures
+      // those keys so the page does not scroll. PhaserGame starts the game in a
+      // microtask, which registers its listener after this one. preventDefault
+      // here would swallow movement and attacks.
       // Toggle inventory with 'v' (blocked during thief vanish animation)
       if (!typing && (e.key === 'v' || e.key === 'V')) {
         if (session.classId === 'thief' && performance.now() < session.thiefVanishUntil) return
@@ -1417,6 +1418,7 @@ export default function Game() {
       setGameOver(false)
     }
     const onWheel = ({ open } = {}) => setSpellWheelOpen(!!open)
+    const onAbility = () => setAbilityNow(performance.now())
     const onVendor = () => {
       setShopOpen(true)
       markVendorActivity()
@@ -1434,6 +1436,7 @@ export default function Game() {
       eventBus.on(GameEvents.DIED, onDied),
       eventBus.on(GameEvents.RESPAWN, onRespawn),
       eventBus.on(GameEvents.SPELL_WHEEL, onWheel),
+      eventBus.on(GameEvents.ABILITY, onAbility),
       eventBus.on(GameEvents.VENDOR, onVendor),
     ]
     return () => { for (const off of offs) off() }

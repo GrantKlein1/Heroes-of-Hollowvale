@@ -352,6 +352,12 @@ export class DragonAI {
         const canPlay = typeof markerSprite.anims?.play === 'function'
           && (typeof scene?.anims?.exists !== 'function' || scene.anims.exists(animKey))
         if (canPlay) markerSprite.anims.play(animKey, true)
+        // A marker planted before dragon_fx_extra finishes loading binds to
+        // Phaser's __MISSING texture and stays in the list for the warning delay.
+        if (markerSprite?.texture?.key === '__MISSING') {
+          if (typeof markerSprite.destroy === 'function') markerSprite.destroy()
+          continue
+        }
       }
 
       this.activeMarkers.push({
