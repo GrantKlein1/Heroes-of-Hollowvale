@@ -428,6 +428,9 @@ export default class HollowvaleScene extends Phaser.Scene {
     if (now >= session.thiefVanishUntil && this._vanishArmed && session.classId === 'thief') {
       this._vanishArmed = false
       session.thiefSmokeUntil = now + 15000
+      if (this.player instanceof Player) {
+        this.player.reappear(now)
+      }
     }
   }
 
@@ -1825,7 +1828,9 @@ export default class HollowvaleScene extends Phaser.Scene {
   _present(now) {
     const vanishing = session.classId === 'thief' && now < session.thiefVanishUntil
     const smoke = session.classId === 'thief' && now < session.thiefSmokeUntil
-    const showSprite = !vanishing && (!smoke || this._attacking)
+    // Vanish window keeps the sprite up so thief_vanish_<dir> can play.
+    // Smoke still hides it (no ghost alpha) except during an attack.
+    const showSprite = vanishing || !smoke || this._attacking
     if (session.classId) this.player.setVisible(showSprite)
     if (now < (this._flashUntil || 0)) this.player.setAlpha(0.5)
     else this.player.setAlpha(1)
