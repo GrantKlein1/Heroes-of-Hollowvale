@@ -1,6 +1,6 @@
 # AS-2 v4 manifest
 AS-2 v5 visual swap (approved by Grant 2026-11-09): 6 PNGs replaced, all metadata unchanged.
-TILES-SWAP-1 (Batch 11 natural outdoor tiles, package A, approved by Grant 2026-11-18): 12 outdoor ground PNGs replaced (ash_fill, ash_ground, bridge_plank, cliff, cliff_face, cobble_road, dirt_road, forest_floor, grass, water, water_ford, water_shore); tsj, ids, collides unchanged. Byte and SHA rows below are updated for rows that exist; ash_fill, ash_ground and forest_floor have no rows in this older table.
+TILES-SWAP-1 (Batch 11 natural outdoor tiles, package A, approved by Grant 2026-11-18): 12 outdoor ground PNGs replaced (ash_fill, ash_ground, bridge_plank, cliff, cliff_face, cobble_road, dirt_road, forest_floor, grass, water, water_ford, water_shore); tsj, ids, collides unchanged. forest_floor PNG later replaced with the calmer approved-and-frozen version (Grant 2026-11-18); tsj unchanged. Byte and SHA rows below are updated for rows that exist; ash_fill and ash_ground have no rows in this older table.
 
 LOCAL art scope complete; not game-integrated or approved.
 15 tilesets,222 tile IDs,20 logical props. No character asset changes.
@@ -15,6 +15,7 @@ LOCAL art scope complete; not game-integrated or approved.
 | ground/dirt_road | 136x136 | 0..15 | 16 | none | 6802 | 18167 |
 | ground/dungeon_floor | 102x68 | 0..5 | 6 | none | 1006 | 3288 |
 | ground/dungeon_wall | 136x34 | 0..3 | 4 | none | 292 | 2568 |
+| ground/forest_floor | 136x68 | 0..7 | 8 | none | 4482 | 3743 |
 | ground/grass | 136x68 | 0..7 | 8 | none | 2982 | 3986 |
 | ground/interior_market_floor | 136x34 | 0..3 | 4 | none | 584 | 2590 |
 | ground/interior_market_wall | 136x34 | 0..3 | 4 | none | 443 | 2584 |
@@ -77,6 +78,8 @@ MANIFEST.md itself excluded to avoid self-reference.
 | ground/dungeon_floor.tsj | 3288 | aa685e7ebbb469bab852b00107efd0877ba41e4fe46d41d3f25e7aae44212a35 |
 | ground/dungeon_wall.png | 292 | b0e3a4a4705fe945dbdc21c08ba8829d8ff1242cabb73679ee8d3550906bd1ca |
 | ground/dungeon_wall.tsj | 2568 | 4358a559afc8271dddc85412e08bf479b77780f2031976b9ec5cb36102259132 |
+| ground/forest_floor.png | 4482 | 6870a3aad4750293d0c4080ef8d6428f034f9fb33c411dad38b46cbae1bcf026 |
+| ground/forest_floor.tsj | 3743 | 492bc396a3962757bb990ec019c003b332ce301f763295268943e2f068ac39e5 |
 | ground/grass.png | 2982 | 73a8f6ba400593271c6e3e5ef765a52406f283d44ea62247ee060ce699f23c64 |
 | ground/grass.tsj | 3986 | 6629ad7f81cec7c4534d15c70c0e226b6fbad71d74c923ad71ae03f773faddbb |
 | ground/interior_market_floor.png | 584 | 014905f5d28d87af37750c98b61d91f6934a0cf4ccf61340be51da887e07292d |
