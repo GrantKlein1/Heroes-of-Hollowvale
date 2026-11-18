@@ -90,9 +90,10 @@ describe('Combat Balance Constants & Formulas', () => {
         clip: 'use_eat',
       })
       expect(CONSUMABLE_EFFECTS.ale_flask).toEqual({
-        heal: 15,
+        heal: 10,
         mana: 0,
-        speedMs: 5000,
+        damageMult: 1.25,
+        durationMs: 5000,
         clip: 'use_drink',
       })
       expect(Object.isFrozen(CONSUMABLE_EFFECTS)).toBe(true)
