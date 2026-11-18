@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { rerank, warmupReranker } from '../rag/rerank.js';
-import { retrieveCandidates, retrieveLoreForQuery, retrieveLoreWithShadow } from '../rag/store.js';
+import { compareScoredChunks, retrieveCandidates, retrieveLoreForQuery, retrieveLoreWithShadow } from '../rag/store.js';
 
 const modelReady = await warmupReranker();
 const OFFLINE = 'cross-encoder model unavailable (offline)';
@@ -72,6 +72,38 @@ test(
     await assert.doesNotReject(rerank('q', ['a']));
   }
 );
+
+test('compareScoredChunks orders by score descending, then chunk id ascending', () => {
+  const higherScore = { id: 'chunk_9', score: 0.9 };
+  const lowerScore = { id: 'chunk_0', score: 0.1 };
+  assert.ok(compareScoredChunks(higherScore, lowerScore) < 0);
+  assert.ok(compareScoredChunks(lowerScore, higherScore) > 0);
+
+  const earlierId = { id: 'chunk_10', score: 0.5 };
+  const laterId = { id: 'chunk_2', score: 0.5 };
+  assert.ok(compareScoredChunks(earlierId, laterId) < 0);
+  assert.ok(compareScoredChunks(laterId, earlierId) > 0);
+  assert.equal(compareScoredChunks({ id: 'chunk_4', score: 0.5 }, { id: 'chunk_4', score: 0.5 }), 0);
+});
+
+test('retrieveCandidates returns the same chunk ids when the same query runs twice', async () => {
+  const query = 'dragon in the cavern';
+  const first = await retrieveCandidates(query, 100);
+  const second = await retrieveCandidates(query, 100);
+  const idsOf = (rows) => rows.map((row) => row.id);
+
+  assert.ok(first.length > 0, 'expected at least one lore candidate');
+  assert.deepEqual(idsOf(second), idsOf(first));
+  for (let i = 1; i < first.length; i++) {
+    assert.ok(first[i - 1].score >= first[i].score);
+    if (first[i - 1].score === first[i].score) {
+      assert.ok(
+        String(first[i - 1].id) <= String(first[i].id),
+        `tied scores should keep chunk ids ascending: ${first[i - 1].id} then ${first[i].id}`
+      );
+    }
+  }
+});
 
 test('retrieveCandidates returns candidates with cosine similarity in descending order', async () => {
   const candidates = await retrieveCandidates('dragon in the cavern', 5);
