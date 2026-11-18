@@ -70,7 +70,7 @@ test.describe('Package 1b-1: Lane D Enemies — Goblin Base & AI', () => {
       consoleLogs.push(msg.text());
     });
 
-    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1');
+    await page.goto('/?renderer=blend&maps=tiled&seed=1&qa=1&debug=1');
 
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await startButton.click();
