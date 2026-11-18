@@ -25,6 +25,7 @@ import { ACTOR_STATES } from '../actors/stateMachine.js'
 import { resolveFacing, DEFAULT_FACING } from '../actors/facing.js'
 import { Projectile } from '../actors/Projectile.js'
 import { resolveAnimWithFallback } from '../combat/fallbacks.js'
+import { isDebug } from '../config/flags.js'
 
 export const ARCHER_AI_MODES = Object.freeze({
   SPAWN: 'SPAWN',
@@ -298,7 +299,9 @@ export class ArcherAI {
         enemy.animHistory.push(alertKey)
       }
       enemy.lastAnimKey = alertKey
-      console.log(`[Enemy anim] ${alertKey}`)
+      if (isDebug()) {
+        console.log(`[Enemy anim] ${alertKey}`)
+      }
       const clipToPlay = resolveAnimWithFallback(scene, alertKey, enemy.getAnimKey?.('telegraph') || `${asset}_attack_${facing}`)
       if (clipToPlay && scene?.anims?.exists(clipToPlay)) {
         try {

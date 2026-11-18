@@ -22,6 +22,7 @@ import {
   DRAGON_METEOR_MARKER_DELAY_MS,
   METEOR_MARKER_KEY,
 } from '../combat/balance.js'
+import { isDebug } from '../config/flags.js'
 
 /**
  * Batch 7 warning marker (boss_fx_extra / dragon_fx_extra).
@@ -168,7 +169,7 @@ export class DragonAI {
       time: currentTime,
     })
 
-    if (typeof console !== 'undefined' && console.log) {
+    if (isDebug() && typeof console !== 'undefined' && console.log) {
       console.log(`[DragonAI] Transitioning P${this.phase} -> P${nextPhase} (invulnerable)`)
     }
   }
