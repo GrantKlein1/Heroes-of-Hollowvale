@@ -26,6 +26,8 @@
  *                (no telegraphSheet: the attack clip's first frames are the wind-up)
  *   loot:        { gems: [{ type, chance, count }], items: [{ id, chance, count }] }
  *   spawnWeight: 6                        // relative weight for weighted spawn tables
+ *   hpBarVisibleTop: 6                    // optional. First opaque row of idle/walk/attack/hurt
+ *                                         // in the source cell. The health bar sits 8px above it.
  * }
  */
 
@@ -38,6 +40,8 @@ const BUILTIN_ENEMY_DEFS = [
     hp: 36,
     speed: 100,
     damage: 10,
+    // First opaque row in the 64px cell. Attack down frame 0 raises the dagger to row 6.
+    hpBarVisibleTop: 6,
     sheets: {
       defaultSheet: 'goblin',
       walkSheet: 'goblin',
@@ -70,6 +74,8 @@ const BUILTIN_ENEMY_DEFS = [
     hp: 72,
     speed: 50,
     damage: 16,
+    // First opaque row in the 96px cell. Attack left frame 0 raises the club to row 15.
+    hpBarVisibleTop: 15,
     sheets: {
       assetId: 'goblin_brute',
       defaultSheet: 'goblin_brute',
@@ -104,6 +110,8 @@ const BUILTIN_ENEMY_DEFS = [
     speed: 80,
     damage: 6,
     projectile: { speed: 300, dist: 400, size: 12, damage: 10 },
+    // First opaque row in the 64px body cell. Walk down frame 2 lifts the bow to row 3.
+    hpBarVisibleTop: 3,
     sheets: {
       assetId: 'goblin_archer',
       defaultSheet: 'goblin_archer',
@@ -136,6 +144,8 @@ const BUILTIN_ENEMY_DEFS = [
     hp: 30,
     speed: 130,
     damage: 7,
+    // First opaque row in the 128px cell. Walk up frame 3 raises the ears to row 48.
+    hpBarVisibleTop: 48,
     sheets: {
       assetId: 'shadowfang_wolf',
       defaultSheet: 'shadowfang_wolf',
