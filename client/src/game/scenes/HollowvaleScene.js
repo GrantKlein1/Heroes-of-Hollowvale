@@ -2016,6 +2016,9 @@ export default class HollowvaleScene extends Phaser.Scene {
         const textH = text.height || 16
         let x = p.x + p.w / 2
         let y = p.y - 4
+        // The north gate sits under the controls bar. A label above that
+        // exit is inside the world and still hidden. Drop it under the gate.
+        if (p.action === 'wilderness' && p.y < 8) y = p.y + p.h + textH + 2
         if (this.worldW > 0) {
           x = Math.min(this.worldW - half - 4, Math.max(half + 4, x))
         }
