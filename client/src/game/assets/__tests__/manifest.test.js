@@ -153,6 +153,51 @@ describe('Manifest & Atlas Contract Validation (Package 0-3)', () => {
   });
 });
 
+describe('Ashen bolt atlas (ASHEN-BOLT-1)', () => {
+  const boltJsonPath = path.join(REPO_ROOT, 'client/public/assets/enemies/ashen_cultist/ashen_bolt.json');
+
+  it('loads ashen_bolt with the cultist and leaves the mage fireball key alone', () => {
+    const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8'));
+    const bolt = manifest.assets.ashen_cultist.sheets.ashen_bolt;
+    expect(bolt.key).toBe('ashen_bolt');
+    expect(bolt.image).toBe('assets/enemies/ashen_cultist/ashen_bolt.png');
+    expect(bolt.json).toBe('assets/enemies/ashen_cultist/ashen_bolt.json');
+    expect(bolt.anchor).toEqual({ x: 0.5, y: 0.5 });
+    expect(manifest.groups.wilderness).toContain('ashen_cultist');
+
+    const fireball = manifest.assets.mage.sheets.fireball;
+    expect(fireball.key).toBe('fireball');
+    expect(fireball.image).toBe('assets/characters/mage/fireball.png');
+    expect(fireball.json).toBe('assets/characters/mage/fireball.json');
+
+    expect(isFxAtlas('ashen_bolt', bolt.json, 'enemies')).toBe(true);
+    expect(isFxAtlas('fireball', fireball.json, 'characters')).toBe(true);
+  });
+
+  it('keeps the frozen 192x64 layout and validates without a footprint', () => {
+    const data = JSON.parse(fs.readFileSync(boltJsonPath, 'utf8'));
+    expect(data.meta.size).toEqual({ w: 192, h: 64 });
+    expect(data.meta.anims).toBeUndefined();
+    expect(Object.keys(data.frames)).toHaveLength(12);
+    for (let i = 0; i < 6; i++) {
+      expect(data.frames[`ashen_bolt_fly_${i}`].frame).toEqual({ x: i * 32, y: 0, w: 32, h: 32 });
+      expect(data.frames[`ashen_bolt_hit_${i}`].frame).toEqual({ x: i * 32, y: 32, w: 32, h: 32 });
+    }
+
+    const result = validateAtlas(boltJsonPath, {
+      sheetKey: 'ashen_bolt',
+      kind: 'enemies',
+      assetId: 'ashen_cultist',
+      jsonPath: 'assets/enemies/ashen_cultist/ashen_bolt.json',
+      manifestAnchor: { x: 0.5, y: 0.5 },
+    });
+    expect(result.errors).toEqual([]);
+    expect(result.valid).toBe(true);
+    expect(result.info.anchor).toEqual({ x: 0.5, y: 0.5, source: 'manifest.anchor' });
+    expect(result.info.frameCount).toBe(12);
+  });
+});
+
 describe('Broken Fixture Testing (Asset QA Failure Detection)', () => {
   function createValidBaseFixture() {
     return {

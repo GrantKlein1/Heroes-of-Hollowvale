@@ -1448,6 +1448,15 @@
             "x": 0.5,
             "y": 0.9271
           }
+        },
+        "ashen_bolt": {
+          "key": "ashen_bolt",
+          "image": "assets/enemies/ashen_cultist/ashen_bolt.png",
+          "json": "assets/enemies/ashen_cultist/ashen_bolt.json",
+          "anchor": {
+            "x": 0.5,
+            "y": 0.5
+          }
         }
       },
       "sidecars": []

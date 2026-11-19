@@ -68,10 +68,26 @@ test.describe('ENEMY-NEW-1: Ashen Cultist (CultistAI)', () => {
 
     await page.waitForFunction(() => {
       const scene = (window as any).__scene;
-      const bolts = (scene?.projectiles || []).filter((pr: any) => pr?.owner === 'enemy' && pr?.flyAnim === 'fireball_fly');
+      const bolts = (scene?.projectiles || []).filter((pr: any) => pr?.owner === 'enemy' && pr?.flyAnim === 'ashen_bolt_fly');
       if (bolts.length > 0) {
         const b = bolts[0];
-        (window as any).__emberBolt = { damage: b.damage, shooter: b.shooter?.enemyType, maxDist: b.maxDist };
+        const fly = scene.anims.get('ashen_bolt_fly');
+        const hit = scene.anims.get('ashen_bolt_hit');
+        (window as any).__emberBolt = {
+          damage: b.damage,
+          shooter: b.shooter?.enemyType,
+          maxDist: b.maxDist,
+          texture: b.texture?.key,
+          frame: b.frame?.name,
+          hitAnim: b.hitAnim,
+          scale: b.scaleX,
+          size: b.size,
+          flyFps: fly?.frameRate,
+          flyRepeat: fly?.repeat,
+          hitFps: hit?.frameRate,
+          hitRepeat: hit?.repeat,
+          fireballStillThere: scene.textures.exists('fireball'),
+        };
       }
       return Boolean((window as any).__emberBolt);
     }, null, { timeout: 8000 });
@@ -80,6 +96,16 @@ test.describe('ENEMY-NEW-1: Ashen Cultist (CultistAI)', () => {
     expect(bolt.shooter).toBe('ashen_cultist');
     expect(bolt.damage).toBe(10);
     expect(bolt.maxDist).toBe(420);
+    expect(bolt.texture).toBe('ashen_bolt');
+    expect(bolt.frame).toBe('ashen_bolt_fly_0');
+    expect(bolt.hitAnim).toBe('ashen_bolt_hit');
+    expect(bolt.scale).toBeCloseTo(0.7);
+    expect(bolt.size).toBe(14);
+    expect(bolt.flyFps).toBe(12);
+    expect(bolt.flyRepeat).toBe(-1);
+    expect(bolt.hitFps).toBe(14);
+    expect(bolt.hitRepeat).toBe(0);
+    expect(bolt.fireballStillThere).toBe(true);
 
     // The bolt lands: the (stationary) player loses HP.
     await page.waitForFunction((before) => (window as any).__hv.combat().hp < before, hpBefore, { timeout: 8000 });

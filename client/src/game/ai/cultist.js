@@ -8,8 +8,9 @@
  * - Throws one ember bolt per cast. The cast is the blade-swing clip. The bolt
  *   is released on the atlas hit frame (3, from meta hitFrames) and spawns at
  *   the blade tip from meta weaponTipOffsetFromFeet, per facing.
- * - Bolt art is the mage's fireball clip, scaled down. It is slower than an
- *   arrow so it can be dodged.
+ * - Bolt art is the ashen_bolt atlas (same cell layout and frame rates as the
+ *   mage fireball, its own key). Scaled down. Slower than an arrow so it can
+ *   be dodged.
  * - Melee fallback: if the player is right on top of it and it is off cooldown,
  *   it swings the blade instead (Enemy's own melee path, hit on frame 3).
  *   This is what a cornered caster does when retreat is not possible.
@@ -40,11 +41,76 @@ export const CULTIST_RELEASE_FRAME = 3
 export const CULTIST_RELEASE_ELAPSED_MS = 390
 export const CULTIST_TOTAL_ATTACK_MS = 930
 
-/** Ember bolt, drawn with the mage fireball clips from the 'fireball' atlas. */
-export const EMBER_BOLT_TEXTURE = 'fireball'
-export const EMBER_BOLT_FLY_ANIM = 'fireball_fly'
-export const EMBER_BOLT_HIT_ANIM = 'fireball_hit'
+/**
+ * Ember bolt atlas. Fly is 6 frames at 12 fps, looping. Hit is 6 frames at
+ * 14 fps, once. Those are the fireball rates in spells.js. Mage spells keep
+ * their own 'fireball' key and clips.
+ */
+export const EMBER_BOLT_TEXTURE = 'ashen_bolt'
+export const EMBER_BOLT_FLY_ANIM = 'ashen_bolt_fly'
+export const EMBER_BOLT_HIT_ANIM = 'ashen_bolt_hit'
+export const EMBER_BOLT_SPAWN_FRAME = 'ashen_bolt_fly_0'
 export const EMBER_BOLT_SCALE = 0.7
+const EMBER_BOLT_FRAMES = 6
+
+/**
+ * Frame list for one ashen bolt clip. `clip` is 'fly' or 'hit'.
+ *
+ * @param {'fly'|'hit'} clip
+ * @returns {Array<{ key: string, frame: string }>}
+ */
+function emberBoltFrames(clip) {
+  return Array.from({ length: EMBER_BOLT_FRAMES }, (_, i) => ({
+    key: EMBER_BOLT_TEXTURE,
+    frame: `ashen_bolt_${clip}_${i}`,
+  }))
+}
+
+/**
+ * Registers the bolt fly and hit clips once the atlas is in the texture cache.
+ * No-ops when the scene cannot create anims or the sheet is not loaded yet.
+ *
+ * @param {import('phaser').Scene} scene
+ * @returns {string[]} keys created on this call
+ */
+export function ensureAshenBoltAnimations(scene) {
+  if (!scene?.anims || typeof scene.anims.create !== 'function') return []
+  if (typeof scene.textures?.exists === 'function' && !scene.textures.exists(EMBER_BOLT_TEXTURE)) {
+    return []
+  }
+
+  const created = []
+  const createIfMissing = (config) => {
+    if (typeof scene.anims.exists === 'function' && scene.anims.exists(config.key)) {
+      const existing = typeof scene.anims.get === 'function' ? scene.anims.get(config.key) : null
+      if (existing && (!existing.frames || existing.frames.length === 0)) {
+        scene.anims.remove?.(config.key)
+      } else {
+        return
+      }
+    }
+    try {
+      scene.anims.create(config)
+      created.push(config.key)
+    } catch {
+      // Atlas frames are not ready yet (mock scenes, or a load still in flight).
+    }
+  }
+
+  createIfMissing({
+    key: EMBER_BOLT_FLY_ANIM,
+    frames: emberBoltFrames('fly'),
+    frameRate: 12,
+    repeat: -1,
+  })
+  createIfMissing({
+    key: EMBER_BOLT_HIT_ANIM,
+    frames: emberBoltFrames('hit'),
+    frameRate: 14,
+    repeat: 0,
+  })
+  return created
+}
 
 /** Fallback bolt spawn offsets from the feet if the atlas has no weapon tip. */
 const FALLBACK_SPAWN = Object.freeze({
@@ -185,7 +251,9 @@ export class CultistAI extends ArcherAI {
       dirY = pdy / len
     }
 
-    const bolt = new Projectile(scene, spawn.x, spawn.y, EMBER_BOLT_TEXTURE, 'fireball_fly_0', {
+    ensureAshenBoltAnimations(scene)
+
+    const bolt = new Projectile(scene, spawn.x, spawn.y, EMBER_BOLT_TEXTURE, EMBER_BOLT_SPAWN_FRAME, {
       dirX,
       dirY,
       speed: this.arrowSpeed,
