@@ -60,6 +60,12 @@ vi.mock('phaser', () => {
       return this
     }
 
+    setScale(sx, sy) {
+      this.scaleX = sx
+      this.scaleY = sy !== undefined ? sy : sx
+      return this
+    }
+
     setDepth(d) {
       this.depth = d
       return this
@@ -107,7 +113,9 @@ import { session } from '../../session.js'
 import { eventBus, GameEvents } from '../../../lib/eventBus.js'
 import { getVialThrowTiming, VIAL_THROW_COOLDOWN_MS } from '../../combat/spells.js'
 import mageSpellsV2Atlas from '../../../../public/assets/characters/mage/spells_v2/mage_spells_v2.json'
-import { getBowTiming, getBowCooldownMs, getArrowSpawnOffset, ARROW_FLY_ANIM, ARROW_HIT_ANIM } from '../../combat/bowShot.js'
+import { getBowTiming, getBowCooldownMs, getScaledArrowSpawnOffset, ARROW_FLY_ANIM, ARROW_HIT_ANIM } from '../../combat/bowShot.js'
+import { getItemAnchor } from '../itemHold.js'
+import { BOW_HAND_SCALE, ARROW_VISUAL_SCALE } from '../../items/registry.js'
 import thiefUseThrowAtlas from '../../../../public/assets/characters/thief/thief_use_throw.json'
 
 function createMockScene() {
@@ -1276,9 +1284,12 @@ describe('Player Actor — Package 1-3', () => {
       player.update(5000 + 500, 16)
       expect(mockScene.projectiles).toHaveLength(1)
       const arrow = mockScene.projectiles[0]
-      const tip = getArrowSpawnOffset(hero, 'down')
+      const tip = getScaledArrowSpawnOffset(hero, 'down')
       expect(arrow.x).toBeCloseTo(200 + tip.x, 3)
       expect(arrow.y).toBeCloseTo(300 + tip.y, 3)
+      expect(arrow.scaleX).toBeCloseTo(ARROW_VISUAL_SCALE, 5)
+      expect(arrow.size).toBe(24)
+      expect(arrow.vy).toBe(520)
       expect(arrow.flyAnim).toBe(ARROW_FLY_ANIM)
       expect(arrow.hitAnim).toBe(ARROW_HIT_ANIM)
       expect(arrow.owner).toBe('player')
@@ -1319,9 +1330,10 @@ describe('Player Actor — Package 1-3', () => {
       thief.beginBowDraw(1000)
       thief.update(1000 + 500, 16)
       const arrow = mockScene.projectiles[0]
-      const tip = getArrowSpawnOffset('thief', 'right')
+      const tip = getScaledArrowSpawnOffset('thief', 'right')
       expect(arrow.x).toBeCloseTo(40 + tip.x, 3)
       expect(arrow.y).toBeCloseTo(70 + tip.y, 3)
+      expect(arrow.vx).toBe(520)
       expect(arrow.vx).toBeGreaterThan(0)
       expect(arrow.vy).toBe(0)
     })
@@ -1348,11 +1360,17 @@ describe('Player Actor — Package 1-3', () => {
       expect(mage.itemSprite.texture.key).toBe('mage_use_bow_weapon')
       expect(mage.itemSprite.frame.name).toBe('mage_use_bow_down_5')
       expect(mage.itemSprite.visible).toBe(true)
-      expect(mage.itemSprite.x).toBe(mage.x)
-      expect(mage.itemSprite.y).toBe(mage.y)
+      const anchor = getItemAnchor('mage', 'use_bow', 'mage_use_bow_down_5')
+      expect(BOW_HAND_SCALE).toBe(1.45)
+      expect(mage.itemSprite.scaleX).toBeCloseTo(BOW_HAND_SCALE, 5)
+      expect(mage.itemSprite.x).toBeCloseTo(mage.x + anchor.x * (1 - BOW_HAND_SCALE), 3)
+      expect(mage.itemSprite.y).toBeCloseTo(mage.y + anchor.y * (1 - BOW_HAND_SCALE), 3)
       expect(mage.itemSprite.depth).toBeGreaterThan(mage.depth)
       expect(mage.glowSprite.texture.key).toBe('mage_use_bow_glow')
       expect(mage.glowSprite.frame.name).toBe('mage_use_bow_down_5')
+      expect(mage.glowSprite.scaleX).toBeCloseTo(BOW_HAND_SCALE, 5)
+      expect(mage.glowSprite.x).toBeCloseTo(mage.itemSprite.x, 3)
+      expect(mage.glowSprite.y).toBeCloseTo(mage.itemSprite.y, 3)
       expect(mage.glowSprite.depth).toBeGreaterThan(mage.itemSprite.depth)
 
       // back to the in-hand bow and the resting glow once the draw ends
@@ -1360,6 +1378,11 @@ describe('Player Actor — Package 1-3', () => {
       mage._syncItemInHandSprite()
       expect(mage.itemSprite.texture.key).toBe('items_inhand_b12')
       expect(mage.itemSprite.frame.name).toBe('lightning_bow_down')
+      const hold = getItemAnchor('mage', 'hold_idle', 'mage_hold_idle_down_0')
+      expect(mage.itemSprite.scaleX).toBeCloseTo(BOW_HAND_SCALE, 5)
+      expect(mage.itemSprite.x).toBeCloseTo(mage.x + hold.x, 3)
+      expect(mage.itemSprite.y).toBeCloseTo(mage.y + hold.y, 3)
+      expect(mage.glowSprite.scaleX).toBeCloseTo(BOW_HAND_SCALE, 5)
     })
 
     it('holds the bow with the hero hold clip and the resting glow; the dwarf uses charm_hold', () => {
@@ -1371,8 +1394,17 @@ describe('Player Actor — Package 1-3', () => {
       expect(thief.itemSprite.texture.key).toBe('items_inhand_b12')
       expect(thief.itemSprite.frame.name).toBe('lightning_bow_down')
       expect(thief.itemSprite.visible).toBe(true)
+      expect(thief.itemSprite.scaleX).toBeCloseTo(BOW_HAND_SCALE, 5)
       expect(thief.glowSprite.texture.key).toBe('thief_bow_hold_idle_glow')
       expect(thief.glowSprite.frame.name).toBe('thief_bow_hold_idle_glow_down_0')
+      expect(thief.glowSprite.scaleX).toBeCloseTo(BOW_HAND_SCALE, 5)
+      expect(thief.glowSprite.depth).toBeGreaterThan(thief.itemSprite.depth)
+
+      thief.facing = 'left'
+      thief.anims.currentFrame = { frame: { name: 'thief_hold_idle_left_0' } }
+      thief._syncItemInHandSprite()
+      expect(thief.itemSprite.depth).toBeLessThan(thief.depth)
+      expect(thief.itemSprite.scaleX).toBeCloseTo(BOW_HAND_SCALE, 5)
 
       const dwarf = new Player(mockScene, 10, 10, 'dwarf')
       session.classId = 'dwarf'

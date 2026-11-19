@@ -26,6 +26,11 @@ vi.mock('phaser', () => {
       this.originY = y !== undefined ? y : x
       return this
     }
+    setScale(sx, sy) {
+      this.scaleX = sx
+      this.scaleY = sy !== undefined ? sy : sx
+      return this
+    }
     setDepth(d) {
       this.depth = d
       return this
@@ -83,10 +88,13 @@ vi.mock('phaser', () => {
   }
 })
 
+import { getItemAnchor } from '../../actors/itemHold.js'
+import { ARROW_VISUAL_SCALE, BOW_HAND_SCALE } from '../../items/registry.js'
 import {
   spawnLightningArrow,
   ensureBowAnimations,
   getArrowSpawnOffset,
+  getScaledArrowSpawnOffset,
   getBowTiming,
   ARROW_FLY_ANIM,
   ARROW_HIT_ANIM,
@@ -114,6 +122,20 @@ describe('lightning arrow (BOW-1)', () => {
     expect(getBowTiming()).toEqual({ releaseFrame: 6, releaseMs: 500, durationMs: 833, frames: 10 })
   })
 
+  it('moves the release tip out with the enlarged bow and leaves the grip put', () => {
+    const facing = 'right'
+    const raw = getArrowSpawnOffset('knight', facing)
+    const scaled = getScaledArrowSpawnOffset('knight', facing)
+    const anchor = getItemAnchor('knight', 'use_bow', 'knight_use_bow_right_6')
+    expect(BOW_HAND_SCALE).toBe(1.45)
+    expect(scaled.x).toBeCloseTo(anchor.x + (raw.x - anchor.x) * BOW_HAND_SCALE, 4)
+    expect(scaled.y).toBeCloseTo(anchor.y + (raw.y - anchor.y) * BOW_HAND_SCALE, 4)
+    expect(Math.hypot(scaled.x - anchor.x, scaled.y - anchor.y)).toBeCloseTo(
+      Math.hypot(raw.x - anchor.x, raw.y - anchor.y) * BOW_HAND_SCALE,
+      4,
+    )
+  })
+
   it.each([
     ['down', 0, 1],
     ['up', 0, -1],
@@ -122,7 +144,7 @@ describe('lightning arrow (BOW-1)', () => {
   ])('spawns tip-first facing %s with the registry numbers and the frame-6 arrow tip', (facing, dx, dy) => {
     const player = { x: 300, y: 400, classId: 'knight', scaleX: 1 }
     const arrow = spawnLightningArrow(scene, player, facing)
-    const tip = getArrowSpawnOffset('knight', facing)
+    const tip = getScaledArrowSpawnOffset('knight', facing)
     expect(scene.projectiles).toEqual([arrow])
     expect(arrow.texture.key).toBe(ARROW_TEXTURE)
     expect(arrow.x).toBeCloseTo(300 + tip.x, 3)
@@ -130,6 +152,12 @@ describe('lightning arrow (BOW-1)', () => {
     expect(arrow.vx).toBe(dx * 520)
     expect(arrow.vy).toBe(dy * 520)
     expect(arrow.maxDist).toBe(360)
+    expect(arrow.size).toBe(24)
+    expect(arrow.w).toBe(24)
+    expect(arrow.h).toBe(24)
+    expect(arrow.scaleX).toBeCloseTo(ARROW_VISUAL_SCALE, 5)
+    expect(arrow.scaleY).toBeCloseTo(ARROW_VISUAL_SCALE, 5)
+    expect(arrow.visualScale).toBe(ARROW_VISUAL_SCALE)
     expect(arrow.damage).toBe(14)
     expect(arrow.owner).toBe('player')
     expect(arrow.originX).toBeCloseTo(76 / 96, 4)

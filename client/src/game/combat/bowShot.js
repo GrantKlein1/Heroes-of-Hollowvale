@@ -15,7 +15,7 @@
 
 import { Projectile } from '../actors/Projectile.js'
 import { getItemAnchor } from '../actors/itemHold.js'
-import { getItem, isRangedWeapon } from '../items/registry.js'
+import { getItem, inhandScaleFor, isRangedWeapon } from '../items/registry.js'
 import { onSpellCast, onSpellImpact } from '../MainGameScene.js'
 import { getAnimationFrameIndex } from './hitSystem.js'
 import { facingToVector } from './spells.js'
@@ -77,6 +77,27 @@ export function getArrowSpawnOffset(classId, facing = 'down') {
   const tip = anchor?.arrowTip
   if (Array.isArray(tip) && tip.length >= 2) return { x: tip[0], y: tip[1] }
   return { x: 0, y: -44 }
+}
+
+/**
+ * Arrow spawn after the drawn bow is scaled around the grip. The tip moves out
+ * with the bow; the grip itself does not.
+ *
+ * @param {string} classId
+ * @param {string} facing
+ * @returns {{ x: number, y: number }}
+ */
+export function getScaledArrowSpawnOffset(classId, facing = 'down') {
+  const tip = getArrowSpawnOffset(classId, facing)
+  const { releaseFrame } = getBowTiming()
+  const anchor = getItemAnchor(classId, BOW_CLIP, `${classId}_use_bow_${facing}_${releaseFrame}`)
+  const bowScale = inhandScaleFor(BOW_ITEM_ID)
+  const gx = typeof anchor?.x === 'number' ? anchor.x : 0
+  const gy = typeof anchor?.y === 'number' ? anchor.y : 0
+  return {
+    x: gx + (tip.x - gx) * bowScale,
+    y: gy + (tip.y - gy) * bowScale,
+  }
 }
 
 /**
@@ -195,7 +216,7 @@ export function spawnLightningArrow(scene, player, facing) {
   if (!scene || !player || !shot) return null
   ensureBowFx(scene)
   const [dx, dy] = facingToVector(facing)
-  const offset = getArrowSpawnOffset(player.classId, facing)
+  const offset = getScaledArrowSpawnOffset(player.classId, facing)
   const scale = player.scaleX || 1
   const proj = new Projectile(scene, player.x + offset.x * scale, player.y + offset.y * scale, ARROW_TEXTURE, `${ARROW_TEXTURE}_0`, {
     dirX: dx,
@@ -207,8 +228,10 @@ export function spawnLightningArrow(scene, player, facing) {
     damage: item.weapon.damage,
     impact: 'lightning',
     // The arrowhead is at x 76 of the 96 px cell: pin it to the spawn point and fly it tip first.
+    // visualScale shrinks the sprite around that tip. size (the hit box) stays as registered.
     origin: { x: shot.tipX ?? 0.5, y: 0.5 },
     hitOrigin: { x: 0.5, y: 0.5 },
+    visualScale: shot.visualScale,
     flyAnim: ARROW_FLY_ANIM,
     hitAnim: ARROW_HIT_ANIM,
     hitOffsetY: ARROW_HIT_DROP_PX * scale,

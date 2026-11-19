@@ -48,7 +48,7 @@ import {
   inhandOriginFor,
 } from './itemHold.js'
 import { BOW_ITEM_ID, BOW_CLIP, armBowShot, tickBowShot, cancelBowShot, getBowTiming } from '../combat/bowShot.js'
-import { itemUsableBy } from '../items/registry.js'
+import { inhandScaleFor, itemUsableBy } from '../items/registry.js'
 import {
   castFireball,
   castLightning,
@@ -75,6 +75,27 @@ import {
   calculateBlockMitigation,
 } from '../combat/block.js'
 import { attackAnimTimeScale } from '../combat/balance.js'
+
+/**
+ * Feet-origin pose for a full-cell overlay scaled around the grip anchor.
+ * itemScale 1 keeps the sprite on the body. Above 1, the grip pixel stays at the hand.
+ *
+ * @param {number} feetX
+ * @param {number} feetY
+ * @param {number} playerScale
+ * @param {number} itemScale
+ * @param {{ x?: number, y?: number } | null | undefined} anchor
+ * @returns {{ scale: number, x: number, y: number }}
+ */
+function poseAroundGrip(feetX, feetY, playerScale, itemScale, anchor) {
+  const ax = anchor && typeof anchor.x === 'number' ? anchor.x : 0
+  const ay = anchor && typeof anchor.y === 'number' ? anchor.y : 0
+  return {
+    scale: playerScale * itemScale,
+    x: feetX + ax * playerScale * (1 - itemScale),
+    y: feetY + ay * playerScale * (1 - itemScale),
+  }
+}
 
 export const CLASS_SHEETS = Object.freeze({
   knight: {
@@ -1379,6 +1400,7 @@ export class Player extends Actor {
           setAngle(deg) { this.rotation = deg * (Math.PI / 180); return this; },
           setDepth(d) { this.depth = d; return this; },
           setPosition(px, py) { this.x = px; this.y = py; return this; },
+          setScale(sx, sy) { this.scaleX = sx; this.scaleY = sy ?? sx; return this; },
           setVisible(v) { this.visible = v; return this; },
           destroy() { this.visible = false; },
         }
@@ -1511,17 +1533,17 @@ export class Player extends Actor {
       sprite.visible = true
     }
 
-    if (this._itemSpriteScaled && typeof sprite.setScale === 'function') {
-      sprite.setScale(1)
-      this._itemSpriteScaled = false
-    }
+    // The in-hand cell's origin is the grip, so scaling it does not move the hand.
+    const itemScale = inhandScaleFor(activeItemId)
+    if (typeof sprite.setScale === 'function') sprite.setScale(scale * itemScale)
+    this._itemSpriteScaled = itemScale !== 1
 
     const glowClip = isUsing ? useGlowClipFor(activeItemId) : null
     const holdGlow = !isUsing && !holdMoving ? holdGlowClipFor(activeItemId) : null
     if (glowClip) {
       this._syncGlowSprite(glowClip, playerFrameName, scale)
     } else if (holdGlow) {
-      this._syncGlowSprite(holdGlow, `${this.classId}_${holdGlow}_${this.facing}_0`, scale)
+      this._syncGlowSprite(holdGlow, `${this.classId}_${holdGlow}_${this.facing}_0`, scale, itemScale, anchor)
     } else {
       this._hideGlowSprite()
     }
@@ -1549,6 +1571,10 @@ export class Player extends Actor {
       frameName = `${frameStem}_${this.facing}_0`
     }
     const scale = this.scaleX !== undefined ? this.scaleX : (this.scale !== undefined ? this.scale : 1)
+    const itemScale = inhandScaleFor(itemId)
+    const anchor = getItemAnchor(this.classId, useClip, frameName)
+    // Scale the baked bow around the grip so the hand stays put. Depth stays body, weapon, glow.
+    const pose = poseAroundGrip(this.x, this.y, scale, itemScale, anchor)
 
     if (sprite.texture?.key !== textureKey && typeof sprite.setTexture === 'function') {
       sprite.setTexture(textureKey, frameName)
@@ -1557,10 +1583,10 @@ export class Player extends Actor {
     }
     if (typeof sprite.setOrigin === 'function') sprite.setOrigin(this.originX ?? 0.5, this.originY ?? 0.5)
     else { sprite.originX = this.originX ?? 0.5; sprite.originY = this.originY ?? 0.5 }
-    if (typeof sprite.setScale === 'function') sprite.setScale(scale)
+    if (typeof sprite.setScale === 'function') sprite.setScale(pose.scale)
     this._itemSpriteScaled = true
-    if (typeof sprite.setPosition === 'function') sprite.setPosition(this.x, this.y)
-    else { sprite.x = this.x; sprite.y = this.y }
+    if (typeof sprite.setPosition === 'function') sprite.setPosition(pose.x, pose.y)
+    else { sprite.x = pose.x; sprite.y = pose.y }
     if (typeof sprite.setAngle === 'function') sprite.setAngle(0)
     else sprite.rotation = 0
     const depth = (this.depth ?? 0) + 1
@@ -1568,10 +1594,10 @@ export class Player extends Actor {
     else sprite.depth = depth
     if (typeof sprite.setVisible === 'function') sprite.setVisible(true)
     else sprite.visible = true
-    this._lastAnchor = getItemAnchor(this.classId, useClip, frameName) || this._lastAnchor
+    this._lastAnchor = anchor || this._lastAnchor
 
     const glowClip = useGlowClipFor(itemId)
-    if (glowClip) this._syncGlowSprite(glowClip, frameName, scale)
+    if (glowClip) this._syncGlowSprite(glowClip, frameName, scale, itemScale, anchor)
     else this._hideGlowSprite()
     return true
   }
@@ -1584,8 +1610,10 @@ export class Player extends Actor {
    * @param {string} glowClip - e.g. 'use_charm_glow'
    * @param {string} bodyFrameName - current body frame, e.g. 'knight_use_charm_down_10'
    * @param {number} scale
+   * @param {number} [itemScale=1] extra scale around the grip (the lightning bow)
+   * @param {{ x?: number, y?: number } | null} [anchor=null]
    */
-  _syncGlowSprite(glowClip, bodyFrameName, scale) {
+  _syncGlowSprite(glowClip, bodyFrameName, scale, itemScale = 1, anchor = null) {
     const textureKey = `${this.classId}_${glowClip}`
     const textures = this.scene?.textures
     if (typeof textures?.exists === 'function' && !textures.exists(textureKey)) {
@@ -1617,10 +1645,11 @@ export class Player extends Actor {
     } else if (typeof glow.setFrame === 'function') {
       glow.setFrame(bodyFrameName)
     }
+    const pose = poseAroundGrip(this.x, this.y, scale, itemScale, anchor)
     if (typeof glow.setOrigin === 'function') glow.setOrigin(this.originX ?? 0.5, this.originY ?? 0.5)
-    if (typeof glow.setScale === 'function') glow.setScale(scale)
-    if (typeof glow.setPosition === 'function') glow.setPosition(this.x, this.y)
-    else { glow.x = this.x; glow.y = this.y }
+    if (typeof glow.setScale === 'function') glow.setScale(pose.scale)
+    if (typeof glow.setPosition === 'function') glow.setPosition(pose.x, pose.y)
+    else { glow.x = pose.x; glow.y = pose.y }
     // Above the body (depth) and above the item layer (depth + 1 when in front).
     if (typeof glow.setDepth === 'function') glow.setDepth((this.depth ?? 0) + 2)
     else glow.depth = (this.depth ?? 0) + 2
