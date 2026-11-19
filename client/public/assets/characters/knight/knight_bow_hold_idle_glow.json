@@ -1,0 +1,178 @@
+{
+ "frames": {
+  "knight_bow_hold_idle_glow_down_0": {
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "knight_bow_hold_idle_glow_left_0": {
+   "frame": {
+    "x": 0,
+    "y": 96,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "knight_bow_hold_idle_glow_right_0": {
+   "frame": {
+    "x": 0,
+    "y": 192,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  },
+  "knight_bow_hold_idle_glow_up_0": {
+   "frame": {
+    "x": 0,
+    "y": 288,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270833333333334
+   }
+  }
+ },
+ "meta": {
+  "app": "items_b12/scripts/make_bow_glow.py",
+  "version": "0.2-phase1",
+  "image": "knight_bow_hold_idle_glow.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 64,
+   "h": 384
+  },
+  "scale": "1",
+  "pxPerUnit": 36.923,
+  "origin": {
+   "x": 0.5,
+   "y": 0.9271
+  },
+  "propCameraDegFromHorizontal": 12,
+  "rows": [
+   "down",
+   "left",
+   "right",
+   "up"
+  ],
+  "note": "Phase 1: 4 facings. Binary alpha, palette colours only. Overlay drawn above body and weapon layer.",
+  "footprint": {
+   "x": -12,
+   "y": -4,
+   "w": 23,
+   "h": 7,
+   "shape": "ellipse",
+   "note": "collision footprint centred on feet"
+  },
+  "hurtbox": {
+   "x": -14,
+   "y": -37,
+   "w": 28,
+   "h": 37,
+   "note": "body hurtbox, bottom on feet"
+  },
+  "hand": "hand.R",
+  "anchorsFile": "knight_use_bow_anchors.json",
+  "anims": {
+   "hold_idle_glow": {
+    "frames": 1,
+    "fps": 1,
+    "loop": true,
+    "playback": "loop",
+    "durationMs": 1000,
+    "durations": [
+     1000
+    ],
+    "note": "resting lightning string + faint runes for the hold; draw on the in-hand bow",
+    "cell": [
+     64,
+     96
+    ],
+    "origin": [
+     0.5,
+     0.9271
+    ],
+    "directions": [
+     "down",
+     "left",
+     "right",
+     "up"
+    ],
+    "frameNames": "knight_bow_hold_idle_glow_<dir>_<i>"
+   }
+  },
+  "weapon": "sword hidden (Guard, Grip, Pommel, Blade) all frames; SHIELD (Shield, ShieldRim, Boss) stowed/hidden f1-f8 while the left arm draws the string (visible f0/f9 == hold_idle)",
+  "clip": "hold_idle_glow",
+  "colors": [
+   "rune_lt",
+   "rune",
+   "bolt_wh",
+   "bolt",
+   "bolt_dk"
+  ]
+ }
+}

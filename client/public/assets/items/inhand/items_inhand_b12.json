@@ -1,0 +1,168 @@
+{
+ "frames": {
+  "lightning_bow_down": {
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   }
+  },
+  "lightning_bow_left": {
+   "frame": {
+    "x": 48,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   }
+  },
+  "lightning_bow_right": {
+   "frame": {
+    "x": 96,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   }
+  },
+  "lightning_bow_up": {
+   "frame": {
+    "x": 144,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   }
+  }
+ },
+ "meta": {
+  "app": "items_b12/scripts/pack_bow_item.py",
+  "version": "0.1-sample",
+  "image": "items_inhand_b12.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 192,
+   "h": 48
+  },
+  "scale": "1",
+  "pxPerUnit": 36.923,
+  "propCameraDegFromHorizontal": 12,
+  "cell": [
+   48,
+   48
+  ],
+  "itemCells": {
+   "lightning_bow": [
+    48,
+    48
+   ]
+  },
+  "rows": [
+   "lightning_bow"
+  ],
+  "cols": [
+   "down",
+   "left",
+   "right",
+   "up"
+  ],
+  "pivots": {
+   "lightning_bow_down": {
+    "x": 24.0,
+    "y": 24.0
+   },
+   "lightning_bow_left": {
+    "x": 24.0,
+    "y": 24.0
+   },
+   "lightning_bow_right": {
+    "x": 24.0,
+    "y": 24.0
+   },
+   "lightning_bow_up": {
+    "x": 24.0,
+    "y": 24.0
+   }
+  },
+  "ids": [
+   "lightning_bow"
+  ],
+  "icons": {
+   "dir": "runtime/icons",
+   "size": [
+    1024,
+    1024
+   ],
+   "format": "PNG RGBA",
+   "nativeCell": 64,
+   "native": "frames/icons/<id>_64.png",
+   "upscale": "nearest x16 then gaussian alpha sigma 0.82 (soft edge like main)",
+   "ids": [
+    "lightning_bow"
+   ]
+  },
+  "pipeline": "EEVEE 1-sample toon + inverted-hull, same camera and PPU as the heroes (B9/B10/B11)"
+ }
+}

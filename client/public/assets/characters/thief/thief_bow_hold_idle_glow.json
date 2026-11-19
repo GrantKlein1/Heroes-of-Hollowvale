@@ -1,0 +1,183 @@
+{
+ "frames": {
+  "thief_bow_hold_idle_glow_down_0": {
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270999999999999
+   }
+  },
+  "thief_bow_hold_idle_glow_left_0": {
+   "frame": {
+    "x": 0,
+    "y": 96,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270999999999999
+   }
+  },
+  "thief_bow_hold_idle_glow_right_0": {
+   "frame": {
+    "x": 0,
+    "y": 192,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270999999999999
+   }
+  },
+  "thief_bow_hold_idle_glow_up_0": {
+   "frame": {
+    "x": 0,
+    "y": 288,
+    "w": 64,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 96
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9270999999999999
+   }
+  }
+ },
+ "meta": {
+  "app": "items_b12/scripts/make_bow_glow.py",
+  "version": "0.2-phase1",
+  "image": "thief_bow_hold_idle_glow.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 64,
+   "h": 384
+  },
+  "scale": "1",
+  "pxPerUnit": 36.923,
+  "origin": {
+   "x": 0.5,
+   "y": 0.9271
+  },
+  "propCameraDegFromHorizontal": 12,
+  "cell": {
+   "w": 64,
+   "h": 96
+  },
+  "pivotRowPx": 89.0016,
+  "rows": [
+   "down",
+   "left",
+   "right",
+   "up"
+  ],
+  "note": "Phase 1: 4 facings. Binary alpha, palette colours only. Overlay drawn above body and weapon layer.",
+  "footprint": {
+   "x": -9,
+   "y": -3,
+   "w": 18,
+   "h": 5,
+   "shape": "ellipse",
+   "note": "collision footprint centred on feet"
+  },
+  "hurtbox": {
+   "x": -11,
+   "y": -32,
+   "w": 22,
+   "h": 32,
+   "note": "body hurtbox, bottom on feet"
+  },
+  "hand": "hand.R",
+  "anchorsFile": "thief_use_bow_anchors.json",
+  "weapon": "right dagger hidden (Dagger.R, Guard.R) all frames; LEFT dagger (Dagger.L, Guard.L) hidden f1-f8 while the hand draws the string (visible f0/f9 == hold_idle)",
+  "anims": {
+   "hold_idle_glow": {
+    "frames": 1,
+    "fps": 1,
+    "loop": true,
+    "playback": "loop",
+    "directions": [
+     "down",
+     "left",
+     "right",
+     "up"
+    ],
+    "frameNames": "thief_bow_hold_idle_glow_<dir>_<i>",
+    "durationMs": 1000,
+    "durations": [
+     1000
+    ],
+    "cell": [
+     64,
+     96
+    ],
+    "origin": [
+     0.5,
+     0.9271
+    ],
+    "note": "resting lightning string + faint runes for the hold; draw on the in-hand bow"
+   }
+  },
+  "clip": "hold_idle_glow",
+  "colors": [
+   "rune_lt",
+   "rune",
+   "bolt_wh",
+   "bolt",
+   "bolt_dk"
+  ]
+ }
+}

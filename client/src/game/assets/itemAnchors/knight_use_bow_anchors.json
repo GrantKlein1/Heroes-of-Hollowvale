@@ -1,0 +1,593 @@
+{
+ "actor": "knight",
+ "clip": "use_bow",
+ "cell": [
+  64,
+  96
+ ],
+ "origin": {
+  "x": 0.5,
+  "y": 0.9271
+ },
+ "pivotPx": [
+  32.0,
+  89.0016
+ ],
+ "hand": "hand.R",
+ "units": "px from feet origin, +y down",
+ "rotation": "degrees, 0=item upright (cork/stem up), positive clockwise on screen",
+ "layer": "front|behind; up is forced front so the item reads",
+ "format": "{x, y, rotation, layer}",
+ "layerLock": {
+  "down": "front",
+  "left": "front",
+  "right": "front",
+  "up": "front"
+ },
+ "fps": 12,
+ "framesCount": 10,
+ "effectFrame": 6,
+ "note": "grip = bow-hand position (px from feet, +y down) for reference; the bow is baked in knight_use_bow_weapon.png (do not composite the in-hand sprite during use_bow). nock/arrowTip = arrow spawn reference (arrow spawn = f6 arrowTip). Layer is always front: the weapon layer was rendered with the body as holdout, so true depth is already in the pixels.",
+ "frames": {
+  "knight_use_bow_down_0": {
+   "x": -4.35,
+   "y": -40.76,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    4.54,
+    -40.76
+   ],
+   "arrowTip": [
+    -5.91,
+    -40.76
+   ]
+  },
+  "knight_use_bow_down_1": {
+   "x": -8.8,
+   "y": -44.63,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -1.26,
+    -45.61
+   ],
+   "arrowTip": [
+    -15.89,
+    -43.71
+   ]
+  },
+  "knight_use_bow_down_2": {
+   "x": -13.09,
+   "y": -48.15,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -7.33,
+    -49.86
+   ],
+   "arrowTip": [
+    -17.88,
+    -46.72
+   ]
+  },
+  "knight_use_bow_down_3": {
+   "x": -13.09,
+   "y": -48.15,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -6.18,
+    -50.2
+   ],
+   "arrowTip": [
+    -17.88,
+    -46.72
+   ]
+  },
+  "knight_use_bow_down_4": {
+   "x": -13.09,
+   "y": -48.15,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -5.03,
+    -50.54
+   ],
+   "arrowTip": [
+    -17.88,
+    -46.72
+   ]
+  },
+  "knight_use_bow_down_5": {
+   "x": -13.09,
+   "y": -48.15,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -4.7,
+    -50.64
+   ],
+   "arrowTip": [
+    -17.88,
+    -46.72
+   ]
+  },
+  "knight_use_bow_down_6": {
+   "x": -13.09,
+   "y": -48.15,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -4.3,
+    -50.76
+   ],
+   "arrowTip": [
+    -10.29,
+    -48.98
+   ]
+  },
+  "knight_use_bow_down_7": {
+   "x": -12.64,
+   "y": -47.8,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -3.08,
+    -49.86
+   ],
+   "arrowTip": [
+    -10.34,
+    -48.3
+   ]
+  },
+  "knight_use_bow_down_8": {
+   "x": -8.8,
+   "y": -44.63,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -0.68,
+    -45.38
+   ],
+   "arrowTip": [
+    -10.23,
+    -44.5
+   ]
+  },
+  "knight_use_bow_down_9": {
+   "x": -4.35,
+   "y": -40.76,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    4.54,
+    -40.76
+   ],
+   "arrowTip": [
+    -5.91,
+    -40.76
+   ]
+  },
+  "knight_use_bow_left_0": {
+   "x": -13.7,
+   "y": -44.51,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -13.7,
+    -42.67
+   ],
+   "arrowTip": [
+    -13.7,
+    -44.84
+   ]
+  },
+  "knight_use_bow_left_1": {
+   "x": -15.03,
+   "y": -49.43,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -10.32,
+    -47.87
+   ],
+   "arrowTip": [
+    -19.46,
+    -50.91
+   ]
+  },
+  "knight_use_bow_left_2": {
+   "x": -16.3,
+   "y": -53.98,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -8.08,
+    -52.78
+   ],
+   "arrowTip": [
+    -23.15,
+    -54.98
+   ]
+  },
+  "knight_use_bow_left_3": {
+   "x": -16.3,
+   "y": -53.98,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -6.43,
+    -52.54
+   ],
+   "arrowTip": [
+    -23.15,
+    -54.98
+   ]
+  },
+  "knight_use_bow_left_4": {
+   "x": -16.3,
+   "y": -53.98,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -4.79,
+    -52.3
+   ],
+   "arrowTip": [
+    -23.15,
+    -54.98
+   ]
+  },
+  "knight_use_bow_left_5": {
+   "x": -16.3,
+   "y": -53.98,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -4.32,
+    -52.24
+   ],
+   "arrowTip": [
+    -23.15,
+    -54.98
+   ]
+  },
+  "knight_use_bow_left_6": {
+   "x": -16.3,
+   "y": -53.98,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -3.75,
+    -52.15
+   ],
+   "arrowTip": [
+    -12.31,
+    -53.4
+   ]
+  },
+  "knight_use_bow_left_7": {
+   "x": -16.16,
+   "y": -53.53,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -6.26,
+    -51.55
+   ],
+   "arrowTip": [
+    -13.77,
+    -53.05
+   ]
+  },
+  "knight_use_bow_left_8": {
+   "x": -15.03,
+   "y": -49.43,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -11.41,
+    -47.75
+   ],
+   "arrowTip": [
+    -15.66,
+    -49.73
+   ]
+  },
+  "knight_use_bow_left_9": {
+   "x": -13.7,
+   "y": -44.51,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -13.7,
+    -42.67
+   ],
+   "arrowTip": [
+    -13.7,
+    -44.84
+   ]
+  },
+  "knight_use_bow_right_0": {
+   "x": 13.7,
+   "y": -42.71,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    13.7,
+    -44.55
+   ],
+   "arrowTip": [
+    13.7,
+    -42.38
+   ]
+  },
+  "knight_use_bow_right_1": {
+   "x": 15.03,
+   "y": -46.1,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    10.32,
+    -47.66
+   ],
+   "arrowTip": [
+    19.46,
+    -44.62
+   ]
+  },
+  "knight_use_bow_right_2": {
+   "x": 16.3,
+   "y": -49.2,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    8.08,
+    -50.4
+   ],
+   "arrowTip": [
+    23.15,
+    -48.21
+   ]
+  },
+  "knight_use_bow_right_3": {
+   "x": 16.3,
+   "y": -49.2,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    6.43,
+    -50.64
+   ],
+   "arrowTip": [
+    23.15,
+    -48.21
+   ]
+  },
+  "knight_use_bow_right_4": {
+   "x": 16.3,
+   "y": -49.2,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    4.79,
+    -50.88
+   ],
+   "arrowTip": [
+    23.15,
+    -48.21
+   ]
+  },
+  "knight_use_bow_right_5": {
+   "x": 16.3,
+   "y": -49.2,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    4.32,
+    -50.95
+   ],
+   "arrowTip": [
+    23.15,
+    -48.21
+   ]
+  },
+  "knight_use_bow_right_6": {
+   "x": 16.3,
+   "y": -49.2,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    3.75,
+    -51.03
+   ],
+   "arrowTip": [
+    12.31,
+    -49.79
+   ]
+  },
+  "knight_use_bow_right_7": {
+   "x": 16.16,
+   "y": -48.9,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    6.26,
+    -50.89
+   ],
+   "arrowTip": [
+    13.77,
+    -49.38
+   ]
+  },
+  "knight_use_bow_right_8": {
+   "x": 15.03,
+   "y": -46.1,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    11.41,
+    -47.78
+   ],
+   "arrowTip": [
+    15.66,
+    -45.8
+   ]
+  },
+  "knight_use_bow_right_9": {
+   "x": 13.7,
+   "y": -42.71,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    13.7,
+    -44.55
+   ],
+   "arrowTip": [
+    13.7,
+    -42.38
+   ]
+  },
+  "knight_use_bow_up_0": {
+   "x": 4.35,
+   "y": -46.46,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -4.54,
+    -46.46
+   ],
+   "arrowTip": [
+    5.91,
+    -46.46
+   ]
+  },
+  "knight_use_bow_up_1": {
+   "x": 8.03,
+   "y": -50.89,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    0.49,
+    -49.91
+   ],
+   "arrowTip": [
+    15.12,
+    -51.81
+   ]
+  },
+  "knight_use_bow_up_2": {
+   "x": 11.49,
+   "y": -54.98,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    5.73,
+    -53.27
+   ],
+   "arrowTip": [
+    16.28,
+    -56.4
+   ]
+  },
+  "knight_use_bow_up_3": {
+   "x": 11.49,
+   "y": -54.98,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    4.58,
+    -52.93
+   ],
+   "arrowTip": [
+    16.28,
+    -56.4
+   ]
+  },
+  "knight_use_bow_up_4": {
+   "x": 11.49,
+   "y": -54.98,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    3.42,
+    -52.59
+   ],
+   "arrowTip": [
+    16.28,
+    -56.4
+   ]
+  },
+  "knight_use_bow_up_5": {
+   "x": 11.49,
+   "y": -54.98,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    3.1,
+    -52.49
+   ],
+   "arrowTip": [
+    16.28,
+    -56.4
+   ]
+  },
+  "knight_use_bow_up_6": {
+   "x": 11.49,
+   "y": -54.98,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    2.7,
+    -52.37
+   ],
+   "arrowTip": [
+    8.69,
+    -54.15
+   ]
+  },
+  "knight_use_bow_up_7": {
+   "x": 11.13,
+   "y": -54.58,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    1.57,
+    -52.52
+   ],
+   "arrowTip": [
+    8.83,
+    -54.08
+   ]
+  },
+  "knight_use_bow_up_8": {
+   "x": 8.03,
+   "y": -50.89,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -0.09,
+    -50.14
+   ],
+   "arrowTip": [
+    9.46,
+    -51.02
+   ]
+  },
+  "knight_use_bow_up_9": {
+   "x": 4.35,
+   "y": -46.46,
+   "rotation": 0.0,
+   "layer": "front",
+   "nock": [
+    -4.54,
+    -46.46
+   ],
+   "arrowTip": [
+    5.91,
+    -46.46
+   ]
+  }
+ }
+}

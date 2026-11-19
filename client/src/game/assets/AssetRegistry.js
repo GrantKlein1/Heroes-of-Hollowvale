@@ -15,13 +15,15 @@ export { defaultManifest }
  * meteor telegraph are resident. Scene code keeps calling the parent group;
  * AssetRegistry pulls the dependency.
  *
- * Combat areas (village, wilderness, cavern) can drop loot.
+ * Combat areas (village, wilderness, cavern) can drop loot. The same areas and the boss
+ * arena can fire the lightning bow, so its arrow and impact sheets (`bow_b12`) ride along.
  * Phase 3 is the only phase that telegraphs meteors.
  */
 export const GROUP_DEPENDENCIES = Object.freeze({
-  village: Object.freeze(['loot']),
-  wilderness: Object.freeze(['loot']),
-  cavern: Object.freeze(['loot']),
+  village: Object.freeze(['loot', 'bow_b12']),
+  wilderness: Object.freeze(['loot', 'bow_b12']),
+  cavern: Object.freeze(['loot', 'bow_b12']),
+  boss: Object.freeze(['bow_b12']),
   boss_p3: Object.freeze(['boss_fx_extra']),
 })
 

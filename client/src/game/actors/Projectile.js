@@ -132,6 +132,9 @@ export class Projectile extends SpriteBase {
     this.arcHeight = (config.arcHeight ?? 32) * this.unit
     this.bakedSpin = Boolean(config.bakedSpin)
 
+    // Collision box sits this far below the sprite (a chest-height arrow hits at the feet row)
+    this.hitOffsetY = (config.hitOffsetY ?? 0)
+
     // Animation keys
     this.flyAnim = config.flyAnim || ''
     this.hitAnim = config.hitAnim || ''
@@ -199,7 +202,7 @@ export class Projectile extends SpriteBase {
   getBounds() {
     return {
       x: this.x - this.w / 2,
-      y: (this.isArc ? this.groundY : this.y) - this.h / 2,
+      y: (this.isArc ? this.groundY : this.y) - this.h / 2 + this.hitOffsetY,
       w: this.w,
       h: this.h,
     }

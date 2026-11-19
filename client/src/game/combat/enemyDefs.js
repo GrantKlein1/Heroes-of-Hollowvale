@@ -120,6 +120,7 @@ const BUILTIN_ENEMY_DEFS = [
       items: [
         { id: 'mana_potion', chance: 0.25, count: 1 },
         { id: 'nightfang_dagger', chance: 0.04, count: 1 }, // tunable (ITEM-NEW-1)
+        { id: 'lightning_bow', chance: 0.05, count: 1 }, // tunable (BOW-1): rare, an archer's bow
       ],
     },
     spawnWeight: 2,

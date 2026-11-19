@@ -265,6 +265,17 @@ describe('Projectile Class (Package 1-5)', () => {
     expect(rectIntersects(null, { x: 0, y: 0, w: 10, h: 10 })).toBe(false)
   })
 
+  it('hitOffsetY drops the collision box below the sprite so a chest-height arrow hits at the feet row', () => {
+    const plain = new Projectile(mockScene, 100, 100, 'spell_fx_v2', 'spell_fx_v2_0', { dirX: 1, dirY: 0, size: 24 })
+    const dropped = new Projectile(mockScene, 100, 100, 'lightning_arrow_b12', 'lightning_arrow_b12_0', {
+      dirX: 1, dirY: 0, size: 24, hitOffsetY: 40,
+    })
+    expect(plain.getBounds()).toEqual({ x: 88, y: 88, w: 24, h: 24 })
+    expect(dropped.getBounds()).toEqual({ x: 88, y: 128, w: 24, h: 24 })
+    expect(rectIntersects(plain.getBounds(), { x: 90, y: 130, w: 20, h: 20 })).toBe(false)
+    expect(rectIntersects(dropped.getBounds(), { x: 90, y: 130, w: 20, h: 20 })).toBe(true)
+  })
+
   it('a projectile whose flyAnim has 0 frames constructs without throwing', () => {
     mockScene.anims = {
       get: vi.fn((key) => {

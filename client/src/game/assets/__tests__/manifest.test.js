@@ -595,7 +595,7 @@ describe('Prop and Tile Contract Validation (Phase 1 AS-2)', () => {
     // 4 new groups
     expect(manifest.groups.interiors).toEqual(['interior_props', 'npc_bartender', 'npc_vendor']);
     expect(manifest.groups.cavern).toEqual(['dungeon_props', 'dungeon_brazier', 'treasure_chest', 'mountain_mouth_props']);
-    expect(manifest.groups.loot).toEqual(['loot_pickups', 'loot_pickups_b11']);
+    expect(manifest.groups.loot).toEqual(['loot_pickups', 'loot_pickups_b11', 'loot_pickups_b12']);
     expect(manifest.groups.boss_fx_extra).toEqual(['dragon_fx_extra']);
 
     // Wilderness additions

@@ -21,6 +21,10 @@ import {
   lootAtlasFor,
   holdClipsFor,
   inhandFor,
+  itemUsableBy,
+  isRangedWeapon,
+  useLayersFor,
+  holdGlowFor,
 } from '../registry.js'
 import { ITEM_ICONS } from '../../../config/paths.js'
 import { CONSUMABLE_EFFECTS, applyConsumableEffects, isWieldedWeapon, meleeDamageFor, MELEE_DMG } from '../../combat/balance.js'
@@ -392,6 +396,111 @@ describe('item registry (ITEM-NEW-1)', () => {
 
     it('every item icon on disk exists', () => {
       for (const id of NEW_IDS) expect(fs.existsSync(path.join(PUBLIC, getItem(id).icon)), id).toBe(true)
+    })
+  })
+
+  describe('lightning_bow (BOW-1, Batch 12)', () => {
+    const HEROES = ['thief', 'knight', 'mage', 'dwarf']
+    const DIRS = ['down', 'left', 'right', 'up']
+    const DURATIONS = [83, 83, 84, 83, 83, 84, 83, 83, 84, 83]
+
+    it('is a found weapon any class can hold: not sold, with icon, in-hand sprite, pickup and projectile', () => {
+      const bow = getItem('lightning_bow')
+      expect(bow).toMatchObject({
+        id: 'lightning_bow', name: 'Lightning Bow', kind: 'weapon', icon: '/images/lightning_bow.png',
+        classes: null, market: null, price: null, effect: null,
+      })
+      expect(bow.weapon).toEqual({ damage: 14, ranged: true })
+      expect(bow.projectile).toMatchObject({ speed: 520, maxDist: 360 })
+      expect(isRangedWeapon('lightning_bow')).toBe(true)
+      expect(isRangedWeapon('iron_sword')).toBe(false)
+      expect(marketItems().map((m) => m.id)).not.toContain('lightning_bow')
+      for (const hero of HEROES) expect(itemUsableBy('lightning_bow', hero)).toBe(true)
+      expect(ITEM_ICONS.lightning_bow).toBe('/images/lightning_bow.png')
+      expect(fs.existsSync(path.join(PUBLIC, bow.icon))).toBe(true)
+    })
+
+    it('is not a melee weapon: the class swing and damage are untouched', () => {
+      for (const hero of HEROES) {
+        expect(isWieldedWeapon(hero, 'lightning_bow')).toBe(false)
+        expect(meleeDamageFor(hero, 'lightning_bow')).toBe(MELEE_DMG[hero])
+      }
+    })
+
+    it('holds with the hero hold clips (the dwarf potion grip) and a resting glow, and draws with use_bow', () => {
+      expect(holdClipsFor('lightning_bow', 'knight')).toEqual({ idle: 'hold_idle', run: 'hold_run' })
+      expect(holdClipsFor('lightning_bow', 'dwarf')).toEqual({ idle: 'charm_hold_idle', run: 'charm_hold_run' })
+      expect(holdGlowFor('lightning_bow')).toBe('bow_hold_idle_glow')
+      expect(useLayersFor('lightning_bow')).toEqual({ weapon: 'use_bow_weapon', glow: 'use_bow_glow' })
+      expect(getItem('lightning_bow').use).toMatchObject({ clip: 'use_bow', effectFrame: 6, durations: DURATIONS })
+      expect(useClipFor('lightning_bow')).toBeNull() // not a consumable
+      for (const hero of HEROES) {
+        expect(getHeldItemId({ classId: hero, equippedId: 'lightning_bow' })).toBe('lightning_bow')
+      }
+      expect(inhandAtlasKey('lightning_bow')).toBe('items_inhand_b12')
+      expect(inhandOriginFor('lightning_bow')).toEqual([0.5, 0.5])
+    })
+
+    it.each(HEROES)('%s use_bow sheets: 10 frames at 12 fps, release on frame 6, weapon and glow on the same grid', (hero) => {
+      const sheets = manifest.assets[hero].sheets
+      for (const suffix of ['use_bow', 'use_bow_weapon', 'use_bow_glow', 'bow_hold_idle_glow']) {
+        expect(sheets[`${hero}_${suffix}`], `${hero}_${suffix}`).toBeDefined()
+      }
+      const body = readAtlas(sheets[`${hero}_use_bow`].json)
+      const weapon = readAtlas(sheets[`${hero}_use_bow_weapon`].json)
+      const glow = readAtlas(sheets[`${hero}_use_bow_glow`].json)
+      const clip = body.meta.anims.use_bow
+      expect(clip).toMatchObject({ frames: 10, fps: 12, effectFrame: 6, durations: DURATIONS, next: 'hold_idle' })
+      expect(DURATIONS.slice(0, 6).reduce((a, b) => a + b, 0)).toBe(500)
+      expect(Object.keys(weapon.frames)).toEqual(Object.keys(body.frames))
+      expect(Object.keys(glow.frames)).toEqual(Object.keys(body.frames))
+      const cell = hero === 'dwarf' ? { w: 64, h: 80 } : { w: 64, h: 96 }
+      for (const dir of DIRS) {
+        for (let i = 0; i < 10; i++) {
+          const name = `${hero}_use_bow_${dir}_${i}`
+          expect(body.frames[name], name).toBeDefined()
+          expect(body.frames[name].frame).toMatchObject(cell)
+        }
+        expect(readAtlas(sheets[`${hero}_bow_hold_idle_glow`].json).frames[`${hero}_bow_hold_idle_glow_${dir}_0`]).toBeDefined()
+        // the arrow leaves at that frame's arrow tip
+        const anchor = getItemAnchor(hero, 'use_bow', `${hero}_use_bow_${dir}_6`)
+        expect(anchor.arrowTip, `${hero} ${dir}`).toHaveLength(2)
+        expect(anchor.layer).toBe('front')
+      }
+    })
+
+    it('has a 6-frame 8 fps shimmer pickup, the in-hand sheet and the arrow and impact clips', () => {
+      expect(lootHasSprite('lightning_bow')).toBe(true)
+      expect(LOOT_PICKUP_IDS).toContain('lightning_bow')
+      expect(lootAtlasFor('lightning_bow')).toBe('loot_pickups_b12')
+      expect(lootIdleAnimKey('lightning_bow')).toBe('loot_pickups_b12_loot_lightning_bow_idle_down')
+      const loot = readAtlas(manifest.assets.loot_pickups_b12.json)
+      expect(loot.meta.anims.loot_lightning_bow_idle).toMatchObject({ frames: 6, fps: 8, loop: true })
+      expect(manifest.assets.loot_pickups_b12.anims.loot_lightning_bow_idle.fps).toBe(8)
+      for (let i = 0; i < 6; i++) expect(loot.frames[`loot_lightning_bow_idle_down_${i}`]).toBeDefined()
+      expect(manifest.groups.loot).toContain('loot_pickups_b12')
+
+      const inhand = readAtlas(manifest.assets.items_inhand_b12.json)
+      for (const dir of DIRS) {
+        expect(inhand.frames[`lightning_bow_${dir}`].frame).toMatchObject({ w: 48, h: 48 })
+        expect(inhand.frames[`lightning_bow_${dir}`].pivot).toEqual({ x: 0.5, y: 0.5 })
+      }
+      expect(manifest.groups.wilderness).toContain('items_inhand_b12')
+      expect(manifest.groups.boss).toContain('items_inhand_b12')
+
+      const arrow = readAtlas(manifest.assets.lightning_arrow_b12.json)
+      const impact = readAtlas(manifest.assets.lightning_arrow_impact_b12.json)
+      expect(Object.keys(arrow.frames)).toHaveLength(4)
+      expect(arrow.frames.lightning_arrow_b12_0.frame).toMatchObject({ w: 96, h: 32 })
+      expect(Object.keys(impact.frames)).toHaveLength(7)
+      expect(impact.frames.lightning_arrow_impact_b12_0.frame).toMatchObject({ w: 64, h: 64 })
+      expect(manifest.groups.bow_b12).toEqual(['lightning_arrow_b12', 'lightning_arrow_impact_b12'])
+    })
+
+    it('can be found: a rare goblin archer drop (the locked cavern chest also holds one)', () => {
+      const archer = ENEMY_DEFS.archer.loot.items.find((row) => row.id === 'lightning_bow')
+      expect(archer).toMatchObject({ chance: 0.05, count: 1 })
+      expect(seededLootIds()).toContain('lightning_bow')
     })
   })
 
