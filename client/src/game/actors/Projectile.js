@@ -11,7 +11,10 @@
 
 import Phaser from 'phaser'
 import { scaleOutgoingDamage } from '../combat/balance.js'
+import { computeWorldHurtbox } from '../combat/hitSystem.js'
 import { session } from '../session.js'
+
+const LIGHTNING_CORRIDOR_HALF = 20
 
 // Safe sprite base resolution for both browser runtime and mocked test environments
 const SpriteBase = (Phaser && Phaser.GameObjects && Phaser.GameObjects.Sprite)
@@ -85,6 +88,54 @@ export function rectIntersects(a, b) {
     a.y < b.y + b.h &&
     a.y + a.h > b.y
   )
+}
+
+/**
+ * Forward distance along a ray corridor where an AABB first intersects, or null.
+ *
+ * @param {number} ox
+ * @param {number} oy
+ * @param {number} dirX
+ * @param {number} dirY
+ * @param {number} maxLen
+ * @param {number} halfW
+ * @param {{ x: number, y: number, w: number, h: number }} box
+ * @returns {number|null}
+ */
+function corridorHitDistance(ox, oy, dirX, dirY, maxLen, halfW, box) {
+  const points = [
+    [box.x, box.y],
+    [box.x + box.w, box.y],
+    [box.x, box.y + box.h],
+    [box.x + box.w, box.y + box.h],
+    [box.x + box.w / 2, box.y + box.h / 2],
+  ]
+
+  let bestT = null
+  for (const [px, py] of points) {
+    const t = (px - ox) * dirX + (py - oy) * dirY
+    if (t < 0 || t > maxLen) continue
+    const lx = ox + dirX * t
+    const ly = oy + dirY * t
+    if (Math.hypot(px - lx, py - ly) <= halfW) {
+      if (bestT === null || t < bestT) bestT = t
+    }
+  }
+
+  const cx = box.x + box.w / 2
+  const cy = box.y + box.h / 2
+  const tCenter = (cx - ox) * dirX + (cy - oy) * dirY
+  const clampedT = Math.max(0, Math.min(maxLen, tCenter))
+  const lx = ox + dirX * clampedT
+  const ly = oy + dirY * clampedT
+  const nearX = Math.max(box.x, Math.min(lx, box.x + box.w))
+  const nearY = Math.max(box.y, Math.min(ly, box.y + box.h))
+  const tNear = (nearX - ox) * dirX + (nearY - oy) * dirY
+  if (tNear >= 0 && tNear <= maxLen && Math.hypot(nearX - lx, nearY - ly) <= halfW) {
+    if (bestT === null || tNear < bestT) bestT = tNear
+  }
+
+  return bestT
 }
 
 export class Projectile extends SpriteBase {
@@ -267,6 +318,17 @@ export class Projectile extends SpriteBase {
       this.y += stepY
     }
 
+    if (this.impactType === 'lightning' && this.owner === 'player' && this.shooter) {
+      if (this._resolveLightningStrike(now)) {
+        return true
+      }
+      if (this.distanceTraveled >= this.maxDist) {
+        this.impact(null, false, now)
+        return true
+      }
+      return true
+    }
+
     // Check collision against world solids
     const bounds = this.getBounds()
     const solids = this.scene?._solidRects || []
@@ -368,6 +430,81 @@ export class Projectile extends SpriteBase {
       }
     } else {
       this._afterImpact(now)
+    }
+  }
+
+  /**
+   * Ray corridor vs enemies/solids from the caster's feet (lightning only).
+   *
+   * @param {number} now
+   * @returns {boolean} True when the bolt stopped on a hit this frame
+   * @private
+   */
+  _resolveLightningStrike(now) {
+    const shooter = this.shooter || this.caster
+    if (!shooter) return false
+
+    const ox = shooter.x
+    const oy = shooter.y
+    const maxLen = this.maxDist
+    const halfW = LIGHTNING_CORRIDOR_HALF * this.unit
+
+    let bestSolid = null
+    const solids = this.scene?._solidRects || []
+    for (let i = 0; i < solids.length; i++) {
+      const t = corridorHitDistance(ox, oy, this.dirX, this.dirY, maxLen, halfW, solids[i])
+      if (t !== null && (bestSolid === null || t < bestSolid)) bestSolid = t
+    }
+
+    let bestEnemy = null
+    let bestEnemyDist = null
+    const enemies = this.scene?.enemies?.getChildren?.() || []
+    for (let i = 0; i < enemies.length; i++) {
+      const enemy = enemies[i]
+      if (!enemy || enemy.hp <= 0) continue
+      const hb = computeWorldHurtbox(enemy)
+      const t = corridorHitDistance(ox, oy, this.dirX, this.dirY, maxLen, halfW, hb)
+      if (t !== null && (bestEnemyDist === null || t < bestEnemyDist)) {
+        bestEnemyDist = t
+        bestEnemy = enemy
+      }
+    }
+
+    if (bestSolid !== null && (bestEnemyDist === null || bestSolid < bestEnemyDist)) {
+      this._stopLightningAt(ox, oy, bestSolid)
+      this.impact(null, true, now)
+      return true
+    }
+
+    if (bestEnemy) {
+      this._stopLightningAt(ox, oy, bestEnemyDist)
+      this.impact(bestEnemy, false, now)
+      return true
+    }
+
+    return false
+  }
+
+  /**
+   * @param {number} ox
+   * @param {number} oy
+   * @param {number} hitDist
+   * @private
+   */
+  _stopLightningAt(ox, oy, hitDist) {
+    this.distanceTraveled = hitDist
+    this.x = ox + this.dirX * hitDist
+    this.y = oy + this.dirY * hitDist
+    this.groundY = this.y
+    const angle = Math.atan2(this.dirY, this.dirX)
+    if (typeof this.setRotation === 'function') {
+      this.setRotation(angle)
+    } else {
+      this.rotation = angle
+    }
+    const scaleX = hitDist / 96
+    if (typeof this.setScale === 'function') {
+      this.setScale(scaleX, 1)
     }
   }
 

@@ -950,6 +950,34 @@ export class Player extends Actor {
   }
 
   /**
+   * After a non-looping clip ends, return to IDLE or honor a fresh buffered input.
+   *
+   * @param {number} [now=Date.now()]
+   */
+  _finishAnimBuffer(now = Date.now()) {
+    const buffered = this.consumeBuffer(now)
+    if (!buffered) {
+      this.transition(ACTOR_STATES.IDLE, { force: true })
+      return
+    }
+
+    if (buffered.state === ACTOR_STATES.BLOCK) {
+      this.transition(ACTOR_STATES.IDLE, { force: true })
+      if (!this.blockState) this.blockState = {}
+      this.blockState.holding = true
+      this.startBlock(now)
+    } else if (buffered.state === ACTOR_STATES.ATTACK) {
+      this.transition(ACTOR_STATES.IDLE, { force: true })
+      this.attack(now)
+    } else if (buffered.state === ACTOR_STATES.DODGE) {
+      this.transition(ACTOR_STATES.IDLE, { force: true })
+      this.dodge(now)
+    } else {
+      this.transition(buffered.state, { force: true })
+    }
+  }
+
+  /**
    * Animation completion handler.
    *
    * @param {Phaser.Animations.Animation} [anim]
@@ -965,10 +993,7 @@ export class Player extends Actor {
       return
     }
     if (key.includes('hurt') && this.is(ACTOR_STATES.HURT)) {
-      const consumed = this.consumeBuffer(Date.now())
-      if (!consumed) {
-        this.transition(ACTOR_STATES.IDLE, { force: true })
-      }
+      this._finishAnimBuffer(Date.now())
     } else if ((key.includes('attack') || key.includes('cast') || key.includes('charged_release')) && this.is(ACTOR_STATES.ATTACK)) {
       if (this.currentAttackType === 'charge_hold') {
         return // Loop while held
@@ -992,17 +1017,11 @@ export class Player extends Actor {
       if (this.scene) {
         this.scene._attacking = false
       }
-      const consumed = this.consumeBuffer(Date.now())
-      if (!consumed) {
-        this.transition(ACTOR_STATES.IDLE, { force: true })
-      }
+      this._finishAnimBuffer(Date.now())
     } else if (key.includes('dodge') && this.is(ACTOR_STATES.DODGE)) {
       this.dodgeState.active = false
       this._lastDodgeFrame = -1
-      const consumed = this.consumeBuffer(Date.now())
-      if (!consumed) {
-        this.transition(ACTOR_STATES.IDLE, { force: true })
-      }
+      this._finishAnimBuffer(Date.now())
     } else if (key.includes('block_start') && this.is(ACTOR_STATES.BLOCK)) {
       if (this.blockState?.holding) {
         this.blockState.stage = 'hold'
@@ -1029,10 +1048,7 @@ export class Player extends Actor {
       }
       this.vanishState.invisible = true
     } else if (key.includes('reappear')) {
-      const consumed = this.consumeBuffer(Date.now())
-      if (!consumed) {
-        this.transition(ACTOR_STATES.IDLE, { force: true })
-      }
+      this._finishAnimBuffer(Date.now())
     }
   }
 

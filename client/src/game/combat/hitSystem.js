@@ -226,6 +226,14 @@ export function rectIntersects(a, b) {
   )
 }
 
+/** Knight sword reach in feet space (+y down), anchored at sprite origin. */
+const KNIGHT_MELEE_REACH = Object.freeze({
+  down: { x: -20, y: -24, w: 40, h: 64 },
+  up: { x: -20, y: -40, w: 40, h: 52 },
+  left: { x: -40, y: -24, w: 56, h: 48 },
+  right: { x: -16, y: -24, w: 56, h: 48 },
+})
+
 /**
  * Executes a melee hit scan for a player on an active hitFrame.
  *
@@ -243,7 +251,14 @@ export function executePlayerMeleeHit(player, frameIndex, now = (typeof performa
 
   if (!hitboxDef) return 0
 
-  const worldHitbox = computeWorldHitbox(player, hitboxDef)
+  const scale = player.scaleX || player.scale || 1
+  const reachDef = KNIGHT_MELEE_REACH[player.facing] || KNIGHT_MELEE_REACH.down
+  const worldHitbox = {
+    x: player.x + reachDef.x * scale,
+    y: player.y + reachDef.y * scale,
+    w: reachDef.w * scale,
+    h: reachDef.h * scale,
+  }
   const enemiesGroup = scene.enemies
   const enemies = enemiesGroup && typeof enemiesGroup.getChildren === 'function'
     ? enemiesGroup.getChildren()
@@ -284,7 +299,6 @@ export function executePlayerMeleeHit(player, frameIndex, now = (typeof performa
     applyKnockback(enemy, player.x, player.y, 140, 150)
 
     // Hit spark placement: prefer weapon tip, otherwise center of intersection
-    const scale = player.scaleX || player.scale || 1
     const tip = getWeaponTip(scene, sheetKey, frameIndex, player.facing, 'attack')
     let sparkX
     let sparkY

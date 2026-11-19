@@ -55,6 +55,19 @@ export function isFrontalHit(playerFacing, playerPos, attackerPos, arcDeg = BLOC
     return true
   }
 
+  const dist = Math.hypot(dx, dy)
+  if (dist <= 36) {
+    const facingDot = {
+      right: dx,
+      left: -dx,
+      down: dy,
+      up: -dy,
+    }[playerFacing]
+    if (facingDot !== undefined && facingDot >= 0) {
+      return true
+    }
+  }
+
   // Angle from player to attacker
   const angleToAttackerDeg = (Math.atan2(dy, dx) * 180) / Math.PI
   const facingDeg = FACING_ANGLES_DEG[playerFacing] ?? 90
