@@ -93,7 +93,7 @@ import {
 } from '../combat/balance.js'
 import { isDebug } from '../config/flags.js'
 import { getEnemyDef, isEnemyType, resolveEnemyDef } from '../combat/enemyDefs.js'
-import { enemyHpBarTop } from '../combat/enemyHpBar.js'
+import { enemyHpBarTop, enemyHpTextBottom, trimmedTopPxFromFrame } from '../combat/enemyHpBar.js'
 import { planScreenSpawns } from '../terrain/spawnTables.js'
 import { consumableEffect, isConsumable } from '../items/registry.js'
 
@@ -1943,7 +1943,8 @@ export default class HollowvaleScene extends Phaser.Scene {
         originY: e.originY,
         displayHeight: e.displayHeight,
         frameHeight,
-        visibleTopPx: resolveEnemyDef(e.enemyType)?.hpBarVisibleTop,
+        visibleTopPx: e.hpBarVisibleTop ?? resolveEnemyDef(e.enemyType)?.hpBarVisibleTop,
+        trimmedTopPx: trimmedTopPxFromFrame(e.frame),
       })
       g.fillStyle(0x000000, 0.6)
       g.fillRect(x, y, w, 4)
@@ -1957,9 +1958,10 @@ export default class HollowvaleScene extends Phaser.Scene {
         }).setOrigin(0.5, 1).setDepth(19000)
       }
       e.hpText.setVisible(true)
-      e.hpText.setPosition(e.x, y - 1)
       const label = String(Math.ceil(e.hp))
       if (e.hpText.text !== label) e.hpText.setText(label)
+      const viewTop = this.cameras?.main?.worldView?.y
+      e.hpText.setPosition(e.x, enemyHpTextBottom(y, e.hpText.height, viewTop))
     }
   }
 
