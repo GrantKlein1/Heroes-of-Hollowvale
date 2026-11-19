@@ -667,6 +667,17 @@ describe('AssetRegistry — AS-3 Groups Loading (Interiors, Cavern, Loot, Boss F
     const keys = registry.loadGroup('wilderness')
     expect(keys).toContain('items_inhand_b11')
     expect(keys).toContain('loot_pickups_b11')
+    expect(keys).toContain('ashen_bolt')
+    const bolt = mockScene.queuedAtlases.find((entry) => entry.key === 'ashen_bolt')
+    expect(bolt).toMatchObject({
+      image: 'assets/enemies/ashen_cultist/ashen_bolt.png',
+      json: 'assets/enemies/ashen_cultist/ashen_bolt.json',
+    })
+    const fireball = mockScene.queuedAtlases.find((entry) => entry.key === 'fireball')
+    expect(fireball).toMatchObject({
+      image: 'assets/characters/mage/fireball.png',
+      json: 'assets/characters/mage/fireball.json',
+    })
     const lootMeta = {
       anims: {
         loot_seranyas_tear_idle: {

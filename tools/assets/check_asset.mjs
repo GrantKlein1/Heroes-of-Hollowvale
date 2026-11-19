@@ -21,7 +21,8 @@ export function isFxAtlas(sheetKey = '', jsonPath = '', kind = '') {
   if (kind === 'fx') return true;
   const lowerKey = sheetKey.toLowerCase();
   const lowerPath = jsonPath.toLowerCase().replace(/\\/g, '/');
-  if (lowerKey.includes('_fx') || lowerKey.endsWith('_glow') || lowerKey === 'fx' || lowerKey === 'fireball' || lowerKey === 'spell_fx' || lowerKey.startsWith('dfx_')) {
+  // fireball and ashen_bolt are projectile atlases: non-directional frames, no footprint.
+  if (lowerKey.includes('_fx') || lowerKey.endsWith('_glow') || lowerKey === 'fx' || lowerKey === 'fireball' || lowerKey === 'ashen_bolt' || lowerKey === 'spell_fx' || lowerKey.startsWith('dfx_')) {
     return true;
   }
   if (lowerPath.includes('/fx/') || lowerPath.includes('/fx_v2/')) {

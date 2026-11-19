@@ -63,6 +63,10 @@ import {
   CULTIST_TOTAL_ATTACK_MS,
   EMBER_BOLT_TEXTURE,
   EMBER_BOLT_FLY_ANIM,
+  EMBER_BOLT_HIT_ANIM,
+  EMBER_BOLT_SPAWN_FRAME,
+  EMBER_BOLT_SCALE,
+  ensureAshenBoltAnimations,
 } from '../cultist.js'
 import { AttackTokenManager } from '../tokens.js'
 
@@ -187,12 +191,21 @@ describe('CultistAI (Ashen Cultist)', () => {
     expect(scene.projectiles).toHaveLength(1)
 
     const bolt = scene.projectiles[0]
-    expect(bolt.texture.key).toBe(EMBER_BOLT_TEXTURE)
+    expect(EMBER_BOLT_TEXTURE).toBe('ashen_bolt')
+    expect(EMBER_BOLT_FLY_ANIM).toBe('ashen_bolt_fly')
+    expect(EMBER_BOLT_HIT_ANIM).toBe('ashen_bolt_hit')
+    expect(EMBER_BOLT_SPAWN_FRAME).toBe('ashen_bolt_fly_0')
+    expect(bolt.texture.key).toBe('ashen_bolt')
+    expect(bolt.texture.key).not.toBe('fireball')
+    expect(bolt.frame.name).toBe(EMBER_BOLT_SPAWN_FRAME)
     expect(bolt.flyAnim).toBe(EMBER_BOLT_FLY_ANIM)
+    expect(bolt.hitAnim).toBe(EMBER_BOLT_HIT_ANIM)
+    expect(bolt.scale).toBe(EMBER_BOLT_SCALE)
     expect(bolt.owner).toBe('enemy')
     expect(bolt.shooter).toBe(c)
     expect(bolt.damage).toBe(10)
     expect(bolt.maxDist).toBe(420)
+    expect(bolt.size).toBe(14)
     // Spawns at the left-facing blade tip from meta, flies toward the player (left).
     expect(bolt.x).toBeCloseTo(c.x - 30.8)
     expect(bolt.y).toBeCloseTo(c.y - 25.4)
@@ -252,6 +265,66 @@ describe('CultistAI (Ashen Cultist)', () => {
     expect(c.ai.isAttacking).toBe(false)
     expect(c.ai.attackCooldownUntil).toBe(1700)
     expect(scene.projectiles).toHaveLength(0)
+  })
+
+  describe('ashen bolt clips', () => {
+    function animScene({ textureLoaded = true } = {}) {
+      const created = new Map()
+      return {
+        textures: { exists: vi.fn(() => textureLoaded) },
+        anims: {
+          create: vi.fn((config) => {
+            created.set(config.key, { ...config, frames: config.frames.slice() })
+            return created.get(config.key)
+          }),
+          exists: vi.fn((key) => created.has(key)),
+          get: vi.fn((key) => created.get(key) || null),
+          remove: vi.fn((key) => created.delete(key)),
+        },
+        created,
+      }
+    }
+
+    it('registers fly at 12 fps looping and hit at 14 fps once', () => {
+      const scene = animScene()
+      const keys = ensureAshenBoltAnimations(scene)
+      expect(keys).toEqual(['ashen_bolt_fly', 'ashen_bolt_hit'])
+
+      const fly = scene.created.get('ashen_bolt_fly')
+      const hit = scene.created.get('ashen_bolt_hit')
+      expect(fly.frameRate).toBe(12)
+      expect(fly.repeat).toBe(-1)
+      expect(hit.frameRate).toBe(14)
+      expect(hit.repeat).toBe(0)
+      expect(fly.frames).toHaveLength(6)
+      expect(hit.frames).toHaveLength(6)
+      expect(fly.frames[0]).toEqual({ key: 'ashen_bolt', frame: 'ashen_bolt_fly_0' })
+      expect(fly.frames[5]).toEqual({ key: 'ashen_bolt', frame: 'ashen_bolt_fly_5' })
+      expect(hit.frames[0]).toEqual({ key: 'ashen_bolt', frame: 'ashen_bolt_hit_0' })
+      expect(hit.frames[5]).toEqual({ key: 'ashen_bolt', frame: 'ashen_bolt_hit_5' })
+      expect(scene.anims.create.mock.calls.map((c) => c[0].key)).not.toContain('fireball_fly')
+      expect(scene.anims.create.mock.calls.map((c) => c[0].key)).not.toContain('fireball_hit')
+    })
+
+    it('does not register a second copy, and skips when the atlas is absent', () => {
+      const scene = animScene()
+      ensureAshenBoltAnimations(scene)
+      expect(ensureAshenBoltAnimations(scene)).toEqual([])
+      expect(scene.anims.create).toHaveBeenCalledTimes(2)
+
+      const missing = animScene({ textureLoaded: false })
+      expect(ensureAshenBoltAnimations(missing)).toEqual([])
+      expect(missing.anims.create).not.toHaveBeenCalled()
+    })
+
+    it('replaces an empty stub clip so the bolt can play', () => {
+      const scene = animScene()
+      scene.anims.exists.mockImplementation(() => true)
+      scene.anims.get.mockImplementation((key) => (key === 'ashen_bolt_fly' ? { frames: [] } : { frames: [{ key: 'ashen_bolt' }] }))
+      const keys = ensureAshenBoltAnimations(scene)
+      expect(scene.anims.remove).toHaveBeenCalledWith('ashen_bolt_fly')
+      expect(keys).toEqual(['ashen_bolt_fly'])
+    })
   })
 
   describe('melee fallback (cornered)', () => {
