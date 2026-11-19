@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { settleForScreenshot, waitForScene } from './helpers/waits';
+import { freezeSceneForScreenshot, freezeTitleSword, settleForScreenshot, waitForScene } from './helpers/waits';
 
 test.describe('Heroes of Hollowvale — E2E Smoke & Visual Regression', () => {
   test('boots, selects class, visits every scene with 0 console errors and 0 404s', async ({ page }) => {
@@ -43,8 +43,11 @@ test.describe('Heroes of Hollowvale — E2E Smoke & Visual Regression', () => {
     const startButton = page.getByRole('button', { name: 'Start Game' });
     await expect(startButton).toBeVisible();
 
-    // Settle render (including the display font) and capture Title Screen baseline
+    // Settle render (including the display font) and capture Title Screen baseline.
+    // The sword cycles on a timer; lock the first plate before the shot.
     await settleForScreenshot(page, 600);
+    await freezeTitleSword(page);
+    await freezeSceneForScreenshot(page);
     await expect(page).toHaveScreenshot('01-title-screen.png');
 
     // 2. Open Class Selection
@@ -52,8 +55,10 @@ test.describe('Heroes of Hollowvale — E2E Smoke & Visual Regression', () => {
     const classModalHeading = page.getByText('Choose Your Class');
     await expect(classModalHeading).toBeVisible();
 
-    // Settle render and capture Class Select modal baseline
+    // The heading is the display face. A serif fallback reflows the panel (diff ~0.33).
     await settleForScreenshot(page, 600);
+    await expect(classModalHeading).toHaveCSS('font-family', /Uncial Antiqua/);
+    await freezeSceneForScreenshot(page);
     await expect(page).toHaveScreenshot('02-class-selection.png');
 
     // 3. Choose Knight class to enter the village
@@ -85,8 +90,9 @@ test.describe('Heroes of Hollowvale — E2E Smoke & Visual Regression', () => {
         await waitForScene(page, id);
       }
 
-      // Allow background textures, solids, and the display font to settle
+      // Water, prop clips, and pulsing exit outlines are pinned inside the helper.
       await settleForScreenshot(page, 600);
+      await freezeSceneForScreenshot(page);
       await expect(page).toHaveScreenshot(screenshot);
     }
 

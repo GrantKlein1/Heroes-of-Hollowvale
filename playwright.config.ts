@@ -23,18 +23,6 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: 1,
-  // Passed on main at 6f75716. testIgnore is file-scoped, so one failing case skips the file.
-  // Re-enabled specs wait on __hv / scene state. These three still fail for the reason on the comment.
-  testIgnore: process.env.CI
-    ? [
-        // 1080p screenshot diff ratio 0.06 exceeds the 0.05 cap on the runner.
-        '**/brackenford.spec.ts',
-        // Runner actualFps stays under the floor of 30 (cavern ~17, village ~22).
-        '**/full-flow.spec.ts',
-        // Class-selection screenshot diff ratio was 0.33 (fallback serif vs the display face).
-        '**/smoke.spec.ts',
-      ]
-    : [],
   reporter: 'list',
   snapshotPathTemplate: '{testDir}/__screenshots__/{arg}{ext}',
   use: {
