@@ -58,6 +58,8 @@ import {
   rollMineLoot,
   stepLockpick,
   stepPickaxe,
+  readPickaxeFrame,
+  watchPickaxeContact,
   toolShouldCancel,
   rectsOverlap,
   expandedRect,
@@ -366,6 +368,8 @@ export default class HollowvaleScene extends Phaser.Scene {
   }
 
   _shutdown() {
+    this._disarmPickaxeContact()
+    this._toolUse = null
     if (typeof window !== 'undefined' && window.__scene === this) {
       delete window.__scene
     }
@@ -831,8 +835,77 @@ export default class HollowvaleScene extends Phaser.Scene {
   }
 
   /**
+   * Drops the pickaxe animationupdate listener, if one is attached.
+   */
+  _disarmPickaxeContact() {
+    const unwatch = this._pickaxeUnwatch
+    this._pickaxeUnwatch = null
+    if (typeof unwatch === 'function') unwatch()
+  }
+
+  /**
+   * Records the use_pickaxe contact frame when Phaser advances the clip.
+   * The listener never applies the mine: `_updateToolUse` does that, so a
+   * cancel in the same tick still wins.
+   *
+   * @param {object} player
+   */
+  _armPickaxeContact(player) {
+    this._disarmPickaxeContact()
+    const swing = this._toolUse
+    if (!swing || swing.kind !== 'pickaxe' || !player) return
+    this._pickaxeUnwatch = watchPickaxeContact(player, {
+      classId: player.classId,
+      effectFrame: swing.timing.effectFrame,
+      isCancelled: () => this._pickaxeContactCancelled(swing, player),
+      onContact: (frameIndex) => {
+        if (this._toolUse === swing && !swing.cancelled && !swing.effectFired) {
+          swing.watchedFrame = frameIndex
+        }
+      },
+    })
+  }
+
+  /**
+   * True when this swing must not accept another contact frame.
+   *
+   * @param {object} swing
+   * @param {object} player
+   * @returns {boolean}
+   */
+  _pickaxeContactCancelled(swing, player) {
+    if (this._toolUse !== swing || swing.cancelled || swing.effectFired) return true
+    if (swing.sceneId !== this.sceneId) return true
+    if (swing.equippedId !== session.equippedId || swing.hotbarSlot !== session.hotbarSlot) return true
+    if (player.classId !== TOOLS.pickaxe.classId) return true
+    if (player.is?.(ACTOR_STATES.HURT) || player.is?.(ACTOR_STATES.DEAD) || this.dead) return true
+    if (player.is?.(ACTOR_STATES.DODGE) || player.is?.(ACTOR_STATES.ATTACK) || player.is?.(ACTOR_STATES.BLOCK)) {
+      return true
+    }
+    return false
+  }
+
+  /**
+   * Ends the active tool swing and detaches the pickaxe frame listener first,
+   * so a clip change inside cancel/complete cannot still mine.
+   *
+   * @param {object} player
+   * @param {'cancel'|'complete'} mode
+   */
+  _finishToolUse(player, mode) {
+    const active = this._toolUse
+    if (active) active.cancelled = true
+    this._disarmPickaxeContact()
+    this._toolUse = null
+    if (!player) return
+    if (mode === 'complete') player.completeToolUse()
+    else player.cancelToolUse()
+  }
+
+  /**
    * Lockpick (hold E on a locked zone) and pickaxe (press E on a mineable).
-   * Timings come from the clip meta. One call site: `_drive`.
+   * The pickaxe mine follows the use_pickaxe contact frame. The clock is only
+   * the fallback when that clip cannot play. One call site: `_drive`.
    *
    * @param {number} now
    * @param {boolean} blocked
@@ -849,9 +922,8 @@ export default class HollowvaleScene extends Phaser.Scene {
 
     const active = this._toolUse
     if (active && active.sceneId !== this.sceneId) {
-      this._toolUse = null
-      if (active.unlocked || active.effectFired) player.completeToolUse()
-      else player.cancelToolUse()
+      const mode = active.unlocked || active.effectFired ? 'complete' : 'cancel'
+      this._finishToolUse(player, mode)
       return
     }
     if (!active && (blocked || this._consuming || player.itemUseState?.active)) return
@@ -897,27 +969,39 @@ export default class HollowvaleScene extends Phaser.Scene {
           eventBus.emit(TOOL_UNLOCK_EVENT, payload)
         }
         if (step.action === 'cancel') {
-          this._toolUse = null
-          player.cancelToolUse()
+          this._finishToolUse(player, 'cancel')
           return
         }
         if (step.action === 'complete') {
-          this._toolUse = null
-          player.completeToolUse()
+          this._finishToolUse(player, 'complete')
           return
         }
         active.unlocked = step.unlocked
         return
       }
 
+      const polled = readPickaxeFrame(player)
+      const watchedIndex = Number.isInteger(active.watchedFrame) ? active.watchedFrame : -1
+      const frameIndex = Math.max(polled.onClip ? polled.frameIndex : -1, watchedIndex)
+      const onClip = frameIndex >= 0
+      const reached = frameIndex >= active.timing.effectFrame
+      const gearChanged = active.equippedId !== session.equippedId || active.hotbarSlot !== session.hotbarSlot
+      const clipLive = Boolean(player.itemUseState?.active) && player.itemUseState?.clip === TOOLS.pickaxe.clip
+      // The clip ending on the contact frame (a hitch that skips ahead) still
+      // mines. Ending earlier, or swapping the held item, does not.
+      const endedEarly = !clipLive && !reached && !active.effectFired
       const step = stepPickaxe({
         elapsed,
         timing: active.timing,
-        interrupted,
+        interrupted: interrupted || gearChanged || player.classId !== TOOLS.pickaxe.classId || endedEarly,
         effectFired: active.effectFired,
+        onClip,
+        frameIndex,
+        animPlayable: active.animPlayable === true,
       })
       if (step.effect) {
         active.effectFired = true
+        this._disarmPickaxeContact()
         const target = active.target
         target.mined = true
         target.broken = true
@@ -938,13 +1022,11 @@ export default class HollowvaleScene extends Phaser.Scene {
         eventBus.emit(TOOL_MINE_EVENT, payload)
       }
       if (step.action === 'cancel') {
-        this._toolUse = null
-        player.cancelToolUse()
+        this._finishToolUse(player, 'cancel')
         return
       }
       if (step.action === 'complete') {
-        this._toolUse = null
-        player.completeToolUse()
+        this._finishToolUse(player, 'complete')
       }
       return
     }
@@ -971,6 +1053,10 @@ export default class HollowvaleScene extends Phaser.Scene {
       const started = player.beginToolUse(tool, now)
       if (!started) return false
       if (typeof player.body?.setVelocity === 'function') player.body.setVelocity(0, 0)
+      const animKey = `${classId}_${tool.clip}_${player.facing || 'down'}`
+      const animPlayable = toolId === 'pickaxe'
+        && typeof this.anims?.exists === 'function'
+        && this.anims.exists(animKey)
       this._toolUse = {
         kind: toolId,
         sceneId: this.sceneId,
@@ -979,7 +1065,13 @@ export default class HollowvaleScene extends Phaser.Scene {
         target,
         unlocked: false,
         effectFired: false,
+        equippedId: session.equippedId,
+        hotbarSlot: session.hotbarSlot,
+        animPlayable,
+        watchedFrame: null,
+        cancelled: false,
       }
+      if (toolId === 'pickaxe') this._armPickaxeContact(player)
       return true
     }
 

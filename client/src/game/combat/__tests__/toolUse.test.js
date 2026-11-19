@@ -13,13 +13,17 @@ import {
   isLockedTarget,
   isMineableTarget,
   locateMineVisual,
+  PICKAXE_FRAME_EVENT,
+  pickaxeContactIndex,
   readLockpickTiming,
+  readPickaxeFrame,
   readPickaxeTiming,
   rectsOverlap,
   rollMineLoot,
   stepLockpick,
   stepPickaxe,
   toolShouldCancel,
+  watchPickaxeContact,
 } from '../toolUse.js'
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../../..')
@@ -199,6 +203,169 @@ describe('tool use steps (B10-2)', () => {
     }
     const again = rollMineLoot(() => 0)
     expect(again).toEqual(rolls[0])
+  })
+})
+
+function frameEmitter() {
+  const listeners = new Map()
+  return {
+    on(event, fn) {
+      const list = listeners.get(event) || []
+      list.push(fn)
+      listeners.set(event, list)
+    },
+    off(event, fn) {
+      const list = (listeners.get(event) || []).filter((item) => item !== fn)
+      listeners.set(event, list)
+    },
+    emit(event, ...args) {
+      for (const fn of [...(listeners.get(event) || [])]) fn(...args)
+    },
+  }
+}
+
+function pickaxeUpdate(animKey, frameName) {
+  return [
+    { key: animKey },
+    { textureFrame: frameName, frame: { name: frameName } },
+    null,
+    frameName,
+  ]
+}
+
+describe('pickaxe contact follows the animation frame (PICKAXE-FRAME-1)', () => {
+  const timing = readPickaxeTiming(dwarfPickaxeAtlas.meta.anims.use_pickaxe)
+
+  it('fires the effect once when the frame event reaches the contact frame', () => {
+    const contacts = []
+    const sprite = frameEmitter()
+    let cancelled = false
+    const unbind = watchPickaxeContact(sprite, {
+      classId: 'dwarf',
+      effectFrame: timing.effectFrame,
+      isCancelled: () => cancelled,
+      onContact: (index) => contacts.push(index),
+    })
+
+    sprite.emit(PICKAXE_FRAME_EVENT, ...pickaxeUpdate('dwarf_use_pickaxe_down', 'dwarf_use_pickaxe_down_3'))
+    expect(contacts).toEqual([])
+    expect(pickaxeContactIndex(
+      { key: 'dwarf_idle_down' },
+      { textureFrame: 'dwarf_idle_down_0' },
+      'dwarf_idle_down_0',
+      'dwarf',
+      timing.effectFrame,
+    )).toBe(-1)
+
+    const behind = stepPickaxe({
+      elapsed: timing.effectMs + 400,
+      timing,
+      interrupted: false,
+      effectFired: false,
+      onClip: true,
+      frameIndex: 3,
+      animPlayable: true,
+    })
+    expect(behind).toEqual({ action: 'continue', effect: false })
+
+    sprite.emit(PICKAXE_FRAME_EVENT, ...pickaxeUpdate('dwarf_use_pickaxe_down', 'dwarf_use_pickaxe_down_4'))
+    sprite.emit(PICKAXE_FRAME_EVENT, ...pickaxeUpdate('dwarf_use_pickaxe_down', 'dwarf_use_pickaxe_down_5'))
+    expect(contacts).toEqual([4])
+
+    const player = { classId: 'dwarf', anims: { currentFrame: { frame: { name: 'dwarf_use_pickaxe_down_4' } } } }
+    expect(readPickaxeFrame(player).onClip).toBe(true)
+    expect(readPickaxeFrame(player).frameIndex).toBe(4)
+
+    const hit = stepPickaxe({
+      elapsed: timing.effectMs - 40,
+      timing,
+      interrupted: false,
+      effectFired: false,
+      onClip: true,
+      frameIndex: contacts[0],
+      animPlayable: true,
+    })
+    expect(hit).toEqual({ action: 'continue', effect: true })
+
+    const again = stepPickaxe({
+      elapsed: timing.totalMs,
+      timing,
+      interrupted: false,
+      effectFired: true,
+      onClip: true,
+      frameIndex: 6,
+      animPlayable: true,
+    })
+    expect(again).toEqual({ action: 'complete', effect: false })
+    unbind()
+  })
+
+  it('uses the timer only when the use_pickaxe clip cannot play', () => {
+    const waiting = stepPickaxe({
+      elapsed: timing.effectMs - 1,
+      timing,
+      interrupted: false,
+      effectFired: false,
+      onClip: false,
+      frameIndex: -1,
+      animPlayable: false,
+    })
+    expect(waiting).toEqual({ action: 'continue', effect: false })
+
+    const due = stepPickaxe({
+      elapsed: timing.effectMs,
+      timing,
+      interrupted: false,
+      effectFired: false,
+      onClip: false,
+      frameIndex: -1,
+      animPlayable: false,
+    })
+    expect(due.effect).toBe(true)
+    expect(due.action).toBe('continue')
+
+    const stalled = stepPickaxe({
+      elapsed: timing.totalMs,
+      timing,
+      interrupted: false,
+      effectFired: false,
+      onClip: true,
+      frameIndex: 2,
+      animPlayable: true,
+    })
+    expect(stalled).toEqual({ action: 'continue', effect: false })
+  })
+
+  it('does not fire after the swing is cancelled', () => {
+    const contacts = []
+    const sprite = frameEmitter()
+    let cancelled = false
+    const unbind = watchPickaxeContact(sprite, {
+      classId: 'dwarf',
+      effectFrame: timing.effectFrame,
+      isCancelled: () => cancelled,
+      onContact: (index) => contacts.push(index),
+    })
+
+    const blocked = stepPickaxe({
+      elapsed: timing.totalMs,
+      timing,
+      interrupted: true,
+      effectFired: false,
+      onClip: true,
+      frameIndex: timing.effectFrame,
+      animPlayable: true,
+    })
+    expect(blocked).toEqual({ action: 'cancel', effect: false })
+
+    cancelled = true
+    sprite.emit(PICKAXE_FRAME_EVENT, ...pickaxeUpdate('dwarf_use_pickaxe_down', 'dwarf_use_pickaxe_down_4'))
+    expect(contacts).toEqual([])
+
+    unbind()
+    cancelled = false
+    sprite.emit(PICKAXE_FRAME_EVENT, ...pickaxeUpdate('dwarf_use_pickaxe_left', 'dwarf_use_pickaxe_left_7'))
+    expect(contacts).toEqual([])
   })
 })
 
