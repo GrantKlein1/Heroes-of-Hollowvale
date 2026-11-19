@@ -478,6 +478,7 @@ function spawnV2Spell(scene, player, spellId, facing) {
       maxDist: 320,
       damage: 15,
       impact: 'lightning',
+      shooter: player,
     })
     : new Projectile(scene, spawnPos.x, spawnPos.y, 'spell_fx_v2', `${fx.fly}_0`, {
       ...shared,

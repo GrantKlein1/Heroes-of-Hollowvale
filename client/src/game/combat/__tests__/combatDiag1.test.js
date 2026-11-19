@@ -256,7 +256,7 @@ describe('COMBAT-DIAG-1', () => {
   }
 
   describe('knight melee', () => {
-    it.skip('hits a goblin overlapping the knight and one tile in front, on every facing', () => {
+    it('hits a goblin overlapping the knight and one tile in front, on every facing', () => {
       const misses = []
       for (const sheet of [
         ['knight_attack', 'attack'],
@@ -277,7 +277,7 @@ describe('COMBAT-DIAG-1', () => {
       expect(misses).toEqual([])
     })
 
-    it.skip('does not hit a goblin standing one tile behind the facing', () => {
+    it('does not hit a goblin standing one tile behind the facing', () => {
       const tagged = []
       for (const facing of ['down', 'left', 'right', 'up']) {
         const enemy = place(facing, -32)
@@ -292,7 +292,7 @@ describe('COMBAT-DIAG-1', () => {
   })
 
   describe('knight block', () => {
-    it.skip('mitigates a goblin inside attack range but outside the 60 degree half-angle', () => {
+    it('mitigates a goblin inside attack range but outside the 60 degree half-angle', () => {
       // Feet 32px right and 16px down of a down-facing knight.
       // dist = 35.8 <= goblin ATTACK_RANGE_PX (36). Off-axis by ~63.4°, just past ±60°.
       const knightActor = {
@@ -308,7 +308,7 @@ describe('COMBAT-DIAG-1', () => {
       expect(res.finalDamage).toBe(3)
     })
 
-    it.skip('returns to block when the hurt clip ends while C is still held', () => {
+    it('returns to block when the hurt clip ends while C is still held', () => {
       const player = new Player(scene, 100, 100, 'knight', { facing: 'down' })
       const now = Date.now()
       expect(player.startBlock(now)).toBe(true)
@@ -327,7 +327,7 @@ describe('COMBAT-DIAG-1', () => {
   })
 
   describe('lightning bolt', () => {
-    it.skip('stops on the first enemy along facing and does not damage the one behind it', () => {
+    it('stops on the first enemy along facing and does not damage the one behind it', () => {
       const mage = {
         classId: 'mage',
         facing: 'down',
