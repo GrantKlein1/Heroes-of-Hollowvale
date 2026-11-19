@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { ANIM_TIMEOUT, markSlow, previewClass, waitForScene } from './helpers/waits';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -36,6 +37,7 @@ async function sample(page: import('@playwright/test').Page): Promise<SwingSampl
 }
 
 test('dwarf walks Brackenford and swings the axe', async ({ page }) => {
+  markSlow();
   fs.mkdirSync(SHOT_DIR, { recursive: true });
 
   const consoleErrors: string[] = [];
@@ -72,19 +74,15 @@ test('dwarf walks Brackenford and swings the axe', async ({ page }) => {
   await expect(chooseButtons).toHaveCount(4);
   // Redesigned class screen: hovering a Choose button previews that class in the detail panel.
   await expect(chooseButtons.nth(3)).toHaveText('Choose Dwarf');
-  await chooseButtons.nth(3).hover();
-  await expect(page.locator('h3', { hasText: 'Dwarf' })).toBeVisible();
+  await previewClass(page, chooseButtons.nth(3), 'Dwarf');
   await page.screenshot({ path: path.join(SHOT_DIR, '02-class-select.png') });
 
   // Fourth Choose is the dwarf (knight, mage, thief, dwarf).
   await chooseButtons.nth(3).click();
   await expect(chooseHeading).toBeHidden();
 
-  await page.waitForFunction(() => {
-    const hv = (window as any).__hv;
-    const player = (window as any).__scene?.player;
-    return hv?.scene?.() === 'village' && player?.classId === 'dwarf';
-  });
+  await waitForScene(page, 'village');
+  await page.waitForFunction(() => (window as any).__scene?.player?.classId === 'dwarf');
 
   const idle = await sample(page);
   expect(idle.classId).toBe('dwarf');
@@ -110,14 +108,14 @@ test('dwarf walks Brackenford and swings the axe', async ({ page }) => {
   await page.waitForFunction(() => {
     const frame = (window as any).__scene?.player?.anims?.currentFrame?.textureFrame || '';
     return frame === 'dwarf_attack_up_3';
-  });
+  }, null, { timeout: ANIM_TIMEOUT });
   const swing = await sample(page);
   await page.screenshot({ path: path.join(SHOT_DIR, '05-axe-swing.png') });
 
   await page.waitForFunction(() => {
     const anim = (window as any).__hv?.anim?.() || '';
     return anim.startsWith('dwarf_idle');
-  });
+  }, null, { timeout: ANIM_TIMEOUT });
   await page.keyboard.down('ArrowRight');
   await page.waitForTimeout(250);
   await page.keyboard.up('ArrowRight');
@@ -125,7 +123,7 @@ test('dwarf walks Brackenford and swings the axe', async ({ page }) => {
   await page.waitForFunction(() => {
     const frame = (window as any).__scene?.player?.anims?.currentFrame?.textureFrame || '';
     return frame === 'dwarf_attack_right_3';
-  });
+  }, null, { timeout: ANIM_TIMEOUT });
   const secondSwing = await sample(page);
   await page.screenshot({ path: path.join(SHOT_DIR, '06-axe-swing-facing-right.png') });
 

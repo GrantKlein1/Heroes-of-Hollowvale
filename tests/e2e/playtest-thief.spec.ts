@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { expect, test } from '@playwright/test'
+import { ANIM_TIMEOUT, markSlow, previewClass, waitForScene } from './helpers/waits'
 
 const OUT = path.resolve('docs/playtest/thief')
 
@@ -66,6 +67,7 @@ async function sample(page: import('@playwright/test').Page): Promise<Sample> {
 }
 
 test('PT-T thief moves, vanishes on J, and swings daggers on Space', async ({ page }) => {
+  markSlow()
   fs.mkdirSync(OUT, { recursive: true })
 
   const consoleErrors: string[] = []
@@ -98,25 +100,24 @@ test('PT-T thief moves, vanishes on J, and swings daggers on Space', async ({ pa
   await expect(choose).toHaveCount(4)
   // Third Choose button is the thief; hovering it previews the thief in the detail panel.
   await expect(choose.nth(2)).toHaveText('Choose Thief')
-  await choose.nth(2).hover()
+  await previewClass(page, choose.nth(2), 'Thief')
   const thiefCardText = await page.getByRole('dialog').innerText()
-  await expect(page.getByRole('dialog').locator('h3')).toHaveText('Thief')
   expect(thiefCardText).toContain('Thief')
   await page.screenshot({ path: path.join(OUT, '02-class-select.png') })
 
   await choose.nth(2).click()
   await expect(classModal).toBeHidden()
 
+  await waitForScene(page, 'village')
   await page.waitForFunction(() => {
     const w = window as any
     return (
       typeof w.__hv?.anim === 'function' &&
-      w.__hv.scene() === 'village' &&
       w.__session?.classId === 'thief' &&
       w.__session?.equippedId === 'twin_daggers'
     )
-  })
-  await page.waitForFunction(() => (window as any).__hv.anim() === 'thief_idle_down')
+  }, null, { timeout: ANIM_TIMEOUT })
+  await page.waitForFunction(() => (window as any).__hv.anim() === 'thief_idle_down', null, { timeout: ANIM_TIMEOUT })
 
   const idle = await sample(page)
   const hotbarAlts = await page.locator('img[alt]').evaluateAll((imgs) =>
@@ -125,12 +126,12 @@ test('PT-T thief moves, vanishes on J, and swings daggers on Space', async ({ pa
   await page.screenshot({ path: path.join(OUT, '03-idle.png') })
 
   await page.keyboard.down('ArrowUp')
-  await page.waitForFunction(() => (window as any).__hv.anim() === 'thief_walk_up')
+  await page.waitForFunction(() => (window as any).__hv.anim() === 'thief_walk_up', null, { timeout: ANIM_TIMEOUT })
   await page.waitForTimeout(400)
   const moving = await sample(page)
   await page.screenshot({ path: path.join(OUT, '04-move.png') })
   await page.keyboard.up('ArrowUp')
-  await page.waitForFunction(() => (window as any).__hv.anim() === 'thief_idle_up')
+  await page.waitForFunction(() => (window as any).__hv.anim() === 'thief_idle_up', null, { timeout: ANIM_TIMEOUT })
 
   await page.keyboard.press('j', { delay: 60 })
   await page.waitForFunction(() => {
@@ -138,7 +139,7 @@ test('PT-T thief moves, vanishes on J, and swings daggers on Space', async ({ pa
     const anim = w.__hv?.anim?.() || ''
     const p = w.__scene?.player
     return /^thief_vanish_/.test(anim) && p?.visible === true
-  })
+  }, null, { timeout: ANIM_TIMEOUT })
   const vanished = await sample(page)
   await page.screenshot({ path: path.join(OUT, '05-vanish.png') })
 
@@ -147,7 +148,7 @@ test('PT-T thief moves, vanishes on J, and swings daggers on Space', async ({ pa
     const now = performance.now()
     const s = w.__session
     return now >= (s?.thiefVanishUntil || 0) && now < (s?.thiefSmokeUntil || 0)
-  })
+  }, null, { timeout: ANIM_TIMEOUT })
   const smoke = await sample(page)
   await page.screenshot({ path: path.join(OUT, '06-smoke.png') })
 
@@ -155,7 +156,7 @@ test('PT-T thief moves, vanishes on J, and swings daggers on Space', async ({ pa
   await page.waitForFunction(() => {
     const anim = (window as any).__hv?.anim?.() || ''
     return anim.includes('attack')
-  })
+  }, null, { timeout: ANIM_TIMEOUT })
   const swing = await sample(page)
   await page.screenshot({ path: path.join(OUT, '07-dagger.png') })
 
