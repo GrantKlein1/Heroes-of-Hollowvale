@@ -63,16 +63,14 @@ test.describe('Heroes of Hollowvale — Hit System & Combat Feedback (Package 1-
     );
 
     // 5. Spawn goblin enemy in front of the knight
-    const playerPos = await page.evaluate(() => (window as any).__hv.player());
-    expect(playerPos).toBeDefined();
-
-    // Right-facing sword box is knight_attack frame 3:
-    // { x: 12, y: -68, w: 56, h: 40 } from body.bottom (feet + 3).
-    // __hv.player() is the physics-body top-left, not the feet.
-    // Goblin hurtbox { x: -16, y: -23, w: 31, h: 23 } sits inside that box at +52, -34.
-    // speed = 0 keeps the dummy still.
-    const targetX = playerPos.x + 52;
-    const targetY = playerPos.y - 34;
+    // Feet-space reach (right): { x: -16, y: -24, w: 56, h: 48 } at player.x/y.
+    // Goblin feet at player feet + (35, -15) sits inside that reach vs goblin hurtbox
+    // (same offset as attack-combat-regression / full-flow combo tests).
+    const goblinFeet = await page.evaluate(() => {
+      const p = (window as any).__scene.player;
+      return { x: p.x + 35, y: p.y - 15 };
+    });
+    expect(goblinFeet).toBeDefined();
 
     await page.evaluate(
       ({ x, y }) => {
@@ -82,7 +80,7 @@ test.describe('Heroes of Hollowvale — Hit System & Combat Feedback (Package 1-
           if (e.body?.setVelocity) e.body.setVelocity(0, 0);
         }
       },
-      { x: targetX, y: targetY }
+      goblinFeet
     );
 
     // Verify goblin spawned at the first-wave health from combat/balance.js
