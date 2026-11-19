@@ -1159,6 +1159,142 @@ function pushProp(propsObjects, propKey, tx, ty, name = propKey) {
   });
 }
 
+const CARDINALS = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+
+function cellKey(x, y) {
+  return `${x},${y}`;
+}
+
+/**
+ * The canopy canvas includes empty space under the leaves, and the leaves
+ * sit at the top of that canvas. y == 0 puts those leaves on the screen edge.
+ */
+function spriteInsideMap(propKey, tx, ty, width, height) {
+  const def = PROP_DEFINITIONS[propKey];
+  if (!def) return false;
+  const { x, y } = propObjectCoords(tx, ty, def.w, def.h);
+  return x >= 0 && y > 0 && x + def.w <= width * TILE_SIZE && y + def.h <= height * TILE_SIZE;
+}
+
+/**
+ * Hearthmile's stamped apron is a filled 3x2 cobble box south of the stone.
+ * Keep a connected core, drop one corner, and add a two-cell tab so the
+ * outline is not a rectangle. Both shapes stay degree >= 2 against the road
+ * (validateMap treats cobble and dirt as road, and rejects a one-cell spur).
+ */
+function monumentPad(seed) {
+  const keep = new Set(['6,5', '7,5', '8,5', '7,6']);
+  const drop = new Set(['6,6', '8,6']);
+  const side = mix(seed, 7, 6, 91) % 2;
+  if (side === 0) {
+    drop.delete('6,6');
+    keep.add('6,6');
+    keep.add('5,5');
+    keep.add('5,6');
+  } else {
+    drop.delete('8,6');
+    keep.add('8,6');
+    keep.add('9,5');
+    keep.add('9,6');
+  }
+  if (unit(seed, 7, 7, 92) < 0.75) {
+    if (side === 0) {
+      keep.add('6,7');
+      keep.add('7,7');
+    } else {
+      keep.add('7,7');
+      keep.add('8,7');
+    }
+  }
+  return { keep, drop };
+}
+
+/**
+ * Seeded dirt tabs on grass (or plains) that touches a road or cobble pad.
+ * Each tab is a domino lying on the edge, so both cells meet another road
+ * cell and validateMap does not see a dead-end spur. The Wang blend on
+ * those cells is what frays the dirt into the grass.
+ * @param {(tx: number, ty: number) => string} kindAt local cell kind
+ */
+function frayDirtEdges(kindAt, seed, width, height, salt, blocked) {
+  const paved = new Set();
+  const terrain = new Map();
+  for (let ty = 0; ty < height; ty++) {
+    for (let tx = 0; tx < width; tx++) {
+      const kind = kindAt(tx, ty);
+      const key = cellKey(tx, ty);
+      terrain.set(key, kind);
+      if (kind === 'road' || kind === 'cobble' || kind === 'gate') paved.add(key);
+    }
+  }
+
+  const added = new Set();
+  const isRoad = (x, y, extra) => {
+    const key = cellKey(x, y);
+    return paved.has(key) || added.has(key) || (extra && extra.has(key));
+  };
+
+  const candidates = [];
+  for (let ty = 0; ty < height; ty++) {
+    for (let tx = 0; tx < width; tx++) {
+      if (tx + 1 < width) candidates.push([[tx, ty], [tx + 1, ty]]);
+      if (ty + 1 < height) candidates.push([[tx, ty], [tx, ty + 1]]);
+    }
+  }
+  candidates.sort((a, b) => mix(seed, a[0][0], a[0][1], salt) - mix(seed, b[0][0], b[0][1], salt));
+
+  const createsHole = (extra) => {
+    const seen = new Set();
+    for (const [x, y] of extra) {
+      for (let dy = -1; dy <= 1; dy++) {
+        for (let dx = -1; dx <= 1; dx++) seen.add(cellKey(x + dx, y + dy));
+      }
+    }
+    for (const key of seen) {
+      const [x, y] = key.split(',').map(Number);
+      if (x < 1 || y < 1 || x >= width - 1 || y >= height - 1) continue;
+      if (isRoad(x, y, extra)) continue;
+      let n = 0;
+      for (const [dx, dy] of CARDINALS) {
+        if (isRoad(x + dx, y + dy, extra)) n += 1;
+      }
+      if (n === 4) return true;
+    }
+    return false;
+  };
+
+  const touchesOriginal = (x, y) => CARDINALS.some(([dx, dy]) => paved.has(cellKey(x + dx, y + dy)));
+
+  for (const pair of candidates) {
+    const [ax, ay] = pair[0];
+    if (unit(seed, ax, ay, salt + 3) >= 0.7) continue;
+    // One cell deep, and not flush with another tab. A solid extra row
+    // would just move the hard edge outward.
+    if (!pair.every(([x, y]) => touchesOriginal(x, y))) continue;
+    if (pair.some(([x, y]) => CARDINALS.some(([dx, dy]) => added.has(cellKey(x + dx, y + dy))))) continue;
+    const keys = pair.map(([x, y]) => cellKey(x, y));
+    if (keys.some((key) => blocked.has(key) || paved.has(key) || added.has(key))) continue;
+    if (keys.some((key) => {
+      const kind = terrain.get(key);
+      return kind !== 'grass' && kind !== 'plains';
+    })) continue;
+
+    const extra = new Set(keys);
+    let linked = true;
+    for (const [x, y] of pair) {
+      let degree = 0;
+      for (const [dx, dy] of CARDINALS) {
+        if (isRoad(x + dx, y + dy, extra)) degree += 1;
+      }
+      if (degree < 2) linked = false;
+    }
+    if (!linked || createsHole(extra)) continue;
+    for (const key of keys) added.add(key);
+  }
+
+  return (tx, ty) => (added.has(cellKey(tx, ty)) ? 'road' : kindAt(tx, ty));
+}
+
 /**
  * Seeded bushes, rocks, and the occasional tree. Skips pavement and stays
  * clear of exits, spawns, and props already placed.
@@ -1175,8 +1311,17 @@ function scatterDecor(propsObjects, seed, width, height, kindAt, keepOut, anchor
       if (placed.some((p) => Math.max(Math.abs(p.x - tx), Math.abs(p.y - ty)) <= 2)) continue;
       if (unit(seed, tx, ty, salt) >= 0.1) continue;
       let key = decor[mix(seed, tx, ty, salt + 1) % decor.length];
-      // Canopy art sits at the top of the canvas, so a tree above row 5 is clipped.
-      if (key.startsWith('tree_') && (ty < 5 || unit(seed, tx, ty, salt + 2) > 0.4)) key = 'bush_a';
+      // Leaves sit at the top of the canopy canvas. A tree whose sprite
+      // touches the screen edge, or leaves it, becomes a bush.
+      if (key.startsWith('tree_') && (!spriteInsideMap(key, tx, ty, width, height) || unit(seed, tx, ty, salt + 2) > 0.4)) {
+        key = 'bush_a';
+      }
+      const def = PROP_DEFINITIONS[key];
+      const rect = propObjectCoords(tx, ty, def.w, def.h);
+      const hitsSprite = propsObjects.some((p) =>
+        rect.x < p.x + p.width && rect.x + def.w > p.x && rect.y < p.y + p.height && rect.y + def.h > p.y
+      );
+      if (hitsSprite) continue;
       pushProp(propsObjects, key, tx, ty);
       placed.push({ x: tx, y: ty });
       count += 1;
@@ -1203,7 +1348,25 @@ export function buildHearthmileMap(tilesets, seed = DEFAULT_SEED) {
   const collisionData = new Array(width * height).fill(0);
   const overheadData = new Array(width * height).fill(0);
 
-  const kindAt = (wx, wy) => computeKind(wx, wy, seed);
+  const worldKind = (wx, wy) => computeKind(wx, wy, seed);
+  const pad = monumentPad(seed);
+  const localBase = (tx, ty) => {
+    const base = worldKind(x0 + tx, y0 + ty);
+    if (base === 'road' || base === 'gate') return base;
+    const key = cellKey(tx, ty);
+    if (pad.keep.has(key)) return 'cobble';
+    if (pad.drop.has(key) && base === 'cobble') return 'grass';
+    return base;
+  };
+  // Props already standing on the grass, and the bitten-out pad corner.
+  const blocked = new Set([...pad.drop, '5,5', '9,6', '2,8', '15,4', '13,6']);
+  const frayed = frayDirtEdges(localBase, seed, width, height, 73, blocked);
+  const kindAt = (wx, wy) => {
+    const tx = wx - x0;
+    const ty = wy - y0;
+    if (tx >= 0 && ty >= 0 && tx < width && ty < height) return frayed(tx, ty);
+    return worldKind(wx, wy);
+  };
   paintEavesGround({ gids, groundData, width, height, kindAt, seed, x0, y0 });
 
   const propsObjects = [];
@@ -1214,7 +1377,7 @@ export function buildHearthmileMap(tilesets, seed = DEFAULT_SEED) {
   pushProp(propsObjects, 'tree_pine_base', 2, 8);
   pushProp(propsObjects, 'tree_oak_base', 15, 4);
   pushProp(propsObjects, 'bush_a', 13, 6);
-  const localKind = (tx, ty) => kindAt(x0 + tx, y0 + ty);
+  const localKind = (tx, ty) => frayed(tx, ty);
   const keepOut = [
     { x: 7, y: 5 }, { x: 9, y: 1 }, { x: 1, y: 2 },
     { x: 8, y: 0 }, { x: 9, y: 0 }, { x: 10, y: 0 }, { x: 11, y: 0 },
@@ -1359,12 +1522,19 @@ export function buildRuinwatchMap(tilesets, seed = DEFAULT_SEED) {
       }
     }
   }
-  const kindAt = (tx, ty) => {
+  const baseKind = (tx, ty) => {
     if (tx < 0 || ty < 0 || tx >= width || ty >= height) return 'forest';
     if (road(tx, ty)) return 'road';
     if (camp(tx, ty)) return 'cobble';
     if (skirt[ty * width + tx]) return 'grass';
     return 'forest';
+  };
+  // Trunks and the camp props. The pine sits at ty 5 so its canopy clears the top.
+  const blocked = new Set(['7,7', '4,5', '16,8', '10,5', '8,4', '12,4']);
+  const frayed = frayDirtEdges(baseKind, seed, width, height, 84, blocked);
+  const kindAt = (tx, ty) => {
+    if (tx < 0 || ty < 0 || tx >= width || ty >= height) return 'forest';
+    return frayed(tx, ty);
   };
   paintEavesGround({ gids, groundData, width, height, kindAt, seed });
 
@@ -1374,7 +1544,9 @@ export function buildRuinwatchMap(tilesets, seed = DEFAULT_SEED) {
   pushProp(propsObjects, 'crate', 8, 4);
   pushProp(propsObjects, 'barrel', 12, 4);
   pushProp(propsObjects, 'rock_a', 7, 7);
-  pushProp(propsObjects, 'tree_pine_base', 4, 3);
+  // Pine canopy is 160px with the leaves at the top of the canvas.
+  // ty 3 starts the sprite at y -32 and cuts the crown off. ty 5 clears the top edge.
+  pushProp(propsObjects, 'tree_pine_base', 4, 5);
   // The oak canopy is 144px of leaves at the top of the canvas. ty 2 clips it off the map.
   pushProp(propsObjects, 'tree_oak_base', 16, 8);
   scatterDecor(
@@ -1389,7 +1561,7 @@ export function buildRuinwatchMap(tilesets, seed = DEFAULT_SEED) {
     ],
     [
       { x: 10, y: 5 }, { x: 8, y: 4 }, { x: 12, y: 4 },
-      { x: 7, y: 7 }, { x: 4, y: 3 }, { x: 16, y: 8 },
+      { x: 7, y: 7 }, { x: 4, y: 5 }, { x: 16, y: 8 },
     ],
     80,
   );

@@ -107,7 +107,7 @@ describe('Data-driven Tiled Map Registry (mapRegistry.js)', () => {
     expect(exitBeaconName('tavern', 'The Flagon')).toBe('The Flagon')
     expect(exitBeaconName('village', 'Brackenford')).toBe('Village')
     expect(exitBeaconName('dungeon', 'Cavern of Embers')).toBe('Cavern of Embers')
-    expect(exitBeaconName('wilderness', 'wilderness')).toBe('wilderness')
+    expect(exitBeaconName('wilderness', 'wilderness')).toBe('Wilderness')
     expect(exitBeaconName('ruinwatch', 'Ruinwatch', 'Custom Sign')).toBe('Custom Sign')
     expect(placeNameFromMap({
       properties: [{ name: 'placeName', type: 'string', value: 'Ruinwatch' }],

@@ -16,6 +16,7 @@ import {
   LEAGUE_H,
   floodLeague,
   autotileWangId,
+  computeKind,
 } from '../../../../../tools/maps/generate_tmj.mjs';
 import { parsePropFootprint, validateMap } from '../../../../../tools/maps/validate_map.mjs';
 import { MAP_LAYERS } from '../depth.js';
@@ -499,12 +500,63 @@ describe('MAPS-POLISH-1 hearthmile and ruinwatch', () => {
     },
   ];
 
+  function tilesetCells(map, tilesetName) {
+    const ts = map.tilesets.find((t) => t.name === tilesetName);
+    const ground = layer(map, 'ground').data;
+    const cells = [];
+    for (let ty = 0; ty < map.height; ty++) {
+      for (let tx = 0; tx < map.width; tx++) {
+        const gid = ground[ty * map.width + tx];
+        if (gid >= ts.firstgid && gid < ts.firstgid + ts.tilecount) cells.push([tx, ty]);
+      }
+    }
+    return cells;
+  }
+
+  function isFilledRectangle(cells) {
+    let minX = Infinity;
+    let maxX = -1;
+    let minY = Infinity;
+    let maxY = -1;
+    for (const [x, y] of cells) {
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      if (y < minY) minY = y;
+      if (y > maxY) maxY = y;
+    }
+    const w = maxX - minX + 1;
+    const h = maxY - minY + 1;
+    return w >= 2 && h >= 2 && cells.length === w * h;
+  }
+
+  function canopyInside(map, obj) {
+    expect(obj.y, obj.name).toBeGreaterThan(0);
+    expect(obj.x, obj.name).toBeGreaterThanOrEqual(0);
+    expect(obj.x + obj.width, obj.name).toBeLessThanOrEqual(map.width * TILE_SIZE);
+    expect(obj.y + obj.height, obj.name).toBeLessThanOrEqual(map.height * TILE_SIZE);
+  }
+
   it('softens hearthmile, keeps the exits, and stays reachable', () => {
     const map = buildHearthmileMap(tilesets, DEFAULT_SEED);
     expectPolish(map, hearthExits);
     expect(JSON.stringify(map)).toBe(JSON.stringify(buildHearthmileMap(tilesets, DEFAULT_SEED)));
     const other = buildHearthmileMap(tilesets, 'other-seed');
     expect(JSON.stringify(layer(map, 'ground').data)).not.toBe(JSON.stringify(layer(other, 'ground').data));
+
+    const cobble = tilesetCells(map, 'cobble_road');
+    expect(cobble.length).toBeGreaterThan(4);
+    expect(isFilledRectangle(cobble)).toBe(false);
+
+    const dirt = tilesetCells(map, 'dirt_road');
+    const outsideRoad = dirt.filter(([tx, ty]) => {
+      const kind = computeKind(tx, 44 + ty, DEFAULT_SEED);
+      return kind !== 'road' && kind !== 'gate';
+    });
+    expect(outsideRoad.length).toBeGreaterThan(0);
+
+    for (const tree of props(map).filter((p) => p.name.endsWith('_base') && p.name.startsWith('tree_'))) {
+      canopyInside(map, tree);
+    }
   });
 
   it('gives ruinwatch canopies, a forest edge, and a reachable camp', () => {
@@ -515,5 +567,15 @@ describe('MAPS-POLISH-1 hearthmile and ruinwatch', () => {
     expect(names).toContain('tree_oak_canopy');
     expect(names).toContain('hearth_burn_down_0');
     expect(JSON.stringify(map)).toBe(JSON.stringify(buildRuinwatchMap(tilesets, DEFAULT_SEED)));
+
+    const pines = props(map).filter((p) => p.name === 'tree_pine_base');
+    expect(pines.length).toBeGreaterThan(0);
+    for (const pine of pines) canopyInside(map, pine);
+    const topLeft = pines.reduce((best, pine) => (pine.x + pine.y < best.x + best.y ? pine : best));
+    expect(topLeft.y).toBeGreaterThan(0);
+
+    const dirt = tilesetCells(map, 'dirt_road');
+    const outsideStrip = dirt.filter(([tx, ty]) => !(tx >= 14 && (ty === 5 || ty === 6)));
+    expect(outsideStrip.length).toBeGreaterThan(0);
   });
 });

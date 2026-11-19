@@ -227,6 +227,9 @@ export function exitBeaconName(toScene, placeName, zoneLabel) {
   if (toScene === 'market') return 'Market'
   if (toScene === 'tavern') return 'The Flagon'
   if (toScene === 'village') return 'Village'
+  // Scene catalog and the rangers' name in the lore. The map file stores
+  // the lowercase scene id, which is not the sign the player should read.
+  if (toScene === 'wilderness') return 'Wilderness'
   if (typeof placeName === 'string') {
     const name = placeName.trim()
     if (name && name !== name.toLowerCase()) return name

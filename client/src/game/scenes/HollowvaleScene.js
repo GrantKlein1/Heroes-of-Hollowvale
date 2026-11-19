@@ -1696,10 +1696,12 @@ export default class HollowvaleScene extends Phaser.Scene {
           }
         } else {
           const target = dest || 'wilderness'
+          const raw = String(target).replace(/\.tmj$/i, '')
+          const shortName = exitBeaconName(raw.toLowerCase(), raw)
           const prompt = this._pushPrompt(
             rect,
-            z.properties?.prompt || `Press E to exit to ${target.replace('.tmj', '')}`,
-            'Wilderness',
+            z.properties?.prompt || `Press E to exit to ${shortName}`,
+            shortName,
             'exit',
             'wilderness'
           )
