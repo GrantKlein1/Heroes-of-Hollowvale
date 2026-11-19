@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { freezeSceneForScreenshot } from './helpers/waits';
 
 const CLASSES = [
   { id: 'knight', name: 'Knight', index: 0 },
@@ -86,8 +87,9 @@ test.describe('Package 2-3: Playable Brackenford Tiled Map Integration (?maps=ti
     expect(mapValidation.overheadLayerExists).toBe(true);
     expect(mapValidation.waterTilesCount).toBeGreaterThan(0);
 
-    // 6. Settle and capture visual screenshot of Brackenford
+    // 6. Settle, then pin water and the pulsing exit outlines before the shot.
     await page.waitForTimeout(600);
+    await freezeSceneForScreenshot(page);
     await expect(page).toHaveScreenshot('brackenford-overview.png');
 
     expect(consoleErrors).toEqual([]);
@@ -293,15 +295,19 @@ test.describe('Package 2-3: Playable Brackenford Tiled Map Integration (?maps=ti
       expect(cameraBounds.viewY).toBeGreaterThanOrEqual(-1);
       expect(cameraBounds.viewBottom).toBeLessThanOrEqual(385);
 
-      // Test combat attack trigger
+      // The swing's frame at a fixed 300ms depends on the runner's frame time.
+      // Wait until this class has left idle, then pin one frame of that clip.
       await page.keyboard.press('Space');
-      await page.waitForTimeout(100);
+      await page.waitForFunction((id) => {
+        const key = String((window as any).__hv?.anim?.() || '');
+        return key.includes(id) && !/idle|walk/.test(key);
+      }, classId, { timeout: 5000 });
 
       const animKey = await page.evaluate(() => (window as any).__hv.anim());
       expect(animKey).toContain(classId);
+      expect(animKey, `${className} should be in the swing, not idle`).not.toMatch(/idle|walk/);
 
-      // Capture screenshot for each class in Brackenford
-      await page.waitForTimeout(300);
+      await freezeSceneForScreenshot(page, { playerFrame: 3 });
       await expect(page).toHaveScreenshot(`brackenford-${classId}-1080p.png`);
     }
   });

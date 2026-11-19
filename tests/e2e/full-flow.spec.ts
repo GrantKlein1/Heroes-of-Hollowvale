@@ -185,9 +185,12 @@ async function sampleFps(page: Page, label: string) {
   })
   const avg = samples.reduce((sum, n) => sum + n, 0) / samples.length
   const min = Math.min(...samples)
-  console.log(`[QA-1] ${label} fps avg ${avg.toFixed(1)} min ${min.toFixed(1)} over ${samples.length} samples / 2s`)
-  // Generous floor. The shipped target is 60; 30 only catches a stalled loop.
-  expect(avg, `${label} average fps`).toBeGreaterThanOrEqual(30)
+  // Local machines should hold 30 (the shipped target is 60; 30 catches a stall).
+  // GitHub-hosted runners have no GPU. Measured there: village ~22, cavern mouth ~17.
+  // The CI floor stays well under that and still rejects a loop that is not advancing.
+  const floor = process.env.CI ? 8 : 30
+  console.log(`[QA-1] ${label} fps avg ${avg.toFixed(1)} min ${min.toFixed(1)} over ${samples.length} samples / 2s (floor ${floor})`)
+  expect(avg, `${label} average fps`).toBeGreaterThanOrEqual(floor)
   return avg
 }
 
