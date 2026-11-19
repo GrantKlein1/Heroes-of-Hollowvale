@@ -233,6 +233,43 @@ test.describe('BOW-1: lightning bow', () => {
     });
   }
 
+  test('BOW-SHOP-1: buys from market Weaponry, equips from the hotbar, and still holds like a found bow', async ({ page }) => {
+    await boot(page, 0); // knight
+
+    await page.evaluate(() => {
+      const w = window as any;
+      w.__hv.giveItem('ruby', 5);
+      w.__hv.giveItem('sapphire', 3);
+      w.__hv.giveItem('emerald', 2);
+    });
+
+    await page.evaluate(() => (window as any).__hv.goto('market', 0.5, 0.8));
+    await page.waitForFunction(() => (window as any).__hv.scene() === 'market');
+    await page.evaluate(() => (window as any).__chatEventBus.emit('npc:vendor', {}));
+    await expect(page.getByText('Market Stall').first()).toBeVisible({ timeout: 5000 });
+    await page.getByRole('button', { name: 'Weaponry' }).click();
+    await expect(page.getByText('Lightning Bow').first()).toBeVisible();
+
+    const bowCard = page.locator('div.rounded-xl.border').filter({ hasText: 'Lightning Bow' });
+    await bowCard.getByRole('button', { name: 'Buy' }).click();
+    await expect(page.getByText('Bought Lightning Bow.')).toBeVisible({ timeout: 3000 });
+
+    await page.keyboard.press('Escape');
+
+    let equipped = false;
+    for (let n = 1; n <= 9 && !equipped; n += 1) {
+      await page.keyboard.press(String(n));
+      equipped = await page.evaluate(() => (window as any).__session.equippedId === 'lightning_bow');
+    }
+    expect(equipped).toBe(true);
+    await page.evaluate(() => {
+      const p = (window as any).__scene.player;
+      p.setFacing('right');
+      p.playAnim('idle');
+    });
+    await page.waitForFunction(() => (window as any).__hv.anim() === 'knight_hold_idle_right');
+  });
+
   test('the bow is a ground pickup with the shimmer clip, and is listed in the Field Guide', async ({ page }) => {
     await boot(page, 0);
     await page.evaluate(() => (window as any).__hv.dropItem('lightning_bow', 70, 0));

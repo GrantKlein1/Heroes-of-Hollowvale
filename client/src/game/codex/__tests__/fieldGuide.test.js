@@ -158,7 +158,7 @@ describe('field guide catalog', () => {
     expect(bowEntry.stats.find((row) => row.label === 'Strike').value).toBe(damageLine(bow.weapon.damage))
     expect(bowEntry.stats.find((row) => row.label === 'Draw').value).toContain(secondsLabel(833))
     expect(bowEntry.stats.find((row) => row.label === 'Range').value).toContain(String(bow.projectile.maxDist))
-    expect(bowEntry.stats.find((row) => row.label === 'Price').value).not.toMatch(/ruby|sapphire|emerald/i)
+    expect(bowEntry.stats.find((row) => row.label === 'Price').value).toMatch(/ruby|sapphire|emerald/i)
     expect(entry(guide, 'enemies', 'archer').stats.find((row) => row.label === 'Drops').value).toContain('Lightning Bow')
 
     const charm = getItem('healing_charm')
