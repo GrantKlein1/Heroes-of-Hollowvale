@@ -11,7 +11,7 @@
   "version": "1.10",
   "tiledversion": "1.10.2",
   "nextlayerid": 8,
-  "nextobjectid": 11,
+  "nextobjectid": 20,
   "properties": [
     {
       "name": "placeName",
@@ -12375,6 +12375,559 @@
       "type": "tileset",
       "version": "1.10",
       "_baseGid": 185
+    },
+    {
+      "firstgid": 264,
+      "columns": 4,
+      "image": "../assets/tiles/forest_floor.png",
+      "imagewidth": 136,
+      "imageheight": 204,
+      "margin": 1,
+      "name": "forest_floor",
+      "spacing": 2,
+      "tilecount": 23,
+      "tileheight": 32,
+      "tilewidth": 32,
+      "tiles": [
+        {
+          "id": 0,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 0
+            },
+            {
+              "name": "variant",
+              "type": "string",
+              "value": "emberwood_0"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "variant",
+              "type": "string",
+              "value": "emberwood_1"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "variant",
+              "type": "string",
+              "value": "emberwood_2"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "variant",
+              "type": "string",
+              "value": "emberwood_3"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "variant",
+              "type": "string",
+              "value": "emberwood_4"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "variant",
+              "type": "string",
+              "value": "emberwood_5"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "variant",
+              "type": "string",
+              "value": "emberwood_6"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "variant",
+              "type": "string",
+              "value": "emberwood_7"
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 8
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 1
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "forest_grass"
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 9
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "forest_grass"
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "forest_grass"
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 11
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "forest_grass"
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "forest_grass"
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 13
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 6
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "forest_grass"
+            }
+          ]
+        },
+        {
+          "id": 14,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 14
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 7
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "forest_grass"
+            }
+          ]
+        },
+        {
+          "id": 15,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 15
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 8
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "forest_grass"
+            }
+          ]
+        },
+        {
+          "id": 16,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 16
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 9
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "forest_grass"
+            }
+          ]
+        },
+        {
+          "id": 17,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 17
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 10
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "forest_grass"
+            }
+          ]
+        },
+        {
+          "id": 18,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 18
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 11
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "forest_grass"
+            }
+          ]
+        },
+        {
+          "id": 19,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 19
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 12
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "forest_grass"
+            }
+          ]
+        },
+        {
+          "id": 20,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 20
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 13
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "forest_grass"
+            }
+          ]
+        },
+        {
+          "id": 21,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 21
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 14
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "forest_grass"
+            }
+          ]
+        },
+        {
+          "id": 22,
+          "properties": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": 22
+            },
+            {
+              "name": "collides",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "grassMask",
+              "type": "int",
+              "value": 15
+            },
+            {
+              "name": "variantSlot",
+              "type": "string",
+              "value": "forest_grass"
+            }
+          ]
+        }
+      ],
+      "type": "tileset",
+      "version": "1.10",
+      "_baseGid": 264
     }
   ],
   "layers": [
@@ -12389,246 +12942,246 @@
       "width": 20,
       "height": 12,
       "data": [
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
+        270,
+        270,
+        270,
+        270,
+        264,
+        264,
+        279,
+        283,
+        275,
+        264,
+        264,
+        279,
+        283,
+        275,
+        266,
+        279,
+        283,
+        275,
+        264,
+        264,
+        270,
+        270,
+        270,
+        270,
+        279,
+        283,
+        285,
+        1,
+        284,
+        283,
+        283,
+        285,
+        4,
+        284,
+        283,
+        285,
+        2,
+        276,
+        264,
+        264,
+        270,
+        270,
+        270,
+        270,
+        281,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        4,
+        4,
+        4,
+        4,
+        2,
+        284,
+        283,
+        275,
+        264,
+        264,
+        270,
+        270,
+        273,
+        282,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        4,
+        4,
+        4,
+        1,
+        2,
+        2,
+        2,
+        284,
+        264,
+        264,
+        264,
+        264,
+        264,
+        281,
+        1,
+        1,
+        41,
+        45,
+        45,
+        45,
+        45,
+        37,
+        4,
+        1,
+        1,
+        7,
+        7,
+        7,
+        264,
+        264,
+        264,
+        264,
+        264,
+        281,
+        1,
+        1,
+        43,
         48,
         48,
         48,
         48,
-        48,
-        48,
+        46,
+        28,
+        32,
+        32,
+        32,
+        28,
+        13,
+        264,
+        264,
+        264,
+        264,
+        264,
+        281,
         1,
         1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        48,
-        48,
-        48,
-        48,
-        48,
-        48,
-        24,
-        24,
-        24,
-        24,
-        24,
-        24,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
+        43,
         48,
         48,
         48,
         48,
-        48,
-        48,
-        24,
-        24,
-        24,
-        24,
-        24,
-        24,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        48,
-        48,
-        48,
-        48,
-        48,
-        48,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1
+        40,
+        29,
+        29,
+        25,
+        29,
+        12,
+        10,
+        264,
+        264,
+        264,
+        264,
+        279,
+        285,
+        1,
+        1,
+        35,
+        36,
+        36,
+        36,
+        36,
+        34,
+        4,
+        4,
+        7,
+        7,
+        7,
+        7,
+        264,
+        264,
+        264,
+        264,
+        281,
+        1,
+        1,
+        1,
+        8,
+        8,
+        8,
+        8,
+        1,
+        2,
+        2,
+        278,
+        282,
+        1,
+        1,
+        1,
+        264,
+        264,
+        264,
+        264,
+        281,
+        1,
+        1,
+        1,
+        8,
+        8,
+        8,
+        8,
+        2,
+        2,
+        278,
+        280,
+        285,
+        1,
+        1,
+        1,
+        264,
+        264,
+        264,
+        264,
+        281,
+        1,
+        1,
+        1,
+        278,
+        274,
+        274,
+        282,
+        2,
+        2,
+        276,
+        281,
+        1,
+        278,
+        274,
+        274,
+        264,
+        264,
+        264,
+        264,
+        273,
+        274,
+        274,
+        274,
+        272,
+        264,
+        270,
+        273,
+        274,
+        274,
+        272,
+        273,
+        274,
+        272,
+        264,
+        264
       ]
     },
     {
@@ -13148,7 +13701,7 @@
       "y": 0,
       "objects": [
         {
-          "name": "hearth",
+          "name": "hearth_burn_down_0",
           "type": "prop",
           "x": 288,
           "y": 96,
@@ -13258,10 +13811,10 @@
           "id": 5
         },
         {
-          "name": "tree_pine_base",
+          "name": "tree_pine_canopy",
           "type": "prop",
-          "x": 432,
-          "y": -64,
+          "x": 80,
+          "y": -32,
           "width": 128,
           "height": 160,
           "visible": true,
@@ -13269,7 +13822,39 @@
             {
               "name": "footprint",
               "type": "string",
-              "value": "{\"x\":-10,\"y\":-12,\"w\":20,\"h\":12,\"shape\":\"ellipse\"}"
+              "value": "{\"x\":0,\"y\":0,\"w\":0,\"h\":0,\"shape\":\"none\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "layer",
+              "type": "string",
+              "value": "overhead"
+            },
+            {
+              "name": "pairedBase",
+              "type": "string",
+              "value": "tree_pine_base"
+            }
+          ],
+          "id": 6
+        },
+        {
+          "name": "tree_oak_base",
+          "type": "prop",
+          "x": 456,
+          "y": 144,
+          "width": 144,
+          "height": 144,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-12,\"y\":-12,\"w\":24,\"h\":12,\"shape\":\"ellipse\"}"
             },
             {
               "name": "tall",
@@ -13277,7 +13862,193 @@
               "value": false
             }
           ],
-          "id": 6
+          "id": 7
+        },
+        {
+          "name": "tree_oak_canopy",
+          "type": "prop",
+          "x": 456,
+          "y": 144,
+          "width": 144,
+          "height": 144,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":0,\"y\":0,\"w\":0,\"h\":0,\"shape\":\"none\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": true
+            },
+            {
+              "name": "layer",
+              "type": "string",
+              "value": "overhead"
+            },
+            {
+              "name": "pairedBase",
+              "type": "string",
+              "value": "tree_oak_base"
+            }
+          ],
+          "id": 8
+        },
+        {
+          "name": "bush_a",
+          "type": "prop",
+          "x": 408,
+          "y": 16,
+          "width": 48,
+          "height": 48,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-10,\"y\":-10,\"w\":20,\"h\":10,\"shape\":\"ellipse\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "id": 9
+        },
+        {
+          "name": "bush_a",
+          "type": "prop",
+          "x": 504,
+          "y": 16,
+          "width": 48,
+          "height": 48,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-10,\"y\":-10,\"w\":20,\"h\":10,\"shape\":\"ellipse\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "id": 10
+        },
+        {
+          "name": "rock_a",
+          "type": "prop",
+          "x": 24,
+          "y": 80,
+          "width": 48,
+          "height": 48,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-12,\"y\":-12,\"w\":24,\"h\":12,\"shape\":\"ellipse\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "id": 11
+        },
+        {
+          "name": "bush_b",
+          "type": "prop",
+          "x": 124,
+          "y": 208,
+          "width": 40,
+          "height": 48,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-12,\"y\":-12,\"w\":24,\"h\":12,\"shape\":\"ellipse\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "id": 12
+        },
+        {
+          "name": "bush_b",
+          "type": "prop",
+          "x": 28,
+          "y": 240,
+          "width": 40,
+          "height": 48,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-12,\"y\":-12,\"w\":24,\"h\":12,\"shape\":\"ellipse\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "id": 13
+        },
+        {
+          "name": "bush_b",
+          "type": "prop",
+          "x": 348,
+          "y": 240,
+          "width": 40,
+          "height": 48,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-12,\"y\":-12,\"w\":24,\"h\":12,\"shape\":\"ellipse\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "id": 14
+        },
+        {
+          "name": "rock_a",
+          "type": "prop",
+          "x": 120,
+          "y": 304,
+          "width": 48,
+          "height": 48,
+          "visible": true,
+          "properties": [
+            {
+              "name": "footprint",
+              "type": "string",
+              "value": "{\"x\":-12,\"y\":-12,\"w\":24,\"h\":12,\"shape\":\"ellipse\"}"
+            },
+            {
+              "name": "tall",
+              "type": "bool",
+              "value": false
+            }
+          ],
+          "id": 15
         }
       ]
     },
@@ -13558,7 +14329,7 @@
               "value": "spawn"
             }
           ],
-          "id": 7
+          "id": 16
         },
         {
           "name": "spawn_east",
@@ -13574,7 +14345,7 @@
               "value": "spawn"
             }
           ],
-          "id": 8
+          "id": 17
         },
         {
           "name": "exit_east",
@@ -13600,7 +14371,7 @@
               "value": "spawn_west"
             }
           ],
-          "id": 9
+          "id": 18
         },
         {
           "name": "Ruinwatch",
@@ -13626,7 +14397,7 @@
               "value": "Press E to inspect Ruinwatch Camp"
             }
           ],
-          "id": 10
+          "id": 19
         }
       ]
     },
