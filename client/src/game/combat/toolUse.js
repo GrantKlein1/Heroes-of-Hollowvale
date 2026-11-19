@@ -7,7 +7,11 @@
  * Pure module: no Phaser.
  */
 
+import { getAnimationFrameIndex } from './hitSystem.js'
 import { random } from '../rng.js'
+
+/** Phaser sprite event fired each time a playing animation changes frame. */
+export const PICKAXE_FRAME_EVENT = 'animationupdate'
 
 export const TOOL_UNLOCK_EVENT = 'tool:unlock'
 export const TOOL_MINE_EVENT = 'tool:mine'
@@ -197,19 +201,122 @@ export function stepLockpick(input) {
 }
 
 /**
- * Contact is taken when the effect frame's time is reached, including the
- * tick that also gets interrupted. A swing that stops earlier does nothing.
+ * Frame name prefix for a hero's use_pickaxe clip (`dwarf_use_pickaxe_down_4`).
  *
- * @param {{ elapsed: number, timing: { effectMs: number, totalMs: number }, interrupted: boolean, effectFired: boolean }} input
+ * @param {string} classId
+ * @returns {string}
+ */
+function pickaxeClipPrefix(classId) {
+  return `${classId || ''}_${TOOLS.pickaxe.clip}_`
+}
+
+/**
+ * The use_pickaxe frame on screen, read the same way the bow and the spells
+ * read their release frames. `onClip` is false when that animation is not
+ * the one playing (missing atlas, or the swing was replaced).
+ *
+ * @param {object|null|undefined} player
+ * @returns {{ onClip: boolean, frameIndex: number, frameName: string }}
+ */
+export function readPickaxeFrame(player) {
+  const frame = player?.anims?.currentFrame
+  const frameName = frame?.frame?.name || frame?.textureFrame || ''
+  const name = typeof frameName === 'string' ? frameName : ''
+  const frameIndex = getAnimationFrameIndex(frame)
+  const onClip = name.startsWith(pickaxeClipPrefix(player?.classId))
+  return { onClip, frameIndex, frameName: name }
+}
+
+/**
+ * Contact frame index from one `animationupdate`, or -1 when this payload
+ * is not the use_pickaxe clip at or past effectFrame.
+ *
+ * Phaser passes `(animation, frame, gameObject, frameKey)`.
+ *
+ * @param {object|null|undefined} anim
+ * @param {object|null|undefined} frame
+ * @param {string} [frameKey]
+ * @param {string} classId
+ * @param {number} effectFrame
+ * @returns {number}
+ */
+export function pickaxeContactIndex(anim, frame, frameKey, classId, effectFrame) {
+  const contact = finiteNumber(effectFrame)
+  if (contact === null || contact < 0) return -1
+  const key = typeof anim?.key === 'string' ? anim.key : ''
+  const named = frame?.textureFrame || frame?.frame?.name || frameKey || ''
+  const name = typeof named === 'string' ? named : ''
+  const prefix = pickaxeClipPrefix(classId)
+  if (!key.startsWith(prefix) && !name.startsWith(prefix)) return -1
+  const index = getAnimationFrameIndex(
+    frame?.textureFrame || frame?.frame?.name ? frame : { textureFrame: name },
+  )
+  return index >= contact ? index : -1
+}
+
+/**
+ * Subscribes to the sprite's animation frame event. `onContact` runs once,
+ * on the first use_pickaxe frame at or past effectFrame, and never after
+ * unbind or when `isCancelled()` is true.
+ *
+ * @param {object|null|undefined} sprite
+ * @param {{ classId: string, effectFrame: number, isCancelled?: () => boolean, onContact: (frameIndex: number) => void }} options
+ * @returns {() => void} unbind
+ */
+export function watchPickaxeContact(sprite, options) {
+  if (!sprite || typeof sprite.on !== 'function' || !options || typeof options.onContact !== 'function') {
+    return () => {}
+  }
+  const isCancelled = typeof options.isCancelled === 'function' ? options.isCancelled : () => false
+  let fired = false
+  let bound = true
+  const handler = (anim, frame, _gameObject, frameKey) => {
+    if (!bound || fired || isCancelled()) return
+    const index = pickaxeContactIndex(anim, frame, frameKey, options.classId, options.effectFrame)
+    if (index < 0) return
+    fired = true
+    options.onContact(index)
+  }
+  sprite.on(PICKAXE_FRAME_EVENT, handler)
+  return () => {
+    bound = false
+    if (typeof sprite.off === 'function') sprite.off(PICKAXE_FRAME_EVENT, handler)
+  }
+}
+
+/**
+ * The mine lands when use_pickaxe actually reaches effectFrame. effectMs is
+ * only the fallback when that clip cannot play (`animPlayable` false and the
+ * clip is not on screen). A cancel on the contact tick does not fire, and a
+ * swing that already fired does not fire again.
+ *
+ * @param {{ elapsed: number, timing: { effectMs: number, totalMs: number, effectFrame?: number }, interrupted?: boolean, cancelled?: boolean, effectFired?: boolean, onClip?: boolean, frameIndex?: number, animPlayable?: boolean }} input
  * @returns {{ action: 'cancel'|'continue'|'complete', effect: boolean }}
  */
 export function stepPickaxe(input) {
-  const effect = !input.effectFired && input.elapsed >= input.timing.effectMs
-  const fired = Boolean(input.effectFired) || effect
-  if (input.interrupted && !fired) {
+  const timing = input.timing
+  const effectFired = Boolean(input.effectFired)
+  const cancelled = Boolean(input.interrupted) || Boolean(input.cancelled)
+  if (!effectFired && cancelled) {
     return { action: 'cancel', effect: false }
   }
-  if (fired && (input.interrupted || input.elapsed >= input.timing.totalMs)) {
+
+  const effectFrame = finiteNumber(timing?.effectFrame)
+  const frameIndex = finiteNumber(input.frameIndex)
+  const onClip = input.onClip === true
+  // Omitted animPlayable keeps the clock path for callers that do not have a
+  // clip (the existing timing tests, a missing atlas). A clip that is on
+  // screen never falls through to the clock, even when it is running late.
+  const animPlayable = input.animPlayable === true || onClip
+  const frameDue = !effectFired
+    && onClip
+    && effectFrame !== null
+    && frameIndex !== null
+    && frameIndex >= effectFrame
+  const timeDue = !effectFired && !animPlayable && input.elapsed >= timing.effectMs
+  const effect = frameDue || timeDue
+  const fired = effectFired || effect
+  if (fired && (cancelled || input.elapsed >= timing.totalMs)) {
     return { action: 'complete', effect }
   }
   return { action: 'continue', effect }

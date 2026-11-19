@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test'
 import { markSlow, waitForScene } from './helpers/waits'
 
-/** Longest slice in the 12fps tool clips. The effect lands on the first update at or after the authored time. */
+/** Longest slice in the 12fps tool clips. Lockpick still lands on its clock; the pickaxe mine lands on contact frame 4. */
 const CLIP_FRAME_MS = 84
 
 async function boot(page: Page, classIndex: number) {
@@ -33,7 +33,11 @@ async function boot(page: Page, classIndex: number) {
     w.__toolUnlocks = []
     w.__toolMines = []
     w.__chatEventBus?.on('tool:unlock', (evt: any) => w.__toolUnlocks.push(evt))
-    w.__chatEventBus?.on('tool:mine', (evt: any) => w.__toolMines.push(evt))
+    w.__chatEventBus?.on('tool:mine', (evt: any) => {
+      const frame = w.__scene?.player?.anims?.currentFrame
+      const name = frame?.frame?.name || frame?.textureFrame || ''
+      w.__toolMines.push({ ...evt, frame: name })
+    })
   })
 
   return { consoleErrors, pageErrors }
@@ -214,6 +218,16 @@ test.describe('Package B10-2: lockpick and pickaxe tool use', () => {
     await page.waitForFunction(() => (window as any).__scene.player.classId === 'dwarf')
     await standOn(page, 'cavern_mouth', 'mine')
 
+    await page.keyboard.down('KeyE')
+    await page.waitForFunction(() => (window as any).__scene.player.itemUseState?.clip === 'use_pickaxe')
+    await page.keyboard.down('ArrowLeft')
+    await page.waitForFunction(() => !(window as any).__scene.player.itemUseState?.active)
+    await page.keyboard.up('ArrowLeft')
+    await page.keyboard.up('KeyE')
+    expect(await page.evaluate(() => (window as any).__toolMines.length)).toBe(0)
+
+    await standOn(page, 'cavern_mouth', 'mine')
+
     const before = await page.evaluate(() => {
       const scene = (window as any).__scene
       const enemy = scene.spawn('goblin', scene.player.x + 24, scene.player.y)
@@ -258,6 +272,7 @@ test.describe('Package B10-2: lockpick and pickaxe tool use', () => {
         name: evt?.name,
         elapsed: evt?.elapsed,
         lootId: evt?.lootId,
+        frame: evt?.frame,
         hp: enemy?.hp ?? null,
         loot: pickups.length,
         pickupId: pickups[pickups.length - 1]?.lootId || null,
@@ -266,8 +281,11 @@ test.describe('Package B10-2: lockpick and pickaxe tool use', () => {
     })
     expect(mined.count).toBe(1)
     expect(mined.name).toBe('cavern_rock_large_a')
-    expect(mined.elapsed).toBeGreaterThanOrEqual(333)
-    expect(mined.elapsed).toBeLessThanOrEqual(333 + CLIP_FRAME_MS)
+    // Contact is use_pickaxe frame 4. effectMs (333) is only the fallback when
+    // that clip cannot play, so a slow animation still mines on frame 4 later.
+    expect(mined.frame).toMatch(/^dwarf_use_pickaxe_(down|left|right|up)_[4-7]$/)
+    expect(mined.elapsed).toBeGreaterThanOrEqual(200)
+    expect(mined.elapsed).toBeLessThanOrEqual(2000)
     expect(['ruby', 'sapphire', 'emerald']).toContain(mined.lootId)
     expect(mined.loot).toBe(before.loot + 1)
     expect(mined.pickupId).toBe(mined.lootId)
