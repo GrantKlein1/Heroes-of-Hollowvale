@@ -92,7 +92,8 @@ import {
   getEnemyDamage,
 } from '../combat/balance.js'
 import { isDebug } from '../config/flags.js'
-import { getEnemyDef, isEnemyType } from '../combat/enemyDefs.js'
+import { getEnemyDef, isEnemyType, resolveEnemyDef } from '../combat/enemyDefs.js'
+import { enemyHpBarTop } from '../combat/enemyHpBar.js'
 import { planScreenSpawns } from '../terrain/spawnTables.js'
 import { consumableEffect, isConsumable } from '../items/registry.js'
 
@@ -1936,7 +1937,14 @@ export default class HollowvaleScene extends Phaser.Scene {
       }
       const w = Math.max(20, e.displayWidth)
       const x = e.x - w / 2
-      const y = e.y - e.displayHeight / 2 - 8
+      const frameHeight = e.frame?.realHeight || e.frame?.height || e.height
+      const y = enemyHpBarTop({
+        y: e.y,
+        originY: e.originY,
+        displayHeight: e.displayHeight,
+        frameHeight,
+        visibleTopPx: resolveEnemyDef(e.enemyType)?.hpBarVisibleTop,
+      })
       g.fillStyle(0x000000, 0.6)
       g.fillRect(x, y, w, 4)
       g.fillStyle(0xdc2626, 0.9)

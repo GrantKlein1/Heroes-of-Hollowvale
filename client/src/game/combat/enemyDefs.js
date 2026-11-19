@@ -160,6 +160,8 @@ const BUILTIN_ENEMY_DEFS = [
     speed: 70,
     damage: 6,
     projectile: { speed: 220, dist: 420, size: 14, damage: 10 },
+    // First opaque row in the 96px cell (the pointed hood). The health bar sits just above it.
+    hpBarVisibleTop: 20,
     sheets: {
       assetId: 'ashen_cultist',
       defaultSheet: 'ashen_cultist',
@@ -186,6 +188,8 @@ const BUILTIN_ENEMY_DEFS = [
     hp: 90,
     speed: 40,
     damage: 20,
+    // First opaque row in the 96px cell (the flame crown). The health bar sits just above it.
+    hpBarVisibleTop: 10,
     sheets: {
       assetId: 'ashen_revenant',
       defaultSheet: 'ashen_revenant',
