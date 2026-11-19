@@ -25,6 +25,8 @@ const SpriteBase = (Phaser && Phaser.GameObjects && Phaser.GameObjects.Sprite)
         this.frame = { name: frame }
         this.originX = 0.5
         this.originY = 0.5
+        this.scaleX = 1
+        this.scaleY = 1
         this.rotation = 0
         this.depth = 15000
         this.visible = true
@@ -33,6 +35,11 @@ const SpriteBase = (Phaser && Phaser.GameObjects && Phaser.GameObjects.Sprite)
       setOrigin(x, y) {
         this.originX = x
         this.originY = y !== undefined ? y : x
+        return this
+      }
+      setScale(sx, sy) {
+        this.scaleX = sx
+        this.scaleY = sy !== undefined ? sy : sx
         return this
       }
       setDepth(d) {
@@ -111,11 +118,16 @@ export class Projectile extends SpriteBase {
     this.special = config.special || ''
     this.unit = scene?.unit || 1
 
-    // Size & Collision Box
+    // Size & Collision Box. visualScale changes the sprite only; the hit box stays `size`.
     const baseSize = config.size ?? 32
     this.size = baseSize * this.unit
     this.w = this.size
     this.h = this.size
+    const visualScale = typeof config.visualScale === 'number' && config.visualScale > 0 ? config.visualScale : 1
+    this.visualScale = visualScale
+    if (visualScale !== 1 && typeof this.setScale === 'function') {
+      this.setScale(visualScale)
+    }
 
     // Physics / Velocity
     const speed = (config.speed ?? 420) * this.unit

@@ -21,6 +21,9 @@ import {
   lootAtlasFor,
   holdClipsFor,
   inhandFor,
+  inhandScaleFor,
+  BOW_HAND_SCALE,
+  ARROW_VISUAL_SCALE,
   itemUsableBy,
   isRangedWeapon,
   useLayersFor,
@@ -411,7 +414,11 @@ describe('item registry (ITEM-NEW-1)', () => {
         classes: null, market: null, price: null, effect: null,
       })
       expect(bow.weapon).toEqual({ damage: 14, ranged: true })
-      expect(bow.projectile).toMatchObject({ speed: 520, maxDist: 360 })
+      expect(bow.projectile).toMatchObject({ speed: 520, maxDist: 360, size: 24, visualScale: ARROW_VISUAL_SCALE })
+      expect(ARROW_VISUAL_SCALE).toBeCloseTo(0.42, 5)
+      expect(BOW_HAND_SCALE).toBeCloseTo(1.45, 5)
+      expect(inhandScaleFor('lightning_bow')).toBe(BOW_HAND_SCALE)
+      expect(inhandScaleFor('healing_potion')).toBe(1)
       expect(isRangedWeapon('lightning_bow')).toBe(true)
       expect(isRangedWeapon('iron_sword')).toBe(false)
       expect(marketItems().map((m) => m.id)).not.toContain('lightning_bow')
@@ -439,6 +446,7 @@ describe('item registry (ITEM-NEW-1)', () => {
       }
       expect(inhandAtlasKey('lightning_bow')).toBe('items_inhand_b12')
       expect(inhandOriginFor('lightning_bow')).toEqual([0.5, 0.5])
+      expect(inhandFor('lightning_bow').scale).toBe(BOW_HAND_SCALE)
     })
 
     it.each(HEROES)('%s use_bow sheets: 10 frames at 12 fps, release on frame 6, weapon and glow on the same grid', (hero) => {

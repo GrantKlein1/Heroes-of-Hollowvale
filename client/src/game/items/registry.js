@@ -62,7 +62,23 @@ const HOLD_CHARM = Object.freeze({
  */
 const HOLD_BOW = Object.freeze({ ...HOLD_CHARM, glowIdle: 'bow_hold_idle_glow' })
 
-const inhand = (atlas, origin = DEFAULT_INHAND_ORIGIN) => Object.freeze({ atlas, origin: Object.freeze([...origin]) })
+/**
+ * BOW-SIZE-1. The carried bow and the drawn overlay (weapon + glow) render at this
+ * multiple of the authored art. The grip stays on the hand; 1 leaves other items alone.
+ */
+export const BOW_HAND_SCALE = 1.45
+/**
+ * Lightning-arrow sprite scale. The 96px flight cell is longer than the bow, and
+ * 0.65 of it is still about as long as the bow drawn at BOW_HAND_SCALE. 0.42 keeps
+ * the projectile shorter than the bow in hand. The hit box stays `projectile.size`.
+ */
+export const ARROW_VISUAL_SCALE = 0.42
+
+const inhand = (atlas, origin = DEFAULT_INHAND_ORIGIN, scale = 1) => Object.freeze({
+  atlas,
+  origin: Object.freeze([...origin]),
+  scale,
+})
 const price = (ruby = 0, sapphire = 0, emerald = 0) => Object.freeze({ ruby, sapphire, emerald })
 const pickup = (atlas = LOOT_ATLAS_MAIN, random = true) => Object.freeze({ pickupAtlas: atlas, random })
 const NO_LOOT = Object.freeze({ pickupAtlas: null, random: false })
@@ -203,16 +219,18 @@ const BUILTIN_ITEMS = [
     // Space draws and fires. Numbers marked // tunable are placeholders: lightning spell = 15 dmg for
     // 10 mana at 600 px/s over 320 px, twin_daggers 7, iron_sword 12, battle_axe 22.
     weapon: { damage: 14, ranged: true }, // tunable
-    projectile: { speed: 520, maxDist: 360, size: 24, tipX: 76 / 96 }, // tunable; tipX = arrowhead on the 96 px cell
+    // visualScale is the arrow sprite only. size is the hit box and does not follow the sprite.
+    projectile: { speed: 520, maxDist: 360, size: 24, tipX: 76 / 96, visualScale: ARROW_VISUAL_SCALE }, // tunable; tipX = arrowhead on the 96 px cell
     loot: pickup(LOOT_ATLAS_B12, false),
     hold: HOLD_BOW,
     // use_bow is 10 frames at 12 fps (83/83/84 ms), release on frame 6 (500 ms in). weapon and glow are
     // overlay sheets (`<hero>_use_bow_weapon`, `<hero>_use_bow_glow`) drawn over the body.
+    // BOW_HAND_SCALE grows those sheets and the in-hand cell around the grip.
     use: {
       clip: 'use_bow', weapon: 'use_bow_weapon', glow: 'use_bow_glow', effectFrame: 6,
       durations: [83, 83, 84, 83, 83, 84, 83, 83, 84, 83],
     },
-    inhand: inhand('items_inhand_b12', [0.5, 0.5]),
+    inhand: inhand('items_inhand_b12', [0.5, 0.5], BOW_HAND_SCALE),
   },
 ]
 
@@ -418,9 +436,21 @@ export function isRandomLoot(id) {
   return Boolean(getItem(id)?.loot.random)
 }
 
-/** @param {string} id @returns {{ atlas: string, origin: readonly number[] }} */
+/** @param {string} id @returns {{ atlas: string, origin: readonly number[], scale: number }} */
 export function inhandFor(id) {
-  return getItem(id)?.inhand || { atlas: 'items_inhand', origin: DEFAULT_INHAND_ORIGIN }
+  return getItem(id)?.inhand || { atlas: 'items_inhand', origin: DEFAULT_INHAND_ORIGIN, scale: 1 }
+}
+
+/**
+ * Extra draw scale for an in-hand sprite and its full-cell overlays. 1 for every
+ * item except the lightning bow.
+ *
+ * @param {string} id
+ * @returns {number}
+ */
+export function inhandScaleFor(id) {
+  const scale = inhandFor(id).scale
+  return typeof scale === 'number' && scale > 0 ? scale : 1
 }
 
 /** Every use clip name a registered item plays (for animation-complete matching). */

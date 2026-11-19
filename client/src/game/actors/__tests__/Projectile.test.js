@@ -26,6 +26,11 @@ vi.mock('phaser', () => {
       this.originY = y !== undefined ? y : x
       return this
     }
+    setScale(sx, sy) {
+      this.scaleX = sx
+      this.scaleY = sy !== undefined ? sy : sx
+      return this
+    }
     setDepth(d) {
       this.depth = d
       return this
@@ -125,6 +130,23 @@ describe('Projectile Class (Package 1-5)', () => {
     expect(bounds.y).toBe(100 - 16)
     expect(bounds.w).toBe(32)
     expect(bounds.h).toBe(32)
+  })
+
+  it('scales the sprite without changing the hit box', () => {
+    const proj = new Projectile(mockScene, 40, 80, 'lightning_arrow_b12', 'lightning_arrow_b12_0', {
+      dirX: 1,
+      dirY: 0,
+      speed: 520,
+      maxDist: 360,
+      size: 24,
+      visualScale: 0.65,
+    })
+    expect(proj.scaleX).toBeCloseTo(0.65, 5)
+    expect(proj.scaleY).toBeCloseTo(0.65, 5)
+    expect(proj.size).toBe(24)
+    expect(proj.getBounds()).toMatchObject({ w: 24, h: 24 })
+    expect(proj.vx).toBe(520)
+    expect(proj.maxDist).toBe(360)
   })
 
   it('updates linear flight position over time and reaches max distance', () => {
