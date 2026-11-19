@@ -25,6 +25,19 @@ const HUD_RESERVE_PX = 104
 export const HUB_RETURN_SPAWN = { scene: 'dungeon', nx: 0.87, ny: 0.88 }
 
 /**
+ * Procedural stand-in for wilderness.tmj exit_south. The entrance screen is the
+ * corridor Brackenford's south gate and the cavern mouth both open onto. Its
+ * south path mouth leaves the wilderness for Hearthmile. Coming back uses
+ * spawnAtEdge('south'), which sits on that same path, inset from the edge
+ * trigger so the crossing does not fire again.
+ */
+export const HEARTHMILE_GATE = Object.freeze({
+  nodeId: WILDERNESS_ENTRANCE_ID,
+  edge: 'south',
+  targetSpawn: 'spawn_north',
+})
+
+/**
  * How close a sprite edge must get to the frame border to count as crossing.
  * Tested against the leading edge rather than the sprite centre, because
  * Game.jsx clamps the whole sprite rect inside the frame — a centre-based test
@@ -107,9 +120,12 @@ export function loadWildernessScreen(nodeId) {
 /**
  * @param {string} nodeId
  * @param {'north'|'south'|'east'|'west'} edge
- * @returns {{ type: 'neighbor', nodeId: string, appearAt: 'north'|'south'|'east'|'west' } | { type: 'hub' } | null}
+ * @returns {{ type: 'neighbor', nodeId: string, appearAt: 'north'|'south'|'east'|'west' } | { type: 'hub' } | { type: 'hearthmile', targetSpawn: string } | null}
  */
 export function resolveEdgeTransition(nodeId, edge) {
+  if (nodeId === HEARTHMILE_GATE.nodeId && edge === HEARTHMILE_GATE.edge) {
+    return { type: 'hearthmile', targetSpawn: HEARTHMILE_GATE.targetSpawn }
+  }
   const neighbors = getNeighbors(nodeId)
   const nextId = neighbors[edge]
   if (nextId) {
@@ -170,7 +186,13 @@ export function wildernessExitPrompts(layout, nodeId) {
   }
   if (exits.south) {
     const b = bandFor(layout, 'south')
-    add('south', { x: b.start, y: 1 - strip, w: b.end - b.start, h: strip }, 'South', 'Walk south to continue')
+    const toHearthmile = nodeId === HEARTHMILE_GATE.nodeId
+    add(
+      'south',
+      { x: b.start, y: 1 - strip, w: b.end - b.start, h: strip },
+      toHearthmile ? 'Hearthmile' : 'South',
+      toHearthmile ? 'Walk south along the path to Hearthmile' : 'Walk south to continue'
+    )
   }
   if (exits.west) {
     const b = bandFor(layout, 'west')

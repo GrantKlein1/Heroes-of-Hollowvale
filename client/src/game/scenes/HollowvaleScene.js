@@ -14,6 +14,7 @@ import {
 } from '../MainGameScene.js'
 import {
   HUB_RETURN_SPAWN,
+  HEARTHMILE_GATE,
   spawnAtEdge,
   spawnFromHub,
   loadWildernessScreen,
@@ -548,6 +549,9 @@ export default class HollowvaleScene extends Phaser.Scene {
     if (result?.type === 'hub') {
       onDoorOpen()
       this.enterScene('dungeon', { nx: HUB_RETURN_SPAWN.nx, ny: HUB_RETURN_SPAWN.ny, targetSpawn: 'spawn_wilderness' })
+    } else if (result?.type === 'hearthmile') {
+      onDoorOpen()
+      this.enterScene('hearthmile', { targetSpawn: result.targetSpawn })
     } else if (result?.type === 'neighbor') {
       const next = loadWildernessScreen(result.nodeId)
       this.wildNodeId = result.nodeId
@@ -580,7 +584,10 @@ export default class HollowvaleScene extends Phaser.Scene {
     if (zone.action === 'wilderness') {
       onDoorOpen()
       this.wildNodeId = WILDERNESS_ENTRANCE_ID
-      this.enterScene('wilderness', null)
+      // Hearthmile's north exit names wilderness spawn_south. That spawn is the
+      // south path of the entrance screen, not the hub arrival at the north edge.
+      const atSouthGate = zone.targetSpawn === 'spawn_south'
+      this.enterScene('wilderness', atSouthGate ? { edge: HEARTHMILE_GATE.edge } : null)
       return
     }
     if (zone.action === 'bartender') {
@@ -1722,7 +1729,7 @@ export default class HollowvaleScene extends Phaser.Scene {
     const layout = loadWildernessScreen(nodeId)
     this.wildNodeId = nodeId
     this.wildLayout = layout
-    const sp = spawn || spawnFromHub(layout)
+    const sp = spawn?.edge ? spawnAtEdge(spawn.edge, layout) : (spawn || spawnFromHub(layout))
     this._mountWilderness(layout, sp, slideMs)
     this.wildLatchUntil = performance.now() + 600
   }

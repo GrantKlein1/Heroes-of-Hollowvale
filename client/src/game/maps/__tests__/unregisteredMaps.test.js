@@ -16,10 +16,6 @@ const MAPS_DIR = path.resolve(__dirname, '../../../../public/maps')
 const KNOWN_UNREGISTERED = Object.freeze({
   'wilderness.tmj':
     'Reference output of tools/maps/generate_tmj.mjs. The live wilderness is procedural (terrain/*), and HollowvaleScene.enterScene skips the registry for id "wilderness".',
-  'hearthmile.tmj':
-    'Generated league (0,4) road bend. Only reachable from wilderness.tmj exit_south, which the live procedural wilderness does not use.',
-  'ruinwatch.tmj':
-    'Generated Ruinwatch camp. Only reachable from hearthmile.tmj exit_west, so it is orphaned with it.',
 })
 
 function tmjFiles() {
@@ -60,10 +56,11 @@ describe('Known unregistered Tiled maps (MAPS-1)', () => {
     }
   })
 
-  it('hearthmile.tmj and ruinwatch.tmj link only to each other and wilderness.tmj, and nothing registered links to them', () => {
+  it('hearthmile and ruinwatch link to each other and the procedural wilderness, and no other registered map does', () => {
     expect(exitTargets(readMap('hearthmile.tmj')).sort()).toEqual(['ruinwatch.tmj', 'wilderness.tmj'])
     expect(exitTargets(readMap('ruinwatch.tmj'))).toEqual(['hearthmile.tmj'])
     for (const m of getAllMaps()) {
+      if (m.key === 'hearthmile' || m.key === 'ruinwatch') continue
       const targets = exitTargets(readMap(path.basename(m.file)))
       expect(targets, m.file).not.toContain('hearthmile.tmj')
       expect(targets, m.file).not.toContain('ruinwatch.tmj')

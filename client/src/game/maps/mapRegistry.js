@@ -11,6 +11,18 @@ export const DEFAULT_MAPS = Object.freeze([
     assetGroups: ['village'],
   },
   {
+    key: 'hearthmile',
+    file: 'maps/hearthmile.tmj',
+    sceneIds: ['hearthmile'],
+    assetGroups: ['village'],
+  },
+  {
+    key: 'ruinwatch',
+    file: 'maps/ruinwatch.tmj',
+    sceneIds: ['ruinwatch'],
+    assetGroups: ['village'],
+  },
+  {
     key: 'tavern',
     file: 'maps/tavern.tmj',
     sceneIds: ['tavern'],

@@ -1,22 +1,18 @@
 # Unregistered Tiled maps
 
-`client/src/game/maps/mapRegistry.js` (`DEFAULT_MAPS`) lists the Tiled maps the game can load. Three maps in `client/public/maps/` are **not** in it:
+`client/src/game/maps/mapRegistry.js` (`DEFAULT_MAPS`) lists the Tiled maps the game can load. One map in `client/public/maps/` is **not** in it:
 
 | File | What it is | Why it is not registered |
 | --- | --- | --- |
 | `wilderness.tmj` | 20x34 reference render of the Ember Road corridor from `tools/maps/generate_tmj.mjs`. | The live wilderness is procedural (`client/src/game/terrain/*`). `HollowvaleScene.enterScene` skips the registry for the id `wilderness`, and `mapRegistry.test.js` asserts `resolveMap('wilderness')` is undefined. |
-| `hearthmile.tmj` | 20x12 league (0,4) road bend with the Hearthmile Stone (landmark, canon in `newLore_expanded.txt`). Exits: north to `wilderness.tmj`, west to `ruinwatch.tmj`. | Its only inbound link is `wilderness.tmj` `exit_south`, which the procedural wilderness never uses. Registering it alone would not make it reachable. |
-| `ruinwatch.tmj` | 20x12 Ruinwatch camp (canon: a stone ring and campsite on the Ember Road). Exit: east to `hearthmile.tmj`. | Its only inbound link is `hearthmile.tmj`. |
 
-Both maps pass `validateMap` with 0 errors (see `generate_tmj.test.js`), so they are valid, just not wired in.
+`hearthmile.tmj` and `ruinwatch.tmj` are registered with `assetGroups: ['village']`, the same group as Brackenford.
 
-## Making them reachable
+## How the road is wired
 
-1. Add `hearthmile` and `ruinwatch` entries to `DEFAULT_MAPS` (assetGroups `['village']`, like Brackenford) and update the "7 canonical maps" count in `mapRegistry.test.js`.
-2. Give the procedural wilderness a south exit that calls `enterScene('hearthmile', ...)` in `HollowvaleScene.js`, and add the matching `SCENE_HINTS` entries in `sceneCatalog.js`.
-3. Remove the files from `KNOWN_UNREGISTERED` in `client/src/game/maps/__tests__/unregisteredMaps.test.js`.
+The procedural wilderness does not load `wilderness.tmj`. Its south exit is the south path mouth of the entrance screen (`wild_0_0`, `HEARTHMILE_GATE` in `client/src/game/terrain/wildernessBridge.js`). Walking out of that corridor calls `enterScene('hearthmile', { targetSpawn: 'spawn_north' })`.
 
-Step 2 needs `HollowvaleScene.js`, which was out of scope for MAPS-1.
+Hearthmile's north exit still targets `wilderness.tmj` / `spawn_south`. That name is not a registered map, so the exit returns to the procedural wilderness and places the hero on the same south path, inset from the edge so the crossing does not fire again. Hearthmile's west exit and Ruinwatch's east exit use the spawns already in the `.tmj` files (`spawn_east` and `spawn_west`).
 
 ## Guard test
 
