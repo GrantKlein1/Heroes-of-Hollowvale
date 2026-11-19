@@ -129,7 +129,7 @@ describe('item registry (ITEM-NEW-1)', () => {
     })
 
     it('lists the market in the old order', () => {
-      const old = marketItems().filter((row) => !NEW_IDS.includes(row.id))
+      const old = marketItems().filter((row) => !NEW_IDS.includes(row.id) && row.id !== 'lightning_bow')
       expect(old.map((row) => [row.id, row.category])).toEqual(OLD_MARKET)
     })
 
@@ -407,11 +407,11 @@ describe('item registry (ITEM-NEW-1)', () => {
     const DIRS = ['down', 'left', 'right', 'up']
     const DURATIONS = [83, 83, 84, 83, 83, 84, 83, 83, 84, 83]
 
-    it('is a found weapon any class can hold: not sold, with icon, in-hand sprite, pickup and projectile', () => {
+    it('is a found or purchased weapon any class can hold, with icon, in-hand sprite, pickup and projectile', () => {
       const bow = getItem('lightning_bow')
       expect(bow).toMatchObject({
         id: 'lightning_bow', name: 'Lightning Bow', kind: 'weapon', icon: '/images/lightning_bow.png',
-        classes: null, market: null, price: null, effect: null,
+        classes: null, market: 'Weaponry', price: P(5, 3, 2), effect: null,
       })
       expect(bow.weapon).toEqual({ damage: 14, ranged: true })
       expect(bow.projectile).toMatchObject({ speed: 520, maxDist: 360, size: 24, visualScale: ARROW_VISUAL_SCALE })
@@ -421,7 +421,8 @@ describe('item registry (ITEM-NEW-1)', () => {
       expect(inhandScaleFor('healing_potion')).toBe(1)
       expect(isRangedWeapon('lightning_bow')).toBe(true)
       expect(isRangedWeapon('iron_sword')).toBe(false)
-      expect(marketItems().map((m) => m.id)).not.toContain('lightning_bow')
+      expect(marketItems()).toContainEqual({ id: 'lightning_bow', category: 'Weaponry' })
+      expect(marketPrice('lightning_bow')).toEqual(P(5, 3, 2))
       for (const hero of HEROES) expect(itemUsableBy('lightning_bow', hero)).toBe(true)
       expect(ITEM_ICONS.lightning_bow).toBe('/images/lightning_bow.png')
       expect(fs.existsSync(path.join(PUBLIC, bow.icon))).toBe(true)

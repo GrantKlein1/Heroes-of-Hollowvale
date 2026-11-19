@@ -211,11 +211,12 @@ const BUILTIN_ITEMS = [
     id: 'ember_chalice', name: 'The Embered Flagon Chalice', icon: `${IMAGES}/ember_chalice.png`, kind: 'quest',
     loot: pickup(LOOT_ATLAS_B11, false),
   },
-  // --- BOW-1 (Batch 12, Grant-approved and frozen). Found weapon, any hero can hold and fire it.
-  // Not sold. Found in the cavern treasure chest and as a rare goblin archer drop (enemyDefs.js).
+  // --- BOW-1 (Batch 12, Grant-approved and frozen). Any hero can hold and fire it.
+  // BOW-SHOP-1: also sold in Weaponry. Still found in the cavern treasure chest and as a rare goblin archer drop (enemyDefs.js).
   {
     id: 'lightning_bow', name: 'Lightning Bow', icon: `${IMAGES}/lightning_bow.png`, kind: 'weapon',
     classes: null, // any class
+    market: 'Weaponry', price: price(5, 3, 2), // tunable (BOW-SHOP-1): premium any-class ranged; nightfang 4/3/1, stonehollow 2/4/2, iron_sword 4/0/2
     // Space draws and fires. Numbers marked // tunable are placeholders: lightning spell = 15 dmg for
     // 10 mana at 600 px/s over 320 px, twin_daggers 7, iron_sword 12, battle_axe 22.
     weapon: { damage: 14, ranged: true }, // tunable
