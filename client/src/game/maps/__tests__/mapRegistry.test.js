@@ -16,9 +16,9 @@ describe('Data-driven Tiled Map Registry (mapRegistry.js)', () => {
     resetRegistry()
   })
 
-  it('initializes with the 7 canonical maps: brackenford, tavern, market, and 4 cavern maps', () => {
+  it('initializes with the 9 canonical maps: brackenford, hearthmile, ruinwatch, tavern, market, and 4 cavern maps', () => {
     const maps = getAllMaps()
-    expect(maps).toHaveLength(7)
+    expect(maps).toHaveLength(9)
 
     const brackenford = maps.find((m) => m.key === 'brackenford')
     expect(brackenford).toBeDefined()
@@ -26,6 +26,18 @@ describe('Data-driven Tiled Map Registry (mapRegistry.js)', () => {
     expect(brackenford.sceneIds).toContain('village')
     expect(brackenford.sceneIds).toContain('brackenford')
     expect(brackenford.assetGroups).toContain('village')
+
+    const hearthmile = maps.find((m) => m.key === 'hearthmile')
+    expect(hearthmile).toBeDefined()
+    expect(hearthmile.file).toBe('maps/hearthmile.tmj')
+    expect(hearthmile.sceneIds).toContain('hearthmile')
+    expect(hearthmile.assetGroups).toEqual(['village'])
+
+    const ruinwatch = maps.find((m) => m.key === 'ruinwatch')
+    expect(ruinwatch).toBeDefined()
+    expect(ruinwatch.file).toBe('maps/ruinwatch.tmj')
+    expect(ruinwatch.sceneIds).toContain('ruinwatch')
+    expect(ruinwatch.assetGroups).toEqual(['village'])
 
     const tavern = maps.find((m) => m.key === 'tavern')
     expect(tavern).toBeDefined()
@@ -67,6 +79,11 @@ describe('Data-driven Tiled Map Registry (mapRegistry.js)', () => {
     expect(resolveMap('maps/brackenford.tmj')?.key).toBe('brackenford')
     expect(resolveMap('brackenford.tmj')?.key).toBe('brackenford')
 
+    expect(resolveMap('hearthmile')?.key).toBe('hearthmile')
+    expect(resolveMap('maps/hearthmile.tmj')?.key).toBe('hearthmile')
+    expect(resolveMap('ruinwatch')?.key).toBe('ruinwatch')
+    expect(resolveMap('maps/ruinwatch.tmj')?.key).toBe('ruinwatch')
+
     expect(resolveMap('tavern')?.key).toBe('tavern')
     expect(resolveMap('maps/tavern.tmj')?.key).toBe('tavern')
     expect(resolveMap('tavern.tmj')?.key).toBe('tavern')
@@ -105,21 +122,21 @@ describe('Data-driven Tiled Map Registry (mapRegistry.js)', () => {
     expect(resolveMap('maps/crypt.tmj')?.key).toBe('crypt')
     expect(resolveMap('crypt.tmj')?.key).toBe('crypt')
 
-    // getAllMaps includes crypt (7 defaults + 1 = 8)
-    expect(getAllMaps()).toHaveLength(8)
+    // getAllMaps includes crypt (9 defaults + 1 = 10)
+    expect(getAllMaps()).toHaveLength(10)
   })
 
   it('unregisters a map and resets to default cleanly', () => {
     registerMap({ key: 'custom', file: 'maps/custom.tmj' })
-    expect(getAllMaps()).toHaveLength(8)
+    expect(getAllMaps()).toHaveLength(10)
 
     unregisterMap('custom')
-    expect(getAllMaps()).toHaveLength(7)
+    expect(getAllMaps()).toHaveLength(9)
     expect(resolveMap('custom')).toBeUndefined()
 
     registerMap({ key: 'custom2', file: 'maps/custom2.tmj' })
     resetRegistry()
-    expect(getAllMaps()).toHaveLength(7)
+    expect(getAllMaps()).toHaveLength(9)
     expect(resolveMap('custom2')).toBeUndefined()
   })
 
