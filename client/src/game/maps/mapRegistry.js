@@ -21,6 +21,8 @@ export const DEFAULT_MAPS = Object.freeze([
     file: 'maps/ruinwatch.tmj',
     sceneIds: ['ruinwatch'],
     assetGroups: ['village'],
+    // The camp fire lives in the hearth atlas, not village_props.
+    propAtlases: ['village_props', 'hearth'],
   },
   {
     key: 'tavern',
@@ -197,4 +199,40 @@ export function resolveMap(identifier) {
     )
   })
   return byFile
+}
+
+/**
+ * placeName property on a Tiled map JSON object, or ''.
+ * @param {object|null|undefined} mapData
+ * @returns {string}
+ */
+export function placeNameFromMap(mapData) {
+  const props = mapData?.properties
+  if (!Array.isArray(props)) return ''
+  const hit = props.find((p) => p && p.name === 'placeName')
+  return typeof hit?.value === 'string' ? hit.value.trim() : ''
+}
+
+/**
+ * Floating exit beacon. Interiors keep their signs. Any other map uses the
+ * placeName already stored on that map when it is a proper name, so the
+ * beacon reads "Ruinwatch" rather than the scene id "ruinwatch".
+ * @param {string} toScene
+ * @param {string} [placeName]
+ * @param {string} [zoneLabel]
+ * @returns {string}
+ */
+export function exitBeaconName(toScene, placeName, zoneLabel) {
+  if (typeof zoneLabel === 'string' && zoneLabel.trim()) return zoneLabel.trim()
+  if (toScene === 'market') return 'Market'
+  if (toScene === 'tavern') return 'The Flagon'
+  if (toScene === 'village') return 'Village'
+  // Scene catalog and the rangers' name in the lore. The map file stores
+  // the lowercase scene id, which is not the sign the player should read.
+  if (toScene === 'wilderness') return 'Wilderness'
+  if (typeof placeName === 'string') {
+    const name = placeName.trim()
+    if (name && name !== name.toLowerCase()) return name
+  }
+  return toScene
 }
