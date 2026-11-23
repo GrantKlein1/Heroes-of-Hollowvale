@@ -9,6 +9,8 @@ import {
   getMapBySceneId,
   getMapByFile,
   resolveMap,
+  exitBeaconName,
+  placeNameFromMap,
 } from '../mapRegistry.js'
 
 describe('Data-driven Tiled Map Registry (mapRegistry.js)', () => {
@@ -38,6 +40,7 @@ describe('Data-driven Tiled Map Registry (mapRegistry.js)', () => {
     expect(ruinwatch.file).toBe('maps/ruinwatch.tmj')
     expect(ruinwatch.sceneIds).toContain('ruinwatch')
     expect(ruinwatch.assetGroups).toEqual(['village'])
+    expect(ruinwatch.propAtlases).toEqual(['village_props', 'hearth'])
 
     const tavern = maps.find((m) => m.key === 'tavern')
     expect(tavern).toBeDefined()
@@ -95,6 +98,20 @@ describe('Data-driven Tiled Map Registry (mapRegistry.js)', () => {
     expect(resolveMap('dungeonInterior')?.key).toBe('cavern_halls')
     expect(resolveMap('treasureRoom')?.key).toBe('cavern_treasure')
     expect(resolveMap('cavernLair')?.key).toBe('cavern_lair')
+  })
+
+  it('uses a map placeName for exit beacons instead of the raw scene id', () => {
+    expect(exitBeaconName('ruinwatch', 'Ruinwatch')).toBe('Ruinwatch')
+    expect(exitBeaconName('hearthmile', 'Hearthmile')).toBe('Hearthmile')
+    expect(exitBeaconName('market', 'Brackenford')).toBe('Market')
+    expect(exitBeaconName('tavern', 'The Flagon')).toBe('The Flagon')
+    expect(exitBeaconName('village', 'Brackenford')).toBe('Village')
+    expect(exitBeaconName('dungeon', 'Cavern of Embers')).toBe('Cavern of Embers')
+    expect(exitBeaconName('wilderness', 'wilderness')).toBe('Wilderness')
+    expect(exitBeaconName('ruinwatch', 'Ruinwatch', 'Custom Sign')).toBe('Custom Sign')
+    expect(placeNameFromMap({
+      properties: [{ name: 'placeName', type: 'string', value: 'Ruinwatch' }],
+    })).toBe('Ruinwatch')
   })
 
   it('returns undefined for unregistered maps or external targets', () => {

@@ -71,7 +71,7 @@ import {
   ensureCritterAnimations,
 } from '../ai/critter.js'
 import { MapLoader } from '../maps/MapLoader.js'
-import { getAllMaps, resolveMap } from '../maps/mapRegistry.js'
+import { exitBeaconName, getAllMaps, placeNameFromMap, resolveMap } from '../maps/mapRegistry.js'
 import { Dragon, DRAGON_PHASE_SHEETS } from '../actors/Dragon.js'
 import {
   WILDERNESS_WORLD_W,
@@ -1673,15 +1673,9 @@ export default class HollowvaleScene extends Phaser.Scene {
         const mapEntry = resolveMap(dest)
         if (mapEntry) {
           const toScene = mapEntry.sceneIds[0] || mapEntry.key
-          const shortName =
-            z.properties?.label ||
-            (toScene === 'market'
-              ? 'Market'
-              : toScene === 'tavern'
-              ? 'The Flagon'
-              : toScene === 'village'
-              ? 'Village'
-              : toScene)
+          const cached = this.cache?.tilemap?.get?.(mapEntry.key)
+          const placeName = placeNameFromMap(cached?.data || cached)
+          const shortName = exitBeaconName(toScene, placeName, z.properties?.label)
 
           const defPrompt =
             toScene === 'market'
@@ -1702,10 +1696,12 @@ export default class HollowvaleScene extends Phaser.Scene {
           }
         } else {
           const target = dest || 'wilderness'
+          const raw = String(target).replace(/\.tmj$/i, '')
+          const shortName = exitBeaconName(raw.toLowerCase(), raw)
           const prompt = this._pushPrompt(
             rect,
-            z.properties?.prompt || `Press E to exit to ${target.replace('.tmj', '')}`,
-            'Wilderness',
+            z.properties?.prompt || `Press E to exit to ${shortName}`,
+            shortName,
             'exit',
             'wilderness'
           )
@@ -2014,7 +2010,22 @@ export default class HollowvaleScene extends Phaser.Scene {
       g.strokeRect(p.x, p.y, p.w, p.h)
       const text = this.beaconLabels[i]
       if (text) {
-        text.setPosition(p.x + p.w / 2, p.y - 4)
+        // Edge exits sit on the map border. Keep the whole name inside the world
+        // so "Ruinwatch" is readable instead of running off the screen.
+        const half = (text.width || 0) / 2
+        const textH = text.height || 16
+        let x = p.x + p.w / 2
+        let y = p.y - 4
+        // The north gate sits under the controls bar. A label above that
+        // exit is inside the world and still hidden. Drop it under the gate.
+        if (p.action === 'wilderness' && p.y < 8) y = p.y + p.h + textH + 2
+        if (this.worldW > 0) {
+          x = Math.min(this.worldW - half - 4, Math.max(half + 4, x))
+        }
+        if (this.worldH > 0) {
+          y = Math.min(this.worldH - 4, Math.max(textH + 4, y))
+        }
+        text.setPosition(x, y)
         text.setAlpha(on ? 1 : 0.85)
       }
     }
@@ -2089,6 +2100,14 @@ export default class HollowvaleScene extends Phaser.Scene {
     for (let i = 0; i < rects.length; i++) {
       const r = rects[i]
       g.strokeRect(r.x, r.y, r.w, r.h)
+    }
+    // Tiled maps collide through prop footprints, not the collision tile layer.
+    const footprints = this.tiledMapLoader?.propFootprints
+    if (footprints) {
+      for (let i = 0; i < footprints.length; i++) {
+        const b = footprints[i].bounds
+        g.strokeRect(b.x, b.y, b.width, b.height)
+      }
     }
     this._debugPlayerDirty = true
   }
