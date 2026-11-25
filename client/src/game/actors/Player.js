@@ -1002,6 +1002,11 @@ export class Player extends Actor {
       if (this.currentAttackType === 'charge_hold') {
         return // Loop while held
       }
+      const now = typeof this.scene?.time?.now === 'number' ? this.scene.time.now : Date.now()
+      const scanEnd = this._resolveAttackScanEndIndex(anim)
+      if (scanEnd >= 0 && !String(this.currentAttackType || '').startsWith('cast_')) {
+        this._checkAttackHitFrames(now, scanEnd)
+      }
       if (typeof this.currentAttackType === 'string' && this.currentAttackType.startsWith('cast_')) {
         this._v2Cast = null
       }
@@ -1704,21 +1709,45 @@ export class Player extends Actor {
   }
 
   /**
+   * Last frame index in the clip that finished (for hits skipped when the swing ends).
+   *
+   * @param {Phaser.Animations.Animation} [anim]
+   * @returns {number}
+   */
+  _resolveAttackScanEndIndex(anim) {
+    let end = getAnimationFrameIndex(this.anims?.currentFrame)
+    const frames = anim?.frames
+    if (Array.isArray(frames)) {
+      for (const frame of frames) {
+        const index = getAnimationFrameIndex(frame)
+        if (index > end) end = index
+      }
+    }
+    return end
+  }
+
+  /**
    * Checks for hitFrame triggers during active attack animation.
    *
    * @param {number} time
+   * @param {number} [scanThroughIndex] - Scan through this index when the clip ends or skips ahead.
    */
-  _checkAttackHitFrames(time) {
+  _checkAttackHitFrames(time, scanThroughIndex = undefined) {
     const currentFrame = this.anims?.currentFrame
     const currentFrameIndex = getAnimationFrameIndex(currentFrame)
-    if (currentFrameIndex < 0) return
+    let endIndex = currentFrameIndex
+    if (scanThroughIndex !== undefined && scanThroughIndex !== null && scanThroughIndex >= 0) {
+      endIndex = Math.max(endIndex, scanThroughIndex)
+    }
+    if (endIndex < 0) return
 
     const lastChecked = this._lastAttackFrameIndex
+    const pivotIndex = currentFrameIndex >= 0 ? currentFrameIndex : endIndex
     const newSwing =
-      lastChecked >= 0 && currentFrameIndex < lastChecked
-    const startIndex = newSwing ? currentFrameIndex : lastChecked + 1
-    if (startIndex > currentFrameIndex) {
-      this._lastAttackFrameIndex = currentFrameIndex
+      lastChecked >= 0 && pivotIndex < lastChecked
+    const startIndex = newSwing ? pivotIndex : lastChecked + 1
+    if (startIndex > endIndex) {
+      this._lastAttackFrameIndex = endIndex
       return
     }
 
@@ -1735,7 +1764,7 @@ export class Player extends Actor {
     const sheetKey = this.getSheetForAnim(isCharged ? 'charged_release' : (isAttack2 ? 'attack_2' : 'attack'))
     const hitFrames = getHitFrames(this.scene, sheetKey, animMetaKey)
 
-    for (let frameIndex = startIndex; frameIndex <= currentFrameIndex; frameIndex++) {
+    for (let frameIndex = startIndex; frameIndex <= endIndex; frameIndex++) {
       if (this._hitFramesProcessed.has(frameIndex)) continue
       if (!hitFrames.includes(frameIndex)) continue
       this._hitFramesProcessed.add(frameIndex)
@@ -1747,7 +1776,7 @@ export class Player extends Actor {
       executePlayerMeleeHit(this, frameIndex, time, animMetaKey)
     }
 
-    this._lastAttackFrameIndex = currentFrameIndex
+    this._lastAttackFrameIndex = endIndex
   }
 
   /**

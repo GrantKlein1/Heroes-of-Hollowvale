@@ -727,6 +727,27 @@ describe('Player Actor — Package 1-3', () => {
       expect(knight.anims.play).toHaveBeenCalledWith('knight_walk_right', true)
     })
 
+    it('fires knight hit frame 3 when attack completes before update scans skipped frames', () => {
+      const meleeSpy = vi.spyOn(hitSystem, 'executePlayerMeleeHit').mockReturnValue(0)
+      const knight = new Player(mockScene, 100, 100, 'knight')
+      knight.attack(1000)
+
+      knight.anims.currentFrame = { frame: { name: 'knight_attack_down_1' } }
+      knight.update(1016, 16)
+      expect(meleeSpy).not.toHaveBeenCalled()
+
+      const animFrames = Array.from({ length: 7 }, (_, i) => ({
+        textureFrame: `knight_attack_down_${i}`,
+      }))
+      knight.anims.currentFrame = { frame: { name: 'knight_attack_down_6' } }
+      knight.emit('animationcomplete', { key: 'knight_attack_down', frames: animFrames })
+
+      expect(meleeSpy).toHaveBeenCalledTimes(1)
+      expect(meleeSpy).toHaveBeenCalledWith(knight, 3, expect.any(Number), 'attack')
+      expect(knight._hitFramesProcessed.has(3)).toBe(true)
+      meleeSpy.mockRestore()
+    })
+
     it('fires knight hit frame 3 once when Phaser skips from frame 1 to 5', () => {
       const meleeSpy = vi.spyOn(hitSystem, 'executePlayerMeleeHit').mockReturnValue(0)
       const knight = new Player(mockScene, 100, 100, 'knight')
