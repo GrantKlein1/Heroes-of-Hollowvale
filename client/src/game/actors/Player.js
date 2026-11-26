@@ -173,6 +173,7 @@ export class Player extends Actor {
     this._lastFacing = this.facing
     this.currentSwingId = 0
     this._hitFramesProcessed = new Set()
+    this._lastAttackFrameIndex = -1
     this.invulnerableUntil = 0
     this.lastDamageTaken = 0
 
@@ -204,6 +205,10 @@ export class Player extends Actor {
       const animCompleteEvent = Phaser?.Animations?.Events?.ANIMATION_COMPLETE || 'animationcomplete'
       this.on(animCompleteEvent, (anim) => {
         this.onAnimationComplete(anim)
+      })
+      const animUpdateEvent = Phaser?.Animations?.Events?.ANIMATION_UPDATE || 'animationupdate'
+      this.on(animUpdateEvent, (anim) => {
+        this._onAnimationUpdate(anim)
       })
     }
 
@@ -507,6 +512,7 @@ export class Player extends Actor {
         this.comboQueued = false
         this.currentSwingId = (this.currentSwingId || 0) + 1
         this._hitFramesProcessed = new Set()
+        this._lastAttackFrameIndex = -1
         this.playAnim('attack_2', false)
         try {
           onMeleeSwing()
@@ -530,6 +536,7 @@ export class Player extends Actor {
     this.comboQueued = false
     this.currentSwingId = (this.currentSwingId || 0) + 1
     this._hitFramesProcessed = new Set()
+    this._lastAttackFrameIndex = -1
 
     try {
       onMeleeSwing()
@@ -584,6 +591,7 @@ export class Player extends Actor {
 
     this.currentSwingId = (this.currentSwingId || 0) + 1
     this._hitFramesProcessed = new Set()
+    this._lastAttackFrameIndex = -1
 
     if (isCharged) {
       this.currentAttackType = 'charged_release'
@@ -978,6 +986,22 @@ export class Player extends Actor {
   }
 
   /**
+   * Runs hit-frame detection on every animation frame advance (including skipped
+   * frames in the same game tick, before animationcomplete).
+   *
+   * @param {Phaser.Animations.Animation} [anim]
+   */
+  _onAnimationUpdate(anim) {
+    if (!this.is(ACTOR_STATES.ATTACK)) return
+    if (this.currentAttackType === 'charge_hold') return
+    if (typeof this.currentAttackType === 'string' && this.currentAttackType.startsWith('cast_')) return
+    const key = anim?.key || this.anims?.currentAnim?.key || ''
+    if (!key.includes('attack') && !key.includes('charged_release')) return
+    const now = typeof this.scene?.time?.now === 'number' ? this.scene.time.now : Date.now()
+    this._checkAttackHitFrames(now)
+  }
+
+  /**
    * Animation completion handler.
    *
    * @param {Phaser.Animations.Animation} [anim]
@@ -998,6 +1022,11 @@ export class Player extends Actor {
       if (this.currentAttackType === 'charge_hold') {
         return // Loop while held
       }
+      const now = typeof this.scene?.time?.now === 'number' ? this.scene.time.now : Date.now()
+      const scanEnd = this._resolveAttackScanEndIndex(anim)
+      if (scanEnd >= 0 && !String(this.currentAttackType || '').startsWith('cast_')) {
+        this._checkAttackHitFrames(now, scanEnd)
+      }
       if (typeof this.currentAttackType === 'string' && this.currentAttackType.startsWith('cast_')) {
         this._v2Cast = null
       }
@@ -1006,6 +1035,7 @@ export class Player extends Actor {
         this.currentAttackType = 'attack_2'
         this.currentSwingId = (this.currentSwingId || 0) + 1
         this._hitFramesProcessed = new Set()
+        this._lastAttackFrameIndex = -1
         this.playAnim('attack_2', false)
         try {
           onMeleeSwing()
@@ -1699,36 +1729,75 @@ export class Player extends Actor {
   }
 
   /**
+   * Last frame index in the clip that finished (for hits skipped when the swing ends).
+   *
+   * @param {Phaser.Animations.Animation} [anim]
+   * @returns {number}
+   */
+  _resolveAttackScanEndIndex(anim) {
+    let end = getAnimationFrameIndex(this.anims?.currentFrame)
+    const clip = Array.isArray(anim?.frames) ? anim : this.anims?.currentAnim
+    const frames = clip?.frames
+    if (Array.isArray(frames)) {
+      for (const frame of frames) {
+        const index = getAnimationFrameIndex(frame)
+        if (index > end) end = index
+      }
+    }
+    return end
+  }
+
+  /**
    * Checks for hitFrame triggers during active attack animation.
    *
    * @param {number} time
+   * @param {number} [scanThroughIndex] - Scan through this index when the clip ends or skips ahead.
    */
-  _checkAttackHitFrames(time) {
+  _checkAttackHitFrames(time, scanThroughIndex = undefined) {
     const currentFrame = this.anims?.currentFrame
-    const frameIndex = getAnimationFrameIndex(currentFrame)
-    if (frameIndex >= 0 && !this._hitFramesProcessed.has(frameIndex)) {
-      const isAttack2 = this.currentAttackType === 'attack_2' || this.anims?.currentAnim?.key?.includes('attack_2')
-      const isCharged = this.currentAttackType === 'charged_release' || this.anims?.currentAnim?.key?.includes('charged_release')
-
-      let animMetaKey = 'attack'
-      if (isCharged) {
-        animMetaKey = 'charged_release'
-      } else if (isAttack2 || this.classId === 'mage') {
-        animMetaKey = 'attack_2'
-      }
-
-      const sheetKey = this.getSheetForAnim(isCharged ? 'charged_release' : (isAttack2 ? 'attack_2' : 'attack'))
-      const hitFrames = getHitFrames(this.scene, sheetKey, animMetaKey)
-      if (hitFrames.includes(frameIndex)) {
-        this._hitFramesProcessed.add(frameIndex)
-        if (isAttack2) {
-          console.log(`[Hit] attack_2 frame ${frameIndex}`)
-        } else if (isCharged) {
-          console.log(`[Hit] charged_release frame ${frameIndex}`)
-        }
-        executePlayerMeleeHit(this, frameIndex, time, animMetaKey)
-      }
+    const currentFrameIndex = getAnimationFrameIndex(currentFrame)
+    let endIndex = currentFrameIndex
+    if (scanThroughIndex !== undefined && scanThroughIndex !== null && scanThroughIndex >= 0) {
+      endIndex = Math.max(endIndex, scanThroughIndex)
     }
+    if (endIndex < 0) return
+
+    const lastChecked = this._lastAttackFrameIndex
+    const pivotIndex = currentFrameIndex >= 0 ? currentFrameIndex : endIndex
+    const newSwing =
+      lastChecked >= 0 && pivotIndex < lastChecked
+    const startIndex = newSwing ? pivotIndex : lastChecked + 1
+    if (startIndex > endIndex) {
+      this._lastAttackFrameIndex = endIndex
+      return
+    }
+
+    const isAttack2 = this.currentAttackType === 'attack_2' || this.anims?.currentAnim?.key?.includes('attack_2')
+    const isCharged = this.currentAttackType === 'charged_release' || this.anims?.currentAnim?.key?.includes('charged_release')
+
+    let animMetaKey = 'attack'
+    if (isCharged) {
+      animMetaKey = 'charged_release'
+    } else if (isAttack2 || this.classId === 'mage') {
+      animMetaKey = 'attack_2'
+    }
+
+    const sheetKey = this.getSheetForAnim(isCharged ? 'charged_release' : (isAttack2 ? 'attack_2' : 'attack'))
+    const hitFrames = getHitFrames(this.scene, sheetKey, animMetaKey)
+
+    for (let frameIndex = startIndex; frameIndex <= endIndex; frameIndex++) {
+      if (this._hitFramesProcessed.has(frameIndex)) continue
+      if (!hitFrames.includes(frameIndex)) continue
+      this._hitFramesProcessed.add(frameIndex)
+      if (isAttack2) {
+        console.log(`[Hit] attack_2 frame ${frameIndex}`)
+      } else if (isCharged) {
+        console.log(`[Hit] charged_release frame ${frameIndex}`)
+      }
+      executePlayerMeleeHit(this, frameIndex, time, animMetaKey)
+    }
+
+    this._lastAttackFrameIndex = endIndex
   }
 
   /**
@@ -1848,6 +1917,7 @@ export class Player extends Actor {
             this.currentAttackType = 'attack_2'
             this.currentSwingId = (this.currentSwingId || 0) + 1
             this._hitFramesProcessed = new Set()
+            this._lastAttackFrameIndex = -1
             this.playAnim('attack_2', false)
             try {
               onMeleeSwing()

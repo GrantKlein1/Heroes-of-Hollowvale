@@ -117,6 +117,7 @@ import { getBowTiming, getBowCooldownMs, getScaledArrowSpawnOffset, ARROW_FLY_AN
 import { getItemAnchor } from '../itemHold.js'
 import { BOW_HAND_SCALE, ARROW_VISUAL_SCALE } from '../../items/registry.js'
 import thiefUseThrowAtlas from '../../../../public/assets/characters/thief/thief_use_throw.json'
+import * as hitSystem from '../../combat/hitSystem.js'
 
 function createMockScene() {
   const metadataMap = {
@@ -724,6 +725,60 @@ describe('Player Actor — Package 1-3', () => {
       knight.body.velocity = { x: 100, y: 0 }
       knight.update(1016, 16)
       expect(knight.anims.play).toHaveBeenCalledWith('knight_walk_right', true)
+    })
+
+    it('fires knight hit frame 3 when attack completes before update scans skipped frames', () => {
+      const meleeSpy = vi.spyOn(hitSystem, 'executePlayerMeleeHit').mockReturnValue(0)
+      const knight = new Player(mockScene, 100, 100, 'knight')
+      knight.attack(1000)
+
+      knight.anims.currentFrame = { frame: { name: 'knight_attack_down_1' } }
+      knight.update(1016, 16)
+      expect(meleeSpy).not.toHaveBeenCalled()
+
+      const animFrames = Array.from({ length: 7 }, (_, i) => ({
+        textureFrame: `knight_attack_down_${i}`,
+      }))
+      knight.anims.currentFrame = { frame: { name: 'knight_attack_down_6' } }
+      knight.emit('animationcomplete', { key: 'knight_attack_down', frames: animFrames })
+
+      expect(meleeSpy).toHaveBeenCalledTimes(1)
+      expect(meleeSpy).toHaveBeenCalledWith(knight, 3, expect.any(Number), 'attack')
+      expect(knight._hitFramesProcessed.has(3)).toBe(true)
+      meleeSpy.mockRestore()
+    })
+
+    it('fires knight hit frame 3 on each animationupdate while skipping frames in one tick', () => {
+      const meleeSpy = vi.spyOn(hitSystem, 'executePlayerMeleeHit').mockReturnValue(0)
+      const knight = new Player(mockScene, 100, 100, 'knight')
+      knight.attack(1000)
+
+      for (const index of [1, 2, 3, 4, 5]) {
+        knight.anims.currentFrame = { frame: { name: `knight_attack_down_${index}` } }
+        knight.emit('animationupdate', { key: 'knight_attack_down' })
+      }
+
+      expect(meleeSpy).toHaveBeenCalledTimes(1)
+      expect(meleeSpy).toHaveBeenCalledWith(knight, 3, expect.any(Number), 'attack')
+      meleeSpy.mockRestore()
+    })
+
+    it('fires knight hit frame 3 once when Phaser skips from frame 1 to 5', () => {
+      const meleeSpy = vi.spyOn(hitSystem, 'executePlayerMeleeHit').mockReturnValue(0)
+      const knight = new Player(mockScene, 100, 100, 'knight')
+      knight.attack(1000)
+
+      knight.anims.currentFrame = { frame: { name: 'knight_attack_down_1' } }
+      knight.update(1016, 16)
+      expect(meleeSpy).not.toHaveBeenCalled()
+
+      knight.anims.currentFrame = { frame: { name: 'knight_attack_down_5' } }
+      knight.update(1100, 400)
+
+      expect(meleeSpy).toHaveBeenCalledTimes(1)
+      expect(meleeSpy).toHaveBeenCalledWith(knight, 3, 1100, 'attack')
+      expect(knight._hitFramesProcessed.has(3)).toBe(true)
+      meleeSpy.mockRestore()
     })
 
     it('chains attack_2 combo on second attack press inside combo window', () => {
