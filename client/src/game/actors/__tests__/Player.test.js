@@ -748,6 +748,21 @@ describe('Player Actor — Package 1-3', () => {
       meleeSpy.mockRestore()
     })
 
+    it('fires knight hit frame 3 on each animationupdate while skipping frames in one tick', () => {
+      const meleeSpy = vi.spyOn(hitSystem, 'executePlayerMeleeHit').mockReturnValue(0)
+      const knight = new Player(mockScene, 100, 100, 'knight')
+      knight.attack(1000)
+
+      for (const index of [1, 2, 3, 4, 5]) {
+        knight.anims.currentFrame = { frame: { name: `knight_attack_down_${index}` } }
+        knight.emit('animationupdate', { key: 'knight_attack_down' })
+      }
+
+      expect(meleeSpy).toHaveBeenCalledTimes(1)
+      expect(meleeSpy).toHaveBeenCalledWith(knight, 3, expect.any(Number), 'attack')
+      meleeSpy.mockRestore()
+    })
+
     it('fires knight hit frame 3 once when Phaser skips from frame 1 to 5', () => {
       const meleeSpy = vi.spyOn(hitSystem, 'executePlayerMeleeHit').mockReturnValue(0)
       const knight = new Player(mockScene, 100, 100, 'knight')

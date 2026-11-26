@@ -206,6 +206,10 @@ export class Player extends Actor {
       this.on(animCompleteEvent, (anim) => {
         this.onAnimationComplete(anim)
       })
+      const animUpdateEvent = Phaser?.Animations?.Events?.ANIMATION_UPDATE || 'animationupdate'
+      this.on(animUpdateEvent, (anim) => {
+        this._onAnimationUpdate(anim)
+      })
     }
 
     // Hook scene attack and hurt handlers if mounted in HollowvaleScene.
@@ -982,6 +986,22 @@ export class Player extends Actor {
   }
 
   /**
+   * Runs hit-frame detection on every animation frame advance (including skipped
+   * frames in the same game tick, before animationcomplete).
+   *
+   * @param {Phaser.Animations.Animation} [anim]
+   */
+  _onAnimationUpdate(anim) {
+    if (!this.is(ACTOR_STATES.ATTACK)) return
+    if (this.currentAttackType === 'charge_hold') return
+    if (typeof this.currentAttackType === 'string' && this.currentAttackType.startsWith('cast_')) return
+    const key = anim?.key || this.anims?.currentAnim?.key || ''
+    if (!key.includes('attack') && !key.includes('charged_release')) return
+    const now = typeof this.scene?.time?.now === 'number' ? this.scene.time.now : Date.now()
+    this._checkAttackHitFrames(now)
+  }
+
+  /**
    * Animation completion handler.
    *
    * @param {Phaser.Animations.Animation} [anim]
@@ -1716,7 +1736,8 @@ export class Player extends Actor {
    */
   _resolveAttackScanEndIndex(anim) {
     let end = getAnimationFrameIndex(this.anims?.currentFrame)
-    const frames = anim?.frames
+    const clip = Array.isArray(anim?.frames) ? anim : this.anims?.currentAnim
+    const frames = clip?.frames
     if (Array.isArray(frames)) {
       for (const frame of frames) {
         const index = getAnimationFrameIndex(frame)
